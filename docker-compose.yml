@@ -1,0 +1,9 @@
+sfmrabbit:
+    image: rabbitmq:3-management
+    ports:
+        - "15672:15672"
+    restart: always
+    environment:
+        - RABBITMQ_DEFAULT_USER=sfm_user
+    env_file:
+        - ./secrets.env
