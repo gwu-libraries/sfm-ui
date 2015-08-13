@@ -4,6 +4,14 @@ import socket
 from datetime import datetime, timedelta
 import time
 
+"""
+Simple utility to check and/or wait for application dependencies based
+on file or port availability.
+
+It is primarily intended to assist with the ordering of docker containers.
+For example: python appdeps.py --port-wait rabbit:5672 && python python myapp.py
+"""
+
 
 def _check_port(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,13 +76,12 @@ if __name__ == '__main__':
         iter_dict[wait_file(f)] = "%s does not exist after wait." % f
 
     for p in args.port:
-        (host, port) = p.split(":")
-        iter_dict[check_port(host, port)] = "%s not available." % p
+        (main_host, main_port) = p.split(":")
+        iter_dict[check_port(main_host, main_port)] = "%s not available." % p
 
     for p in args.port_wait:
-        (host, port) = p.split(":")
-        iter_dict[wait_port(host, port)] = "%s not available after wait." % p
-
+        (main_host, main_port) = p.split(":")
+        iter_dict[wait_port(main_host, main_port)] = "%s not available after wait." % p
 
     iters = iter_dict.keys()
     start = datetime.now()
