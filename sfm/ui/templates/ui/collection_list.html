@@ -1,0 +1,17 @@
+{% block title %}
+    Collections
+{% endblock %}
+
+{% block content %}
+    <h1>Collections</h1>
+    <h2><a href={% url "collection_create" %}>Create new Collection</h2>
+    <ul>
+    {% for collection in collection_list %}
+        <li><a href={% url "collection_detail" collection.pk %}>{{ collection }}</a> | <a href={% url "collection_update" collection.pk %}>Update</a> | <form style="display:inline;" action={% url "collection_delete" collection.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ collection }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No Collections yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
