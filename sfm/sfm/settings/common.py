@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'ui',
     'allauth',  # registration
     'allauth.account',  # registration
@@ -105,6 +106,8 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Authentication Backends for AllAuth
 
