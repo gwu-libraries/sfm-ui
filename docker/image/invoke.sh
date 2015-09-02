@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Waiting for db"
-python appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui
+appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui
 if [ "$?" = "1" ]; then
     echo "Problem with application dependencies."
     exit 1
