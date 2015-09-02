@@ -3,3 +3,5 @@ pytz
 psycopg2
 django-allauth
 django-crispy-forms
+docker-py
+docker-compose
