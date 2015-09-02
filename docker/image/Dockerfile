@@ -24,7 +24,6 @@ RUN pip install -r /opt/sfm-ui/requirements/requirements.txt
 #This is used to automatically create the admin user.
 RUN pip install django-finalware==0.0.2
 ADD common.py /tmp/
-ADD wsgi.py /opt/sfm-ui/sfm/sfm/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
 RUN a2ensite sfm.conf
@@ -37,6 +36,7 @@ ADD invoke.sh /opt/
 RUN chmod +x /opt/invoke.sh
 #Install appdeps to allow checking for application dependencies
 WORKDIR /opt/sfm-ui
-RUN wget -L --no-check-certificate https://github.com/gwu-libraries/appdeps/raw/master/appdeps.py
+RUN pip install appdeps
+# RUN wget -L --no-check-certificate https://github.com/gwu-libraries/appdeps/raw/master/appdeps.py
 CMD ["/opt/invoke.sh"]
 EXPOSE 80

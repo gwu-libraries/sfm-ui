@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Waiting for db"
-python /opt/sfm-setup/appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui
+python appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui
 if [ "$?" = "1" ]; then
     echo "Problem with application dependencies."
     exit 1
@@ -13,9 +13,6 @@ echo "Writing local_settings"
 echo "env={}" > /opt/sfm-ui/sfm/sfm/settings/common.py
 env | grep 'SFM_\|\DB_' | sed 's/\(.*\)=\(.*\)/env["\1"]="\2"/' >> /opt/sfm-ui/sfm/sfm/settings/common.py
 cat /tmp/common.py >> /opt/sfm-ui/sfm/sfm/settings/common.py
-
-echo "Copying config"
-cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
 echo "Syncing db"
 /opt/sfm-ui/sfm/manage.py syncdb --noinput
