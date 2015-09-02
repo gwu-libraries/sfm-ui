@@ -17,7 +17,7 @@ class Credential(models.Model):
                                 help_text='Platform name')
     token = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
-    date_added = models.DateTimeField(default=timezone.now())
+    date_added = models.DateTimeField(default=timezone.now)
 
 
 @python_2_unicode_compatible
@@ -30,7 +30,7 @@ class Collection(models.Model):
     is_active = models.BooleanField(default=True)
     is_visible = models.BooleanField(default=True)
     stats = models.TextField(blank=True)
-    date_added = models.DateTimeField(default=timezone.now())
+    date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -50,9 +50,9 @@ class SeedSet(models.Model):
     crawl_options = models.TextField(blank=True)
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
-    date_added = models.DateTimeField(default=timezone.now())
-    date_started = models.DateTimeField(default=timezone.now())
-    date_ended = models.DateTimeField(default=timezone.now())
+    date_added = models.DateTimeField(default=timezone.now)
+    date_started = models.DateTimeField(default=timezone.now)
+    date_ended = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
@@ -67,7 +67,7 @@ class Seed(models.Model):
     is_active = models.BooleanField(default=True)
     is_valid = models.BooleanField(default=True)
     stats = models.TextField(blank=True)
-    date_added = models.DateTimeField(default=timezone.now())
+    date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -78,8 +78,8 @@ class Harvest(models.Model):
 
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
     stats = models.TextField(blank=True)
-    date_started = models.DateTimeField(default=timezone.now())
-    date_ended = models.DateTimeField(default=timezone.now())
+    date_started = models.DateTimeField(default=timezone.now)
+    date_ended = models.DateTimeField(default=timezone.now)
 
 
 class Media(models.Model):
