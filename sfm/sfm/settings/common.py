@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -105,6 +106,8 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Authentication Backends for AllAuth
 
