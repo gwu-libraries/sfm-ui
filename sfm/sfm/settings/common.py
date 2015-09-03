@@ -117,3 +117,8 @@ AUTHENTICATION_BACKENDS = (
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Required due to custom fields on AbstractUser, see "Substituting
+# a custom user model" under:
+# https://docs.djangoproject.com/en/1.8/topics/auth/customizing/
+AUTH_USER_MODEL = 'ui.User'
