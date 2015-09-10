@@ -1,4 +1,4 @@
 django>=1.8,<=1.9
-pytz
-psycopg2
 django-allauth
+psycopg2
+pytz
