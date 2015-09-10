@@ -14,6 +14,9 @@ echo "env={}" > /opt/sfm-ui/sfm/sfm/settings/common.py
 env | grep 'SFM_\|\DB_' | sed 's/\(.*\)=\(.*\)/env["\1"]="\2"/' >> /opt/sfm-ui/sfm/sfm/settings/common.py
 cat /tmp/common.py >> /opt/sfm-ui/sfm/sfm/settings/common.py
 
+echo "Copying config"
+cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
+
 echo "Syncing db"
 /opt/sfm-ui/sfm/manage.py syncdb --noinput
 

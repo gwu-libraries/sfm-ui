@@ -15,28 +15,22 @@ RUN apt-get update && apt-get install -y \
     zip 
 #Upgrade pip
 RUN pip install --upgrade pip
-WORKDIR /tmp
-RUN wget --no-check-certificate https://github.com/gwu-libraries/sfm-ui/archive/t13-initial-collection-list.zip
-RUN unzip t13-initial-collection-list.zip
-RUN mv sfm-ui-t13-initial-collection-list /opt/sfm-ui
-#This installs the requirements.txt.
-RUN pip install -r /opt/sfm-ui/requirements/requirements.txt
+#This pre-fetches the most recent requirements.txt.
+ADD https://github.com/gwu-libraries/sfm-ui/blob/t14-add_seed-seed_sets/requirements/requirements.txt /opt/sfm-setup/
+RUN pip install -r /opt/sfm-setup/requirements.txt
 #This is used to automatically create the admin user.
 RUN pip install django-finalware==0.0.2
+#These will be copied over into the app by invoke.sh.
 ADD common.py /tmp/
+ADD wsgi.py /tmp/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
 RUN a2ensite sfm.conf
 #Disable pre-existing default site
 RUN a2dissite 000-default
 #Data volume
-RUN mkdir /var/sfm && chmod ugo+w /var/sfm
-VOLUME /var/sfm
-ADD invoke.sh /opt/
-RUN chmod +x /opt/invoke.sh
 #Install appdeps to allow checking for application dependencies
 WORKDIR /opt/sfm-ui
 RUN pip install appdeps
-# RUN wget -L --no-check-certificate https://github.com/gwu-libraries/appdeps/raw/master/appdeps.py
 CMD ["/opt/invoke.sh"]
 EXPOSE 80
