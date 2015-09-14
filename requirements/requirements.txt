@@ -6,3 +6,4 @@ django-crispy-forms
 docker-py
 docker-compose
 appdeps
+django-finalware

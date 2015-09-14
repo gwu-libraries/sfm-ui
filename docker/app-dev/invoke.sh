@@ -10,9 +10,9 @@ echo "Updating requirements"
 pip install -r /opt/sfm-ui/requirements/requirements.txt
 
 echo "Writing local_settings"
-echo "env={}" > /opt/sfm-ui/sfm/sfm/settings/common.py
-env | grep 'SFM_\|\DB_' | sed 's/\(.*\)=\(.*\)/env["\1"]="\2"/' >> /opt/sfm-ui/sfm/sfm/settings/common.py
-cat /tmp/common.py >> /opt/sfm-ui/sfm/sfm/settings/common.py
+echo "env={}" > /opt/sfm-ui/sfm/sfm/settings/local.py
+env | grep 'SFM_\|\DB_' | sed 's/\(.*\)=\(.*\)/env["\1"]="\2"/' >> /opt/sfm-ui/sfm/sfm/settings/local.py
+cat /tmp/local.py >> /opt/sfm-ui/sfm/sfm/settings/local.py
 
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/

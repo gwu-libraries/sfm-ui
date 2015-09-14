@@ -38,11 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'crispy_forms',
     'ui',
-    'allauth',  # registration
-    'allauth.account',  # registration
-    'allauth.socialaccount',  # registration
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,8 +78,8 @@ WSGI_APPLICATION = 'sfm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sfmdatabase',
+        'ENGINE': 'django.db.backends.',
+        'NAME': '',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -106,15 +102,6 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-# Authentication Backends for AllAuth
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

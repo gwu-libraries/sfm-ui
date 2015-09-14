@@ -1,1 +1,1 @@
-CREATE DATABASE sfm-ui;
+CREATE DATABASE sfmdatabase;

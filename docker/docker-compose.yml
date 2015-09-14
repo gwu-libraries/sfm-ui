@@ -9,6 +9,6 @@ sfmdevapp:
     links:
         - sfmdevdb:db
     volumes:
-        - ~/sfm-ui:/opt/sfm-ui
+        - ~/github/sfm:/opt/sfm-ui
     environment:
         - SFM_DEBUG=True

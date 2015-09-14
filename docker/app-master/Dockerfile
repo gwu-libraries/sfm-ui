@@ -22,9 +22,9 @@ RUN mv sfm-ui-t14-add_seed-seed_sets /opt/sfm-ui
 #This installs requirements.txt.
 RUN pip install -r /opt/sfm-ui/requirements/requirements.txt
 #This is used to automatically create the admin user.
-RUN pip install django-finalware==0.0.2
+RUN pip install django-finalware==0.1.0
 #These will be copied over into the app by invoke.sh.
-ADD common.py /opt/sfm-ui/sfm/sfm/settings/
+ADD local.py /opt/sfm-ui/sfm/sfm/settings/
 ADD wsgi.py /opt/sfm-ui/sfm/sfm/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
