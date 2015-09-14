@@ -3,3 +3,4 @@ pytz
 psycopg2
 django-allauth
 django-crispy-forms
+django-finalware
