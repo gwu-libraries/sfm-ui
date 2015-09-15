@@ -1,12 +1,15 @@
-sfmmasterdb:
+sfmdb:
     image: rajatvij/sfm-ui-db
     environment:
         - POSTGRES_PASSWORD=gherD42#dl5
-sfmmasterapp:
-    image: rajatvij/sfm-ui:master
+sfmapp:
+    image: rajatvij/sfm-ui:latest
     ports:
         - "8080:80"
     links:
-        - sfmmasterdb:db
+        - sfmdb:db
     environment:
         - SFM_DEBUG=True
+    volumes:
+        - /sfm-data:/var/sfm
+    restart: always

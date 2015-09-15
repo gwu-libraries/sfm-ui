@@ -24,6 +24,7 @@ RUN pip install -r /opt/sfm-ui/requirements/requirements.txt
 #This is used to automatically create the admin user.
 RUN pip install django-finalware==0.1.0
 #These will be copied over into the app by invoke.sh.
+ADD local.py /opt/sfm-ui/sfm/sfm/settings/
 ADD wsgi.py /opt/sfm-ui/sfm/sfm/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
