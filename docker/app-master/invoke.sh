@@ -6,11 +6,6 @@ if [ "$?" = "1" ]; then
     exit 1
 fi
 
-echo "Writing local_settings"
-echo "env={}" > /opt/sfm-ui/sfm/sfm/settings/local.py
-env | grep 'SFM_\|\DB_' | sed 's/\(.*\)=\(.*\)/env["\1"]="\2"/' >> /opt/sfm-ui/sfm/sfm/settings/local.py
-cat /tmp/local.py >> /opt/sfm-ui/sfm/sfm/settings/local.py
-
 echo "Syncing db"
 /opt/sfm-ui/sfm/manage.py syncdb --noinput
 

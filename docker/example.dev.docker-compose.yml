@@ -1,12 +1,14 @@
-sfmmasterdb:
+sfmdevdb:
     image: rajatvij/sfm-ui-db
     environment:
         - POSTGRES_PASSWORD=gherD42#dl5
-sfmmasterapp:
-    image: rajatvij/sfm-ui:master
+sfmdevapp:
+    image: rajatvij/sfm-ui:dev
     ports:
         - "8080:80"
     links:
-        - sfmmasterdb:db
+        - sfmdevdb:db
+    volumes:
+        - ~/github/sfm:/opt/sfm-ui
     environment:
         - SFM_DEBUG=True
