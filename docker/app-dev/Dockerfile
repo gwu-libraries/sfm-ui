@@ -20,8 +20,7 @@ ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/t14-add_seed-seed_set
 RUN pip install -r /opt/sfm-setup/requirements.txt
 #This is used to automatically create the admin user.
 RUN pip install django-finalware==0.1.0
-#These will be copied over into the app by invoke.sh.
-ADD local.py /tmp/
+#This will be copied over into the app by invoke.sh.
 ADD wsgi.py /tmp/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
