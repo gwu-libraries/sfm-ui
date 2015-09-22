@@ -103,6 +103,8 @@ USE_TZ = True
 
 SITE_ID = 1
 
+LOGIN_REDIRECT_URL = '/'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
