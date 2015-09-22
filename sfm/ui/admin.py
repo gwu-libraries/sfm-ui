@@ -47,7 +47,7 @@ class Credential(a.ModelAdmin):
 
 class Collection(a.ModelAdmin):
     fields = ('group', 'name', 'description', 'is_active', 'is_visible',
-              'stats', 'date_added', 'date_updated')
+              'stats', 'date_added')
     list_display = ['group', 'name', 'description', 'is_active', 'is_visible',
                     'stats', 'date_added', 'date_updated']
     list_filter = ['group', 'name', 'description', 'is_active', 'is_visible',
@@ -76,7 +76,7 @@ class SeedSet(a.ModelAdmin):
 
 class Seed(a.ModelAdmin):
     fields = ('seed_set', 'platform_token', 'platform_uid', 'is_active',
-              'is_valid', 'stats', 'date_added', 'date_updated')
+              'is_valid', 'stats', 'date_added')
     list_display = ['seed_set', 'platform_token', 'platform_uid', 'is_active',
                     'is_valid', 'stats', 'date_added', 'date_updated']
     list_filter = ['seed_set', 'platform_token', 'platform_uid', 'is_active',
