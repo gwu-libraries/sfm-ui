@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    {{ collection }}
+{% endblock %}
+
+{% block content %}
+    <h1><a href={% url "collection_list" %}>Collection</a></h1>
+    <h2>{{ collection }} | <a href={% url "collection_update" collection.pk %}>Update</a> | 
+    <form style="display:inline;" action={% url "collection_delete" collection.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ collection }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    <div>
+        <li>Group : {{ collection.group }}</li>
+        <li>Name : {{ collection.name }}</li>
+        <li>Description : {{ collection.description }}</li>
+        <li>date_updated : {{ collection.date_updated }}</li>
+        <li>date_added : {{ collection.date_added }}</li>
+        <li>is_visible : {{ collection.is_visible }}</li>
+        <li>is_active : {{ collection.is_active }}</li>
+        <li>stats : {{ collection.stats }}</li>
+    </div>
+    </form>
+    </h2>
+{% endblock %}

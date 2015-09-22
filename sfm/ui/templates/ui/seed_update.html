@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Update {{ seed }}
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "seed_list" %}>Seed</a></h1>
+<h2>Update {{ seed }}</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Update" />
+</form>
+<a href={% url "seed_detail" seed.pk %}>Cancel</a>
+<form style="display:inline;" action={% url "seed_delete" seed.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seed }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+</form>
+{% endblock %}

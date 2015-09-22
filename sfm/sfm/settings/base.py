@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'ui',
 )
@@ -77,8 +78,8 @@ WSGI_APPLICATION = 'sfm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sfmdatabase',
+        'ENGINE': 'django.db.backends.',
+        'NAME': '',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -100,13 +101,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
 
-# Required due to custom fields on AbstractUser, see "Substituting 
+# Required due to custom fields on AbstractUser, see "Substituting
 # a custom user model" under:
 # https://docs.djangoproject.com/en/1.8/topics/auth/customizing/
 AUTH_USER_MODEL = 'ui.User'

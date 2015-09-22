@@ -71,7 +71,7 @@ class Seed(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '<Seed %s "%s">' % (self.id, self.token)
+        return '<Seed %s "%s">' % (self.id, self.platform_token)
 
 
 class Harvest(models.Model):

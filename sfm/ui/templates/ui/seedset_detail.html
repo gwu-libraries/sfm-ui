@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    {{ seedset }}
+{% endblock %}
+
+{% block content %}
+    <h1><a href={% url "seedset_list" %}>SeedSet</a></h1>
+    <h2>{{ seedset }} | <a href={% url "seedset_update" seedset.pk %}>Update</a> | 
+    <form style="display:inline;" action={% url "seedset_delete" seedset.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seedset }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    <div>
+        <li>Collection : {{ seedset.collection }}</li>
+        <li>Credential : {{ seedset.credential }}</li>
+        <li>Platform : {{ seedset.platform }}</li>
+        <li>Name : {{ seedset.name }}</li>
+        <li>Description : {{ seedset.description }}</li>
+        <li>Schedule : {{ seedset.schedule }}</li>
+        <li>Crawl Options : {{ seedset.crawl_options }}</li>
+        <li>Max Count : {{ seedset.max_count }}</li>
+        <li>date_started : {{ seedset.date_started }}</li>
+        <li>date_added : {{ seedset.date_added }}</li>
+        <li>date_ended : {{ seedset.date_ended }}</li>
+        <li>is_active : {{ seedset.is_active }}</li>
+        <li>stats : {{ seedset.stats }}</li>
+    </div>
+    </form>
+    </h2>
+{% endblock %}

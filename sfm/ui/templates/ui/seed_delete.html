@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Delete {{ seed }}
+{% endblock %}
+
+{% block content %}
+<h1>Delete {{ seed }}</h1>
+
+<form action="" method="post">{% csrf_token %}
+    <p>Are you sure you want to delete {{ seed }}?</p>
+    <input type="submit" value="Confirm" />
+</form>
+
+<a href={% url "seed_detail" seed.pk %}>Cancel</a>
+
+{% endblock %}
