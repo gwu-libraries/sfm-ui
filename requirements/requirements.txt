@@ -3,3 +3,4 @@ django-allauth
 psycopg2
 pytz
 django-crispy-forms
+appdeps
