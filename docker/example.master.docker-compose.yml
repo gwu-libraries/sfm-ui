@@ -1,0 +1,12 @@
+sfmmasterdb:
+    image: gwul/sfm-ui-db
+    environment:
+        - POSTGRES_PASSWORD=gherD42#dl5
+sfmmasterapp:
+    image: gwul/sfm-ui:master
+    ports:
+        - "80:80"
+    links:
+        - sfmmasterdb:db
+    environment:
+        - SFM_DEBUG=True
