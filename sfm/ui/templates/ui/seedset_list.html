@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    SeedSets
+{% endblock %}
+
+{% block content %}
+    <h1>SeedSets</h1>
+    <h2><a href={% url "seedset_create" %}>Create new SeedSet</h2>
+    <ul>
+    {% for seedset in seedset_list %}
+        <li><a href={% url "seedset_detail" seedset.pk %}>{{ seedset }}</a> | <a href={% url "seedset_update" seedset.pk %}>Update</a> | <form style="display:inline;" action={% url "seedset_delete" seedset.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seedset }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No SeedSets yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Create Collection
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "collection_list" %}>Collection</a></h1>
+<h2>Create Collection</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Create" />
+</form>
+<a href={% url "collection_list" %}>Cancel</a>
+{% endblock %}

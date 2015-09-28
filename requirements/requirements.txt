@@ -2,3 +2,4 @@ django>=1.8,<=1.9
 django-allauth
 psycopg2
 pytz
+django-crispy-forms

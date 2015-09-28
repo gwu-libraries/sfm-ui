@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
