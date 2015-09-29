@@ -9,6 +9,8 @@ fi
 echo "Updating requirements"
 pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
 
+export DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
+
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
