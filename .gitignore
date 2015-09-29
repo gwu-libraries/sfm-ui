@@ -58,3 +58,6 @@ target/
 
 *.swp
 ENV
+
+# PyCharm
+.idea/

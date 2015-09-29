@@ -1,6 +1,7 @@
 django>=1.8,<=1.9
-pytz
-psycopg2
 django-allauth
 django-crispy-forms
 django-finalware
+psycopg2
+pytz
+appdeps
