@@ -47,7 +47,7 @@ Installation
 
 or just download ``docker-compose.yml`` and ``example.secrets.env``::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/docker-compose.yml > docker-compose.yml
+    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/master.docker-compose.yml > docker-compose.yml
     curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.secrets.env > secrets.env
 
 2. Put real secrets in ``secrets.env``.
