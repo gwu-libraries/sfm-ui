@@ -39,3 +39,27 @@ All queues must be declared durable.::
     #Declare harvester queue
     channel.queue_declare(queue="harvester",
                           durable=True)
+
+Example
+-------
+
+Creating a connection and channel, then declaring an exchange and queue and binding
+the exchange to the queue.::
+
+    #Create a connection
+    credentials = pika.PlainCredentials(username, password)
+    parameters = pika.ConnectionParameters(host=host, credentials=credentials)
+    connection = pika.BlockingConnection(parameters)
+    #Create a channel
+    channel = connection.channel()
+    #Declare sfm_exchange
+    channel.exchange_declare(exchange="sfm_exchange",
+                             type="topic", durable=True)
+    #Declare harvester queue
+    channel.queue_declare(queue="sfm_exchange",
+                          durable=True)
+    #Bind
+    channel.queue_bind(exchange="sfm_exchange",
+                       queue="sfm_exchange", routing_key="sfm_exchange")
+
+    channel.close()
