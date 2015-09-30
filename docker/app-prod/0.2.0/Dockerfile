@@ -38,4 +38,5 @@ ADD invoke.sh /opt/
 RUN chmod +x /opt/invoke.sh
 WORKDIR /opt/sfm-ui
 CMD ["/opt/invoke.sh"]
+ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 EXPOSE 80

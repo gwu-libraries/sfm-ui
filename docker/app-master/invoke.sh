@@ -9,8 +9,6 @@ fi
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
-export DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
-
 echo "Syncing db"
 /opt/sfm-ui/sfm/manage.py syncdb --noinput
 
@@ -19,6 +17,9 @@ echo "Migrating db"
 
 echo "Collecting static files"
 /opt/sfm-ui/sfm/manage.py collectstatic --noinput
+
+echo "Loading fixtures"
+/opt/sfm-ui/sfm/manage.py loaddata /opt/sfm-setup/fixtures.json
 
 echo "Running server"
 #Not entirely sure why this is necessary, but it works.

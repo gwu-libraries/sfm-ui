@@ -9,8 +9,6 @@ fi
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
-export DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
-
 echo "Syncing db"
 /opt/sfm-ui/sfm/manage.py syncdb --noinput
 
