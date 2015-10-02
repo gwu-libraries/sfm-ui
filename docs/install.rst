@@ -15,6 +15,7 @@ and be prefixed with *sfm-*.
 
 For a container, there may be multiple flavors of the container. In particular,
 there may be the following:
+
 * *development*:  The code for the service is outside the container and linked into
   the container as a shared volume. This supports development with a running instance
   of the service.
