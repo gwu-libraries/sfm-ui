@@ -7,11 +7,12 @@ from .views import (CollectionListView, CollectionCreateView,
                     SeedListView, SeedCreateView, SeedDetailView,
                     SeedUpdateView, SeedDeleteView)
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
 
 
 urlpatterns = patterns('',
 
-                       url(r'^collections/create/$',  # NOQA
+                       url(r'^collections/create/$',
                            login_required(CollectionCreateView.as_view()),
                            name="collection_create"),
 
@@ -31,7 +32,7 @@ urlpatterns = patterns('',
                            CollectionListView.as_view(),
                            name="collection_list"),
 
-                       url(r'^seedsets/create/$',  # NOQA
+                       url(r'^seedsets/create/$',
                            login_required(SeedSetCreateView.as_view()),
                            name="seedset_create"),
 
@@ -51,7 +52,7 @@ urlpatterns = patterns('',
                            SeedSetListView.as_view(),
                            name="seedset_list"),
 
-                       url(r'^seeds/create/$',  # NOQA
+                       url(r'^seeds/create/$',
                            login_required(SeedCreateView.as_view()),
                            name="seed_create"),
 

@@ -1,5 +1,26 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% block javascript %}
+<script>
+function request_access(){
+    var message = new Object();
+    message.platform_token = document.getElementById("id_platform_token").value;
+    message.platform_ui = document.getElementById("id_platform_uid").value;
+    var request_data= JSON.stringify(message);
+    alert(request_data);
+    $.ajax({
+        type: 'POST',
+        url: 'ui/seed_update.html',
+        data : { 'request_data': request_data},
+        success : function(json) {
+            $("#request-access").hide();
+            alert("requested access complete");
+            alert(data);
+        }
+    })
+}
+</script>
+{% endblock %}
 {% block title %}
     Update {{ seed }}
 {% endblock %}
@@ -10,7 +31,7 @@
 
 <form action="" method="post">{% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="Update" />
+    <input type="submit" value="Update" onclick="request_access(this)" id="{{ data }}"/>
 </form>
 <a href={% url "seed_detail" seed.pk %}>Cancel</a>
 <form style="display:inline;" action={% url "seed_delete" seed.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seed }}?')">{% csrf_token %}
