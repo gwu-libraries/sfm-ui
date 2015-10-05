@@ -17,6 +17,9 @@ echo "Syncing db"
 echo "Migrating db"
 /opt/sfm-ui/sfm/manage.py migrate --noinput
 
+echo "Collecting static files"
+/opt/sfm-ui/sfm/manage.py collectstatic --noinput
+
 echo "Running server"
 #Not entirely sure why this is necessary, but it works.
 /etc/init.d/apache2 start

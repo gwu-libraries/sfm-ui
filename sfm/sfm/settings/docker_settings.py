@@ -11,3 +11,5 @@ SITE_SUPERUSER_EMAIL = env.get('SFM_SITE_ADMIN_EMAIL', 'nowhere@example.com')
 
 # A hashed version of `SITE_SUPERUSER_PASSWORD` will be store in superuser's `password` field.
 SITE_SUPERUSER_PASSWORD = env.get('SFM_SITE_ADMIN_PASSWORD', 'password')
+
+STATIC_ROOT = "/opt/sfm-static"
