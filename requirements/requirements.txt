@@ -5,3 +5,4 @@ django-finalware
 psycopg2
 pytz
 appdeps
+pika

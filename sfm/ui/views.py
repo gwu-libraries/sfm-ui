@@ -4,8 +4,13 @@ from django.views.generic.list import ListView
 from .models import Collection, SeedSet, Seed
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
-
-# Create your views here.
+import pika
+# import json
+# from django.shortcuts import render
+# from django.template import RequestContext
+# import os
+# import sys
+# from HttpRequest import request
 
 
 class CollectionListView(ListView):
@@ -46,6 +51,52 @@ class CollectionUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse("collection_detail", args=(self.object.pk,))
+
+
+def rabbit_worker(message):
+    # Create a connection
+    # credentials = pika.PlainCredentials(
+        # username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
+        # password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
+    parameters = pika.ConnectionParameters(host='localhost')
+    # , credentials=credentials)
+    connection = pika.BlockingConnection(parameters)
+    # Create a channel
+    channel = connection.channel()
+    # Declare sfm_exchange
+    channel.exchange_declare(exchange="sfm_exchange", type="topic",
+                             durable=True)
+    channel.basic_publish(exchange='sfm_exchange', routing_key='sfm_exchange',
+                          body=message)
+    print " [x] Sent %r" % (message,)
+    channel.close()
+
+
+def rabbit_consumer(self):
+    # Create a connection
+    # credentials = pika.PlainCredentials(
+        # username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
+        # password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
+    parameters = pika.ConnectionParameters(host='localhost')
+    # credentials=credentials)
+    connection = pika.BlockingConnection(parameters)
+    # Create a channel
+    channel = connection.channel()
+    # Declare sfm_exchange
+    channel.exchange_declare(exchange="sfm_exchange", type="topic",
+                             durable=True)
+    # Declare harvester queue
+    channel.queue_declare(queue="sfm_exchange", durable=True)
+    # Bind
+    channel.queue_bind(exchange="sfm_exchange", queue="sfm_exchange",
+                       routing_key="sfm_exchange")
+    print ' [*] Waiting for logs. To exit press CTRL+C'
+
+    def callback(ch, method, properties, body):
+        print " [x] Recieved %r" % (body,)
+
+    channel.basic_consume(callback, queue="sfm_exchange", no_ack=True)
+    channel.start_consuming()
 
 
 class CollectionDeleteView(DeleteView):
@@ -147,6 +198,17 @@ class SeedUpdateView(UpdateView):
     slug_url_kwarg = 'slug'
     pk_url_kwarg = 'pk'
     context_object_name = 'seed'
+
+    """def get(self, request, *args, **kwargs):
+        # Handles GET requests and instantiates a blank version of the form.
+        form = self.get_form()
+        message = {
+            'UID': form['platform_uid'].value(),
+            'token': form['platform_token'].value()
+        }
+        rabbit_worker(json.dumps(message))
+        return render(request, "ui/seed_update.html",
+                      context_instance=RequestContext(request))"""
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
