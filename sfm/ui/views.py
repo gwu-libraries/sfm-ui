@@ -5,10 +5,10 @@ from .models import Collection, SeedSet, Seed
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import pika
-# import json
+import json
 # from django.shortcuts import render
 # from django.template import RequestContext
-# import os
+import os
 # import sys
 # from HttpRequest import request
 
@@ -55,11 +55,10 @@ class CollectionUpdateView(UpdateView):
 
 def rabbit_worker(message):
     # Create a connection
-    # credentials = pika.PlainCredentials(
-        # username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
-        # password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
-    parameters = pika.ConnectionParameters(host='localhost')
-    # , credentials=credentials)
+    credentials = pika.PlainCredentials(
+        username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
+        password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
+    parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
     connection = pika.BlockingConnection(parameters)
     # Create a channel
     channel = connection.channel()
@@ -74,11 +73,10 @@ def rabbit_worker(message):
 
 def rabbit_consumer(self):
     # Create a connection
-    # credentials = pika.PlainCredentials(
-        # username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
-        # password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
-    parameters = pika.ConnectionParameters(host='localhost')
-    # credentials=credentials)
+    credentials = pika.PlainCredentials(
+        username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
+        password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
+    parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
     connection = pika.BlockingConnection(parameters)
     # Create a channel
     channel = connection.channel()
@@ -207,8 +205,11 @@ class SeedUpdateView(UpdateView):
             'token': form['platform_token'].value()
         }
         rabbit_worker(json.dumps(message))
-        return render(request, "ui/seed_update.html",
+        return render(request, '/ui/seeds/1',
                       context_instance=RequestContext(request))"""
+
+    message = {'1': 'test', '2': 'json'}
+    rabbit_worker(json.dumps(message))
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
