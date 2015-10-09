@@ -6,6 +6,7 @@ from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import pika
 import json
+from django.http import HttpResponse
 # from django.shortcuts import render
 # from django.template import RequestContext
 import os
@@ -196,6 +197,14 @@ class SeedUpdateView(UpdateView):
     slug_url_kwarg = 'slug'
     pk_url_kwarg = 'pk'
     context_object_name = 'seed'
+
+    def request_access(request):
+        print("django view function")
+        m = request.POST.get('request_data')
+        z = request.POST.get('platform_uid')
+        print z
+        rabbit_worker(json.dumps(m))
+        return HttpResponse(json.dumps(m), content_type="application/json")
 
     """def get(self, request, *args, **kwargs):
         # Handles GET requests and instantiates a blank version of the form.
