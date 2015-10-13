@@ -57,31 +57,31 @@ class Collection(a.ModelAdmin):
 
 
 class SeedSet(a.ModelAdmin):
-    fields = ('collection', 'credential', 'platform', 'name', 'description',
-              'is_active', 'schedule', 'crawl_options', 'max_count', 'stats',
-              'date_added', 'date_started', 'date_ended')
-    list_display = ['collection', 'credential', 'platform', 'name',
-                    'description', 'is_active', 'schedule', 'crawl_options',
-                    'max_count', 'stats', 'date_added', 'date_started',
-                    'date_ended']
-    list_filter = ['collection', 'credential', 'platform', 'name',
-                   'description', 'is_active', 'schedule', 'crawl_options',
-                   'max_count', 'stats', 'date_added', 'date_started',
-                   'date_ended']
-    search_fields = ['collection', 'credential', 'platform', 'name',
-                     'description', 'is_active', 'schedule', 'crawl_options',
-                     'max_count', 'stats', 'date_added', 'date_started',
-                     'date_ended']
+    fields = ('collection', 'credential', 'harvest_type', 'name', 'description',
+              'is_active', 'schedule', 'harvest_options', 'max_count', 'stats',
+              'date_added', 'start_date', 'end_date')
+    list_display = ['collection', 'credential', 'harvest_type', 'name',
+                    'description', 'is_active', 'schedule', 'harvest_options',
+                    'max_count', 'stats', 'date_added', 'start_date',
+                    'end_date']
+    list_filter = ['collection', 'credential', 'harvest_type', 'name',
+                   'description', 'is_active', 'schedule', 'harvest_options',
+                   'max_count', 'stats', 'date_added', 'start_date',
+                   'end_date']
+    search_fields = ['collection', 'credential', 'harvest_type', 'name',
+                     'description', 'is_active', 'schedule', 'harvest_options',
+                     'max_count', 'stats', 'date_added', 'start_date',
+                     'end_date']
 
 
 class Seed(a.ModelAdmin):
-    fields = ('seed_set', 'platform_token', 'platform_uid', 'is_active',
+    fields = ('seed_set', 'token', 'uid', 'is_active',
               'is_valid', 'stats', 'date_added')
-    list_display = ['seed_set', 'platform_token', 'platform_uid', 'is_active',
+    list_display = ['seed_set', 'token', 'uid', 'is_active',
                     'is_valid', 'stats', 'date_added', 'date_updated']
-    list_filter = ['seed_set', 'platform_token', 'platform_uid', 'is_active',
+    list_filter = ['seed_set', 'token', 'uid', 'is_active',
                    'is_valid', 'stats', 'date_added', 'date_updated']
-    search_fields = ['seed_set', 'platform_token', 'platform_uid', 'is_active',
+    search_fields = ['seed_set', 'token', 'uid', 'is_active',
                      'is_valid', 'stats', 'date_added', 'date_updated']
 
 a.site.register(m.Credential, Credential)
