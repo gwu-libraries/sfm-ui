@@ -1,0 +1,17 @@
+
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Create Seed
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "seed_list" %}>Seed</a></h1>
+<h2>Create Seed</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Create" />
+</form>
+<a href={% url "seed_list" %}>Cancel</a>
+{% endblock %}
