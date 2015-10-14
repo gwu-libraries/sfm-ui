@@ -4,14 +4,8 @@ from django.views.generic.list import ListView
 from .models import Collection, SeedSet, Seed
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
-import pika
 import json
-from django.http import HttpResponse
-# from django.shortcuts import render
-# from django.template import RequestContext
-import os
-# import sys
-# from HttpRequest import request
+from .rabbit import RabbitWorker
 
 
 class CollectionListView(ListView):
@@ -52,50 +46,6 @@ class CollectionUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse("collection_detail", args=(self.object.pk,))
-
-
-def rabbit_worker(message):
-    # Create a connection
-    credentials = pika.PlainCredentials(
-        username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
-        password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
-    parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
-    connection = pika.BlockingConnection(parameters)
-    # Create a channel
-    channel = connection.channel()
-    # Declare sfm_exchange
-    channel.exchange_declare(exchange="sfm_exchange", type="topic",
-                             durable=True)
-    channel.basic_publish(exchange='sfm_exchange', routing_key='sfm_exchange',
-                          body=message)
-    print " [x] Sent %r" % (message,)
-    channel.close()
-
-
-def rabbit_consumer(self):
-    # Create a connection
-    credentials = pika.PlainCredentials(
-        username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
-        password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
-    parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
-    connection = pika.BlockingConnection(parameters)
-    # Create a channel
-    channel = connection.channel()
-    # Declare sfm_exchange
-    channel.exchange_declare(exchange="sfm_exchange", type="topic",
-                             durable=True)
-    # Declare harvester queue
-    channel.queue_declare(queue="sfm_exchange", durable=True)
-    # Bind
-    channel.queue_bind(exchange="sfm_exchange", queue="sfm_exchange",
-                       routing_key="sfm_exchange")
-    print ' [*] Waiting for logs. To exit press CTRL+C'
-
-    def callback(ch, method, properties, body):
-        print " [x] Recieved %r" % (body,)
-
-    channel.basic_consume(callback, queue="sfm_exchange", no_ack=True)
-    channel.start_consuming()
 
 
 class CollectionDeleteView(DeleteView):
@@ -188,7 +138,7 @@ class SeedCreateView(CreateView):
     success_url = reverse_lazy('seed_list')
 
 
-class SeedUpdateView(UpdateView):
+class SeedUpdateView(UpdateView, RabbitWorker):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_update.html'
@@ -198,29 +148,13 @@ class SeedUpdateView(UpdateView):
     pk_url_kwarg = 'pk'
     context_object_name = 'seed'
 
-    def request_access(request):
-        print("django view function")
-        m = request.POST.get('request_data')
-        z = request.POST.get('platform_uid')
-        print z
-        rabbit_worker(json.dumps(m))
-        return HttpResponse(json.dumps(m), content_type="application/json")
-
-    """def get(self, request, *args, **kwargs):
-        # Handles GET requests and instantiates a blank version of the form.
-        form = self.get_form()
-        message = {
-            'UID': form['platform_uid'].value(),
-            'token': form['platform_token'].value()
-        }
-        rabbit_worker(json.dumps(message))
-        return render(request, '/ui/seeds/1',
-                      context_instance=RequestContext(request))"""
-
-    message = {'1': 'test', '2': 'json'}
-    rabbit_worker(json.dumps(message))
-
     def get_success_url(self):
+        m = {'1': 'test', '2': 'test2'}
+        message = json.dumps(m)
+        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
+                                           routing_key='sfm_exchange',
+                                           body=message)
+        print " [x] Sent %r" % (message,)
         return reverse("seed_detail", args=(self.object.pk,))
 
 

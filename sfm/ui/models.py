@@ -42,17 +42,17 @@ class SeedSet(models.Model):
 
     collection = models.ForeignKey(Collection, related_name='seed_sets')
     credential = models.ForeignKey(Credential, related_name='seed_sets')
-    platform = models.CharField(max_length=255, blank=True)
+    harvest_type = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     schedule = models.CharField(max_length=255, blank=True)
-    crawl_options = models.TextField(blank=True)
+    harvest_options = models.TextField(blank=True)
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
-    date_started = models.DateTimeField(default=timezone.now)
-    date_ended = models.DateTimeField(default=timezone.now)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
@@ -62,8 +62,8 @@ class SeedSet(models.Model):
 class Seed(models.Model):
 
     seed_set = models.ForeignKey(SeedSet, related_name='seeds')
-    platform_token = models.TextField(blank=True)
-    platform_uid = models.TextField(blank=True)
+    token = models.TextField(blank=True)
+    uid = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     is_valid = models.BooleanField(default=True)
     stats = models.TextField(blank=True)
@@ -71,7 +71,7 @@ class Seed(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '<Seed %s "%s">' % (self.id, self.platform_token)
+        return '<Seed %s "%s">' % (self.id, self.token)
 
 
 class Harvest(models.Model):
