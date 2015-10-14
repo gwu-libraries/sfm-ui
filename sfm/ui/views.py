@@ -6,6 +6,7 @@ from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import json
 from .rabbit import RabbitWorker
+# from django.http import HttpResponseRedirect
 
 
 class CollectionListView(ListView):
@@ -149,7 +150,10 @@ class SeedUpdateView(UpdateView, RabbitWorker):
     context_object_name = 'seed'
 
     def get_success_url(self):
-        m = {'1': 'test', '2': 'test2'}
+        m = {
+            'Token': self.request.POST.get('token'),
+            'UID': self.request.POST.get('uid')
+        }
         message = json.dumps(m)
         RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
                                            routing_key='sfm_exchange',
