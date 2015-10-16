@@ -34,6 +34,8 @@ Dependencies
 
 On OS X, just install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
 
+On Ubuntu, if you have difficulties with the ``apt`` install, try the ``pip`` install.
+
 Configuration
 -------------
 
