@@ -1,3 +1,11 @@
+sfmdevrabbit:
+    image: rabbitmq:3-management
+    ports:
+        - "15672:15672"
+    restart: always
+    environment:
+        - RABBITMQ_DEFAULT_USER=sfm_user
+        - RABBITMQ_DEFAULT_PASS=password
 sfmdevdb:
     image: gwul/sfm-ui-db
     environment:
@@ -8,6 +16,7 @@ sfmdevapp:
         - "8080:80"
     links:
         - sfmdevdb:db
+        - sfmdevrabbit:mq
     volumes:
         - ~/sfm-ui:/opt/sfm-ui
     environment:

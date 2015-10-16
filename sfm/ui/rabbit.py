@@ -5,7 +5,7 @@ import os
 
 class RabbitWorker(AppConfig):
     name = 'ui'
-    verbose_name = "Rabbit Worker"
+    verbose_name = "UI"
     # Create a connection
     credentials = pika.PlainCredentials(
         username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
@@ -19,10 +19,4 @@ class RabbitWorker(AppConfig):
         # Declare sfm_exchange
         RabbitWorker.channel.exchange_declare(exchange="sfm_exchange",
                                               type="topic", durable=True)
-        # Declare harvester queue
-        RabbitWorker.channel.queue_declare(queue="sfm_exchange", durable=True)
-        # Bind
-        RabbitWorker.channel.queue_bind(exchange="sfm_exchange",
-                                        queue="sfm_exchange",
-                                        routing_key="sfm_exchange")
         pass  # startup code here

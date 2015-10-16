@@ -6,7 +6,6 @@ from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import json
 from .rabbit import RabbitWorker
-# from django.http import HttpResponseRedirect
 
 
 class CollectionListView(ListView):
