@@ -2,6 +2,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from .models import Collection, SeedSet, Seed
+from .models import Credential
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import json
@@ -70,6 +71,30 @@ class SeedSetUpdateView(UpdateView):
     form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
 
+    def post(self, request, *args, **kwargs):
+        collection_id = list(Collection.objects.filter(
+            id=self.request.POST.get('collection')).values('id'))
+        credential = list(Credential.objects.filter(
+            id=self.request.POST.get('credential')).values('id', 'user',
+                                                           'platform', 'token'))
+        seeds = list(Seed.objects.filter(
+            seed_set=self.get_object().id).select_related('seeds').values(
+                'id', 'token', 'uid'))
+        seedset = self.get_object()
+        m = {
+            'id': seedset.id,
+            'type': self.request.POST.get('harvest_type'),
+            'options': self.request.POST.get('harvest_options'),
+            'credentials': credential,
+            'collection': collection_id,
+            'seeds': seeds
+        }
+        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
+                                           routing_key='sfm_exchange',
+                                           body=json.dumps(m))
+        self.object = self.get_object()
+        return super(UpdateView, self).post(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
 
@@ -99,41 +124,13 @@ class SeedCreateView(CreateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_create.html'
-
-    def post(self, request, *args, **kwargs):
-        m = {
-            'Action': 'Create Seed',
-            'SeedSet Object': self.request.POST.get('seed_set'),
-            'Token': self.request.POST.get('token'),
-            'UID': self.request.POST.get('uid')
-        }
-        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
-                                           routing_key='sfm_exchange',
-                                           body=json.dumps(m))
-        self.object = None
-        return super(CreateView, self).post(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse_lazy('seed_list')
+    reverse_lazy('seed_list')
 
 
-class SeedUpdateView(UpdateView, RabbitWorker):
+class SeedUpdateView(UpdateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_update.html'
-
-    def post(self, request, *args, **kwargs):
-        m = {
-            'Action': 'Update Seed',
-            'SeedSet Object': self.request.POST.get('seed_set'),
-            'Token': self.request.POST.get('token'),
-            'UID': self.request.POST.get('uid')
-        }
-        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
-                                           routing_key='sfm_exchange',
-                                           body=json.dumps(m))
-        self.object = self.get_object()
-        return super(UpdateView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
@@ -142,17 +139,6 @@ class SeedUpdateView(UpdateView, RabbitWorker):
 class SeedDeleteView(DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
-
-    def post(self, request, *args, **kwargs):
-        seed = self.get_object()
-        m = {
-            'Action': 'Delete Seed',
-            'ID': seed.id
-        }
-        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
-                                           routing_key='sfm_exchange',
-                                           body=json.dumps(m))
-        return self.delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('seed_list')
