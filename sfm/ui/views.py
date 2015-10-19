@@ -26,7 +26,6 @@ class CollectionCreateView(CreateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_create.html'
-    reverse_lazy('collection_list')
 
 
 class CollectionUpdateView(UpdateView):
@@ -63,7 +62,6 @@ class SeedSetCreateView(CreateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
-    reverse_lazy('seedset_list')
 
 
 class SeedSetUpdateView(UpdateView):
@@ -74,12 +72,20 @@ class SeedSetUpdateView(UpdateView):
     def post(self, request, *args, **kwargs):
         collection_id = list(Collection.objects.filter(
             id=self.request.POST.get('collection')).values('id'))
-        credential = list(Credential.objects.filter(
-            id=self.request.POST.get('credential')).values('id', 'user',
-                                                           'platform', 'token'))
+        for idval in list(Collection.objects.filter(
+            id=self.request.POST.get('collection')).values('id')):
+            if 'id' in idval:
+                value = idval['id']
+        path = ['/temp/collection/'+str(value)]
+        for d, n in zip(collection_id, path):
+            d['path'] = n
+        for token in list(Credential.objects.filter(
+            id=self.request.POST.get('credential')).values('token')):
+            if 'token' in token:
+                credential = token['token']
         seeds = list(Seed.objects.filter(
             seed_set=self.get_object().id).select_related('seeds').values(
-                'id', 'token', 'uid'))
+                'token', 'uid'))
         seedset = self.get_object()
         m = {
             'id': seedset.id,
@@ -124,7 +130,6 @@ class SeedCreateView(CreateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_create.html'
-    reverse_lazy('seed_list')
 
 
 class SeedUpdateView(UpdateView):

@@ -5,7 +5,7 @@ import os
 
 class RabbitWorker(AppConfig):
     name = 'ui'
-    verbose_name = "UI"
+    verbose_name = "ui"
     # Create a connection
     credentials = pika.PlainCredentials(
         username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
