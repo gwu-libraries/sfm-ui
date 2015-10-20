@@ -70,36 +70,50 @@ class SeedSetUpdateView(UpdateView):
     template_name = 'ui/seedset_update.html'
 
     def post(self, request, *args, **kwargs):
-        collection_id = list(Collection.objects.filter(
-            id=self.request.POST.get('collection')).values('id'))
+        # To get value of collection id
         for idval in list(Collection.objects.filter(
             id=self.request.POST.get('collection')).values('id')):
             if 'id' in idval:
                 value = idval['id']
-        path = ['/tmp/collection/'+str(value)]
-        for d, n in zip(collection_id, path):
-            d['path'] = n
+        # To get value of token in credentials. Where we pass our secret and key
         for token in list(Credential.objects.filter(
             id=self.request.POST.get('credential')).values('token')):
             if 'token' in token:
                 credential = token['token']
+        # To get value of platform, which is used in routing key later
         for platform in list(Credential.objects.filter(
             id=self.request.POST.get('credential')).values('platform')):
             if 'platform' in platform:
                 media = platform['platform']
+        # To get list of seeds
         seeds = list(Seed.objects.filter(
             seed_set=self.get_object().id).select_related('seeds').values(
                 'token', 'uid'))
+        # To Remove empty token values from the list of seeds
+        for item in seeds:
+            if item['token'] == '':
+                item.pop('token', None)
+        # To get value of seedset id
         seedset = self.get_object()
+        # To be updated later
+        credential = str(credential)
+        options = str(self.request.POST.get('harvest_options'))
+        # Dirty way of replacing \r \n characters
+        options = options.replace('\n', '').replace('\r', '')
+        credential = credential.replace('\n', '').replace('\r', '')
+        # Routing key
         key = ''.join(['harvest.start.',str(media),'.',
                        self.request.POST.get('harvest_type')])
         m = {
-            'id': seedset.id,
+            'id': str(seedset.id),
             'type': self.request.POST.get('harvest_type'),
-            'options': self.request.POST.get('harvest_options'),
+            'options': options,
             'credentials': credential,
-            'collection': collection_id,
-            'seeds': seeds,
+            'collection': {
+                'collection_id': str(value),
+                'path': '/tmp/collection/'+str(value)
+            },
+            'seeds': seeds
         }
         RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
                                            routing_key=key,
