@@ -76,27 +76,33 @@ class SeedSetUpdateView(UpdateView):
             id=self.request.POST.get('collection')).values('id')):
             if 'id' in idval:
                 value = idval['id']
-        path = ['/temp/collection/'+str(value)]
+        path = ['/tmp/collection/'+str(value)]
         for d, n in zip(collection_id, path):
             d['path'] = n
         for token in list(Credential.objects.filter(
             id=self.request.POST.get('credential')).values('token')):
             if 'token' in token:
                 credential = token['token']
+        for platform in list(Credential.objects.filter(
+            id=self.request.POST.get('credential')).values('platform')):
+            if 'platform' in platform:
+                media = platform['platform']
         seeds = list(Seed.objects.filter(
             seed_set=self.get_object().id).select_related('seeds').values(
                 'token', 'uid'))
         seedset = self.get_object()
+        key = ''.join(['harvest.start.',str(media),'.',
+                       self.request.POST.get('harvest_type')])
         m = {
             'id': seedset.id,
             'type': self.request.POST.get('harvest_type'),
             'options': self.request.POST.get('harvest_options'),
             'credentials': credential,
             'collection': collection_id,
-            'seeds': seeds
+            'seeds': seeds,
         }
         RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
-                                           routing_key='sfm_exchange',
+                                           routing_key=key,
                                            body=json.dumps(m))
         self.object = self.get_object()
         return super(UpdateView, self).post(request, *args, **kwargs)
