@@ -96,11 +96,8 @@ class SeedSetUpdateView(UpdateView):
         # To get value of seedset id
         seedset = self.get_object()
         # To be updated later
-        credential = str(credential)
-        options = str(self.request.POST.get('harvest_options'))
-        # Dirty way of replacing \r \n characters
-        options = options.replace('\n', '').replace('\r', '')
-        credential = credential.replace('\n', '').replace('\r', '')
+        credential = json.loads(str(credential))
+        options = json.loads(str(self.request.POST.get('harvest_options')))
         # Routing key
         key = ''.join(['harvest.start.',str(media),'.',
                        self.request.POST.get('harvest_type')])
