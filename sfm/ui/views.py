@@ -107,7 +107,7 @@ class SeedSetUpdateView(UpdateView):
             'options': options,
             'credentials': credential,
             'collection': {
-                'collection_id': str(value),
+                'id': str(value),
                 'path': '/tmp/collection/'+str(value)
             },
             'seeds': seeds
