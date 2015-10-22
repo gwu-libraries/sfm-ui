@@ -72,6 +72,8 @@ class SeedSet(a.ModelAdmin):
                      'description', 'is_active', 'schedule', 'harvest_options',
                      'max_count', 'stats', 'date_added', 'start_date',
                      'end_date']
+
+
 class Seed(a.ModelAdmin):
     fields = ('seed_set', 'token', 'uid', 'is_active',
               'is_valid', 'stats', 'date_added')

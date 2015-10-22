@@ -26,6 +26,7 @@ class CollectionCreateView(CreateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_create.html'
+    success_url = reverse_lazy('collection_list')
 
 
 class CollectionUpdateView(UpdateView):
@@ -40,9 +41,7 @@ class CollectionUpdateView(UpdateView):
 class CollectionDeleteView(DeleteView):
     model = Collection
     template_name = 'ui/collection_delete.html'
-
-    def get_success_url(self):
-        return reverse_lazy('collection_list')
+    success_url = reverse_lazy('collection_list')
 
 
 class SeedSetListView(ListView):
@@ -62,6 +61,7 @@ class SeedSetCreateView(CreateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
+    success_url = reverse_lazy('seedset_list')
 
 
 class SeedSetUpdateView(UpdateView):
@@ -125,9 +125,7 @@ class SeedSetUpdateView(UpdateView):
 class SeedSetDeleteView(DeleteView):
     model = SeedSet
     template_name = 'ui/seedset_delete.html'
-
-    def get_success_url(self):
-        return reverse_lazy('seedset_list')
+    success_url = reverse_lazy('seedset_list')
 
 
 class SeedListView(ListView):
@@ -147,6 +145,7 @@ class SeedCreateView(CreateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_create.html'
+    success_url = reverse_lazy('seed_list')
 
 
 class SeedUpdateView(UpdateView):
@@ -161,6 +160,4 @@ class SeedUpdateView(UpdateView):
 class SeedDeleteView(DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
-
-    def get_success_url(self):
-        return reverse_lazy('seed_list')
+    success_url = reverse_lazy('seed_list')

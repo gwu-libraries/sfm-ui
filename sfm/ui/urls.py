@@ -13,8 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 urlpatterns = patterns('',
 
                        url(r'^collections/create/$',
-                           login_required(CollectionCreateView.as_view(
-                               success_url=reverse_lazy('collection_list'))),
+                           login_required(CollectionCreateView.as_view()),
                            name="collection_create"),
 
                        url(r'^collections/(?P<pk>\d+)/update/$',
@@ -34,8 +33,7 @@ urlpatterns = patterns('',
                            name="collection_list"),
 
                        url(r'^seedsets/create/$',
-                           login_required(SeedSetCreateView.as_view(
-                               success_url=reverse_lazy('seedset_list'))),
+                           login_required(SeedSetCreateView.as_view()),
                            name="seedset_create"),
 
                        url(r'^seedsets/(?P<pk>\d+)/update/$',
@@ -55,8 +53,7 @@ urlpatterns = patterns('',
                            name="seedset_list"),
 
                        url(r'^seeds/create/$',
-                           login_required(SeedCreateView.as_view(
-                               success_url=reverse_lazy('seed_list'))),
+                           login_required(SeedCreateView.as_view()),
                            name="seed_create"),
 
                        url(r'^seeds/(?P<pk>\d+)/update/$',
