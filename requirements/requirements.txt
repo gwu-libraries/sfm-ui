@@ -1,6 +1,8 @@
 django>=1.8,<=1.9
 django-allauth
+django-crispy-forms
+django-finalware
 psycopg2
 pytz
-django-crispy-forms
+pika
 appdeps
