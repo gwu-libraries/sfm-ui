@@ -9,7 +9,7 @@
     <h2>{{ seed }} | <a href={% url "seed_update" seed.pk %}>Update</a> | 
     <form style="display:inline;" action={% url "seed_delete" seed.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seed }}?')">{% csrf_token %}
     <input type="submit" value="Delete" />
-    <div id='jsontemp'>
+    <div>
         <li>SeedSet : {{ seed.seed_set }}</li>
         <li>Platform Token : {{ seed.platform_token }}</li>
         <li>Platform UID : {{ seed.platform_uid }}</li>
