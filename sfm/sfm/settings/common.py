@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
-    'crispy_forms',
+    'crispy_forms',  # for django crispy forms
 ]
 
 MIDDLEWARE_CLASSES = (
