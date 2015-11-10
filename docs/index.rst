@@ -11,6 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   install
+   messaging
 
 
 Indices and tables
