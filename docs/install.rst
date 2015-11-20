@@ -32,9 +32,20 @@ Dependencies
 
 `Docker Engine <https://www.docker.com/>`_ and `Docker Compose <https://docs.docker.com/compose/>`_
 
-On OS X, just install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
+On OS X:
 
-On Ubuntu, if you have difficulties with the ``apt`` install, try the ``pip`` install.
+* Install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
+* Be aware that Docker is not running natively on OS X, but rather in a
+  VirtualBox VM.
+
+On Ubuntu:
+
+* If you have difficulties with the ``apt`` install, try the ``pip`` install.
+* The docker group is automatically created. `Adding your user to the docker
+  group <https://docs.docker.com/v1.8/installation/ubuntulinux/#create-a-docker-group>`_
+  avoids having to use sudo to run docker commands. Note that depending on how
+  users/groups are set up, you may need to manually need to add your user to the
+  group in ``/etc/group``.
 
 Configuration
 -------------
