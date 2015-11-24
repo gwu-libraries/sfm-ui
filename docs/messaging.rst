@@ -1,6 +1,8 @@
 Messaging
 =========
 
+.. _messaging-rabbitmq:
+
 RabbitMQ
 --------
 

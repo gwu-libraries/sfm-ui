@@ -12,6 +12,8 @@ Contents:
    :maxdepth: 2
 
    install
+   development
+   harvester
    messaging
 
 
