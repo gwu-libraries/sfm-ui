@@ -27,6 +27,8 @@ there may be the following:
 SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
 reasonable guidance on how to accomplish this.
 
+.. _install-dependencies:
+
 Dependencies
 ------------
 
@@ -69,6 +71,8 @@ or just download ``docker-compose.yml`` and ``example.secrets.env``::
 3. Bring up the containers::
 
     docker-compose up -d
+
+.. _install-helpful-docker:
 
 Helpful Docker commands
 -----------------------
