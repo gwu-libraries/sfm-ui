@@ -52,7 +52,11 @@ On Ubuntu:
 Configuration
 -------------
 
-Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
+* Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
+* Debug mode for sfm-ui is controlled by the ``DEBUG`` environment variable in ``docker-compose.yml``.
+  If setting ``DEBUG`` to false, the ``ALLOWED_HOSTS`` environment variable must be provided with a
+  comma-separated list of hosts.  See the `Django documentation <https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts>`_
+  for ``ALLOWED_HOSTS``.
 
 Installation
 ------------

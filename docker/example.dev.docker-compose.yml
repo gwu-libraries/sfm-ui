@@ -21,3 +21,5 @@ sfmdevapp:
         - ~/sfm-ui:/opt/sfm-ui
     environment:
         - SFM_DEBUG=True
+        #If not running on localhost
+        #- SFM_ALLOWED_HOSTS=myserver.mydomain.edu
