@@ -26,8 +26,10 @@ SECRET_KEY = '$qjsxe%dh54l8x&#y2sj7=+hc=4$b9f1ujo7*77_n)__qx#up='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.get('SFM_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
-
+# Host/domain names that this Django site can serve.
+# Used when DEBUG = False
+# See https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = env.get('SFM_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 # Application definition
 
