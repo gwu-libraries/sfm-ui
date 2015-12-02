@@ -9,8 +9,6 @@ fi
 echo "Updating requirements"
 pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
 
-export DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
-
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
@@ -22,6 +20,9 @@ echo "Migrating db"
 
 echo "Collecting static files"
 /opt/sfm-ui/sfm/manage.py collectstatic --noinput
+
+echo "Loading fixtures"
+/opt/sfm-ui/sfm/manage.py loaddata /opt/sfm-setup/fixtures.json
 
 echo "Running server"
 #Not entirely sure why this is necessary, but it works.
