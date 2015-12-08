@@ -11,7 +11,10 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     libapache2-mod-wsgi \
     wget \
-    zip 
+    zip
+# Not sure why the git install needs its own line,
+# but it seems to be ignored if added into the list above
+RUN apt-get install -y git
 #Upgrade pip
 RUN pip install --upgrade pip
 WORKDIR /tmp

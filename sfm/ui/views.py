@@ -6,7 +6,8 @@ from .models import Credential
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from django.core.urlresolvers import reverse_lazy, reverse
 import json
-from .rabbit import RabbitWorker
+from .rabbit import RabbitWorker, EXCHANGE
+
 
 class CollectionListView(ListView):
     model = Collection
@@ -98,7 +99,7 @@ class SeedSetUpdateView(UpdateView):
         credential = json.loads(str(credential))
         options = json.loads(str(self.request.POST.get('harvest_options')))
         # Routing key
-        key = ''.join(['harvest.start.',str(media),'.',
+        key = ''.join(['harvest.start.', str(media), '.',
                        self.request.POST.get('harvest_type')])
         m = {
             'id': str(seedset.id),
@@ -111,7 +112,7 @@ class SeedSetUpdateView(UpdateView):
             },
             'seeds': seeds
         }
-        RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
+        RabbitWorker.channel.basic_publish(exchange=EXCHANGE,
                                            routing_key=key,
                                            body=json.dumps(m))
         self.object = self.get_object()

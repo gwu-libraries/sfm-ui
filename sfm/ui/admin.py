@@ -84,7 +84,16 @@ class Seed(a.ModelAdmin):
     search_fields = ['seed_set', 'token', 'uid', 'is_active',
                      'is_valid', 'stats', 'date_added', 'date_updated']
 
+
+class Harvest(a.ModelAdmin):
+    fields = ('seed_set', 'stats', 'date_started', 'date_ended')
+    list_display = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
+    list_filter = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
+    search_fields = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
+
+
 a.site.register(m.Credential, Credential)
 a.site.register(m.Collection, Collection)
 a.site.register(m.SeedSet, SeedSet)
 a.site.register(m.Seed, Seed)
+a.site.register(m.Harvest, Harvest)
