@@ -1,6 +1,7 @@
 from django.apps import AppConfig
+from django.conf import settings
 import pika
-import os
+from sfmutils.consumer import EXCHANGE
 
 
 class RabbitWorker(AppConfig):
@@ -8,8 +9,8 @@ class RabbitWorker(AppConfig):
     verbose_name = "ui"
     # Create a connection
     credentials = pika.PlainCredentials(
-        username=os.environ['MQ_ENV_RABBITMQ_DEFAULT_USER'],
-        password=os.environ['MQ_ENV_RABBITMQ_DEFAULT_PASS'])
+        username=settings.RABBITMQ_USER,
+        password=settings.RABBITMQ_PASSWORD)
     parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
     connection = pika.BlockingConnection(parameters)
     # create channel
@@ -17,12 +18,5 @@ class RabbitWorker(AppConfig):
 
     def ready(self):
         # Declare sfm_exchange
-        RabbitWorker.channel.exchange_declare(exchange="sfm_exchange",
+        RabbitWorker.channel.exchange_declare(exchange=EXCHANGE,
                                               type="topic", durable=True)
-        # Declare harvester queue
-        RabbitWorker.channel.queue_declare(queue="sfm_exchange", durable=True)
-        # Bind
-        RabbitWorker.channel.queue_bind(exchange="sfm_exchange",
-                                        queue="sfm_exchange",
-                                        routing_key="sfm_exchange")
-        pass  # startup code here
