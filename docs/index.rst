@@ -11,6 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   install
+   development
+   harvester
+   messaging
 
 
 Indices and tables

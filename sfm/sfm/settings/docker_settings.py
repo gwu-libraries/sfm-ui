@@ -13,3 +13,35 @@ SITE_SUPERUSER_EMAIL = env.get('SFM_SITE_ADMIN_EMAIL', 'nowhere@example.com')
 SITE_SUPERUSER_PASSWORD = env.get('SFM_SITE_ADMIN_PASSWORD', 'password')
 
 STATIC_ROOT = "/opt/sfm-static"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': env.get('SFM_DJANGO_LOG', 'INFO'),
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': env.get('SFM_DJANGO_REQUEST_LOG', 'INFO'),
+            'propagate': True,
+        },
+        'apscheduler': {
+            'handlers': ['console'],
+            'level': env.get('SFM_APSCHEDULER_LOG', 'INFO'),
+            'propagate': True,
+        },
+        'ui': {
+            'handlers': ['console'],
+            'level': env.get('SFM_UI_LOG', 'INFO'),
+            'propagate': True,
+        },
+    },
+}

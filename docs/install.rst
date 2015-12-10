@@ -27,19 +27,36 @@ there may be the following:
 SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
 reasonable guidance on how to accomplish this.
 
+.. _install-dependencies:
+
 Dependencies
 ------------
 
 `Docker Engine <https://www.docker.com/>`_ and `Docker Compose <https://docs.docker.com/compose/>`_
 
-On OS X, just install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
+On OS X:
 
-On Ubuntu, if you have difficulties with the ``apt`` install, try the ``pip`` install.
+* Install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
+* Be aware that Docker is not running natively on OS X, but rather in a
+  VirtualBox VM.
+
+On Ubuntu:
+
+* If you have difficulties with the ``apt`` install, try the ``pip`` install.
+* The docker group is automatically created. `Adding your user to the docker
+  group <https://docs.docker.com/v1.8/installation/ubuntulinux/#create-a-docker-group>`_
+  avoids having to use sudo to run docker commands. Note that depending on how
+  users/groups are set up, you may need to manually need to add your user to the
+  group in ``/etc/group``.
 
 Configuration
 -------------
 
-Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
+* Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
+* Debug mode for sfm-ui is controlled by the ``DEBUG`` environment variable in ``docker-compose.yml``.
+  If setting ``DEBUG`` to false, the ``ALLOWED_HOSTS`` environment variable must be provided with a
+  comma-separated list of hosts.  See the `Django documentation <https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts>`_
+  for ``ALLOWED_HOSTS``.
 
 Installation
 ------------
@@ -58,6 +75,8 @@ or just download ``docker-compose.yml`` and ``example.secrets.env``::
 3. Bring up the containers::
 
     docker-compose up -d
+
+.. _install-helpful-docker:
 
 Helpful Docker commands
 -----------------------

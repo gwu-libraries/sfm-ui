@@ -20,9 +20,5 @@ class RabbitWorker(AppConfig):
         RabbitWorker.channel.exchange_declare(exchange="sfm_exchange",
                                               type="topic", durable=True)
         # Declare harvester queue
-        RabbitWorker.channel.queue_declare(queue="sfm_exchange", durable=True)
-        # Bind
-        RabbitWorker.channel.queue_bind(exchange="sfm_exchange",
-                                        queue="sfm_exchange",
-                                        routing_key="sfm_exchange")
+        RabbitWorker.channel.queue_declare(queue="sfm_ui", durable=True)
         pass  # startup code here

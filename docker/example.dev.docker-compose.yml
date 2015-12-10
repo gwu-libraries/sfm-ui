@@ -21,3 +21,10 @@ sfmdevapp:
         - ~/sfm-ui:/opt/sfm-ui
     environment:
         - SFM_DEBUG=True
+        #Turn on logging
+        #- SFM_DJANGO_LOG=DEBUG
+        #- SFM_DJANGO_REQUEST_LOG=DEBUG
+        #- SFM_APSCHEDULER_LOG=DEBUG
+        #- SFM_UI_LOG=DEBUG
+        #If not running on localhost
+        #- SFM_ALLOWED_HOSTS=myserver.mydomain.edu
