@@ -7,7 +7,7 @@ sfmdevrabbit:
         - RABBITMQ_DEFAULT_USER=sfm_user
         - RABBITMQ_DEFAULT_PASS=password
 sfmdevdb:
-    image: gwul/sfm-ui-db
+    image: gwul/sfm-ui-db:master
     environment:
         - POSTGRES_PASSWORD=gherD42#dl5
 sfmdevapp:

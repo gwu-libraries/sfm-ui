@@ -1,6 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
+ENV sfm_ui_version 0.2.0
 RUN apt-get update && apt-get install -y \
     build-essential \
     gettext \
@@ -15,9 +16,9 @@ RUN apt-get update && apt-get install -y \
 #Upgrade pip
 RUN pip install --upgrade pip
 WORKDIR /tmp
-RUN wget --no-check-certificate https://github.com/gwu-libraries/sfm-ui/archive/0.2.0.zip
-RUN unzip 0.2.0.zip
-RUN mv sfm-ui-0.2.0 /opt/sfm-ui
+RUN wget --no-check-certificate https://github.com/gwu-libraries/sfm-ui/archive/${sfm_ui_version}.zip
+RUN unzip ${sfm_ui_version}.zip
+RUN mv sfm-ui-${sfm_ui_version} /opt/sfm-ui
 #This installs requirements.txt.
 RUN pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
 #This is used to automatically create the admin user.
