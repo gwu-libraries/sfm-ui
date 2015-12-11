@@ -3,6 +3,7 @@ from .rabbit import RabbitWorker
 from .models import SeedSet, Collection, Seed, Credential
 import datetime
 import logging
+from sfmutils.consumer import EXCHANGE
 
 log = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ def seedset_harvest(d):
     # TODO: Unique id
     # TODO: Correct path
     m = {
-        'id': str(d),
+        'id': d,
         'type': harvest_type,
         'options': options,
         'credentials': credential,
@@ -69,8 +70,8 @@ def seedset_harvest(d):
     log.debug("Message with id %s is %s", m["id"], json.dumps(m, indent=4))
 
     # Bind the queue to the exchange with routing Key
-    RabbitWorker.channel.queue_bind(exchange="sfm_exchange", queue="sfm_ui",
+    RabbitWorker.channel.queue_bind(exchange=EXCHANGE, queue="sfm_ui",
                                     routing_key=key)
     # Publish message to queue via rabbit worker
-    RabbitWorker.channel.basic_publish(exchange='sfm_exchange',
+    RabbitWorker.channel.basic_publish(exchange=EXCHANGE,
                                        routing_key=key,body=json.dumps(m))

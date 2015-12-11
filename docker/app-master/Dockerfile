@@ -11,7 +11,10 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     libapache2-mod-wsgi \
     wget \
-    zip 
+    zip
+# Not sure why the git install needs its own line,
+# but it seems to be ignored if added into the list above
+RUN apt-get install -y git
 #Upgrade pip
 RUN pip install --upgrade pip
 WORKDIR /tmp
@@ -26,6 +29,8 @@ RUN pip install django-finalware==0.1.0
 RUN pip install appdeps
 #This will be copied over into the app by invoke.sh.
 ADD wsgi.py /opt/sfm-ui/sfm/sfm/
+#Adds fixtures.
+ADD fixtures.json /opt/sfm-setup/
 #Enable sfm site
 ADD apache.conf /etc/apache2/sites-available/sfm.conf
 RUN a2ensite sfm.conf
@@ -38,4 +43,5 @@ ADD invoke.sh /opt/
 RUN chmod +x /opt/invoke.sh
 WORKDIR /opt/sfm-ui
 CMD ["/opt/invoke.sh"]
+ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 EXPOSE 80

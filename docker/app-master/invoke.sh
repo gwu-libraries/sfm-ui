@@ -1,13 +1,10 @@
 #!/bin/bash
 echo "Waiting for db"
-appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui
+appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672
 if [ "$?" = "1" ]; then
     echo "Problem with application dependencies."
     exit 1
 fi
-
-echo "Copying config"
-cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/
 
 export DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 
@@ -19,6 +16,12 @@ echo "Migrating db"
 
 echo "Collecting static files"
 /opt/sfm-ui/sfm/manage.py collectstatic --noinput
+
+echo "Loading fixtures"
+/opt/sfm-ui/sfm/manage.py loaddata /opt/sfm-setup/fixtures.json
+
+echo "Starting message consumer"
+/opt/sfm-ui/sfm/manage.py startconsumer &
 
 echo "Running server"
 #Not entirely sure why this is necessary, but it works.

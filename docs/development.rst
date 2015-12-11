@@ -118,3 +118,9 @@ SFM UI runs behind Apache, which means Apache collects stdout and stderr in `/va
 The contents of error.log can be viewed with::
 
     docker exec <name of your container> cat /var/log/apache2/error.log
+
+Initial data
+^^^^^^^^^^^^
+The development and master docker images for SFM UI contain some initial data. This includes a user ("testuser",
+with password "password"). For the latest initial data, see `fixtures.json`. For more information on fixtures,
+see the `Django docs <https://docs.djangoproject.com/en/1.8/howto/initial-data/>`_.
