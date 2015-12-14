@@ -69,9 +69,6 @@ def seedset_harvest(d):
              m["id"])
     log.debug("Message with id %s is %s", m["id"], json.dumps(m, indent=4))
 
-    # Bind the queue to the exchange with routing Key
-    RabbitWorker.channel.queue_bind(exchange=EXCHANGE, queue="sfm_ui",
-                                    routing_key=key)
     # Publish message to queue via rabbit worker
     RabbitWorker.channel.basic_publish(exchange=EXCHANGE,
                                        routing_key=key,body=json.dumps(m))
