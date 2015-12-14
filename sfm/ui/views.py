@@ -1,13 +1,11 @@
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
-from .models import Collection, SeedSet, Seed
-from .models import Credential
 from .forms import CollectionForm, SeedSetForm, SeedForm
-from django.core.urlresolvers import reverse_lazy, reverse
+from .models import Collection, SeedSet, Seed
 from utils import schedule_harvest
-from jobs import seedset_harvest
 
 
 class CollectionListView(ListView):
