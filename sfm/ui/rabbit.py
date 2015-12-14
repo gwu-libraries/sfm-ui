@@ -22,4 +22,3 @@ class RabbitWorker(AppConfig):
                                               type="topic", durable=True)
         # Declare harvester queue
         RabbitWorker.channel.queue_declare(queue="sfm_ui", durable=True)
-        pass  # startup code here
