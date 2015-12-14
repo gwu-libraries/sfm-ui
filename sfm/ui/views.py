@@ -1,12 +1,11 @@
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
-from .models import Collection, SeedSet, Seed
-from .models import Credential
 from .forms import CollectionForm, SeedSetForm, SeedForm
-from django.core.urlresolvers import reverse_lazy, reverse
-import json
-from .rabbit import RabbitWorker, EXCHANGE
+from .models import Collection, SeedSet, Seed
+from utils import schedule_harvest
 
 
 class CollectionListView(ListView):
@@ -69,54 +68,33 @@ class SeedSetUpdateView(UpdateView):
     form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
 
-    def post(self, request, *args, **kwargs):
-        # To get value of collection id
-        for idval in list(Collection.objects.filter(
-            id=self.request.POST.get('collection')).values('id')):
-            if 'id' in idval:
-                value = idval['id']
-        # To get value of token in credentials. Where we pass our secret and key
-        for token in list(Credential.objects.filter(
-            id=self.request.POST.get('credential')).values('token')):
-            if 'token' in token:
-                credential = token['token']
-        # To get value of platform, which is used in routing key later
-        for platform in list(Credential.objects.filter(
-            id=self.request.POST.get('credential')).values('platform')):
-            if 'platform' in platform:
-                media = platform['platform']
-        # To get list of seeds
-        seeds = list(Seed.objects.filter(
-            seed_set=self.get_object().id).select_related('seeds').values(
-                'token', 'uid'))
-        # To Remove empty token values from the list of seeds
-        for item in seeds:
-            if item['token'] == '':
-                item.pop('token', None)
-        # To get value of seedset id
-        seedset = self.get_object()
-        # To be updated later
-        credential = json.loads(str(credential))
-        options = json.loads(str(self.request.POST.get('harvest_options')))
-        # Routing key
-        key = ''.join(['harvest.start.', str(media), '.',
-                       self.request.POST.get('harvest_type')])
-        m = {
-            'id': str(seedset.id),
-            'type': self.request.POST.get('harvest_type'),
-            'options': options,
-            'credentials': credential,
-            'collection': {
-                'id': str(value),
-                'path': '/tmp/collection/'+str(value)
-            },
-            'seeds': seeds
-        }
-        RabbitWorker.channel.basic_publish(exchange=EXCHANGE,
-                                           routing_key=key,
-                                           body=json.dumps(m))
-        self.object = self.get_object()
-        return super(UpdateView, self).post(request, *args, **kwargs)
+    def form_valid(self, form):
+        """
+        If the form is valid, save the associated model.
+        """
+        # To save data to database
+        self.object = form.save()
+        # To schedule harvest message for the current id
+        d = self.get_object().id
+        schedule = SeedSet.objects.filter(id=d).values(
+            'schedule')[0]["schedule"]
+        start_date = SeedSet.objects.filter(id=d).values(
+            'start_date')[0]["start_date"]
+        if start_date:
+            # s = start_date.strftime('%Y-%m-%d')
+            s = start_date.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            s = '2000-01-01'
+        end_date = SeedSet.objects.filter(id=d).values(
+            'end_date')[0]["end_date"]
+        if end_date:
+            # e = end_date.strftime('%Y-%m-%d')
+            e = end_date.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            e = '2050-01-01'
+        schedule_harvest(d, schedule, s, e)
+
+        return super(ModelFormMixin, self).form_valid(form)
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))

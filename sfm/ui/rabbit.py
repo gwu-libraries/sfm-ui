@@ -20,3 +20,5 @@ class RabbitWorker(AppConfig):
         # Declare sfm_exchange
         RabbitWorker.channel.exchange_declare(exchange=EXCHANGE,
                                               type="topic", durable=True)
+        # Declare harvester queue
+        RabbitWorker.channel.queue_declare(queue="sfm_ui", durable=True)

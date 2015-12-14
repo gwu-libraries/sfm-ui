@@ -5,4 +5,5 @@ pytz
 django-crispy-forms>=1.5,<1.6
 appdeps>=1.0,<1.1
 pika>=0.10,<0.11
+apscheduler>=3.0,<3.0.3
 git+https://github.com/gwu-libraries/sfm-utils.git@0.1.0#egg=sfmutils

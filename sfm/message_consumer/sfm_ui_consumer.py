@@ -11,6 +11,10 @@ class SfmUiConsumer(BaseConsumer):
     messages from the queue and updates the models as appropriate.
     """
     def on_message(self):
+        # TODO: Currently assumes message is a harvest status message.
+        #       We'll want to check the routing key before processing,
+        #       as on_message will likely be invoked for various
+        #       key bindings in the future.
         m = self.message
         m_id = m['id']
         m_status = m['status']

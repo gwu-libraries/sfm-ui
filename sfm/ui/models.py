@@ -46,13 +46,13 @@ class SeedSet(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
-    schedule = models.CharField(max_length=255, blank=True)
+    schedule = models.CharField(max_length=12)
     harvest_options = models.TextField(blank=True)
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
-    start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(default=timezone.now)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)

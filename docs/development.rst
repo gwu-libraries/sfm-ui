@@ -104,6 +104,13 @@ When running on a remote VM, some ports (e.g., 15672 used by the RabbitMQ manage
 be blocked. `SSH port forwarding <https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding>`_
 can help make those ports available.
 
+Django logs
+^^^^^^^^^^^
+Django logs for SFM UI are written to the Apache logs. In the docker environment, the level of various
+loggers can be set from environment variables.  For example, setting `SFM_APSCHEDULER_LOG` to `DEBUG`
+in the `docker-compose.yml` will turn on debug logging for the apscheduler logger. The logger for
+the SFM UI application is called ui and is controlled by the `SFM_UI_LOG` environment variable.
+
 Apache logs
 ^^^^^^^^^^^
 SFM UI runs behind Apache, which means Apache collects stdout and stderr in `/var/log/apache2/error.log`.

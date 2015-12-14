@@ -42,11 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'ui',
-    'allauth',  # registration
-    'allauth.account',  # registration
-    'allauth.socialaccount',  # registration
-    'crispy_forms',  # for django crispy forms
-    'message_consumer',
+    'allauth',                      # registration
+    'allauth.account',              # registration
+    'allauth.socialaccount',        # registration
+    'crispy_forms',                 # for django crispy forms
+    'apscheduler',                  # Scheduler
+    'message_consumer',             # Message Consumer
 ]
 
 MIDDLEWARE_CLASSES = (

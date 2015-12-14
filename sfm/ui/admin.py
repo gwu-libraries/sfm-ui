@@ -52,14 +52,14 @@ class Collection(a.ModelAdmin):
                     'stats', 'date_added', 'date_updated']
     list_filter = ['group', 'name', 'description', 'is_active', 'is_visible',
                    'stats', 'date_added', 'date_updated']
-    search_fields = ['group', 'name', 'description', 'is_active', 'is_visible',
-                     'stats', 'date_added', 'date_updated']
+    search_fields = ['group', 'name', 'description', 'is_active',
+                     'is_visible', 'stats', 'date_added', 'date_updated']
 
 
 class SeedSet(a.ModelAdmin):
-    fields = ('collection', 'credential', 'harvest_type', 'name', 'description',
-              'is_active', 'schedule', 'harvest_options', 'max_count', 'stats',
-              'date_added', 'start_date', 'end_date')
+    fields = ('collection', 'credential', 'harvest_type', 'name',
+              'description', 'is_active', 'schedule', 'harvest_options',
+              'max_count', 'stats', 'date_added', 'start_date', 'end_date')
     list_display = ['collection', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'schedule', 'harvest_options',
                     'max_count', 'stats', 'date_added', 'start_date',
@@ -69,9 +69,9 @@ class SeedSet(a.ModelAdmin):
                    'max_count', 'stats', 'date_added', 'start_date',
                    'end_date']
     search_fields = ['collection', 'credential', 'harvest_type', 'name',
-                     'description', 'is_active', 'schedule', 'harvest_options',
-                     'max_count', 'stats', 'date_added', 'start_date',
-                     'end_date']
+                     'description', 'is_active', 'schedule',
+                     'harvest_options', 'max_count', 'stats', 'date_added',
+                     'start_date', 'end_date']
 
 
 class Seed(a.ModelAdmin):
