@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     libapache2-mod-wsgi \
     wget \
-    zip 
+    zip \
+    git
 #Upgrade pip
 RUN pip install --upgrade pip
 WORKDIR /tmp
