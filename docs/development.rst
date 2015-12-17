@@ -113,11 +113,8 @@ the SFM UI application is called ui and is controlled by the `SFM_UI_LOG` enviro
 
 Apache logs
 ^^^^^^^^^^^
-SFM UI runs behind Apache, which means Apache collects stdout and stderr in `/var/log/apache2/error.log`.
-
-The contents of error.log can be viewed with::
-
-    docker exec <name of your container> cat /var/log/apache2/error.log
+In the SFM UI container, Apache logs are sent to stdout/stderr which means they can be viewed with
+`docker-compose logs` or `docker logs <container name or id>`.
 
 Initial data
 ^^^^^^^^^^^^

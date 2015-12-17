@@ -41,6 +41,9 @@ RUN mkdir /var/sfm && chmod ugo+w /var/sfm
 VOLUME /var/sfm
 ADD invoke.sh /opt/
 RUN chmod +x /opt/invoke.sh
+#Forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/apache2/access.log
+RUN ln -sf /dev/stderr /var/log/apache2/error.log
 WORKDIR /opt/sfm-ui
 CMD ["/opt/invoke.sh"]
 ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
