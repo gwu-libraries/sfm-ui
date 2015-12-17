@@ -1,18 +1,17 @@
 import json
 from .rabbit import RabbitWorker
 from .models import SeedSet, Collection, Seed, Credential
-import datetime
 import logging
-from sfmutils.consumer import EXCHANGE
 
 log = logging.getLogger(__name__)
+
 
 def seedset_harvest(d):
     # To get value of Collection id for the associated collection object.
     for collection_id in list(Collection.objects.filter(
-        id=SeedSet.objects.filter(id=d).values('collection')).values('id')):
+            id=SeedSet.objects.filter(id=d).values('collection')).values('id')):
         if 'id' in collection_id:
-            value=collection_id['id']
+            value = collection_id['id']
 
     # To get value of the token for the associated credential object.
     for token in list(Credential.objects.filter(
@@ -65,10 +64,8 @@ def seedset_harvest(d):
         'seeds': seeds,
     }
 
-    log.info("Sending %s message to %s with id %s", harvest_type, key,
-             m["id"])
-    log.debug("Message with id %s is %s", m["id"], json.dumps(m, indent=4))
+    log.debug("Sending %s message to %s with id %s", harvest_type, key,
+              m["id"])
 
     # Publish message to queue via rabbit worker
-    RabbitWorker.channel.basic_publish(exchange=EXCHANGE,
-                                       routing_key=key,body=json.dumps(m))
+    RabbitWorker().send_message(m, key)
