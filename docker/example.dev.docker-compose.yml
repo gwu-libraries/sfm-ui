@@ -5,11 +5,13 @@ sfmdevrabbit:
         - "15672:15672"
     restart: always
     environment:
+        - TZ=EST
         - RABBITMQ_DEFAULT_USER=sfm_user
         - RABBITMQ_DEFAULT_PASS=password
 sfmdevdb:
     image: gwul/sfm-ui-db:master
     environment:
+        - TZ=EST
         - POSTGRES_PASSWORD=gherD42#dl5
 sfmdevapp:
     image: gwul/sfm-ui:dev
@@ -22,6 +24,7 @@ sfmdevapp:
     volumes:
         - ~/sfm-ui:/opt/sfm-ui
     environment:
+        - TZ=EST
         - SFM_DEBUG=True
         #Turn on logging
         #- SFM_DJANGO_LOG=DEBUG

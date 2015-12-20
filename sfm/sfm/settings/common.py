@@ -103,7 +103,7 @@ SCHEDULER_DB_URL = "postgresql://{USER}:{PASSWORD}@{HOST}/{NAME}".format(**DATAB
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = env.get('CONTAINER_TIMEZONE')
 
 USE_I18N = True
 
