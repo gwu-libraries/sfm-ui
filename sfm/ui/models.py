@@ -40,20 +40,26 @@ class Collection(models.Model):
 
 @python_2_unicode_compatible
 class SeedSet(models.Model):
-
+    SCHEDULE_CHOICES = [
+        (60, 'Every hour'),
+        (60 * 24, 'Every day'),
+        (60 * 24 * 7, 'Every week'),
+        (60 * 24 * 7 * 4, 'Every 4 weeks')
+    ]
     collection = models.ForeignKey(Collection, related_name='seed_sets')
     credential = models.ForeignKey(Credential, related_name='seed_sets')
     harvest_type = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
-    schedule = models.CharField(max_length=12)
+    schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
+                                                   verbose_name="schedule")
     harvest_options = models.TextField(blank=True)
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-    start_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True, help_text="If blank, will start now.")
     end_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

@@ -44,7 +44,12 @@ def seedset_harvest(seedset_id):
     message["options"] = json.loads(seedset.harvest_options or "{}")
 
     # Seeds
-    for seed in seedset.seeds.all():
+    seeds = seedset.seeds.all()
+    if not seeds:
+        log.warning("Seedset %s has no seeds", seedset_id)
+        return
+
+    for seed in seeds:
         seed_map = {}
         if seed.token:
             seed_map["token"] = seed.token

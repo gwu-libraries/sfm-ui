@@ -2,15 +2,15 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
-
 from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .models import Collection, SeedSet, Seed, Credential
+from .sched import next_run_time
+import logging
 
-from utils import schedule_harvest
+log = logging.getLogger(__name__)
 
 
 class CollectionListView(LoginRequiredMixin, ListView):
@@ -73,6 +73,13 @@ class SeedSetDetailView(DetailView):
     model = SeedSet
     template_name = 'ui/seedset_detail.html'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(SeedSetDetailView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        # context['book_list'] = Book.objects.all()
+        context["next_run_time"] = next_run_time(kwargs["object"].id)
+        return context
 
 class SeedSetCreateView(CreateView):
     model = SeedSet
@@ -85,34 +92,6 @@ class SeedSetUpdateView(UpdateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
-
-    def form_valid(self, form):
-        """
-        If the form is valid, save the associated model.
-        """
-        # To save data to database
-        self.object = form.save()
-        # To schedule harvest message for the current id
-        d = self.get_object().id
-        schedule = SeedSet.objects.filter(id=d).values(
-            'schedule')[0]["schedule"]
-        start_date = SeedSet.objects.filter(id=d).values(
-            'start_date')[0]["start_date"]
-        if start_date:
-            # s = start_date.strftime('%Y-%m-%d')
-            s = start_date.strftime('%Y-%m-%d %H:%M:%S')
-        else:
-            s = '2000-01-01'
-        end_date = SeedSet.objects.filter(id=d).values(
-            'end_date')[0]["end_date"]
-        if end_date:
-            # e = end_date.strftime('%Y-%m-%d')
-            e = end_date.strftime('%Y-%m-%d %H:%M:%S')
-        else:
-            e = '2050-01-01'
-        schedule_harvest(d, schedule, s, e)
-
-        return super(ModelFormMixin, self).form_valid(form)
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))

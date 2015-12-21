@@ -15,7 +15,7 @@
         <li>Platform : {{ seedset.platform }}</li>
         <li>Name : {{ seedset.name }}</li>
         <li>Description : {{ seedset.description }}</li>
-        <li>Schedule : {{ seedset.schedule }}</li>
+        <li>Schedule : {{ seedset.schedule_minutes }}</li>
         <li>Crawl Options : {{ seedset.crawl_options }}</li>
         <li>Max Count : {{ seedset.max_count }}</li>
         <li>date_updated : {{ seed.date_updated }}</li>
@@ -25,6 +25,7 @@
         <li>date_ended : {{ seedset.end_date }}</li>
         <li>is_active : {{ seedset.is_active }}</li>
         <li>stats : {{ seedset.stats }}</li>
+        <li>next run time : {{ next_run_time }}</li>
     </div>
     </form>
     </h2>

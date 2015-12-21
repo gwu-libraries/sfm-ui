@@ -1,4 +1,3 @@
-from django.apps import AppConfig
 from django.conf import settings
 from kombu import Connection, Exchange
 from sfmutils.consumer import EXCHANGE
@@ -6,14 +5,6 @@ import logging
 import json
 
 log = logging.getLogger(__name__)
-
-
-class RabbitWorkerConfig(AppConfig):
-    name = 'ui'
-    verbose_name = "ui"
-
-    def ready(self):
-        RabbitWorker().declare_exchange()
 
 
 class RabbitWorker:

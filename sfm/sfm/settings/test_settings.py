@@ -9,3 +9,7 @@ DATABASES = {
 }
 
 SFM_DATA_DIR="/test-data"
+
+SCHEDULER_DB_URL = "sqlite:///testdb"
+
+SCHEDULE_HARVESTS = False
