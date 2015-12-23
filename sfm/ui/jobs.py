@@ -54,7 +54,7 @@ def seedset_harvest(d):
     # TODO: Unique id
     # TODO: Correct path
     m = {
-        'id': d,
+        'id': str(d),
         'type': harvest_type,
         'options': options,
         'credentials': credential,
