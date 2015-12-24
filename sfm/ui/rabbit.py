@@ -1,24 +1,40 @@
 from django.apps import AppConfig
 from django.conf import settings
-import pika
+from kombu import Connection, Exchange
 from sfmutils.consumer import EXCHANGE
+import logging
+import json
+
+log = logging.getLogger(__name__)
 
 
-class RabbitWorker(AppConfig):
+class RabbitWorkerConfig(AppConfig):
     name = 'ui'
     verbose_name = "ui"
-    # Create a connection
-    credentials = pika.PlainCredentials(
-        username=settings.RABBITMQ_USER,
-        password=settings.RABBITMQ_PASSWORD)
-    parameters = pika.ConnectionParameters(host='mq', credentials=credentials)
-    connection = pika.BlockingConnection(parameters)
-    # create channel
-    channel = connection.channel()
 
     def ready(self):
-        # Declare sfm_exchange
-        RabbitWorker.channel.exchange_declare(exchange=EXCHANGE,
-                                              type="topic", durable=True)
-        # Declare harvester queue
-        RabbitWorker.channel.queue_declare(queue="sfm_ui", durable=True)
+        RabbitWorker().declare_exchange()
+
+
+class RabbitWorker:
+    def __init__(self):
+        self.exchange = Exchange(name=EXCHANGE,
+                                 type="topic",
+                                 durable=True)
+
+    @staticmethod
+    def get_connection():
+        return Connection(transport="librabbitmq",
+                          hostname=settings.RABBITMQ_HOST,
+                          userid=settings.RABBITMQ_USER,
+                          password=settings.RABBITMQ_PASSWORD)
+
+    def declare_exchange(self):
+        with self.get_connection() as connection:
+            log.debug("Declaring %s exchange", self.exchange.name)
+            self.exchange(connection).declare()
+
+    def send_message(self, message, routing_key):
+        with self.get_connection() as connection:
+            log.debug("Sending message to %s: %s", routing_key, json.dumps(message, indent=4))
+            connection.Producer(exchange=self.exchange).publish(message, routing_key=routing_key)
