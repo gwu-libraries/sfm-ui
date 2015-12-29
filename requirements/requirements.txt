@@ -10,3 +10,4 @@ apscheduler>=3.0,<3.0.3
 git+https://github.com/gwu-libraries/sfm-utils.git@0.1.1#egg=sfmutils
 mock
 sqlalchemy
+django-braces>=1.8,<1.9

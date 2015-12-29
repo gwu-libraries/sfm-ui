@@ -3,20 +3,24 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
+
+from braces.views import GroupRequiredMixin, LoginRequiredMixin
+
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from .models import Collection, SeedSet, Seed
 from utils import schedule_harvest
 
 
-class CollectionListView(ListView):
+class CollectionListView(GroupRequiredMixin, ListView):
     model = Collection
     template_name = 'ui/collection_list.html'
     paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
+    group_required = u'testgroup'
 
 
-class CollectionDetailView(DetailView):
+class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
 
