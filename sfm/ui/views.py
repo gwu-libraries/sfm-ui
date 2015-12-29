@@ -1,24 +1,30 @@
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
 
-from braces.views import GroupRequiredMixin, LoginRequiredMixin
+from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm
 from .models import Collection, SeedSet, Seed
 from utils import schedule_harvest
 
 
-class CollectionListView(GroupRequiredMixin, ListView):
+class CollectionListView(LoginRequiredMixin, ListView):
     model = Collection
     template_name = 'ui/collection_list.html'
     paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
-    group_required = u'testgroup'
+    
+    def get_context_data(self, **kwargs):
+        context = super(CollectionListView, self).get_context_data(**kwargs)
+        context['collection_list_filtered'] = Collection.objects.filter(group__in=self.request.user.groups.all())
+        return context 
 
+    context_object_name = 'collection_list'
 
 class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
