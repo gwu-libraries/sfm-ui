@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
-ENV sfm_ui_version 0.3.0
+ENV sfm_ui_version 0.3.1
 RUN apt-get update && apt-get install -y \
     build-essential \
     gettext \
