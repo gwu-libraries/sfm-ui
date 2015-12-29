@@ -9,6 +9,14 @@
   },
   {
       "fields": {
+          "name": "testgroup2",
+          "permissions": []
+      },
+      "model": "auth.group",
+      "pk": 2 
+  },
+  {
+      "fields": {
           "username": "testuser",
           "first_name": "",
           "last_name": "",
@@ -25,7 +33,27 @@
       },
       "model": "ui.user",
       "pk": 2
-  }, {
+  }, 
+  {
+      "fields": {
+           "username": "testuser2", 
+           "first_name": "", 
+           "last_name": "", 
+           "is_active": true, 
+           "local_id": "", 
+           "is_superuser": false, 
+           "is_staff": false, 
+           "last_login": "", 
+           "groups": [2], 
+           "user_permissions": [], 
+           "password": "pbkdf2_sha256$20000$vyR6RCXhtSMb$IBiE+NgWsSYGOosmWWxb1Yry2ylWmC31/zns3ip6alM=", 
+           "email": "", 
+           "date_joined": "2015-12-28T20:32:30Z"
+       }, 
+       "model": "ui.user", 
+       "pk": 4
+  },
+  {
       "fields": {
           "is_visible": true,
           "stats": "",
