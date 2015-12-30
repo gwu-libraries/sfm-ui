@@ -1,71 +1,60 @@
 import json
 from .rabbit import RabbitWorker
-from .models import SeedSet, Collection, Seed, Credential
+from .models import SeedSet
+from django.core.exceptions import ObjectDoesNotExist
 import logging
+import datetime
 
 log = logging.getLogger(__name__)
 
 
-def seedset_harvest(d):
-    # To get value of Collection id for the associated collection object.
-    for collection_id in list(Collection.objects.filter(
-            id=SeedSet.objects.filter(id=d).values('collection')).values('id')):
-        if 'id' in collection_id:
-            value = collection_id['id']
+def seedset_harvest(seedset_id):
 
-    # To get value of the token for the associated credential object.
-    for token in list(Credential.objects.filter(
-        id=SeedSet.objects.filter(id=d).values('credential')).values(
-            'token')):
-        if 'token' in token:
-            credential = token['token']
-
-    # To get value of platform
-    for platform in list(Credential.objects.filter(
-        id=SeedSet.objects.filter(id=d).values('credential')).values(
-            'platform')):
-        if 'platform' in platform:
-            media = platform['platform']
-
-    # To get list of seeds
-    seeds = list(Seed.objects.filter(seed_set=d).select_related(
-        'seeds').values('token', 'uid'))
-    # To remove empty token values from the list of seeds --
-    # Need to update below code
-    #
-    # if item['token'] not in seeds:
-        # item.pop('token', None)
-    for item in seeds:
-        if item['token'] == '':
-            item.pop('token', None)
-
-    # To get harvest type, options and credentials
-    harvest_type = SeedSet.objects.filter(id=d).values(
-        'harvest_type')[0]["harvest_type"]
-    options = json.loads(SeedSet.objects.filter(id=d).values(
-        'harvest_options')[0]["harvest_options"])
-    credential = json.loads(str(credential))
-
-    # Routing Key
-    key = ''.join(['harvest.start.',str(media),'.',harvest_type])
-
-    # message to be sent to queue
-    # TODO: Unique id
-    # TODO: Correct path
-    m = {
-        'id': str(d),
-        'type': harvest_type,
-        'options': options,
-        'credentials': credential,
-        'collection': {
-            'id': str(value),
-            'path': '/tmp/collection/'+str(value)
-        },
-        'seeds': seeds,
+    message = {
+        "collection": {},
+        "seeds": []
     }
 
-    log.debug("Sending %s message to %s with id %s", harvest_type, key,
-              m["id"])
+    # Retrieve seedset
+    try:
+        seedset = SeedSet.objects.get(id=seedset_id)
+    except ObjectDoesNotExist:
+        log.error("Harvesting seedset %s failed because seedset does not exist", seedset_id)
+        return
+
+    # Id
+    harvest_id = "harvest:{}:{}".format(seedset_id, datetime.datetime.now().isoformat())
+    message["id"] = harvest_id
+
+    # Collection
+    collection = seedset.collection
+    message["collection"]["id"] = "collection:{}".format(collection.id)
+    # TODO: Different approach for path
+    message["collection"]["path"] = "/tmp/collection/{}".format(collection.id)
+
+    # Credential
+    credentials = seedset.credential
+    message["credentials"] = json.loads(str(credentials.token))
+
+    # Type
+    harvest_type = seedset.harvest_type
+    message["type"] = harvest_type
+
+    # Options
+    message["options"] = json.loads(seedset.harvest_options or "{}")
+
+    # Seeds
+    for seed in seedset.seeds.all():
+        seed_map = {}
+        if seed.token:
+            seed_map["token"] = seed.token
+        if seed.uid:
+            seed_map["uid"] = seed.uid
+        message["seeds"].append(seed_map)
+
+    routing_key = "harvest.start.{}.{}".format(credentials.platform, harvest_type)
+
+    log.debug("Sending %s message to %s with id %s", harvest_type, routing_key, harvest_id)
 
     # Publish message to queue via rabbit worker
-    RabbitWorker().send_message(m, key)
+    RabbitWorker().send_message(message, routing_key)

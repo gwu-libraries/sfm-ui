@@ -30,9 +30,12 @@ class RabbitWorker:
                           password=settings.RABBITMQ_PASSWORD)
 
     def declare_exchange(self):
-        with self.get_connection() as connection:
-            log.debug("Declaring %s exchange", self.exchange.name)
-            self.exchange(connection).declare()
+        try:
+            with self.get_connection() as connection:
+                log.debug("Declaring %s exchange", self.exchange.name)
+                self.exchange(connection).declare()
+        except:
+            log.error("Error connecting to RabbitMQ to declare exchange")
 
     def send_message(self, message, routing_key):
         with self.get_connection() as connection:
