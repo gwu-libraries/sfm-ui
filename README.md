@@ -1,5 +1,7 @@
 # sfm-ui
 
+[![Build Status](https://travis-ci.org/gwu-libraries/sfm-ui.svg?branch=master)](https://travis-ci.org/gwu-libraries/sfm-ui)
+
 The [new] Social Feed Manager user interface application.
 
 sfm-ui provides a Django app which:
