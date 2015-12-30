@@ -17,6 +17,9 @@ echo "Migrating db"
 echo "Collecting static files"
 /opt/sfm-ui/sfm/manage.py collectstatic --noinput
 
+echo "Starting message consumer"
+/opt/sfm-ui/sfm/manage.py startconsumer &
+
 echo "Running server"
 #Not entirely sure why this is necessary, but it works.
 /etc/init.d/apache2 start
