@@ -36,6 +36,9 @@ RUN a2dissite 000-default
 #Data volume
 ADD invoke.sh /opt/
 RUN chmod +x /opt/invoke.sh
+#Forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/apache2/access.log
+RUN ln -sf /dev/stderr /var/log/apache2/error.log
 WORKDIR /opt/sfm-ui
 ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 CMD ["/opt/invoke.sh"]
