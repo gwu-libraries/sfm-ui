@@ -21,10 +21,9 @@ class CollectionListView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(CollectionListView, self).get_context_data(**kwargs)
-        context['collection_list'] = Collection.objects.filter(group__in=self.request.user.groups.all())
+        context['collection_list'] = Collection.objects.filter(group__in=self.request.user.groups.all()).order_by('-is_active','date_updated')
         return context 
 
-    #context_object_name = 'collection_list'
 
 class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
