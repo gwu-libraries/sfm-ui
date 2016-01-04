@@ -196,7 +196,7 @@ fixtures.json).
 
 Killing, removing, and building in development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Killing a container while cause the process in the container to be stopped. Running the container again will cause
+Killing a container will cause the process in the container to be stopped. Running the container again will cause
 process to be re-started. Generally, you will kill and run a development container to get the process to be run
 with changes you've made to the code.
 
