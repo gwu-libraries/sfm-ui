@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="row">
-    <h1>Collections</h1>
+    <h1>My Collections</h1>
 </div>
     {% regroup collection_list by is_active as collections %}
     {% for is_active in collections %}
@@ -17,11 +17,11 @@
         </div>
         <div class="row">
             {% for collection in is_active.list %}
-            <div class="col-md-4"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
-            <div class="col-md-2">{{ collection.num_seedsets }} seedsets</div>
-            <div class="col-md-2">Created {{ collection.date_added }}</div>
-            <div class="col-md-2">most recent harvest from a seedset</div>
-            <div class="col-md-2">{{ collection.group }}</div>
+            <div class="col-md-3"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
+            <div class="col-md-2">{{ collection.num_seedsets }} seedset{{ collection.num_seedsets|pluralize}}</div>
+            <div class="col-md-3">Created {{ collection.date_added }}</div>
+            <div class="col-md-3">most recent harvest from a seedset</div>
+            <div class="col-md-1">{{ collection.group }}</div>
         {% empty %}
             <div class="col-md-12">No collections yet.</div>
         {% endfor %}
