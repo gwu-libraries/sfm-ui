@@ -75,23 +75,3 @@ or just download ``docker-compose.yml`` and ``example.secrets.env``::
 3. Bring up the containers::
 
     docker-compose up -d
-
-.. _install-helpful-docker:
-
-Helpful Docker commands
------------------------
-
-``docker ps``
-    List running containers. Add ``-a`` to also list stopped containers.
-
-``docker-compose kill``
-    Stop the containers.
-
-``docker-compose rm -v --force``
-  Delete the containers and volumes.
-
-``docker-compose logs``
-    List the logs from all containers.
-
-``docker logs <container name>``
-    List the log from a single container.
