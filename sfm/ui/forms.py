@@ -1,5 +1,5 @@
 from django import forms
-from .models import Collection, SeedSet, Seed
+from .models import Collection, SeedSet, Seed, Credential
 
 
 class CollectionForm(forms.ModelForm):
@@ -86,3 +86,30 @@ class SeedForm(forms.ModelForm):
 
     def save(self, commit=True):
         return super(SeedForm, self).save(commit)
+
+
+class CredentialForm(forms.ModelForm):
+
+    class Meta:
+        model = Credential
+        fields = '__all__'
+        exclude = []
+        widgets = None
+        localized_fields = None
+        labels = {}
+        help_texts = {}
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        return super(CredentialForm, self).__init__(*args, **kwargs)
+
+    def is_valid(self):
+        return super(CredentialForm, self).is_valid()
+
+    def full_clean(self):
+        return super(CredentialForm, self).full_clean()
+
+    def save(self, commit=True):
+        return super(CredentialForm, self).save(commit)
+
+
