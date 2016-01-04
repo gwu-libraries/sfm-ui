@@ -75,7 +75,7 @@ Step 5: Run the code
     cd docker
     docker-compose up -d
 
-For additional Docker and Docker-Compose commands, see :ref:`install-helpful-docker`.
+For additional Docker and Docker-Compose commands, see below.
 
 ------------------
  Development tips
@@ -121,3 +121,87 @@ Initial data
 The development and master docker images for SFM UI contain some initial data. This includes a user ("testuser",
 with password "password"). For the latest initial data, see `fixtures.json`. For more information on fixtures,
 see the `Django docs <https://docs.djangoproject.com/en/1.8/howto/initial-data/>`_.
+
+.. _install-helpful-docker:
+
+-------------
+ Docker tips
+-------------
+
+Helpful Docker commands
+^^^^^^^^^^^^^^^^^^^^^^^
+
+``docker-compose up -d``
+    Bring up all of the containers specified in the docker-compose.yml file. If a container has not yet been pulled,
+    it will be pulled. If a container has not yet been built it will be built. If a container has been stopped ("killed")
+    it will be re-started. Otherwise, a new container will be created and started ("run").
+
+``docker-compose pull``
+    Pull the latest images for all of the containers specified in the docker-compose.yml file with the `image` field.
+
+``docker-compose build``
+    Build images for all of the containers specified in the docker-compose.yml file with the `build` field. Add ``--no-cache``
+    to re-build the entire image (which you might want to do if the image isn't building as expected).
+
+``docker ps``
+    List running containers. Add ``-a`` to also list stopped containers.
+
+``docker-compose kill``
+    Stop all containers.
+
+``docker kill <container name>``
+    Stop a single container.
+
+``docker-compose rm -v --force``
+    Delete the containers and volumes.
+
+``docker rm -v <container name>``
+    Delete a single container and volume.
+
+``docker rm $(docker ps -a -q) -v``
+    Delete all containers.
+
+``docker-compose logs``
+    List the logs from all containers.
+
+``docker logs <container name>``
+    List the log from a single container.
+
+``docker-compose -f <docker-compose.yml filename> <command>``
+    Use a different docker-compose.yml file instead of the default.
+
+``docker exec -it <container name> /bin/bash``
+    Shell into a container.
+
+``docker rmi <image name>``
+    Delete an image.
+
+``docker rmi $(docker images -q)``
+    Delete all images
+
+Building vs. pulling
+^^^^^^^^^^^^^^^^^^^^
+Containers are created from images. Images are either built locally or pre-built and pulled from
+`Docker Hub <https://hub.docker.com/>`_. In both cases, images are created based on the docker build (i.e., the
+Dockerfile and other files in the same directory as the Dockerfile).
+
+In a docker-compose.yml, pulled images will be identified by the `image` field, e.g., `image: gwul/sfm-ui:dev`. Built images
+will be identified by the `build` field, e.g., `build: app-dev`.
+
+In general, you will want to use pulled images. These are automatically built when changes are made to the Github repos.
+You should periodically execute `docker-compose pull` to make sure you have the latest images.
+
+You may want to build your own image if your development requires a change to the docker build (e.g., you modify
+fixtures.json).
+
+Killing, removing, and building in development
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Killing a container while cause the process in the container to be stopped. Running the container again will cause
+process to be re-started. Generally, you will kill and run a development container to get the process to be run
+with changes you've made to the code.
+
+Removing a container will delete all of the container's data. During development, you will remove a container to make
+sure you are working with a clean container.
+
+Building a container creates a new image based on the Dockerfile. For a development image, you only need to build
+when making changes to the docker build.
