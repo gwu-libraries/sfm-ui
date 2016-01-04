@@ -5,17 +5,31 @@
 {% endblock %}
 
 {% block content %}
+<div class="row">
     <h1>Collections</h1>
+</div>
     {% regroup collection_list by is_active as collections %}
     {% for is_active in collections %}
-        <h2>{% if is_active.grouper  == True %}Active{% else %}Inactive{% endif %}</h2>
-        <ul>
-        {% for collection in is_active.list %}
-           <li><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a> | Active? {{ collection.is_active }} | group: {{ collection.group }}  </li>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{% if is_active.grouper  == True %}Active{% else %}Inactive{% endif %}</h2>
+            </div>
+        </div>
+        <div class="row">
+            {% for collection in is_active.list %}
+            <div class="col-md-4"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
+            <div class="col-md-2">number of seedsets</div>
+            <div class="col-md-2">Created {{ collection.date_added }}</div>
+            <div class="col-md-2">most recent harvest from a seedset</div>
+            <div class="col-md-2">Group: {{ collection.group }}</div>
         {% empty %}
-        <li>No collections yet.</li>
+            <div class="col-md-12">No collections yet.</div>
         {% endfor %}
-        </ul>
+        </div>
     {% endfor %}
-    <h3><a href={% url "collection_create" %}>Add New Collection</a></h3>
+    <div class="row">
+        <div class="col-md-12">
+            <a href={% url "collection_create" %} class="btn btn-default">Add New Collection</a>
+        </div>
+    </div>
 {% endblock %}
