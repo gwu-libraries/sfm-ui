@@ -15,6 +15,7 @@ Contents:
    development
    harvester
    messaging
+   messaging_spec
 
 
 Indices and tables
