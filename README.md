@@ -46,4 +46,3 @@ Behind the scenes, SFM uses a set of carefully managed processes to harvest and 
 * Tickets:  sfm-ui is used for [all ticketing](https://github.com/gwu-libraries/sfm-ui/issues).
 
 Tickets / pull requests / discussion are welcome.
->>>>>>> refs #51. Updates README and add project info to docs.
