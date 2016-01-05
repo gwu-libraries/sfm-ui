@@ -17,3 +17,33 @@ sfm-ui provides a Django app which:
 
      cd sfm
     ./manage.py test --settings=sfm.settings.test_settings
+
+# Social Feed Manager
+
+## Objectives
+
+Social Feed Manager (SFM) empowers social media researchers, students, archivists, librarians, and others to define and collect datasets from social media services. To support this work, SFM presents an easy-to-use, web-based user interface that lets users:
+
+* define collections comprising sets of targeted accounts, keywords, and other search strategies appropriate to different platforms.
+* authorize SFM to harvest data from platforms on the user's behalf.
+* view collection information and metadata about harvests.
+* extract, filter, and export the datasets to formats appropriate to the user's work.
+
+Behind the scenes, SFM uses a set of carefully managed processes to harvest and and store this data, recording its actions in detail.
+
+## Components
+
+* [sfm-ui](https://github.com/gwu-libraries/sfm-ui):  User interface and datastore for collection and harvest information.
+* [sfm-flickr-harvester](https://github.com/gwu-libraries/sfm-flickr-harvester):  A harvester for Flickr.
+* [sfm-twitter-harvester](https://github.com/gwu-libraries/sfm-twitter-harvester): A harvester for Twitter.
+* [sfm-utils](https://github.com/gwu-libraries/sfm-utils): Utilities to support SFM.
+* [sfm-docker](https://github.com/gwu-libraries/sfm-docker):  Docker configuration for deploying SFM.
+
+## Getting started
+
+* Documentation:  [sfm.readthedocs.org](http://sfm.readthedocs.org/en/latest/)
+* Discussion:  [sfm-dev](https://groups.google.com/forum/#!forum/sfm-dev)
+* Tickets:  sfm-ui is used for [all ticketing](https://github.com/gwu-libraries/sfm-ui/issues).
+
+Tickets / pull requests / discussion are welcome.
+>>>>>>> refs #51. Updates README and add project info to docs.
