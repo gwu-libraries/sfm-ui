@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'sfmdatabase',
         'USER': 'postgres',
         'PASSWORD': env.get('DB_ENV_POSTGRES_PASSWORD'),
-        'HOST': 'db',
+        'HOST': env.get('DB_ENV_HOST', 'db'),
         'PORT': '5432',
     }
 }
