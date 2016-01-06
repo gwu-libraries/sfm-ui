@@ -11,3 +11,6 @@ git+https://github.com/gwu-libraries/sfm-utils.git@0.1.1#egg=sfmutils
 mock
 sqlalchemy
 django-braces>=1.8,<1.9
+git+https://github.com/gwu-libraries/django-auditlog.git@master#egg=django-auditlog
+django-jsonfield==0.9.15
+iso8601==0.1.11

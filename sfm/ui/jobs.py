@@ -1,6 +1,6 @@
 import json
 from .rabbit import RabbitWorker
-from .models import SeedSet
+from .models import SeedSet, Harvest
 from django.core.exceptions import ObjectDoesNotExist
 import logging
 import datetime
@@ -58,3 +58,7 @@ def seedset_harvest(seedset_id):
 
     # Publish message to queue via rabbit worker
     RabbitWorker().send_message(message, routing_key)
+
+    # Record harvest model instance
+    Harvest.objects.create(seed_set=seedset,
+                           harvest_id=harvest_id)

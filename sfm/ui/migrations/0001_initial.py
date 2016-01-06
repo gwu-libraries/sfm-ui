@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
+import jsonfield.fields
 import django.contrib.auth.models
 import django.utils.timezone
 from django.conf import settings
@@ -53,6 +54,7 @@ class Migration(migrations.Migration):
                 ('stats', models.TextField(blank=True)),
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
+                ('note', models.TextField(blank=True)),
                 ('group', models.ForeignKey(related_name='collections', to='auth.Group')),
             ],
         ),
@@ -71,9 +73,20 @@ class Migration(migrations.Migration):
             name='Harvest',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('stats', models.TextField(blank=True)),
-                ('date_started', models.DateTimeField(default=django.utils.timezone.now)),
-                ('date_ended', models.DateTimeField(default=django.utils.timezone.now)),
+                ('harvest_id', models.CharField(unique=True, max_length=255)),
+                ('status', models.CharField(default=b'requested', max_length=20, choices=[(b'requested', b'requested'), (b'completed success', b'completed success'), (b'completed failure', b'completed failure'), (b'running', b'running')])),
+                ('date_requested', models.DateTimeField(default=django.utils.timezone.now, blank=True)),
+                ('date_started', models.DateTimeField(null=True, blank=True)),
+                ('date_ended', models.DateTimeField(null=True, blank=True)),
+                ('date_updated', models.DateTimeField(auto_now=True)),
+                ('stats', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('token_updates', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('uids', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('warcs_count', models.PositiveIntegerField(default=0)),
+                ('warcs_bytes', models.BigIntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
@@ -90,30 +103,32 @@ class Migration(migrations.Migration):
             name='Seed',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('platform_token', models.TextField(blank=True)),
-                ('platform_uid', models.TextField(blank=True)),
+                ('token', models.TextField(blank=True)),
+                ('uid', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
                 ('is_valid', models.BooleanField(default=True)),
                 ('stats', models.TextField(blank=True)),
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
+                ('note', models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
             name='SeedSet',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('platform', models.CharField(max_length=255, blank=True)),
+                ('harvest_type', models.CharField(max_length=255, blank=True)),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('schedule', models.CharField(max_length=255, blank=True)),
-                ('crawl_options', models.TextField(blank=True)),
+                ('schedule', models.CharField(max_length=12)),
+                ('harvest_options', models.TextField(blank=True)),
                 ('max_count', models.PositiveIntegerField(default=0)),
                 ('stats', models.TextField(blank=True)),
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
-                ('date_started', models.DateTimeField(default=django.utils.timezone.now)),
-                ('date_ended', models.DateTimeField(default=django.utils.timezone.now)),
+                ('start_date', models.DateTimeField(null=True, blank=True)),
+                ('end_date', models.DateTimeField(null=True, blank=True)),
+                ('note', models.TextField(blank=True)),
                 ('collection', models.ForeignKey(related_name='seed_sets', to='ui.Collection')),
                 ('credential', models.ForeignKey(related_name='seed_sets', to='ui.Credential')),
             ],

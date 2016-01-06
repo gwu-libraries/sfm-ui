@@ -2,7 +2,7 @@ from django.test import TestCase
 import json
 from mock import MagicMock, patch
 from .jobs import seedset_harvest
-from .models import SeedSet, Collection, Seed, Credential, Group, User
+from .models import SeedSet, Collection, Seed, Credential, Group, User, Harvest
 from .rabbit import RabbitWorker
 
 
@@ -30,6 +30,7 @@ class JobsTests(TestCase):
 
         seedset_harvest(self.seedset.id)
 
+        # Harvest start message sent
         name, args, kwargs = mock_rabbit_worker.mock_calls[0]
         self.assertEqual("send_message", name)
         message = args[0]
@@ -42,6 +43,13 @@ class JobsTests(TestCase):
         self.assertEqual("test_type", message["type"])
         self.assertTrue(message["id"].startswith("harvest:{}:".format(self.seedset.id)))
         self.assertEqual("harvest.start.test_platform.test_type", args[1])
+
+        # Harvest model object created
+        harvest = Harvest.objects.get(harvest_id=message["id"])
+        self.assertIsNotNone(harvest.date_requested)
+        self.assertEqual(self.seedset, harvest.seed_set)
+        self.assertEqual(Harvest.REQUESTED, harvest.status)
+
 
     def test_missing_seedset_harvest(self):
         # Error should be logged and nothing happens

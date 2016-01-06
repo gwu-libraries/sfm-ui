@@ -86,11 +86,12 @@ class Seed(a.ModelAdmin):
 
 
 class Harvest(a.ModelAdmin):
-    fields = ('seed_set', 'stats', 'date_started', 'date_ended')
-    list_display = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
-    list_filter = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
-    search_fields = ['id', 'seed_set', 'stats', 'date_started', 'date_ended']
-
+    fields = (
+       'harvest_id', 'seed_set', 'status', 'date_requested', 'date_started', 'date_ended', 'stats',
+       'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
+    list_display = ['id', 'harvest_id', 'seed_set', 'status', 'date_requested', 'date_updated']
+    list_filter = ['status', 'date_requested', 'date_updated']
+    search_fields = ['id', 'harvest_id', 'seed_set']
 
 a.site.register(m.Credential, Credential)
 a.site.register(m.Collection, Collection)
