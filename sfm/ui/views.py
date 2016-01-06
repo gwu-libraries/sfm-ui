@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Count
 from django.views.generic.detail import DetailView
@@ -19,11 +18,14 @@ class CollectionListView(LoginRequiredMixin, ListView):
     paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
-    
+
     def get_context_data(self, **kwargs):
         context = super(CollectionListView, self).get_context_data(**kwargs)
-        context['collection_list'] = Collection.objects.filter(group__in=self.request.user.groups.all()).annotate(num_seedsets=Count('seed_sets')).order_by('-is_active','date_updated')
-        return context 
+        context['collection_list'] = Collection.objects.filter(
+            group__in=self.request.user.groups.all()).annotate(
+            num_seedsets=Count('seed_sets')).order_by(
+            '-is_active', 'date_updated')
+        return context
 
 
 class CollectionDetailView(LoginRequiredMixin, DetailView):
@@ -162,7 +164,8 @@ class CredentialCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ui/credential_create.html'
     success_url = reverse_lazy('credential_detail')
 
+
 class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
-    allow_empty = True 
+    allow_empty = True
