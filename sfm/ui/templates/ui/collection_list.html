@@ -1,19 +1,34 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 {% block title %}
     Collections
 {% endblock %}
 
 {% block content %}
-    <h1>Collections</h1>
-    <h2><a href={% url "collection_create" %}>Create new Collection</h2>
-    <ul>
-    {% for collection in collection_list %}
-        <li><a href={% url "collection_detail" collection.pk %}>{{ collection }}</a> | <a href={% url "collection_update" collection.pk %}>Update</a> | <form style="display:inline;" action={% url "collection_delete" collection.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ collection }}?')">{% csrf_token %}
-    <input type="submit" value="Delete" />
-    </form></li>
-    {% empty %}
-        <li>No Collections yet.</li>
+<div class="row">
+    <h1>My Collections</h1>
+</div>
+    {% regroup collection_list by is_active as collections %}
+    {% for is_active in collections %}
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{% if is_active.grouper  == True %}Active{% else %}Inactive{% endif %}</h2>
+            </div>
+        </div>
+        <div class="row">
+            {% for collection in is_active.list %}
+            <div class="col-md-4"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
+            <div class="col-md-3">{{ collection.num_seedsets }} seedset{{ collection.num_seedsets|pluralize}}</div>
+            <div class="col-md-4">Created {{ collection.date_added }}</div>
+            <!-- later add date of most recent harvest from among colelction's seedsets -->
+            <div class="col-md-1">{{ collection.group }}</div>
+        {% empty %}
+            <div class="col-md-12">No collections yet.</div>
+        {% endfor %}
+        </div>
     {% endfor %}
-    </ul>
+    <div class="row">
+        <div class="col-md-12">
+            <a href={% url "collection_create" %} class="btn btn-default">Add New Collection</a>
+        </div>
+    </div>
 {% endblock %}

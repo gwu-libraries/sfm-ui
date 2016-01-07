@@ -1,22 +1,34 @@
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic.list import ListView
-from .forms import CollectionForm, SeedSetForm, SeedForm
-from .models import Collection, SeedSet, Seed
+
+from braces.views import LoginRequiredMixin
+
+from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
+from .models import Collection, SeedSet, Seed, Credential
 from utils import schedule_harvest
 
 
-class CollectionListView(ListView):
+class CollectionListView(LoginRequiredMixin, ListView):
     model = Collection
     template_name = 'ui/collection_list.html'
     paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
 
+    def get_context_data(self, **kwargs):
+        context = super(CollectionListView, self).get_context_data(**kwargs)
+        context['collection_list'] = Collection.objects.filter(
+            group__in=self.request.user.groups.all()).annotate(
+            num_seedsets=Count('seed_sets')).order_by(
+            '-is_active', 'date_updated')
+        return context
 
-class CollectionDetailView(DetailView):
+
+class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
 
@@ -139,3 +151,21 @@ class SeedDeleteView(DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
     success_url = reverse_lazy('seed_list')
+
+
+class CredentialDetailView(LoginRequiredMixin, DetailView):
+    model = Credential
+    template_name = 'ui/credential_detail.html'
+
+
+class CredentialCreateView(LoginRequiredMixin, CreateView):
+    model = Credential
+    form_class = CredentialForm
+    template_name = 'ui/credential_create.html'
+    success_url = reverse_lazy('credential_detail')
+
+
+class CredentialListView(LoginRequiredMixin, ListView):
+    model = Credential
+    template_name = 'ui/credential_list.html'
+    allow_empty = True
