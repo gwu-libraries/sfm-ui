@@ -12,6 +12,7 @@ sfmdevdb:
         - POSTGRES_PASSWORD=gherD42#dl5
 sfmdevapp:
     image: gwul/sfm-ui:dev
+#    image: gwul/sfm-ui:dev-runserver
     ports:
         - "8080:80"
     links:

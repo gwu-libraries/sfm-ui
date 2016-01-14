@@ -9,6 +9,7 @@ from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .models import Collection, SeedSet, Seed, Credential
+
 from utils import schedule_harvest
 
 
@@ -33,11 +34,16 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ui/collection_detail.html'
 
 
-class CollectionCreateView(CreateView):
+class CollectionCreateView(LoginRequiredMixin, CreateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_create.html'
     success_url = reverse_lazy('collection_list')
+
+    def get_form_kwargs(self):
+        kwargs = super(CollectionCreateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
 
 class CollectionUpdateView(UpdateView):

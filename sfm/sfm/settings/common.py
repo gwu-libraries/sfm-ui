@@ -134,3 +134,6 @@ AUTH_USER_MODEL = 'ui.User'
 RABBITMQ_HOST = env.get('SFM_RABBITMQ_HOST')
 RABBITMQ_USER = env.get('SFM_RABBITMQ_USER')
 RABBITMQ_PASSWORD = env.get('SFM_RABBITMQ_PASSWORD')
+
+# crispy forms bootstrap version 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

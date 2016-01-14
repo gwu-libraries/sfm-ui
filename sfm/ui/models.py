@@ -25,7 +25,7 @@ class Collection(models.Model):
 
     group = models.ForeignKey(Group, related_name='collections')
     name = models.CharField(max_length=255, blank=False,
-                            help_text='Collection name')
+                            verbose_name='Collection name')
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     is_visible = models.BooleanField(default=True)
