@@ -1,12 +1,18 @@
 from django import forms
+from django.contrib.auth.models import Group
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, Button, Submit
+from crispy_forms.bootstrap import FormActions
+
 from .models import Collection, SeedSet, Seed, Credential
 
 
 class CollectionForm(forms.ModelForm):
+    group = forms.ModelChoiceField(queryset=None)
 
     class Meta:
         model = Collection
-        fields = '__all__'
+        fields = ['name', 'description', 'group']
         exclude = []
         widgets = None
         localized_fields = None
@@ -15,16 +21,27 @@ class CollectionForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CollectionForm, self).__init__(*args, **kwargs)
+        request = kwargs.pop('request')
 
-    def is_valid(self):
-        return super(CollectionForm, self).is_valid()
+        super(CollectionForm, self).__init__(*args, **kwargs)
+        # limiting groups in dropdown to user's
+        self.fields['group'].queryset = Group.objects.filter(
+            pk__in=request.user.groups.all())
 
-    def full_clean(self):
-        return super(CollectionForm, self).full_clean()
-
-    def save(self, commit=True):
-        return super(CollectionForm, self).save(commit)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'description',
+                'group'
+            ),
+            FormActions(
+                Submit('submit', 'Add'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
 
 class SeedSetForm(forms.ModelForm):
@@ -111,5 +128,3 @@ class CredentialForm(forms.ModelForm):
 
     def save(self, commit=True):
         return super(CredentialForm, self).save(commit)
-
-
