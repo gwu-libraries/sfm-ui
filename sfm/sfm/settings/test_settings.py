@@ -7,3 +7,5 @@ DATABASES = {
         'NAME': 'testdb'
     }
 }
+
+SFM_DATA_DIR="/test-data"

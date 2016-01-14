@@ -57,6 +57,17 @@ Configuration
   If setting ``DEBUG`` to false, the ``ALLOWED_HOSTS`` environment variable must be provided with a
   comma-separated list of hosts.  See the `Django documentation <https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts>`_
   for ``ALLOWED_HOSTS``.
+* The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
+  is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used; to use
+  a host volume instead, add the host directory to the ``volumes`` field.  This will allow you to access the
+  data outside of Docker.  For example::
+
+    sfmdata:
+        image: ubuntu:14.04
+        command: /bin/true
+        volumes:
+             - /myhost/data:/sfm-data
+
 
 Installation
 ------------

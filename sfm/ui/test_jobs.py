@@ -34,7 +34,7 @@ class JobsTests(TestCase):
         self.assertEqual("send_message", name)
         message = args[0]
         self.assertEqual("collection:{}".format(self.collection.id), message["collection"]["id"])
-        self.assertEqual("/tmp/collection/{}".format(self.collection.id), message["collection"]["path"])
+        self.assertEqual("/test-data/collection/{}".format(self.collection.id), message["collection"]["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
         self.assertDictEqual({"token": "test_token1"}, message["seeds"][0])
         self.assertDictEqual({"uid": "test_uid2"}, message["seeds"][1])

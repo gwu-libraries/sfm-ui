@@ -135,5 +135,8 @@ RABBITMQ_HOST = env.get('SFM_RABBITMQ_HOST')
 RABBITMQ_USER = env.get('SFM_RABBITMQ_USER')
 RABBITMQ_PASSWORD = env.get('SFM_RABBITMQ_PASSWORD')
 
-# crispy forms bootstrap version 
+# crispy forms bootstrap version
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# Directory where SFM data (e.g., harvested WARCs) is stored.
+SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")

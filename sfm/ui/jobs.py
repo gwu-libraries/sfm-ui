@@ -4,6 +4,7 @@ from .models import SeedSet
 from django.core.exceptions import ObjectDoesNotExist
 import logging
 import datetime
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 
@@ -29,8 +30,7 @@ def seedset_harvest(seedset_id):
     # Collection
     collection = seedset.collection
     message["collection"]["id"] = "collection:{}".format(collection.id)
-    # TODO: Different approach for path
-    message["collection"]["path"] = "/tmp/collection/{}".format(collection.id)
+    message["collection"]["path"] = "{}/collection/{}".format(settings.SFM_DATA_DIR, collection.id)
 
     # Credential
     credentials = seedset.credential
