@@ -122,6 +122,13 @@ The development and master docker images for SFM UI contain some initial data. T
 with password "password"). For the latest initial data, see `fixtures.json`. For more information on fixtures,
 see the `Django docs <https://docs.djangoproject.com/en/1.8/howto/initial-data/>`_.
 
+Runserver
+^^^^^^^^^
+There are two flavors of the the development docker image for SFM UI.  `gwul/sfm-ui:dev` runs SFM UI with
+Apache, just as it will in production.  `gwul/sfm-ui:dev-runserver` runs SFM UI with `runserver <https://docs.djangoproject.com/en/1.8/ref/django-admin/#runserver-port-or-address-port>`_,
+which dynamically reloads changed Python code. To switch between them, change the `image` field in your
+`docker-compose.yml`.
+
 .. _install-helpful-docker:
 
 -------------
