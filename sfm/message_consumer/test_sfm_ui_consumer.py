@@ -71,10 +71,8 @@ class ConsumerTest(TestCase):
         # Check updated seeds
         seed1 = Seed.objects.get(uid="131866249@N02")
         self.assertEqual("j.littman", seed1.token)
-        self.assertTrue(seed1.note)
         seed2 = Seed.objects.get(token="library_of_congress")
         self.assertEqual("671366249@N03", seed2.uid)
-        self.assertTrue(seed2.note)
 
     def test_on_message_ignores_bad_routing_key(self):
         self.consumer.routing_key = "xharvest.status.test.test_search"
