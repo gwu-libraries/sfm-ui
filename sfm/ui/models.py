@@ -52,6 +52,7 @@ class SeedSet(models.Model):
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
