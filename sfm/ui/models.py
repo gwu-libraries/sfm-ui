@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from jsonfield import JSONField
 
 
 class User(AbstractUser):
@@ -51,6 +52,7 @@ class SeedSet(models.Model):
     max_count = models.PositiveIntegerField(default=0)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
 
@@ -75,11 +77,31 @@ class Seed(models.Model):
 
 
 class Harvest(models.Model):
-
+    REQUESTED = "requested"
+    SUCCESS = "completed success"
+    FAILURE = "completed failure"
+    RUNNING = "running"
+    STATUS_CHOICES = (
+        (REQUESTED, REQUESTED),
+        (SUCCESS, SUCCESS),
+        (FAILURE, FAILURE),
+        (RUNNING, RUNNING)
+    )
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
-    stats = models.TextField(blank=True)
-    date_started = models.DateTimeField(default=timezone.now)
-    date_ended = models.DateTimeField(default=timezone.now)
+    harvest_id = models.CharField(max_length=255, blank=False, unique=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
+    date_requested = models.DateTimeField(blank=True, default=timezone.now)
+    date_started = models.DateTimeField(blank=True, null=True)
+    date_ended = models.DateTimeField(blank=True, null=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    stats = JSONField(blank=True)
+    infos = JSONField(blank=True)
+    warnings = JSONField(blank=True)
+    errors = JSONField(blank=True)
+    token_updates = JSONField(blank=True)
+    uids = JSONField(blank=True)
+    warcs_count = models.PositiveIntegerField(default=0)
+    warcs_bytes = models.BigIntegerField(default=0)
 
 
 class Media(models.Model):
