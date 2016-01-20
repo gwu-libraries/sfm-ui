@@ -1,15 +1,10 @@
-## This file is to install os dependencies.
-## This will be used once only on a completely new system.
-## Use sudo apt-get install [package-name]
-##basic build dependencies of various Django apps for Ubuntu 14.04
-#build-essential metapackage install: make, gcc, g++, 
-build-essential
-#required to translate
-gettext
-python-dev
-
-##shared dependencies of pylibmc
-zlib1g-dev
-
-##Postgresql and psycopg2 dependencies
-libpq-dev
+build-essential=11.6ubuntu6
+gettext==0.18.3.1-1ubuntu3
+python-dev==2.7.5-5ubuntu3
+zlib1g-dev=1:1.2.8.dfsg-1ubuntu1
+libpq-dev=9.3.10-0ubuntu0.14.04
+python-pip=1.5.4-1ubuntu3
+apache2=2.4.7-1ubuntu4.8
+libapache2-mod-wsgi=3.4-4ubuntu2.1.14.04.2
+zip=3.0-8
+git=1:1.9.1-1ubuntu0.2
