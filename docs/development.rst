@@ -129,6 +129,11 @@ Apache, just as it will in production.  `gwul/sfm-ui:dev-runserver` runs SFM UI 
 which dynamically reloads changed Python code. To switch between them, change the `image` field in your
 `docker-compose.yml`.
 
+Job schedule intervals
+^^^^^^^^^^^^^^^^^^^^^^
+To assist with testing and development, a 5 minute interval can be added by setting `SFM_FIVE_MINUTE_SCHEDULE` to
+`True` in the `docker-compose.yml`.
+
 .. _install-helpful-docker:
 
 -------------

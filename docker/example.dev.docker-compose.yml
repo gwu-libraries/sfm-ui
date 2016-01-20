@@ -29,3 +29,5 @@ sfmdevapp:
         #- SFM_UI_LOG=DEBUG
         #If not running on localhost
         #- SFM_ALLOWED_HOSTS=myserver.mydomain.edu
+        #Add 5 minute harvest interval
+        #- SFM_FIVE_MINUTE_SCHEDULE=True

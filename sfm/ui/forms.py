@@ -46,14 +46,6 @@ class CollectionForm(forms.ModelForm):
 
 class SeedSetForm(forms.ModelForm):
 
-    OPTIONS = (
-        ('daily', 'daily'),
-        ('hourly', 'hourly'),
-        ('minutely', 'minutely'),
-    )
-
-    schedule = forms.CharField(max_length=12,
-                               widget=forms.Select(choices=OPTIONS))
     start_date = forms.DateTimeField(required=False)
     end_date = forms.DateTimeField(required=False)
 

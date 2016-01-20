@@ -96,6 +96,7 @@ DATABASES = {
     }
 }
 
+SCHEDULER_DB_URL = "postgresql://{USER}:{PASSWORD}@{HOST}/{NAME}".format(**DATABASES["default"])
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -140,3 +141,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Directory where SFM data (e.g., harvested WARCs) is stored.
 SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
+
+# Whether to register receivers on SeedSet for scheduling harvests.
+SCHEDULE_HARVESTS = True
+
+# Add a 5 minute schedule interval. This is useful for dev and testing.
+FIVE_MINUTE_SCHEDULE = env.get('SFM_FIVE_MINUTE_SCHEDULE', 'False') == 'True'
