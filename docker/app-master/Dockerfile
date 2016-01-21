@@ -1,24 +1,16 @@
 FROM ubuntu:14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
+#This pre-fetches the most recent requirements.apt.
+ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    gettext \
-    python-dev \
-    zlib1g-dev \
-    libpq-dev \
-    python-pip \
-    apache2 \
-    libapache2-mod-wsgi \
-    wget \
-    zip
-# Not sure why the git install needs its own line,
-# but it seems to be ignored if added into the list above
-RUN apt-get install -y git
+    zip=3.0-8 \
+    git=1:1.9.1-1ubuntu0.2
+RUN cat /tmp/requirements.apt | tr "\n" " " | xargs apt-get install -y
 #Upgrade pip
-RUN pip install --upgrade pip
+RUN pip install pip==7.1.2
 WORKDIR /tmp
-RUN wget --no-check-certificate https://github.com/gwu-libraries/sfm-ui/archive/master.zip
+ADD https://github.com/gwu-libraries/sfm-ui/archive/master.zip /tmp/
 RUN unzip master.zip
 RUN mv sfm-ui-master /opt/sfm-ui
 #This installs requirements.txt.

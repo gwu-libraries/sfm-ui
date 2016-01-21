@@ -1,13 +1,16 @@
 #!/bin/bash
+echo "Updating packages"
+apt-get install -y < /opt/sfm-ui/requirements/requirements.apt
+
+echo "Updating requirements"
+pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
+
 echo "Waiting for db"
 appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672
 if [ "$?" = "1" ]; then
     echo "Problem with application dependencies."
     exit 1
 fi
-
-echo "Updating requirements"
-pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
 
 echo "Copying config"
 cp /tmp/wsgi.py /opt/sfm-ui/sfm/sfm/

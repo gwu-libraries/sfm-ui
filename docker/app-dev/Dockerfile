@@ -1,22 +1,12 @@
 FROM ubuntu:14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
+#This pre-fetches the most recent requirements.apt.
+ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.apt /opt/sfm-setup/
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    gettext \
-    python-dev \
-    zlib1g-dev \
-    libpq-dev \
-    python-pip \
-    apache2 \
-    libapache2-mod-wsgi \
-    wget \
-    zip
-# Not sure why the git install needs its own line,
-# but it seems to be ignored if added into the list above
-RUN apt-get install -y git
-#Upgrade pip
-RUN pip install --upgrade pip
+    git=1:1.9.1-1ubuntu0.2
+RUN cat /opt/sfm-setup/requirements.apt | tr "\n" " " | xargs apt-get install -y
+RUN pip install pip==7.1.2
 #This pre-fetches the most recent requirements.txt.
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.txt /opt/sfm-setup/
 RUN pip install -r /opt/sfm-setup/requirements.txt
