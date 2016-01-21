@@ -6,5 +6,3 @@ libpq-dev=9.3.10-0ubuntu0.14.04
 python-pip=1.5.4-1ubuntu3
 apache2=2.4.7-1ubuntu4.8
 libapache2-mod-wsgi=3.4-4ubuntu2.1.14.04.2
-zip=3.0-8
-git=1:1.9.1-1ubuntu0.2

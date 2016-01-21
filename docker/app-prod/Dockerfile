@@ -2,22 +2,15 @@ FROM ubuntu:14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
 ENV sfm_ui_version 0.3.1
+#This pre-fetches the most recent requirements.apt.
+ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/${sfm_ui_version}/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    gettext \
-    python-dev \
-    zlib1g-dev \
-    libpq-dev \
-    python-pip \
-    apache2 \
-    libapache2-mod-wsgi \
-    wget \
-    zip \
-    git
+    zip=3.0-8
+RUN cat /tmp/requirements.apt | tr "\n" " " | xargs apt-get install -y
 #Upgrade pip
-RUN pip install --upgrade pip
+RUN pip install pip==7.1.2
 WORKDIR /tmp
-RUN wget --no-check-certificate https://github.com/gwu-libraries/sfm-ui/archive/${sfm_ui_version}.zip
+ADD https://github.com/gwu-libraries/sfm-ui/archive/${sfm_ui_version}.zip /tmp/
 RUN unzip ${sfm_ui_version}.zip
 RUN mv sfm-ui-${sfm_ui_version} /opt/sfm-ui
 #This installs requirements.txt.
