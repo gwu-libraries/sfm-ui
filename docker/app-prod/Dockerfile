@@ -1,4 +1,5 @@
-FROM ubuntu:14.04
+FROM ubuntu@sha256:0844055d30c0cad5ac58097597a94640b0102f47d6fa972c94b7c129d87a44b7
+#Ubuntu 14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
 ENV sfm_ui_version 0.3.1
