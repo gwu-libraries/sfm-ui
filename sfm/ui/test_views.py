@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from django.test import TestCase
 
-from ui.models import Collection, User
+from ui.models import Collection, User, Credential, Seed, SeedSet
 
 
 def create_collection(name, is_active, group):
@@ -17,7 +17,7 @@ def create_new_user(name, email, password):
     return User.objects.create_user(name, email, password)
 
 
-class CollectionViewTests(TestCase):
+class CollectionListViewTests(TestCase):
     def setUp(self):
         group = create_group(name='testgroup1')
         create_collection(name='Test Collection One', is_active=True,
@@ -46,3 +46,69 @@ class CollectionViewTests(TestCase):
         response = self.client.get('/ui/collections/')
         self.assertContains(response, 'Test Collection One')
         self.assertNotContains(response, 'Test Collection Two')
+
+
+class CollectionDetailViewTests(TestCase):
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = create_new_user('testuser', 'testuser@example.com',
+                                    'password')
+        self.user.groups.add(self.group)
+        self.collection = create_collection(name='Test Collection One',
+                                            is_active=True, group=self.group)
+        self.credential = Credential.objects.create(user=self.user,
+                                                    platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              credential=self.credential,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one',
+                                              )
+        Seed.objects.create(seed_set=self.seedset)
+        User.objects.create_user('testuser2', 'testuser2@example.com',
+                                 'password')
+        Credential.objects.create(user=User.objects.get(username='testuser2'),
+                                  platform='test platform')
+        Group.objects.create(name='testgroup2')
+        Collection.objects.create(name='Test Collection Two', is_active=False,
+                                  group=Group.objects.get(name='testgroup2'))
+        SeedSet.objects.create(collection=Collection.objects.get(name='Test Collection Two'),
+            credential=Credential.objects.get(user=User.objects.get(username='testuser2')),
+            harvest_type='test harvest type', name='Test seedset two')
+
+    def test_collections_detail_anonymous(self):
+        '''
+        anonymous user should get the login page instead of a
+        collections list.
+        '''
+        response = self.client.get('/ui/collections/1/', follow=True)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/ui/collections/1/')
+
+    def test_seedset_visible(self):
+        '''
+        seedset list should only show seedsets belonging to the collection
+        '''
+        response = self.client.login(username='testuser', password='password')
+        path = '/ui/collections/' + str(self.collection.pk) + '/'
+        response = self.client.get(path)
+        self.assertContains(response, 'Test seedset one')
+        self.assertNotContains(response, 'Test seedset two')
+
+    def test_number_of_seeds(self):
+        '''
+        count of seeds in seedset table should be correct
+        '''
+        response = self.client.login(username='testuser', password='password')
+        path = '/ui/collections/' + str(self.collection.pk) + '/'
+        response = self.client.get(path)
+        self.assertContains(response, '1 seed')
+        self.assertNotContains(response, '0 seeds')
+
+    def test_update_view_works(self):
+        '''
+        update page should load for a given collection
+        '''
+        response = self.client.login(username='testuser', password='password')
+        path = '/ui/collections/' + str(self.collection.pk) + '/update/'
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, 200)

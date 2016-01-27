@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
 
-from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
+from .forms import CollectionForm, AddSeedsetButtonForm, SeedSetForm, SeedForm, CredentialForm
 from .models import Collection, SeedSet, Seed, Credential
 from .sched import next_run_time
 import logging
@@ -32,6 +32,13 @@ class CollectionListView(LoginRequiredMixin, ListView):
 class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
+ 
+    def get_context_data(self, **kwargs):
+        context = super(CollectionDetailView, self).get_context_data(**kwargs)
+        context['seedset_list'] = SeedSet.objects.filter(
+            collection=self.object.pk).annotate(num_seeds=Count('seeds'))
+        context['form'] = AddSeedsetButtonForm(initial={'collection':self.object.pk})
+        return context
 
 
 class CollectionCreateView(LoginRequiredMixin, CreateView):
@@ -46,10 +53,21 @@ class CollectionCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
 
-class CollectionUpdateView(UpdateView):
+class CollectionUpdateView(LoginRequiredMixin, UpdateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CollectionUpdateView, self).get_context_data(**kwargs)
+        context['seedset_list'] = SeedSet.objects.filter(
+            collection=self.object.pk).annotate(num_seeds=Count('seeds'))
+        return context
+     
+    def get_form_kwargs(self):
+        kwargs = super(CollectionUpdateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def get_success_url(self):
         return reverse("collection_detail", args=(self.object.pk,))
@@ -81,11 +99,19 @@ class SeedSetDetailView(DetailView):
         context["next_run_time"] = next_run_time(kwargs["object"].id)
         return context
 
+
 class SeedSetCreateView(CreateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
-    success_url = reverse_lazy('seedset_list')
+
+    def get_form_kwargs(self):
+        kwargs = super(SeedSetCreateView, self).get_form_kwargs()
+        kwargs['coll'] = self.request.GET.get('collection', None)
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('collection_detail', args=(self.object.collection.pk,))
 
 
 class SeedSetUpdateView(UpdateView):

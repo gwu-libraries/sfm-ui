@@ -1,19 +1,55 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    Update {{ collection }}
+     Edit {{ collection }}
 {% endblock %}
 
 {% block content %}
-<h1><a href={% url "collection_list" %}>Collection</a></h1>
-<h2>Update {{ collection }}</h2>
-
-<form action="" method="post">{% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="Update" />
-</form>
-<a href={% url "collection_detail" collection.pk %}>Cancel</a>
-<form style="display:inline;" action={% url "collection_delete" collection.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ collection }}?')">{% csrf_token %}
-    <input type="submit" value="Delete" />
-</form>
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li>{{ collection.name }}</li>
+      <li class="active">Edit</a>
+    </ol>
+  </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+            <h1>{{ collection.name }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+    {% crispy form %} 
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Seedsets</h4></div>
+        <div class="panel-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Harvest type</th>
+                  <th>Seeds</th>
+                  <!-- <th>Last harvested</th> -->
+                  <th>Active</th>
+                </tr>
+              </thead>
+            {% for seedset in seedset_list %}
+                <tr>
+                    <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>
+                    <td>{{ seedset.harvest_type }}</td>
+                    <td>{{ seedset.num_seeds }} seed{{ seedset.num_seeds|pluralize }}</td>
+                    <!-- <td>date of most recent harvest among seedsets</td> -->
+                    <td>{{ seedset.is_active|yesno:"Yes,No" }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+            <button class="btn btn-primary disabled">Add Seedset</button>
+        </div>
+    </div>
+</div>
 {% endblock %}

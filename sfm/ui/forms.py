@@ -38,29 +38,36 @@ class CollectionForm(forms.ModelForm):
                 'group'
             ),
             FormActions(
-                Submit('submit', 'Add'),
+                Submit('submit', 'Save'),
                 Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
+
+
+class AddSeedsetButtonForm(forms.Form):
+
+    collection = forms.ModelChoiceField(queryset=Collection.objects.all(), widget=forms.HiddenInput)
 
 
 class SeedSetForm(forms.ModelForm):
 
     start_date = forms.DateTimeField(required=False)
     end_date = forms.DateTimeField(required=False)
-
+ 
     class Meta:
         model = SeedSet
         fields = '__all__'
         exclude = []
-        widgets = {}
+        widgets = {'collection': forms.HiddenInput}
         localized_fields = None
         labels = {}
         help_texts = {}
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(SeedSetForm, self).__init__(*args, **kwargs)
+        coll = kwargs.pop('coll')
+        super(SeedSetForm, self).__init__(*args, **kwargs)
+        self.fields['collection'].initial = coll
 
     def is_valid(self):
         return super(SeedSetForm, self).is_valid()
