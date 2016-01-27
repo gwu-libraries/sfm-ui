@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
 RUN cat /opt/sfm-setup/requirements.apt | tr "\n" " " | xargs apt-get install -y
 RUN pip install pip==7.1.2
 #This pre-fetches the most recent requirements.txt.
+ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/common.txt /opt/sfm-setup/
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.txt /opt/sfm-setup/
 RUN pip install -r /opt/sfm-setup/requirements.txt
 #Install appdeps to allow checking for application dependencies

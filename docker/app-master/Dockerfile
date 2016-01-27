@@ -15,7 +15,7 @@ ADD https://github.com/gwu-libraries/sfm-ui/archive/master.zip /tmp/
 RUN unzip master.zip
 RUN mv sfm-ui-master /opt/sfm-ui
 #This installs requirements.txt.
-RUN pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
+RUN pip install -r /opt/sfm-ui/requirements/master.txt --upgrade
 #This is used to automatically create the admin user.
 RUN pip install django-finalware==0.1.0
 #Install appdeps to allow checking for application dependencies

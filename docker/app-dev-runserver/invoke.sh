@@ -3,7 +3,7 @@ echo "Updating packages"
 apt-get install -y < /opt/sfm-ui/requirements/requirements.apt
 
 echo "Updating requirements"
-pip install -r /opt/sfm-ui/requirements/requirements.txt --upgrade
+pip install -r /opt/sfm-ui/requirements/master.txt --upgrade
 
 echo "Waiting for db"
 appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672
