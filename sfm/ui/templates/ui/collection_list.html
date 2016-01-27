@@ -19,16 +19,18 @@
             <div class="col-md-4"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
             <div class="col-md-3">{{ collection.num_seedsets }} seedset{{ collection.num_seedsets|pluralize}}</div>
             <div class="col-md-4">Created {{ collection.date_added }}</div>
-            <!-- later add date of most recent harvest from among colelction's seedsets -->
+            <!-- later add date of most recent harvest from among collection's seedsets -->
             <div class="col-md-1">{{ collection.group }}</div>
         {% empty %}
             <div class="col-md-12">No collections yet.</div>
         {% endfor %}
         </div>
     {% endfor %}
-    <div class="row">
-        <div class="col-md-12">
-            <a href={% url "collection_create" %} class="btn btn-default">Add New Collection</a>
+<div class="row">
+    <div class="col-md-12">
+        <div class="btn-toolbar" style="padding-top: 15px">
+          <a href={% url "collection_create" %} class="btn btn-default">Add New Collection</a>
         </div>
     </div>
+</div>
 {% endblock %}
