@@ -26,6 +26,10 @@
         <li>is_active : {{ seedset.is_active }}</li>
         <li>stats : {{ seedset.stats }}</li>
         <li>next run time : {{ next_run_time }}</li>
+        <li>Harvests : {{ harvests }}</li>
+        <li>Diffs :
+        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
+        </li>
     </div>
     </form>
     </h2>

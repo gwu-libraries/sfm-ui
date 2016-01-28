@@ -41,6 +41,8 @@ class SfmUiConsumer(BaseConsumer):
                     try:
                         seed = Seed.objects.get(seed_set=harvest.seed_set, uid=uid)
                         seed.token = token
+                        seed.history_note = "Changed token based on information from harvester from harvest {}".format(
+                                self.message["id"])
                         seed.save()
                     except ObjectDoesNotExist:
                         log.error("Seed model object with uid {} not found to update token to {}", uid, token)
@@ -51,6 +53,8 @@ class SfmUiConsumer(BaseConsumer):
                     try:
                         seed = Seed.objects.get(seed_set=harvest.seed_set, token=token)
                         seed.uid = uid
+                        seed.history_note = "Changed uid based on information from harvester from harvest {}".format(
+                                self.message["id"])
                         seed.save()
                     except ObjectDoesNotExist:
                         log.error("Seed model object with token {} not found to update uid to {}", token, uid)

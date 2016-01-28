@@ -6,8 +6,9 @@ from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
-from .models import Collection, SeedSet, Seed, Credential
+from .models import Collection, SeedSet, Seed, Credential, Harvest
 from .sched import next_run_time
+from .utils import diff_object_history
 import logging
 
 log = logging.getLogger(__name__)
@@ -37,6 +38,8 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
+        collection = kwargs["object"]
+        context["diffs"] = diff_object_history(collection)
         return context
 
 
@@ -56,6 +59,7 @@ class CollectionUpdateView(LoginRequiredMixin, UpdateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_update.html'
+    initial={'history_note': ''}
 
     def get_context_data(self, **kwargs):
         context = super(CollectionUpdateView, self).get_context_data(**kwargs)
@@ -93,9 +97,10 @@ class SeedSetDetailView(DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        # context['book_list'] = Book.objects.all()
-        context["next_run_time"] = next_run_time(kwargs["object"].id)
+        seed_set = kwargs["object"]
+        context["next_run_time"] = next_run_time(seed_set.id)
+        context["harvests"] = Harvest.objects.filter(historical_seed_set__id = seed_set.id)
+        context["diffs"] = diff_object_history(seed_set)
         return context
 
 
@@ -129,6 +134,7 @@ class SeedSetUpdateView(UpdateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
+    initial={'history_note': ''}
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
@@ -152,6 +158,13 @@ class SeedDetailView(DetailView):
     model = Seed
     template_name = 'ui/seed_detail.html'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(SeedDetailView, self).get_context_data(**kwargs)
+        seed = kwargs["object"]
+        context["diffs"] = diff_object_history(seed)
+        return context
+
 
 class SeedCreateView(CreateView):
     model = Seed
@@ -164,6 +177,7 @@ class SeedUpdateView(UpdateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_update.html'
+    initial={'history_note': ''}
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
@@ -178,6 +192,13 @@ class SeedDeleteView(DeleteView):
 class CredentialDetailView(LoginRequiredMixin, DetailView):
     model = Credential
     template_name = 'ui/credential_detail.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(CredentialDetailView, self).get_context_data(**kwargs)
+        credential = kwargs["object"]
+        context["diffs"] = diff_object_history(credential)
+        return context
 
 
 class CredentialCreateView(LoginRequiredMixin, CreateView):
