@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import django.utils.timezone
 import jsonfield.fields
 import django.contrib.auth.models
 import django.db.models.deletion
+import django.utils.timezone
 from django.conf import settings
 import django.core.validators
+import ui.models
 
 
 class Migration(migrations.Migration):
@@ -48,6 +49,7 @@ class Migration(migrations.Migration):
             name='Collection',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('collection_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
                 ('name', models.CharField(max_length=255, verbose_name=b'Collection name')),
                 ('description', models.TextField(blank=True)),
                 ('is_visible', models.BooleanField(default=True)),
@@ -58,7 +60,7 @@ class Migration(migrations.Migration):
                 ('group', models.ForeignKey(related_name='collections', to='auth.Group')),
             ],
             options={
-                'diff_fields': ('group', 'name', 'description', 'is_active'),
+                'diff_fields': ('group', 'name', 'description'),
             },
         ),
         migrations.CreateModel(
@@ -78,10 +80,32 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Export',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('export_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
+                ('export_type', models.CharField(max_length=255)),
+                ('export_format', models.CharField(default=b'csv', max_length=10, choices=[(b'csv', b'Comma separated values (CSV)'), (b'tsv', b'Tab separated values (TSV)'), (b'html', b'HTML'), (b'xlsx', b'Excel (XLSX)'), (b'json', b'JSON'), (b'json_full', b'Full JSON')])),
+                ('status', models.CharField(default=b'not requested', max_length=20, choices=[(b'not requested', b'not requested'), (b'requested', b'requested'), (b'completed success', b'completed success'), (b'completed failure', b'completed failure')])),
+                ('path', models.TextField(blank=True)),
+                ('date_requested', models.DateTimeField(null=True, blank=True)),
+                ('date_started', models.DateTimeField(null=True, blank=True)),
+                ('date_ended', models.DateTimeField(null=True, blank=True)),
+                ('dedupe', models.BooleanField(default=False)),
+                ('item_date_start', models.DateTimeField(null=True, blank=True)),
+                ('item_date_end', models.DateTimeField(null=True, blank=True)),
+                ('harvest_date_start', models.DateTimeField(null=True, blank=True)),
+                ('harvest_date_end', models.DateTimeField(null=True, blank=True)),
+                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Harvest',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('harvest_id', models.CharField(unique=True, max_length=255)),
+                ('harvest_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
                 ('status', models.CharField(default=b'requested', max_length=20, choices=[(b'requested', b'requested'), (b'completed success', b'completed success'), (b'completed failure', b'completed failure'), (b'running', b'running')])),
                 ('date_requested', models.DateTimeField(default=django.utils.timezone.now, blank=True)),
                 ('date_started', models.DateTimeField(null=True, blank=True)),
@@ -101,6 +125,7 @@ class Migration(migrations.Migration):
             name='HistoricalCollection',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
+                ('collection_id', models.CharField(default=ui.models.default_uuid, max_length=32, db_index=True)),
                 ('name', models.CharField(max_length=255, verbose_name=b'Collection name')),
                 ('description', models.TextField(blank=True)),
                 ('is_visible', models.BooleanField(default=True)),
@@ -146,6 +171,7 @@ class Migration(migrations.Migration):
             name='HistoricalSeed',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
+                ('seed_id', models.CharField(default=ui.models.default_uuid, max_length=32, db_index=True)),
                 ('token', models.TextField(blank=True)),
                 ('uid', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -169,6 +195,7 @@ class Migration(migrations.Migration):
             name='HistoricalSeedSet',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
+                ('seedset_id', models.CharField(default=ui.models.default_uuid, max_length=32, db_index=True)),
                 ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_filter', b'Twitter filter'), (b'flickr_user', b'Flickr user')])),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
@@ -195,19 +222,10 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Media',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('size', models.PositiveIntegerField(default=0, help_text=b'Size (bytes)')),
-                ('host', models.CharField(max_length=255, blank=True)),
-                ('path', models.TextField(blank=True)),
-                ('harvest', models.ForeignKey(related_name='media', to='ui.Harvest')),
-            ],
-        ),
-        migrations.CreateModel(
             name='Seed',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('seed_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
                 ('token', models.TextField(blank=True)),
                 ('uid', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -225,6 +243,7 @@ class Migration(migrations.Migration):
             name='SeedSet',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('seedset_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
                 ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_filter', b'Twitter filter'), (b'flickr_user', b'Flickr user')])),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
@@ -243,6 +262,20 @@ class Migration(migrations.Migration):
             options={
                 'diff_fields': ('collection', 'credential', 'harvest_type', 'name', 'description', 'is_active', 'schedule_minutes', 'harvest_options', 'start_date', 'end_date'),
             },
+        ),
+        migrations.CreateModel(
+            name='Warc',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('warc_id', models.CharField(unique=True, max_length=32)),
+                ('path', models.TextField()),
+                ('sha1', models.CharField(max_length=42)),
+                ('bytes', models.PositiveIntegerField()),
+                ('date_created', models.DateTimeField()),
+                ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
+                ('date_updated', models.DateTimeField(auto_now=True)),
+                ('harvest', models.ForeignKey(related_name='warcs', to='ui.Harvest')),
+            ],
         ),
         migrations.AddField(
             model_name='seed',
@@ -268,5 +301,20 @@ class Migration(migrations.Migration):
             model_name='harvest',
             name='historical_seeds',
             field=models.ManyToManyField(related_name='historical_harvests', to='ui.HistoricalSeed'),
+        ),
+        migrations.AddField(
+            model_name='export',
+            name='seed_set',
+            field=models.ForeignKey(blank=True, to='ui.SeedSet', null=True),
+        ),
+        migrations.AddField(
+            model_name='export',
+            name='seeds',
+            field=models.ManyToManyField(to='ui.Seed', blank=True),
+        ),
+        migrations.AddField(
+            model_name='export',
+            name='user',
+            field=models.ForeignKey(related_name='exports', to=settings.AUTH_USER_MODEL),
         ),
     ]

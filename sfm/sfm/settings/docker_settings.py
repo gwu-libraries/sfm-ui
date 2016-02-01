@@ -53,6 +53,11 @@ LOGGING = {
             'level': env.get('SFM_UI_LOG', 'INFO'),
             'propagate': True,
         },
+        'message_consumer': {
+            'handlers': ['console'],
+            'level': env.get('SFM_UI_LOG', 'INFO'),
+            'propagate': True,
+        },
     },
 }
 RABBITMQ_HOST = "mq"

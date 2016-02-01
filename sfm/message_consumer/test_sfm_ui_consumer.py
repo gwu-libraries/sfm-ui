@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed
+from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed, Warc, Export
 import json
 from message_consumer.sfm_ui_consumer import SfmUiConsumer
 import iso8601
@@ -22,12 +22,13 @@ class ConsumerTest(TestCase):
         historical_seed_set = seed_set.history.all()[0]
         historical_credential = historical_seed_set.credential.history.all()[0]
 
-        Harvest.objects.create(harvest_id="test:1",
+        self.harvest = Harvest.objects.create(harvest_id="test:1",
                                historical_seed_set=historical_seed_set,
                                historical_credential=historical_credential)
+        Export.objects.create(export_id="test:2", user=user, export_type="test_type")
         self.consumer = SfmUiConsumer()
 
-    def test_on_message(self):
+    def test_harvest_status_on_message(self):
         self.consumer.routing_key = "harvest.status.test.test_search"
         self.consumer.message = {
             "id": "test:1",
@@ -94,3 +95,57 @@ class ConsumerTest(TestCase):
         }
         # Trigger on_message and nothing happens
         self.consumer.on_message()
+
+    def test_warc_created_on_message(self):
+        self.consumer.routing_key = "warc_created"
+        self.consumer.message = {
+            "warc": {
+                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection/2015/07/28/11/" +
+                        "test_collection-flickr-2015-07-28T11:17:36Z.warc.gz",
+                "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
+                "bytes": 26146,
+                "id": "test_collection-flickr-2015-07-28T11:17:36Z",
+                "date_created": "2015-07-28T11:17:36.640178"
+            },
+            "collection": {
+                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection",
+                "id": "test_collection"
+            },
+            "harvest": {
+                "id": "test:1",
+            }
+        }
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check created Warc model object
+        warc = Warc.objects.get(warc_id="test_collection-flickr-2015-07-28T11:17:36Z")
+        self.assertEqual(self.consumer.message["warc"]["path"], warc.path)
+        self.assertEqual(self.consumer.message["warc"]["sha1"], warc.sha1)
+        self.assertEqual(self.consumer.message["warc"]["bytes"], warc.bytes)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:36.640178"), warc.date_created)
+        self.assertEqual(self.harvest, warc.harvest)
+
+    def test_export_status_on_message(self):
+        self.consumer.routing_key = "export.status.test"
+        self.consumer.message = {
+            "id": "test:2",
+            "status": "completed success",
+            "date_started": "2015-07-28T11:17:36.640044",
+            "date_ended": "2015-07-28T11:17:42.539470",
+            "infos": [{"code": "test_code_1", "message": "congratulations"}],
+            "warnings": [{"code": "test_code_2", "message": "be careful"}],
+            "errors": [{"code": "test_code_3", "message": "oops"}]
+        }
+
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check updated harvest model object
+        export = Export.objects.get(export_id="test:2")
+        self.assertEqual("completed success", export.status)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:36.640044"), export.date_started)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:42.539470"), export.date_ended)
+        self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], export.infos)
+        self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], export.warnings)
+        self.assertListEqual([{"code": "test_code_3", "message": "oops"}], export.errors)
