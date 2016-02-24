@@ -2,7 +2,7 @@ FROM ubuntu@sha256:0844055d30c0cad5ac58097597a94640b0102f47d6fa972c94b7c129d87a4
 #Ubuntu 14.04
 MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
-ENV sfm_ui_version 0.3.1
+ENV sfm_ui_version 0.4.0
 #This pre-fetches the most recent requirements.apt.
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/${sfm_ui_version}/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
