@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    Create SeedSet
+    Add SeedSet
 {% endblock %}
 
 {% block content %}
-<h1><a href={% url "seedset_list" %}>SeedSet</a></h1>
-<h2>Create SeedSet</h2>
-
-<form action="" method="post">{% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="Create" />
-</form>
-<a href={% url "seedset_list" %}>Cancel</a>
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
+      <li class="active">Add Seedset</li>
+    </ol>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+        <h2>Add Seedset</h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+      {% crispy form %}
+  </div>
+</div>
 {% endblock %}

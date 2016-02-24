@@ -44,17 +44,14 @@
             {% for seedset in seedset_list %}
                 <tr>
                     <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>
-                    <td>{{ seedset.harvest_type }}</td>
+                    <td>{{ seedset.get_harvest_type_display }}</td>
                     <td>{{ seedset.num_seeds }} seed{{ seedset.num_seeds|pluralize }}</td>
                     <!-- <td>date of most recent harvest among seedsets</td> -->
                     <td>{{ seedset.is_active|yesno:"Yes,No" }}</td>
                 </tr>
             {% endfor %}
             </table>
-            <form action="{% url "seedset_create" %}" method="get">
-                {{ form }}
-                <input type="submit" class="btn btn-primary" value="Add Seedset">
-            </form>
+	    <a class="btn btn-primary" value="Add Seedset" href="{% url "seedset_create" collection.id %}">Add Seedset</a>
         </div>
     </div>
 </div>

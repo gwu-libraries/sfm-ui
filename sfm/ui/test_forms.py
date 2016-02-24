@@ -1,9 +1,10 @@
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
+from django.utils import timezone
 
-from .forms import CollectionForm
+from .forms import CollectionForm, SeedSetForm
 from .views import CollectionCreateView, CollectionUpdateView
-from .models import User, Collection
+from .models import User, Collection, SeedSet, Credential
 
 
 def create_group(name):
@@ -15,7 +16,8 @@ class CollectionFormTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.user = User.objects.create_user(username='testuser',
-                        email='testuser@example.com', password='password')
+                                             email='testuser@example.com',
+                                             password='password')
         group = create_group(name='testgroup1')
         self.user.groups.add(group)
         create_group(name='testgroup2')
@@ -65,7 +67,8 @@ class CollectionUpdateFormTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.user = User.objects.create_user(username='testuser',
-                        email='testuser@example.com', password='password')
+                                             email='testuser@example.com',
+                                             password='password')
         group = create_group(name='testgroup1')
         self.user.groups.add(group)
         self.collection = Collection.objects.create(name='Test Collection One',

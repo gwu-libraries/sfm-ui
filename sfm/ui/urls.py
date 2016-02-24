@@ -25,7 +25,7 @@ urlpatterns = patterns('',
                            views.CollectionListView.as_view(),
                            name="collection_list"),
 
-                       url(r'^seedsets/create/$',
+                       url(r'^seedsets/create/(?P<collection_pk>\d+)$',
                            views.SeedSetCreateView.as_view(),
                            name="seedset_create"),
 
