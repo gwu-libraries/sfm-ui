@@ -59,18 +59,18 @@ class Collection(a.ModelAdmin):
 class SeedSet(a.ModelAdmin):
     fields = ('collection', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
-              'max_count', 'stats', 'date_added', 'start_date', 'end_date')
+              'stats', 'date_added', 'start_date', 'end_date')
     list_display = ['collection', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'harvest_options',
-                    'max_count', 'stats', 'date_added', 'start_date',
+                    'stats', 'date_added', 'start_date',
                     'end_date']
     list_filter = ['collection', 'credential', 'harvest_type', 'name',
                    'description', 'is_active', 'harvest_options',
-                   'max_count', 'stats', 'date_added', 'start_date',
+                   'stats', 'date_added', 'start_date',
                    'end_date']
     search_fields = ['collection', 'credential', 'harvest_type', 'name',
                      'description', 'is_active',
-                     'harvest_options', 'max_count', 'stats', 'date_added',
+                     'harvest_options', 'stats', 'date_added',
                      'start_date', 'end_date']
 
 

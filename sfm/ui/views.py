@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
 
-from .forms import CollectionForm, AddSeedsetButtonForm, SeedSetForm, SeedForm, CredentialForm
+from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .models import Collection, SeedSet, Seed, Credential
 from .sched import next_run_time
 import logging
@@ -32,12 +32,11 @@ class CollectionListView(LoginRequiredMixin, ListView):
 class CollectionDetailView(LoginRequiredMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
- 
+
     def get_context_data(self, **kwargs):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
-        context['form'] = AddSeedsetButtonForm(initial={'collection':self.object.pk})
         return context
 
 
@@ -63,7 +62,7 @@ class CollectionUpdateView(LoginRequiredMixin, UpdateView):
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
         return context
-     
+
     def get_form_kwargs(self):
         kwargs = super(CollectionUpdateView, self).get_form_kwargs()
         kwargs['request'] = self.request
@@ -100,18 +99,30 @@ class SeedSetDetailView(DetailView):
         return context
 
 
-class SeedSetCreateView(CreateView):
+class SeedSetCreateView(LoginRequiredMixin, CreateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
 
+    def get_initial(self):
+        # Get the initial dictionary from the superclass method
+        initial = super(SeedSetCreateView, self).get_initial()
+        initial["collection"] = Collection.objects.get(
+           pk=self.kwargs["collection_pk"])
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(SeedSetCreateView, self).get_context_data(**kwargs)
+        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(SeedSetCreateView, self).get_form_kwargs()
-        kwargs['coll'] = self.request.GET.get('collection', None)
+        kwargs["coll"] = self.kwargs["collection_pk"]
         return kwargs
 
     def get_success_url(self):
-        return reverse('collection_detail', args=(self.object.collection.pk,))
+        return reverse('seedset_detail', args=(self.object.pk,))
 
 
 class SeedSetUpdateView(UpdateView):

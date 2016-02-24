@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
+from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
@@ -44,39 +46,74 @@ class CollectionForm(forms.ModelForm):
         )
 
 
-class AddSeedsetButtonForm(forms.Form):
-
-    collection = forms.ModelChoiceField(queryset=Collection.objects.all(), widget=forms.HiddenInput)
-
-
 class SeedSetForm(forms.ModelForm):
 
-    start_date = forms.DateTimeField(required=False)
-    end_date = forms.DateTimeField(required=False)
- 
     class Meta:
         model = SeedSet
-        fields = '__all__'
+        fields = ['name', 'harvest_type', 'description', 'collection',
+                  'is_active', 'schedule_minutes', 'credential',
+                  'harvest_options', 'date_added', 'start_date', 'end_date']
         exclude = []
-        widgets = {'collection': forms.HiddenInput}
+        widgets = {'collection': forms.HiddenInput,
+                   'date_added': forms.HiddenInput,
+                   'is_active': forms.HiddenInput}
         localized_fields = None
         labels = {}
         help_texts = {}
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        coll = kwargs.pop('coll')
+        self.coll = kwargs.pop("coll", None)
         super(SeedSetForm, self).__init__(*args, **kwargs)
-        self.fields['collection'].initial = coll
+        cancel_url = reverse('collection_detail', args=[self.coll])
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'description',
+                'harvest_type',
+                'harvest_options',
+                'schedule_minutes',
+                'start_date',
+                'end_date',
+                'credential',
+                'is_active',
+                'collection',
+                'date_added',
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel',
+                       onclick="window.location.href='{0}'".format(cancel_url))
+            )
+        )
 
-    def is_valid(self):
-        return super(SeedSetForm, self).is_valid()
+    def clean_start_date(self):
+        data = self.cleaned_data.get('start_date', None)
+        if data:
+            if data < timezone.now():
+                raise forms.ValidationError(
+                      'Start date must be later than current date and time.')
+            return data
 
-    def full_clean(self):
-        return super(SeedSetForm, self).full_clean()
+    def clean_end_date(self):
+        data = self.cleaned_data.get('end_date', None)
+        if data:
+            if data < timezone.now():
+                raise forms.ValidationError(
+                      'End date must be later than current date and time.')
+            return data
 
-    def save(self, commit=True):
-        return super(SeedSetForm, self).save(commit)
+    def clean(self):
+        cleaned_data = super(SeedSetForm, self).clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if start_date and end_date:
+            if end_date < start_date:
+                raise forms.ValidationError(
+                      'End date must be later than start date.')
 
 
 class SeedForm(forms.ModelForm):
