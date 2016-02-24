@@ -4,8 +4,7 @@ MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 
 #This pre-fetches the most recent requirements.apt.
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.apt /opt/sfm-setup/
-RUN apt-get update && apt-get install -y \
-    git=1:1.9.1-1ubuntu0.2
+RUN apt-get update
 RUN cat /opt/sfm-setup/requirements.apt | tr "\n" " " | xargs apt-get install -y
 RUN pip install pip==7.1.2
 #This pre-fetches the most recent requirements.txt.

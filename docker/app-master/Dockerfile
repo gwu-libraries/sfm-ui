@@ -5,8 +5,7 @@ MAINTAINER Rajat Vij <rajatvij@email.gwu.edu>
 #This pre-fetches the most recent requirements.apt.
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
-    zip=3.0-8 \
-    git=1:1.9.1-1ubuntu0.2
+    zip=3.0-8
 RUN cat /tmp/requirements.apt | tr "\n" " " | xargs apt-get install -y
 #Upgrade pip
 RUN pip install pip==7.1.2
