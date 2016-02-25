@@ -72,7 +72,6 @@ class CollectionUpdateFormTest(TestCase):
         group = create_group(name='testgroup1')
         self.user.groups.add(group)
         self.collection = Collection.objects.create(name='Test Collection One',
-                                                    is_active=True,
                                                     group=group)
         self.path = '/ui/collections/' + str(self.collection.pk) + '/update/'
 

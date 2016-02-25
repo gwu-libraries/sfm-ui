@@ -35,13 +35,15 @@ def unschedule_harvest(seedset_id):
         sched.remove_job(job_id)
 
 
-def schedule_harvest(seedset_id, schedule_minutes, start_date=None, end_date=None):
+def schedule_harvest(seedset_id, is_active, schedule_minutes, start_date=None, end_date=None):
     assert schedule_minutes
 
     unschedule_harvest(seedset_id)
-    name = "Harvest ({}) for seedset {}".format(schedule_minutes, seedset_id)
-    log.debug("Scheduling job %s", name)
-    sched.add_job(seedset_harvest,
+    log.debug("Seedset %s is active = %s", seedset_id, is_active)
+    if is_active:
+        name = "Harvest ({}) for seedset {}".format(schedule_minutes, seedset_id)
+        log.debug("Scheduling job %s", name)
+        sched.add_job(seedset_harvest,
                   args=[seedset_id],
                   id=str(seedset_id),
                   name=name,
@@ -55,8 +57,7 @@ def schedule_harvest_receiver(sender, **kwargs):
     assert kwargs["instance"]
     seedset = kwargs["instance"]
 
-    schedule_harvest(seedset.id,
-                     seedset.schedule_minutes,
+    schedule_harvest(seedset.id, seedset.is_active, seedset.schedule_minutes,
                      start_date=seedset.start_date or datetime.datetime.now() + datetime.timedelta(seconds=15),
                      end_date=seedset.end_date or None)
 

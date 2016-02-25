@@ -23,13 +23,15 @@ class ScheduleTests(TestCase):
         post_save.connect(schedule_harvest_receiver, sender=SeedSet)
         pre_delete.connect(unschedule_harvest_receiver, sender=SeedSet)
 
+    # Modify Seedset
     @patch("ui.sched.sched", autospec=True)
-    def test_add_update_delete_seedset(self, mock_scheduler):
+    def test_modify_seedset(self, mock_scheduler):
 
         # Add seedset
-        mock_scheduler.get_job.side_effect = [None, True, True]
+        mock_scheduler.get_job.side_effect = [None, True, True, True]
         seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
-                                         harvest_type="test_type", name="test_seedset", schedule_minutes=60)
+                                         harvest_type="test_type", name="test_seedset", is_active=True,
+                                         schedule_minutes=60)
         seedset_id = seedset.id
 
         mock_scheduler.get_job.assert_called_once_with(str(seedset.id))
@@ -61,6 +63,55 @@ class ScheduleTests(TestCase):
                                                        start_date=start_date,
                                                        end_date=end_date,
                                                        minutes=60*24)
+
+    # Modify Inactive Seedset
+    @patch("ui.sched.sched", autospec=True)
+    def test_modify_inactive_seedset(self, mock_scheduler):
+
+        # Add seedset
+        mock_scheduler.get_job.side_effect = [None, True, True, True]
+        seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
+                                         harvest_type="test_type", name="test_seedset", is_active=True,
+                                         schedule_minutes=60)
+        seedset_id = seedset.id
+        mock_scheduler.get_job.assert_called_once_with(str(seedset.id))
+        mock_scheduler.remove_job.assert_not_called()
+        mock_scheduler.add_job.assert_called_once_with(seedset_harvest,
+                                                       args=[seedset_id],
+                                                       id=str(seedset_id),
+                                                       name=ANY,
+                                                       trigger="interval",
+                                                       start_date=ANY,
+                                                       end_date=None,
+                                                       minutes=60)
+
+        # Modify seedset - inactive seedset
+        seedset.is_active = False
+        mock_scheduler.reset_mock()
+        seedset.save()
+        mock_scheduler.get_job.assert_called_once_with(str(seedset.id))
+        mock_scheduler.remove_job.assert_called_once_with(str(seedset_id))
+
+    # Delete seedset
+    @patch("ui.sched.sched", autospec=True)
+    def test_delete_seedset(self, mock_scheduler):
+
+        # Add seedset
+        mock_scheduler.get_job.side_effect = [None, True, True, True]
+        seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
+                                         harvest_type="test_type", name="test_seedset", is_active=True,
+                                         schedule_minutes=60)
+        seedset_id = seedset.id
+        mock_scheduler.get_job.assert_called_once_with(str(seedset.id))
+        mock_scheduler.remove_job.assert_not_called()
+        mock_scheduler.add_job.assert_called_once_with(seedset_harvest,
+                                                       args=[seedset_id],
+                                                       id=str(seedset_id),
+                                                       name=ANY,
+                                                       trigger="interval",
+                                                       start_date=ANY,
+                                                       end_date=None,
+                                                       minutes=60)
 
         # Delete seedset
         mock_scheduler.reset_mock()

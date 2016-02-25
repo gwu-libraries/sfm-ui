@@ -50,20 +50,33 @@ def seedset_harvest(seedset_id):
         return
 
     for seed in seeds:
+
         seed_map = {}
-        if seed.token:
-            seed_map["token"] = seed.token
-        if seed.uid:
-            seed_map["uid"] = seed.uid
-        message["seeds"].append(seed_map)
+        if seed.is_active:
+            if seed.token:
+                seed_map["token"] = seed.token
+            if seed.uid:
+                seed_map["uid"] = seed.uid
+            message["seeds"].append(seed_map)
+        else:
+            log.debug("Seed %s is ignored from the harvest as it is inactive",
+                      seed)
 
-    routing_key = "harvest.start.{}.{}".format(credentials.platform, harvest_type)
 
-    log.debug("Sending %s message to %s with id %s", harvest_type, routing_key, harvest_id)
+    # Include conditions to check Is Active Flag here.
+    # We can include a simple if condition here to check active collections.
+    if seedset.is_active:
 
-    # Publish message to queue via rabbit worker
-    RabbitWorker().send_message(message, routing_key)
+        routing_key = "harvest.start.{}.{}".format(credentials.platform, harvest_type)
 
-    # Record harvest model instance
-    Harvest.objects.create(seed_set=seedset,
-                           harvest_id=harvest_id)
+        log.debug("Sending %s message to %s with id %s", harvest_type, routing_key, harvest_id)
+
+        # Publish message to queue via rabbit worker
+        RabbitWorker().send_message(message, routing_key)
+
+        # Record harvest model instance
+        Harvest.objects.create(seed_set=seedset,
+                       harvest_id=harvest_id)
+    else:
+        log.debug("Ignoring Harvest for seedset as seedset %s is inactive",
+                  seedset_id)

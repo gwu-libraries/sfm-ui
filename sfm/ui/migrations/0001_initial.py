@@ -49,7 +49,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255, verbose_name=b'Collection name')),
                 ('description', models.TextField(blank=True)),
-                ('is_active', models.BooleanField(default=True)),
                 ('is_visible', models.BooleanField(default=True)),
                 ('stats', models.TextField(blank=True)),
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),

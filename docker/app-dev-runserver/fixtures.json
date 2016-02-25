@@ -21,7 +21,6 @@
       "stats": "",
       "name": "testcollection",
       "date_updated": "2015-12-01T19:10:46Z",
-      "is_active": true,
       "date_added": "2015-12-01T19:10:28Z",
       "group": 1,
       "description": "This is a test collection."
@@ -35,8 +34,7 @@
       "stats": "", 
       "name": "Test Collection 2", 
       "date_updated": "2015-12-30T13:18:40.392Z", 
-      "is_active": true, 
-      "date_added": "2015-12-29T20:24:47Z", 
+      "date_added": "2015-12-29T20:24:47Z",
       "group": 2, 
       "description": "This collection is for testing purposes."
     }, 
