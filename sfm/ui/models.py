@@ -20,6 +20,9 @@ class Credential(models.Model):
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return '<Credential %s "%s">' % (self.platform, self.token)
+
 
 @python_2_unicode_compatible
 class Collection(models.Model):

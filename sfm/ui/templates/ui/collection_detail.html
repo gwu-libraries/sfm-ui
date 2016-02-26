@@ -40,7 +40,7 @@
                   <!-- <th>Last harvested</th> -->
                   <th>Active</th>
                 </tr>
-              </thead>    
+              </thead>
             {% for seedset in seedset_list %}
                 <tr>
                     <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>

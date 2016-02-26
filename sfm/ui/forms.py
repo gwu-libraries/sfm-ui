@@ -5,8 +5,10 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
-
+import logging
 from .models import Collection, SeedSet, Seed, Credential
+
+log = logging.getLogger(__name__)
 
 
 class CollectionForm(forms.ModelForm):
@@ -143,11 +145,16 @@ class SeedForm(forms.ModelForm):
 
 class CredentialForm(forms.ModelForm):
 
+    key = forms.CharField()
+    secret = forms.CharField()
+    #token = {"key": key, "secret": secret}
+    #token = forms.CharField()
+
     class Meta:
         model = Credential
         fields = '__all__'
         exclude = []
-        widgets = None
+        widgets = {'token': forms.HiddenInput()}
         localized_fields = None
         labels = {}
         help_texts = {}
@@ -163,4 +170,7 @@ class CredentialForm(forms.ModelForm):
         return super(CredentialForm, self).full_clean()
 
     def save(self, commit=True):
-        return super(CredentialForm, self).save(commit)
+        m = super(CredentialForm, self).save(commit=False)
+        m.token = {"key": self.cleaned_data["key"], "secret": self.cleaned_data["secret"]}
+        m.save()
+        return m

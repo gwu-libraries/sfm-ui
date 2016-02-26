@@ -73,6 +73,14 @@ urlpatterns = patterns('',
                            views.CredentialCreateView.as_view(),
                            name="credential_create"),
 
+                       url(r'^credentials/(?P<pk>\d+)/delete/$',
+                           views.CredentialDeleteView.as_view(),
+                           name="credential_delete"),
+
+                       url(r'^credentials/(?P<pk>\d+)/update/$',
+                           views.CredentialUpdateView.as_view(),
+                           name="credential_update"),
+
                        url(r'^credentials/$',
                            views.CredentialListView.as_view(),
                            name="credential_list"),

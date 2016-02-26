@@ -184,10 +184,27 @@ class CredentialCreateView(LoginRequiredMixin, CreateView):
     model = Credential
     form_class = CredentialForm
     template_name = 'ui/credential_create.html'
-    success_url = reverse_lazy('credential_detail')
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
 
 
 class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
     allow_empty = True
+
+
+class CredentialUpdateView(UpdateView):
+    model = Credential
+    form_class = CredentialForm
+    template_name = 'ui/credential_update.html'
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialDeleteView(DeleteView):
+    model = Credential
+    form_class = CredentialForm
+    success_url = reverse_lazy('credential_list')
