@@ -5,10 +5,7 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
-import logging
 from .models import Collection, SeedSet, Seed, Credential
-
-log = logging.getLogger(__name__)
 
 
 class CollectionForm(forms.ModelForm):

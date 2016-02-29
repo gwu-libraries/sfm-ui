@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
-from django.http import HttpResponse
+
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .forms import CredentialFlickrForm, CredentialTwitterForm
 from .models import Collection, SeedSet, Seed, Credential
