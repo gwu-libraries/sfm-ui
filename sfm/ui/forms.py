@@ -143,18 +143,92 @@ class SeedForm(forms.ModelForm):
         return super(SeedForm, self).save(commit)
 
 
-class CredentialForm(forms.ModelForm):
+class CredentialFlickrForm(forms.ModelForm):
 
     key = forms.CharField()
     secret = forms.CharField()
-    #token = {"key": key, "secret": secret}
-    #token = forms.CharField()
+    platform = forms.CharField(widget = forms.HiddenInput(), initial='flickr')
 
     class Meta:
         model = Credential
         fields = '__all__'
-        exclude = []
-        widgets = {'token': forms.HiddenInput()}
+        exclude = ['user', 'is_active']
+        widgets = {
+            'token': forms.HiddenInput(),
+            'date_added': forms.HiddenInput()
+        }
+        localized_fields = None
+        labels = {}
+        help_texts = {}
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        return super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+
+    def is_valid(self):
+        return super(CredentialFlickrForm, self).is_valid()
+
+    def full_clean(self):
+        return super(CredentialFlickrForm, self).full_clean()
+
+    def save(self, commit=True):
+        m = super(CredentialFlickrForm, self).save(commit=False)
+        m.token = {
+            "key": self.cleaned_data["key"],
+            "secret": self.cleaned_data["secret"]
+        }
+        m.save()
+        return m
+
+
+class CredentialTwitterForm(forms.ModelForm):
+
+    consumer_key = forms.CharField()
+    consumer_secret = forms.CharField()
+    access_token = forms.CharField()
+    access_token_secret = forms.CharField()
+    platform = forms.CharField(widget = forms.HiddenInput(), initial='twitter')
+
+    class Meta:
+        model = Credential
+        fields = '__all__'
+        exclude = ['user', 'is_active']
+        widgets = {
+            'token': forms.HiddenInput(),
+            'date_added': forms.HiddenInput()
+        }
+        localized_fields = None
+        labels = {}
+        help_texts = {}
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        return super(CredentialTwitterForm, self).__init__(*args, **kwargs)
+
+    def is_valid(self):
+        return super(CredentialTwitterForm, self).is_valid()
+
+    def full_clean(self):
+        return super(CredentialTwitterForm, self).full_clean()
+
+    def save(self, commit=True):
+        m = super(CredentialTwitterForm, self).save(commit=False)
+        m.token = {
+            "consumer_key": self.cleaned_data["consumer_key"],
+            "consumer_secret": self.cleaned_data["consumer_secret"],
+            "access_token": self.cleaned_data["access_token"],
+            "access_token_secret": self.cleaned_data["access_token_secret"],
+        }
+        m.save()
+        return m
+
+class CredentialForm(forms.ModelForm):
+
+    class Meta:
+        model = Credential
+        fields = '__all__'
+        exclude = ['user']
+        widgets = {'date_added': forms.HiddenInput()}
         localized_fields = None
         labels = {}
         help_texts = {}
@@ -170,7 +244,4 @@ class CredentialForm(forms.ModelForm):
         return super(CredentialForm, self).full_clean()
 
     def save(self, commit=True):
-        m = super(CredentialForm, self).save(commit=False)
-        m.token = {"key": self.cleaned_data["key"], "secret": self.cleaned_data["secret"]}
-        m.save()
-        return m
+        return super(CredentialForm, self).save(commit)

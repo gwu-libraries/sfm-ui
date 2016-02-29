@@ -12,10 +12,14 @@ class User(AbstractUser):
 
 
 class Credential(models.Model):
-
+    PLATFORM_CHOICES = [
+        ('twitter', 'twitter'),
+        ('flickr', 'flickr'),
+        ('weibo', 'weibo'),
+        ('tumblr', 'tumblr')
+    ]
     user = models.ForeignKey(User, related_name='credentials')
-    platform = models.CharField(max_length=255, blank=True,
-                                help_text='Platform name')
+    platform = models.CharField(max_length=255, choices=PLATFORM_CHOICES)
     token = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)

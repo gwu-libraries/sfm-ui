@@ -4,8 +4,9 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
-
+from django.http import HttpResponse
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
+from .forms import CredentialFlickrForm, CredentialTwitterForm
 from .models import Collection, SeedSet, Seed, Credential
 from .sched import next_run_time
 import logging
@@ -180,10 +181,27 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ui/credential_detail.html'
 
 
-class CredentialCreateView(LoginRequiredMixin, CreateView):
+class CredentialTwitterCreateView(LoginRequiredMixin, CreateView):
     model = Credential
-    form_class = CredentialForm
+    form_class = CredentialTwitterForm
     template_name = 'ui/credential_create.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CredentialTwitterCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
+    model = Credential
+    form_class = CredentialFlickrForm
+    template_name = 'ui/credential_create.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CredentialFlickrCreateView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
