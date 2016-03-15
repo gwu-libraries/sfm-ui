@@ -46,13 +46,13 @@ class Credential(a.ModelAdmin):
 
 
 class Collection(a.ModelAdmin):
-    fields = ('group', 'name', 'description', 'is_active', 'is_visible',
+    fields = ('group', 'name', 'description', 'is_visible',
               'stats', 'date_added')
-    list_display = ['group', 'name', 'description', 'is_active', 'is_visible',
+    list_display = ['group', 'name', 'description', 'is_visible',
                     'stats', 'date_added', 'date_updated']
-    list_filter = ['group', 'name', 'description', 'is_active', 'is_visible',
+    list_filter = ['group', 'name', 'description', 'is_visible',
                    'stats', 'date_added', 'date_updated']
-    search_fields = ['group', 'name', 'description', 'is_active',
+    search_fields = ['group', 'name', 'description',
                      'is_visible', 'stats', 'date_added', 'date_updated']
 
 

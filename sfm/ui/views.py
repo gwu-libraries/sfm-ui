@@ -25,7 +25,7 @@ class CollectionListView(LoginRequiredMixin, ListView):
         context['collection_list'] = Collection.objects.filter(
             group__in=self.request.user.groups.all()).annotate(
             num_seedsets=Count('seed_sets')).order_by(
-            '-is_active', 'date_updated')
+            'date_updated')
         return context
 
 

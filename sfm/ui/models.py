@@ -28,7 +28,6 @@ class Collection(models.Model):
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection name')
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
     is_visible = models.BooleanField(default=True)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
