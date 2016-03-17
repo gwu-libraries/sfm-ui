@@ -25,6 +25,10 @@
     <p><strong>Created:</strong> {{collection.date_added }}</p>
     <!--  add later <p>Last harvested</p> -->
     <p><strong>Group:</strong> {{collection.group }}</p>
+    <p>Changes:
+        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
+    </p>
+
     </div>
 </div>
 <div class="row">

@@ -14,12 +14,17 @@ class ConsumerTest(TestCase):
         collection = Collection.objects.create(group=group, name="test_collection")
         credential = Credential.objects.create(user=user, platform="test_platform",
                                                token=json.dumps({}))
-        seedset = SeedSet.objects.create(collection=collection, credential=credential,
-                                         harvest_type="test_type", name="test_seedset",
-                                         harvest_options=json.dumps({}))
-        Seed.objects.create(seed_set=seedset, uid="131866249@N02")
-        Seed.objects.create(seed_set=seedset, token="library_of_congress")
-        Harvest.objects.create(harvest_id="test:1", seed_set=seedset)
+        seed_set = SeedSet.objects.create(collection=collection, credential=credential,
+                                          harvest_type="test_type", name="test_seedset",
+                                          harvest_options=json.dumps({}))
+        Seed.objects.create(seed_set=seed_set, uid="131866249@N02")
+        Seed.objects.create(seed_set=seed_set, token="library_of_congress")
+        historical_seed_set = seed_set.history.all()[0]
+        historical_credential = historical_seed_set.credential.history.all()[0]
+
+        Harvest.objects.create(harvest_id="test:1",
+                               historical_seed_set=historical_seed_set,
+                               historical_credential=historical_credential)
         self.consumer = SfmUiConsumer()
 
     def test_on_message(self):
@@ -71,8 +76,10 @@ class ConsumerTest(TestCase):
         # Check updated seeds
         seed1 = Seed.objects.get(uid="131866249@N02")
         self.assertEqual("j.littman", seed1.token)
+        self.assertTrue(seed1.history_note.startswith("Changed token"))
         seed2 = Seed.objects.get(token="library_of_congress")
         self.assertEqual("671366249@N03", seed2.uid)
+        self.assertTrue(seed2.history_note.startswith("Changed uid"))
 
     def test_on_message_ignores_bad_routing_key(self):
         self.consumer.routing_key = "xharvest.status.test.test_search"

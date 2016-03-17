@@ -8,18 +8,28 @@ from crispy_forms.bootstrap import FormActions
 
 from .models import Collection, SeedSet, Seed, Credential
 
+HISTORY_NOTE_LABEL = "Change Note"
+HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
+HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
+
 
 class CollectionForm(forms.ModelForm):
     group = forms.ModelChoiceField(queryset=None)
 
     class Meta:
         model = Collection
-        fields = ['name', 'description', 'group']
+        fields = ['name', 'description', 'group', 'history_note']
         exclude = []
-        widgets = None
+        widgets = {
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -37,7 +47,8 @@ class CollectionForm(forms.ModelForm):
                 '',
                 'name',
                 'description',
-                'group'
+                'group',
+                'history_note'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -52,14 +63,19 @@ class SeedSetForm(forms.ModelForm):
         model = SeedSet
         fields = ['name', 'harvest_type', 'description', 'collection',
                   'is_active', 'schedule_minutes', 'credential',
-                  'harvest_options', 'date_added', 'start_date', 'end_date']
+                  'harvest_options', 'date_added', 'start_date', 'end_date', 'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
-                   'is_active': forms.HiddenInput}
+                   'is_active': forms.HiddenInput,
+                   'history_note': HISTORY_NOTE_WIDGET}
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -81,6 +97,7 @@ class SeedSetForm(forms.ModelForm):
                 'is_active',
                 'collection',
                 'date_added',
+                'history_note'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -122,10 +139,16 @@ class SeedForm(forms.ModelForm):
         model = Seed
         fields = '__all__'
         exclude = []
-        widgets = None
+        widgets = {
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -147,10 +170,16 @@ class CredentialForm(forms.ModelForm):
         model = Credential
         fields = '__all__'
         exclude = []
-        widgets = None
+        widgets = {
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):

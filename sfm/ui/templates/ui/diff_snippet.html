@@ -1,0 +1,12 @@
+<ul>
+    {% for diff in diffs %}
+        <li>Updated on {{ diff.date }} by {{ diff.user }}.{% if diff.note %} Note is "{{ diff.note }}".{% endif %}</li>
+        <ul>
+            {% for key, values in diff.fields.iteritems %}
+                <li>{{ key }}: "{{ values.0|default_if_none:"" }}" changed to "{{ values.1 }}"</li>
+            {% endfor %}
+        </ul>
+    {% empty %}
+    <li>No changes yet.</li>
+    {% endfor %}
+</ul>

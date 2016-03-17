@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'crispy_forms',                 # for django crispy forms
     'apscheduler',                  # Scheduler
     'message_consumer',             # Message Consumer
+    'simple_history',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -59,6 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 ROOT_URLCONF = 'sfm.urls'
