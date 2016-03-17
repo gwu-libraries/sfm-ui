@@ -29,7 +29,7 @@ urlpatterns = patterns('',
                            views.SeedSetCreateView.as_view(),
                            name="seedset_create"),
 
-                       url(r'^seedsets/(?P<pk>\d+)/update/$',
+                       url(r'^seedsets/(?P<pk>\d+)/update/(?P<collection_pk>\d+)$',
                            views.SeedSetUpdateView.as_view(),
                            name="seedset_update"),
 
@@ -41,11 +41,7 @@ urlpatterns = patterns('',
                            views.SeedSetDetailView.as_view(),
                            name="seedset_detail"),
 
-                       url(r'^seedsets/$',
-                           views.SeedSetListView.as_view(),
-                           name="seedset_list"),
-
-                       url(r'^seeds/create/$',
+                       url(r'^seeds/create/(?P<seedset_pk>\d+)$',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
 

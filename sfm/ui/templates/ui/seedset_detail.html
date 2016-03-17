@@ -5,32 +5,64 @@
 {% endblock %}
 
 {% block content %}
-    <h1><a href={% url "seedset_list" %}>SeedSet</a></h1>
-    <h2>{{ seedset }} | <a href={% url "seedset_update" seedset.pk %}>Update</a> | 
-    <form style="display:inline;" action={% url "seedset_delete" seedset.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seedset }}?')">{% csrf_token %}
-    <input type="submit" value="Delete" />
-    <div>
-        <li>Collection : {{ seedset.collection }}</li>
-        <li>Credential : {{ seedset.credential }}</li>
-        <li>Platform : {{ seedset.platform }}</li>
-        <li>Name : {{ seedset.name }}</li>
-        <li>Description : {{ seedset.description }}</li>
-        <li>Schedule : {{ seedset.schedule_minutes }}</li>
-        <li>Crawl Options : {{ seedset.crawl_options }}</li>
-        <li>Max Count : {{ seedset.max_count }}</li>
-        <li>date_updated : {{ seed.date_updated }}</li>
-        <li>date_added : {{ seed.date_added }}</li>
-        <li>State date : {{ seedset.date_started }}</li>
-        <li>End date : {{ seedset.start_date }}</li>
-        <li>date_ended : {{ seedset.end_date }}</li>
-        <li>is_active : {{ seedset.is_active }}</li>
-        <li>stats : {{ seedset.stats }}</li>
-        <li>next run time : {{ next_run_time }}</li>
-        <li>Harvests : {{ harvests }}</li>
-        <li>Diffs :
-        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
-        </li>
+<div class="row">
+  <div class="col-md-12">
+      <ol class="breadcrumb">
+          <li><a href={% url "collection_list" %}>My Collections</a></li>
+	  <li><a href={% url "collection_detail" seedset.collection.pk %}>{{ seedset.collection.name }}</a></li>
+	  <li class="active">{{ seedset.name }}</a></li>
+      </ol>
+  </div>
+</div>
+<div class="row">
+   <div class="col-md-12">
+     <div class="page-header">
+        <h1>{{ seedset.name }} <a class="btn btn-default" href={% url "seedset_update" seedset.pk seedset.collection.pk %}>Edit</a></h1>
+     </div>
+   </div>
+</div>
+<div class="row">
+   <div class="col-md-12">
+        <p><strong>Harvest type:</strong> {{ seedset.harvest_type }}</p>
+        <p><strong>Credential: </strong> {{ seedset.credential.token }}</p>
+	<p><strong>Harvest options: </strong> {{ seedset.harvest_options }}</p>
+	<p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
+        <p><strong>Next harvest</strong> {{ next_run_time }}</p>
+        <p><strong>Start date:</strong> {{ seedset.start_date }}</p>
+        <p><strong>End date: </strong> {{ seedset.end_date }}</p>
+        <p><strong>Created:</strong> {{ seedset.date_added }}</p>
+        <p><strong>Description:</strong> {{seedset.description }}</p>
+        <p><strong>Harvests: </strong> {{ harvests }}</p>
+        <p><strong>Diffs:</strong>
+                {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
+                 </p>         
+   </div>
+</div>
+<div class="row">
+   <div class="panel panel-default">
+      <div class="panel-heading"><h4>Seeds</h4></div>
+         <div class="panel-body">
+            <table class="table">
+               <thead>
+                   <tr>
+  	              <th>Token</th>
+		      <th>uid</th>
+		      <th>Next harvest</th>
+		      <th>Active</th>
+	            </tr>
+                </thead>
+	        {% for seed in seed_list %}
+	           <tr>
+		      <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>   
+		      <td>{{ seed.uid }}</td>
+		      <td></td>
+		      <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+		   </tr> 
+                   {% endfor %} 
+               </table>
+               <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}">Add Seed</a>
+	    </div> 
+	</div>
     </div>
-    </form>
-    </h2>
+</div>  
 {% endblock %}
