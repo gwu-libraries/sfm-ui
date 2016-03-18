@@ -5,15 +5,51 @@
 {% endblock %}
 
 {% block content %}
-<h1><a href={% url "seedset_list" %}>SeedSet</a></h1>
-<h2>Update {{ seedset }}</h2>
-
-<form action="" method="post">{% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="Update" />
-</form>
-<a href={% url "seedset_detail" seedset.pk %}>Cancel</a>
-<form style="display:inline;" action={% url "seedset_delete" seedset.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seedset }}?')">{% csrf_token %}
-    <input type="submit" value="Delete" />
-</form>
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li><a href={% url "collection_detail" seedset.collection.pk %}>{{ seedset.collection.name }}</a></li>
+      <li class="active">{{ seedset.name }}</a></li>
+    </ol>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <h1>{{ seedset.name }}</h1>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {% crispy form %}
+  </div>
+</div>
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-heading"><h4>Seeds</h4></div>
+       <div class="panel-body">
+         <table class="table">
+           <thead>
+             <tr>
+	       <th>Token</th>
+	       <th>uid</th>
+	       <th>Next harvest</th>
+	       <th>Active</th>
+             </tr>
+            </thead>
+          {% for seed in seed_list %}
+	     <tr>
+	       <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+	       <td>{{ seed.uid }}</td>
+	       <td></td>
+	       <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+             </tr>
+          {% endfor %}
+           </table>
+         <button class="btn btn-primary disabled">Add Seed</button>
+       </div>
+    </div>
+</div>
 {% endblock %}

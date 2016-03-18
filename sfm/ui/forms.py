@@ -63,7 +63,8 @@ class SeedSetForm(forms.ModelForm):
         model = SeedSet
         fields = ['name', 'harvest_type', 'description', 'collection',
                   'is_active', 'schedule_minutes', 'credential',
-                  'harvest_options', 'date_added', 'start_date', 'end_date', 'history_note']
+                  'harvest_options', 'date_added', 'start_date', 'end_date',
+                  'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
@@ -87,13 +88,13 @@ class SeedSetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'name',
-                'description',
                 'harvest_type',
+                'credential',
                 'harvest_options',
                 'schedule_minutes',
                 'start_date',
                 'end_date',
-                'credential',
+                'description',
                 'is_active',
                 'collection',
                 'date_added',

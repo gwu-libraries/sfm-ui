@@ -59,7 +59,7 @@ class CollectionUpdateView(LoginRequiredMixin, UpdateView):
     model = Collection
     form_class = CollectionForm
     template_name = 'ui/collection_update.html'
-    initial={'history_note': ''}
+    initial = {'history_note': ''}
 
     def get_context_data(self, **kwargs):
         context = super(CollectionUpdateView, self).get_context_data(**kwargs)
@@ -82,24 +82,15 @@ class CollectionDeleteView(DeleteView):
     success_url = reverse_lazy('collection_list')
 
 
-class SeedSetListView(ListView):
-    model = SeedSet
-    template_name = 'ui/seedset_list.html'
-    paginate_by = 20
-    allow_empty = True
-    paginate_orphans = 0
-
-
-class SeedSetDetailView(DetailView):
+class SeedSetDetailView(LoginRequiredMixin, DetailView):
     model = SeedSet
     template_name = 'ui/seedset_detail.html'
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
         seed_set = kwargs["object"]
         context["next_run_time"] = next_run_time(seed_set.id)
-        context["harvests"] = Harvest.objects.filter(historical_seed_set__id = seed_set.id)
+        context["harvests"] = Harvest.objects.filter(historical_seed_set__id=seed_set.id)
         context["diffs"] = diff_object_history(seed_set)
         return context
 
@@ -110,7 +101,6 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ui/seedset_create.html'
 
     def get_initial(self):
-        # Get the initial dictionary from the superclass method
         initial = super(SeedSetCreateView, self).get_initial()
         initial["collection"] = Collection.objects.get(
            pk=self.kwargs["collection_pk"])
@@ -118,7 +108,8 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetCreateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["collection"] = Collection.objects.get(
+                                    pk=self.kwargs["collection_pk"])
         return context
 
     def get_form_kwargs(self):
@@ -130,11 +121,28 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
         return reverse('seedset_detail', args=(self.object.pk,))
 
 
-class SeedSetUpdateView(UpdateView):
+class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     model = SeedSet
     form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
-    initial={'history_note': ''}
+    initial = {'history_note': ''}
+
+    def get_initial(self):
+        initial = super(SeedSetUpdateView, self).get_initial()
+        initial["collection"] = Collection.objects.get(
+                                    pk=self.kwargs["collection_pk"])
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
+        context["collection"] = Collection.objects.get(
+                                    pk=self.kwargs["collection_pk"])
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
+        kwargs["coll"] = self.kwargs["collection_pk"]
+        return kwargs
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
@@ -177,7 +185,7 @@ class SeedUpdateView(UpdateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_update.html'
-    initial={'history_note': ''}
+    initial = {'history_note': ''}
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
