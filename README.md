@@ -38,6 +38,8 @@ Behind the scenes, SFM uses a set of carefully managed processes to harvest and 
 * [sfm-twitter-harvester](https://github.com/gwu-libraries/sfm-twitter-harvester): A harvester for Twitter.
 * [sfm-utils](https://github.com/gwu-libraries/sfm-utils): Utilities to support SFM.
 * [sfm-docker](https://github.com/gwu-libraries/sfm-docker):  Docker configuration for deploying SFM.
+* [sfm-web-harvester](https://github.com/gwu-libraries/sfm-web-harvester):  A harvester for web resources using Heritrix.
+* [sfm-weibo-harvester](https://github.com/gwu-libraries/sfm-weibo-harvester):   A harvester for Sina Weibo. 
 
 ## Getting started
 

@@ -7,29 +7,21 @@
 <div class="row">
     <h1>My Collections</h1>
 </div>
-    {% regroup collection_list by is_active as collections %}
-    {% for is_active in collections %}
         <div class="row">
-            <div class="col-md-12">
-                <h2>{% if is_active.grouper  == True %}Active{% else %}Inactive{% endif %}</h2>
-            </div>
-        </div>
-        <div class="row">
-            {% for collection in is_active.list %}
-            <div class="col-md-4"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></div>
-            <div class="col-md-3">{{ collection.num_seedsets }} seedset{{ collection.num_seedsets|pluralize}}</div>
-            <div class="col-md-4">Created {{ collection.date_added }}</div>
+            {% for collection in collection_list %}
+            <div class="col-md-4"><p><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></p></div>
+            <div class="col-md-3"><p>{{ collection.num_seedsets }} seedset{{ collection.num_seedsets|pluralize}}</p></div>
+            <div class="col-md-4"><p>Created {{ collection.date_added }}</p></div>
             <!-- later add date of most recent harvest from among collection's seedsets -->
-            <div class="col-md-1">{{ collection.group }}</div>
-        {% empty %}
-            <div class="col-md-12">No collections yet.</div>
-        {% endfor %}
+            <div class="col-md-1"><p>{{ collection.group }}</p></div>
+            {% empty %}
+            <div class="col-md-12"><p>No collections yet.</p></div>
+            {% endfor %}
         </div>
-    {% endfor %}
 <div class="row">
     <div class="col-md-12">
         <div class="btn-toolbar" style="padding-top: 15px">
-          <a href={% url "collection_create" %} class="btn btn-default">Add New Collection</a>
+          <a href={% url "collection_create" %} class="btn btn-primary">Add New Collection</a>
         </div>
     </div>
 </div>

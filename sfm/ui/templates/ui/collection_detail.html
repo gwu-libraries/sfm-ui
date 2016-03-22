@@ -25,6 +25,10 @@
     <p><strong>Created:</strong> {{collection.date_added }}</p>
     <!--  add later <p>Last harvested</p> -->
     <p><strong>Group:</strong> {{collection.group }}</p>
+    <p>Changes:
+        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
+    </p>
+
     </div>
 </div>
 <div class="row">
@@ -37,7 +41,7 @@
                   <th>Name</th>
                   <th>Harvest type</th>
                   <th>Seeds</th>
-                  <!-- <th>Last harvested</th> -->
+                  <!-- <th>Last harvest</th> -->  
                   <th>Active</th>
                 </tr>
               </thead>
@@ -45,8 +49,8 @@
                 <tr>
                     <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>
                     <td>{{ seedset.get_harvest_type_display }}</td>
+                    <!-- last harvest -->
                     <td>{{ seedset.num_seeds }} seed{{ seedset.num_seeds|pluralize }}</td>
-                    <!-- <td>date of most recent harvest among seedsets</td> -->
                     <td>{{ seedset.is_active|yesno:"Yes,No" }}</td>
                 </tr>
             {% endfor %}

@@ -3,12 +3,45 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
+from simple_history.models import HistoricalRecords
+import django.db.models.options as options
+
+# This adds an additional meta field
+options.DEFAULT_NAMES = options.DEFAULT_NAMES + (u'diff_fields',)
 
 
 class User(AbstractUser):
 
     local_id = models.CharField(max_length=255, blank=True, default='',
                                 help_text='Local identifier')
+
+
+def history_save(self, *args, **kw):
+    """
+    A save method that skips creating a historical record if none of the
+    diff fields have changed.
+    """
+    is_changed = False
+    if self.pk is not None:
+        orig = self.__class__.objects.get(pk=self.pk)
+        is_changed = False
+        for field in self.__class__._meta.diff_fields:
+            if getattr(orig, field) != getattr(self, field):
+                is_changed = True
+                break
+
+    else:
+        is_changed = True
+
+    if is_changed:
+        return super(self.__class__, self).save(*args, **kw)
+    else:
+        self.skip_history_when_saving = True
+        try:
+            ret = super(self.__class__, self).save(*args, **kw)
+        finally:
+            del self.skip_history_when_saving
+        return ret
 
 
 class Credential(models.Model):
@@ -23,9 +56,18 @@ class Credential(models.Model):
     token = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    history_note = models.TextField(blank=True)
+    history = HistoricalRecords()
+
+    class Meta:
+        diff_fields = ("platform", "token", "is_active")
 
     def __str__(self):
-        return '<Credential %s "%s">' % (self.platform, self.token)
+        return '<Credential %s "%s">' % (self.id, self.platform)
+
+    def save(self, *args, **kw):
+        return history_save(self, *args, **kw)
 
 
 @python_2_unicode_compatible
@@ -35,14 +77,22 @@ class Collection(models.Model):
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection name')
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
     is_visible = models.BooleanField(default=True)
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+    history_note = models.TextField(blank=True)
+
+    class Meta:
+        diff_fields = ("group", "name", "description")
 
     def __str__(self):
         return '<Collection %s "%s">' % (self.id, self.name)
+
+    def save(self, *args, **kw):
+        return history_save(self, *args, **kw)
+
 
 
 @python_2_unicode_compatible
@@ -76,9 +126,19 @@ class SeedSet(models.Model):
     end_date = models.DateTimeField(blank=True,
                                     null=True,
                                     help_text="If blank, will continue until stopped.")
+    history = HistoricalRecords()
+    history_note = models.TextField(blank=True)
+
+    class Meta:
+        diff_fields = (
+            "collection", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
+            "harvest_options", "start_date", "end_date")
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
+
+    def save(self, *args, **kw):
+        return history_save(self, *args, **kw)
 
 
 @python_2_unicode_compatible
@@ -92,9 +152,17 @@ class Seed(models.Model):
     stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+    history_note = models.TextField(blank=True)
+
+    class Meta:
+        diff_fields = ("token", "uid", "is_active")
 
     def __str__(self):
         return '<Seed %s "%s">' % (self.id, self.token)
+
+    def save(self, *args, **kw):
+        return history_save(self, *args, **kw)
 
 
 class Harvest(models.Model):
@@ -108,7 +176,9 @@ class Harvest(models.Model):
         (FAILURE, FAILURE),
         (RUNNING, RUNNING)
     )
-    seed_set = models.ForeignKey(SeedSet, related_name='harvests')
+    historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests')
+    historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests')
+    historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=255, blank=False, unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
@@ -123,6 +193,13 @@ class Harvest(models.Model):
     uids = JSONField(blank=True)
     warcs_count = models.PositiveIntegerField(default=0)
     warcs_bytes = models.BigIntegerField(default=0)
+
+    @property
+    def seed_set(self):
+        return self.historical_seed_set.history_object
+
+    def __str__(self):
+        return '<Harvest %s "%s">' % (self.id, self.harvest_id)
 
 
 class Media(models.Model):

@@ -22,6 +22,8 @@ class JobsTests(TestCase):
         Seed.objects.create(seed_set=self.seedset, token="test_token1")
         Seed.objects.create(seed_set=self.seedset, uid="test_uid2")
         Seed.objects.create(seed_set=self.seedset, token="test_token3", uid="test_uid3")
+        # Creating Inactive seed which will be ignored from harvest
+        Seed.objects.create(seed_set=self.seedset, uid="test_uid4", is_active=False)
 
     @patch("ui.jobs.RabbitWorker", autospec=True)
     def test_seedset_harvest(self, mock_rabbit_worker_class):

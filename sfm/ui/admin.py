@@ -39,25 +39,62 @@ class UserAdmin(AuthUserAdmin):
 
 
 class Credential(a.ModelAdmin):
-    fields = ('user', 'platform', 'token', 'is_active', 'date_added')
+    fields = ('user', 'platform', 'token', 'is_active', 'date_added', 'history_note')
+    list_display = ['user', 'platform', 'token', 'is_active', 'date_added']
+    list_filter = ['user', 'platform', 'token', 'is_active', 'date_added']
+    search_fields = ['user', 'platform', 'token', 'is_active', 'date_added']
+
+
+class HistoricalCredential(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note', 'user', 'platform', 'token', 'is_active', 'date_added')
     list_display = ['user', 'platform', 'token', 'is_active', 'date_added']
     list_filter = ['user', 'platform', 'token', 'is_active', 'date_added']
     search_fields = ['user', 'platform', 'token', 'is_active', 'date_added']
 
 
 class Collection(a.ModelAdmin):
-    fields = ('group', 'name', 'description', 'is_active', 'is_visible',
-              'stats', 'date_added')
-    list_display = ['group', 'name', 'description', 'is_active', 'is_visible',
+    fields = ('group', 'name', 'description', 'is_visible',
+              'stats', 'date_added', 'history_note')
+    list_display = ['group', 'name', 'description', 'is_visible',
                     'stats', 'date_added', 'date_updated']
-    list_filter = ['group', 'name', 'description', 'is_active', 'is_visible',
+    list_filter = ['group', 'name', 'description', 'is_visible',
                    'stats', 'date_added', 'date_updated']
-    search_fields = ['group', 'name', 'description', 'is_active',
+    search_fields = ['group', 'name', 'description',
+                     'is_visible', 'stats', 'date_added', 'date_updated']
+
+
+class HistoricalCollection(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note',  'group', 'name',
+              'description', 'is_visible',
+              'stats', 'date_added')
+    list_display = ['group', 'name', 'description', 'is_visible',
+                    'stats', 'date_added', 'date_updated']
+    list_filter = ['group', 'name', 'description', 'is_visible',
+                   'stats', 'date_added', 'date_updated']
+    search_fields = ['group', 'name', 'description',
                      'is_visible', 'stats', 'date_added', 'date_updated']
 
 
 class SeedSet(a.ModelAdmin):
     fields = ('collection', 'credential', 'harvest_type', 'name',
+              'description', 'is_active', 'schedule_minutes', 'harvest_options',
+              'stats', 'date_added', 'start_date', 'end_date', 'history_note')
+    list_display = ['collection', 'credential', 'harvest_type', 'name',
+                    'description', 'is_active', 'harvest_options',
+                    'stats', 'date_added', 'start_date',
+                    'end_date']
+    list_filter = ['collection', 'credential', 'harvest_type', 'name',
+                   'description', 'is_active', 'harvest_options',
+                   'stats', 'date_added', 'start_date',
+                   'end_date']
+    search_fields = ['collection', 'credential', 'harvest_type', 'name',
+                     'description', 'is_active',
+                     'harvest_options', 'stats', 'date_added',
+                     'start_date', 'end_date']
+
+
+class HistoricalSeedSet(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note', 'collection', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
               'stats', 'date_added', 'start_date', 'end_date')
     list_display = ['collection', 'credential', 'harvest_type', 'name',
@@ -76,6 +113,17 @@ class SeedSet(a.ModelAdmin):
 
 class Seed(a.ModelAdmin):
     fields = ('seed_set', 'token', 'uid', 'is_active',
+              'is_valid', 'stats', 'date_added', 'history_note')
+    list_display = ['seed_set', 'token', 'uid', 'is_active',
+                    'is_valid', 'stats', 'date_added', 'date_updated']
+    list_filter = ['seed_set', 'token', 'uid', 'is_active',
+                   'is_valid', 'stats', 'date_added', 'date_updated']
+    search_fields = ['seed_set', 'token', 'uid', 'is_active',
+                     'is_valid', 'stats', 'date_added', 'date_updated']
+
+
+class HistoricalSeed(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note', 'seed_set', 'token', 'uid', 'is_active',
               'is_valid', 'stats', 'date_added')
     list_display = ['seed_set', 'token', 'uid', 'is_active',
                     'is_valid', 'stats', 'date_added', 'date_updated']
@@ -87,14 +135,19 @@ class Seed(a.ModelAdmin):
 
 class Harvest(a.ModelAdmin):
     fields = (
-       'harvest_id', 'seed_set', 'status', 'date_requested', 'date_started', 'date_ended', 'stats',
+       'harvest_id', 'historical_seed_set', 'historical_seeds', 'historical_credential',
+       'status', 'date_requested', 'date_started', 'date_ended', 'stats',
        'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
-    list_display = ['id', 'harvest_id', 'seed_set', 'status', 'date_requested', 'date_updated']
+    list_display = ['id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested', 'date_updated']
     list_filter = ['status', 'date_requested', 'date_updated']
-    search_fields = ['id', 'harvest_id', 'seed_set']
+    search_fields = ['id', 'harvest_id']
 
 a.site.register(m.Credential, Credential)
+a.site.register(m.HistoricalCredential, HistoricalCredential)
 a.site.register(m.Collection, Collection)
+a.site.register(m.HistoricalCollection, HistoricalCollection)
 a.site.register(m.SeedSet, SeedSet)
+a.site.register(m.HistoricalSeedSet, HistoricalSeedSet)
 a.site.register(m.Seed, Seed)
+a.site.register(m.HistoricalSeed, HistoricalSeed)
 a.site.register(m.Harvest, Harvest)

@@ -5,8 +5,8 @@ from django.test import RequestFactory, TestCase
 from ui.models import Collection, User, Credential, Seed, SeedSet
 
 
-def create_collection(name, is_active, group):
-    return Collection.objects.create(name=name, is_active=is_active,
+def create_collection(name, group):
+    return Collection.objects.create(name=name,
                                      group=group)
 
 
@@ -21,10 +21,10 @@ def create_new_user(name, email, password):
 class CollectionListViewTests(TestCase):
     def setUp(self):
         group = create_group(name='testgroup1')
-        create_collection(name='Test Collection One', is_active=True,
+        create_collection(name='Test Collection One',
                           group=group)
         group2 = create_group(name='testgroup2')
-        create_collection(name='Test Collection Two', is_active=False,
+        create_collection(name='Test Collection Two',
                           group=group2)
         user = create_new_user('testuser', 'testuser@example.com', 'password')
         user.groups.add(group)
@@ -56,7 +56,7 @@ class CollectionDetailViewTests(TestCase):
                                     'password')
         self.user.groups.add(self.group)
         self.collection = create_collection(name='Test Collection One',
-                                            is_active=True, group=self.group)
+                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
@@ -70,7 +70,7 @@ class CollectionDetailViewTests(TestCase):
         Credential.objects.create(user=User.objects.get(username='testuser2'),
                                   platform='test platform')
         Group.objects.create(name='testgroup2')
-        Collection.objects.create(name='Test Collection Two', is_active=False,
+        Collection.objects.create(name='Test Collection Two',
                                   group=Group.objects.get(name='testgroup2'))
         SeedSet.objects.create(collection=Collection.objects.get(
                                           name='Test Collection Two'),
@@ -127,7 +127,7 @@ class SeedSetCreateViewTests(TestCase):
                                     'password')
         self.user.groups.add(self.group)
         self.collection = create_collection(name='Test Collection One',
-                                            is_active=True, group=self.group)
+                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
