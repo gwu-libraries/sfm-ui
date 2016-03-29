@@ -1,0 +1,20 @@
+# Footer navigation links
+
+
+- title: Home
+  url: / 
+
+- title: About
+  url: /about/
+
+- title: Documentation
+  url: https://sfm.readthedocs.org
+
+- title: Resources
+  url: /resources/
+
+- title: Github
+  url: https://github.com/gwu-libraries/sfm-ui
+
+- title: George Washington University Libraries
+  url: http://library.gwu.edu

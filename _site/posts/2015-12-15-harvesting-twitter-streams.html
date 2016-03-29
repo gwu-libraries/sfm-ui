@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Harvesting the Twitter Streaming API to WARC files • </title>
+    <meta name="description" content="The Twitter Streaming API is very powerful, allowing harvesting tweets not readily available from the other APIs.">
+    <meta name="keywords" content="">
+    
+    	<!-- Twitter Cards -->
+	<meta name="twitter:title" content="Harvesting the Twitter Streaming API to WARC files">
+	<meta name="twitter:description" content="The Twitter Streaming API is very powerful, allowing harvesting tweets not readily available from the other APIs.">
+	
+	<meta name="twitter:creator" content="@justin_littman">
+	
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content="/images/">
+	
+	<!-- Open Graph -->
+	<meta property="og:locale" content="en">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="Harvesting the Twitter Streaming API to WARC files">
+	<meta property="og:description" content="The Twitter Streaming API is very powerful, allowing harvesting tweets not readily available from the other APIs.">
+	<meta property="og:url" content="/posts/2015-12-15-harvesting-twitter-streams">
+	<meta property="og:site_name" content="">
+
+    <link rel="canonical" href="/posts/2015-12-15-harvesting-twitter-streams">
+
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title=" Atom Feed">
+    <link href="/sitemap.xml" type="application/xml" rel="sitemap" title="Sitemap">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cleartype" content="on">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <!-- HTML5 Shiv and Media Query Support for IE -->
+    <!--[if lt IE 9]>
+      <script src="/js/vendor/html5shiv.min.js"></script>
+      <script src="/js/vendor/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body id="js-body">
+    <!--[if lt IE 9]><div class="upgrade notice-warning"><strong>Your browser is quite old!</strong> Why not <a href="http://whatbrowser.org/">upgrade to a newer one</a> to better enjoy this site?</div><![endif]-->
+
+    <header id="masthead">
+  <div class="inner-wrap">
+    <a href="/" class="site-title"></a>
+    <nav role="navigation" class="menu top-menu">
+        <ul class="menu-item">
+	<li class="home"><a href="/"></a></li>
+	
+    
+    <li><a href="/about/" >About</a></li>
+  
+    
+    <li><a href="http://sfm.readthedocs.org" target="_blank">Documentation</a></li>
+  
+    
+    <li><a href="/resources/" >Resources</a></li>
+  
+</ul>
+
+    </nav>
+  </div><!-- /.inner-wrap -->
+</header><!-- /.masthead -->
+
+    <nav role="navigation" id="js-menu" class="sliding-menu-content">
+  <h5> <span>Table of Contents</span></h5>
+  <ul class="menu-item">
+    <li>
+      <a href="/about/">
+        
+        <div class="title">About</div>
+        
+      </a>
+    </li><li>
+      <a href="http://sfm.readthedocs.org">
+        
+        <div class="title">Documentation</div>
+        
+      </a>
+    </li><li>
+      <a href="/resources/">
+        
+        <div class="title">Resources</div>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<button type="button" id="js-menu-trigger" class="sliding-menu-button lines-button x2" role="button" aria-label="Toggle Navigation">
+  <span class="nav-lines"></span>
+</button>
+
+<div id="js-menu-screen" class="menu-screen"></div>
+
+
+    <div id="page-wrapper">
+      <div id="main" role="main">
+	<article class="wrap" itemscope itemtype="http://schema.org/Article">
+		
+		
+		<div class="page-title">
+			<h1>Harvesting the Twitter Streaming API to WARC files</h1>
+		</div>
+		<div class="inner-wrap">
+			<div id="content" class="page-content" itemprop="articleBody">
+				<p>The Twitter Streaming API is very powerful, allowing harvesting tweets not readily available from the other APIs. However, recall from our previous post that the Twitter Streaming API does not behave like REST APIs that are typical of social media platforms – see Twitter’s description of the differences. A single HTTP response is potentially huge and may be collected over the course of hours, days, or weeks. This is a poor fit for both the normal web harvesting model in which a single HTTP response is recorded as a single WARC response record in a single WARC file, and for most web archiving tools, which store HTTP responses in-memory and don’t write them to the WARC file until the response is completed.</p>
+
+<p>This post describes an approach we’ve developed for harvesting the Twitter Streaming API and recording in WARC files. We will also show how the tweets can be extracted from the WARC files for use by a researcher.</p>
+
+<p>The Twitter Streaming API is not the only form of streaming content on the Web and the authors of WARC Specification had the forethought to support record segmentation. In record segmentation, a single HTTP response is split into multiple WARC records, potentially in multiple WARC files. The first record is a WARC response record; subsequent records are WARC continuation records. The header of the final continuation record also contains the total number of bytes of the entire HTTP response.</p>
+
+<p>While WARC record segmentation is theoretically a good solution for the Twitter Streaming API, record segmentation is not widely supported in most web archiving tools. Our first step was to modify Internet Archive’s warcprox to support record segmentation. (Our pull request is #15. The crux of the change is between lines 210 and 245 in warcprox.py.) Recall from the earlier post that warcprox is an HTTP proxy that records the HTTP transaction in a WARC.</p>
+
+<p>The following shows snippets from a WARC file created by the modified warcprox from the Twitter filter API retrieved by twarc tracking “obama”. It consists of a WARC response record, a request record, a continuation record, and a final continuation record.</p>
+
+<p>WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e>
+WARC-Date: 2015-12-02T16:59:07Z
+WARC-Target-URI: https://stream.twitter.com/1.1/statuses/filter.json
+WARC-IP-Address: 199.16.156.20
+Content-Type: application/http;msgtype=response
+WARC-Segment-Number: 1
+Content-Length: 1149
+WARC-Block-Digest: sha1:7c8de1bd439cf62c67f9f4b0c48e6f3ae39eb4ef
+WARC-Payload-Digest: sha1:cc1b7bf9a2945ddf8ae7c35d5f05513d0d8b691b</urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e></p>
+
+<p>HTTP/1.1 200 OK
+connection: close
+content-Encoding: gzip
+content-type: application/json
+date: Wed, 02 Dec 2015 16:59:07 GMT
+server: tsa
+transfer-encoding: chunked
+x-connection-hash: 8439cf557d0f807635797377d9e7d0b6</p>
+
+<p>a
+?
+1f1
+tSۊ?0??A/}?%??ر??^???¶??P?q#”KF??n??w?ٔ%?O3?͜?y<code class="highlighter-rouge">?GQ    Y?~?????!+?U??
+^r? ?ي?bZ???r^WeU?_?:[?ѓ??$?"?I?7????1</code>?ہ?;?oH?}?a?v?.?ε
+                                                        }???F???t??|???N??????m?i?t??9?
+??1???B?c?A?&lt;?;a?/???&amp;?d?dkziR?Vxͽ????q                                                ??8?څ??;?Z
+“?c’c?$g?????
+????
+    4???ʁ|???5?Y-k???z???9FM?&lt;v{?v픗2K&gt;_?2!??d????q?v???E?{|??ct???=???=n??_E
+IQ?’?
+U?&amp;??]???n?ֽ??”?(:<em>?6,???F??????4:?%??
+?=-??x?-ל????EQ????N&gt;?????VOW???c’\???^gk?Z=???lZ???y??
+163
+?U?n?0???C?^??Æ^
+=?T?)?4X_U????7~T?75??~Q?˵Ғ1??????<code class="highlighter-rouge">"????c?wfgR?</code>?g???kp&lt;???r)+.
+?4zD?????ie6?/F????˭</em>???   Xm??rLhEiƈs???B)y???b;a??Am??d׮?&lt;??ԍNȄ?$????T?r?ϝ,ot?m???L???
+                        ?j4??.??Q??b???%????7?????????7??XT?2B%?,aQ?4I?p??wn?z
+                                                                                ??\??7`
+                                                                                       R{Z???8?Ϲ&lt;?$?t??)u?^?5?u?{}?K??yOo?]?(??.f??|??m????
+229
+[o?0???’q???6??-J?.?z@k’??IL@??</p>
+
+<p>WARC/1.0
+WARC-Type: request
+WARC-Record-ID: <urn:uuid:3a6ce873-13a9-401a-bfd9-3ddc321aab96>
+WARC-Date: 2015-12-02T16:59:07Z
+WARC-Target-URI: https://stream.twitter.com/1.1/statuses/filter.json
+WARC-Concurrent-To: <urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e>
+WARC-Block-Digest: sha1:fa301cb54fd6c38adac4a43bacf36d38198ec8e0
+Content-Type: application/http;msgtype=request
+Content-Length: 566</urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e></urn:uuid:3a6ce873-13a9-401a-bfd9-3ddc321aab96></p>
+
+<p>POST /1.1/statuses/filter.json HTTP/1.1
+content-length: 30
+accept-encoding: deflate, gzip
+host: stream.twitter.com
+accept: <em>/</em>
+user-agent: python-requests/2.8.1
+content-type: application/x-www-form-urlencoded
+authorization: OAuth oauth_nonce=”149931870481283598461449075546”, oauth_timestamp=”1449075546”, oauth_version=”1.0”, oauth_signature_method=”HMAC-SHA1”, oauth_consumer_key=”EHdoTe7ksBgflP5nUalEfhaeo”, oauth_token=”481186914-c2yZjbk1np0Z5MWEFYYQKSQNFBXd8T9r4k90YkJl”, oauth_signature=”m0hHjrPnU7aTtOhjmk8om3Vv7Ok%3D”</p>
+
+<p>track=obama&amp;stall_warning=True</p>
+
+<p>WARC/1.0
+WARC-Type: continuation
+WARC-Record-ID: <urn:uuid:c18791da-24e0-42a7-91df-82dfdae6697e>
+WARC-Date: 2015-12-02T16:59:07Z
+WARC-Target-URI: https://stream.twitter.com/1.1/statuses/filter.json
+WARC-IP-Address: 199.16.156.20
+Content-Type: application/http;msgtype=response
+WARC-Segment-Number: 2
+WARC-Segment-Origin-ID: <urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e>
+Content-Length: 1220
+WARC-Block-Digest: sha1:82794503724ba3bb06fee69302614a3f5ef00c39</urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e></urn:uuid:c18791da-24e0-42a7-91df-82dfdae6697e></p>
+
+<p>?????a??N?*M???_l???y”uU]IZ<code class="highlighter-rouge">RU1?/?n?V?</code>???&amp;H??h?U??x??Ea j???mٌSjfsr¨??ê˽RN?&amp;F’?<?h^H~ ?è?ـ
+                                                                                            ??m?@?'?]???:?sT?T?/S??W??t??]M???_??.???o?ҷa??Sn1???/?;Z;?+?PF??
+                                       $L?HnD?????x?t?|ľ?    ?    -G^?|?    "?????gr?? ? )?e[????{]vW???j???-??*T&?{)2\?9^?`\?_??>?.-????ҚO??{v?+?W??4??ps %c?8?’?<code class="highlighter-rouge">?nU???a??%?q?/q?о?X???&amp;???G}71G?&amp;V?
+                                                                                  ?w?ȱZn?ӯ?&amp;?*C??&amp;s?R???rRa???? ?j??es??q?@?s??\/7?w??v?????+???2(????????mNS?
+?iZ?????p}?8?.?????????;??
+16c
+̘AO?0ǿ
+     g?F˸??&amp;?!?u???2D????&amp;U?Ń'J?ڒ??????????K5??pBm?T??=)?0?
+                                                           8Ę?????Ԉ,?
+                                                                     O??&gt;u?~???3?A???Ώho??[?rYV'??jW??J?e?IV?r?d?*L6    ;???????i/
+R-       ??
+  ??Y?Cĭ??
+          ??2]vj ??7??C5B??????!?;????m(j???^?d/??jK??m?d?K ,???|P˂?ۥF2??5*%</code>Lﲞ?x\g????’qs?F?
+                                                                                               ?O?
+                                                                                                  ?=Ԥz<code class="highlighter-rouge">??k+?l?gS????
+                                                                                                                    qU?g#?S????3??SӕS???</code>2=HM?-?
+??Ys?5S?O???
+68
+??    U??X?<???̀4?B???Q'Ԇ7(?!?S?፮?>F??^??????Rm,?A????r?&lt;(e??:?28;?f????
+1a1
+??OO?@??&amp;~    ?”?”??D?5?Lj6P?,?@K??    [
+?F?`????~? ???&lt;?T5? ???%’ap,$?FCZ????vP???D?N?8p?-/???l[??y???#?{]??(?J????’E?&amp;΃???զj???X??7?&lt;Ɩg?ՅU?Bh%
+                                                                                                           m??u?h????????s?N??u????u??0֜d</p>
+
+<p>WARC/1.0
+WARC-Type: continuation
+WARC-Record-ID: <urn:uuid:d7bfe010-7831-45a8-8361-715692ea014b>
+WARC-Date: 2015-12-02T16:59:09Z
+WARC-Target-URI: https://stream.twitter.com/1.1/statuses/filter.json
+WARC-IP-Address: 199.16.156.20
+Content-Type: application/http;msgtype=response
+WARC-Segment-Number: 3
+WARC-Segment-Origin-ID: <urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e>
+WARC-Segment-Total-Length: 924
+WARC-Truncated: unspecified
+Content-Length: 307
+WARC-Block-Digest: sha1:57b73cdaab8025cc04a83f3ae6eff2dd6e2bfa15</urn:uuid:9aff4bf7-d64a-411c-9ef8-cd82778e036e></urn:uuid:d7bfe010-7831-45a8-8361-715692ea014b></p>
+
+<p>?^,~0??Cc?43??n????8???????A^]d???ן&amp;??qSN?FZ
+??m?$p? ?&amp;?A?p$?$?S??d,^zk?#?Y    ?q?g~????R????P?\???~??w??T?&amp;`
+                                                              ????L?r????i????Th2?2B??$?C??:????T?????
+20e
+tRMk?@?+??C]YV??T
+NqZHS?K/??F???Y?QE?|GVjB?u?a?y??͋(,J??Vz???X?</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>??̲i??)</td>
+      <td>???$?L?H?Rd?y???”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As should be obvious, this data is not readily usable by most researchers. In particular, there are four barriers to use:</p>
+
+<p>It is in a WARC file.
+The HTTP response is segmented into multiple WARC records.
+The HTTP response has gzip content encoding.
+The HTTP response has chunked transfer encoding.
+In order to be confident in this approach, we feel it is prudent to make sure that we can access the tweets given these various barriers and the lack of support for record segmentation in web archiving tools. To this end, we developed TwitterStreamWarcIter and the parent class BaseWarcIter.  TwitterStreamWarcIter outputs the tweets from a WARC file, one per line. This is the same output as twarc or cat-ing a line-oriented json file and can be piped to other tools such as jq:</p>
+
+<p>$ python twitter_stream_warc_iter.py test_1-20151202200525007-00000-30033-GLSS-F0G5RP-8000.warc.gz</p>
+
+<p>{“contributors”: null, “truncated”: false, “text”: “RT @Litorodbujan: Obama quiere visitar Espa\u00f1a!\nAhora s\u00ed somo
+s un pa\u00eds serio; con Rajoy no se repetir\u00e1 esto.   #RajoyconPiqueras https://t.c\u2026”, “is_quote_status”: false,
+ “in_reply_to_status_id”: null, “id”: 672144412936445952, “favorite_count”: 0, “source”: “&lt;a href="https://mobile.twitter.
+com" rel="nofollow"&gt;Mobile Web (M2)&lt;/a&gt;”, “retweeted”: false, “coordinates”: null, “timestamp_ms”: “1449086690540”, “ent
+ities”: {“user_mentions”: [{“id”: 320317854, “indices”: [3, 16], “id_str”: “320317854”, “screen_name”: “Litorodbujan”, “nam
+….</p>
+
+<p>or suitable for human-consumption with the –pretty flag:</p>
+
+<p>$ python twitter_stream_warc_iter.py test_1-20151202200525007-00000-30033-GLSS-F0G5RP-8000.warc.gz –pretty</p>
+
+<p>{
+    “contributors”: null, 
+    “truncated”: false, 
+    “text”: “RT @Litorodbujan: Obama quiere visitar Espa\u00f1a!\nAhora s\u00ed somos un pa\u00eds serio; con Rajoy no se repetir\u00e1 esto.   #RajoyconPiqueras https://t.c\u2026”, 
+    “is_quote_status”: false, 
+    “in_reply_to_status_id”: null, 
+    “id”: 672144412936445952, 
+    “favorite_count”: 0, 
+    “source”: “&lt;a href="https://mobile.twitter.com" rel="nofollow"&gt;Mobile Web (M2)&lt;/a&gt;”, 
+    “retweeted”: false, 
+    “coordinates”: null, 
+    “timestamp_ms”: “1449086690540”, 
+    “entities”: {
+….</p>
+
+<p>This approach addresses the WARC barrier by using Internet Archive’s WARC library to read the WARC file. The IA WARC library is extended to handle record segmentation by stitching the payload back together. (See CompositeFilePart. It still doesn’t handle continuations that are in other WARC files, but solving that problem is just software development.) And lastly, the content encoding and transfer encoding barriers are remedied by loading the payload into a urllib3 HTTPResponse which handles the decoding of the content encoding and transfer encoding, as well as providing a familiar, pythonic interface to the response.</p>
+
+<p>As we have explored the similarity between web harvesting and social media harvesting, the Twitter Streaming API represents the point of greatest friction. However, the above represents a reasonable first approach to addressing the unique features of the Twitter Streaming API.</p>
+
+<p>(This post originally appeared on the <a href="https://library.gwu.edu/scholarly-technology-group/posts/harvesting-twitter-streaming-api-warc-files">Scholarly Technology Group’s blog</a>)
+n the GW Libraries website.)</p>
+
+				<hr />
+				<footer class="page-footer">
+					
+
+<div class="author-image">
+	<img src="/images/author_littman.png" alt="Justin Littman">
+</div><!-- ./author-image -->
+<div class="author-content">
+	<h3 class="author-name" >Written by <span itemprop="author">Justin Littman</span></h3>
+	
+        <p><a href="http://www.twitter.com/justin_littman">@justin_littman</a></p>
+</div><!-- ./author-content -->
+
+					<div class="inline-btn">
+	<a class="btn-social twitter" href="https://twitter.com/intent/tweet?text=Harvesting%20the%20Twitter%20Streaming%20API%20to%20WARC%20files&amp;url=/posts/2015-12-15-harvesting-twitter-streams&amp;via=" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i> Share on Twitter</a>
+	<a class="btn-social facebook" href="https://www.facebook.com/sharer/sharer.php?u=/posts/2015-12-15-harvesting-twitter-streams" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i> Share on Facebook</a>
+	<a class="btn-social google-plus"  href="https://plus.google.com/share?url=/posts/2015-12-15-harvesting-twitter-streams" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i> Share on Google+</a>
+</div><!-- /.share-this -->
+
+					<div class="page-meta">
+	<p>Updated <time datetime="2015-12-15T00:00:00Z" itemprop="datePublished">December 15, 2015</time></p>
+</div><!-- /.page-meta -->
+				</footer><!-- /.footer -->
+				<aside>
+					
+				</aside>
+			</div><!-- /.content -->
+		</div><!-- /.inner-wrap -->
+		
+	</article><!-- ./wrap -->
+</div><!-- /#main -->
+
+      <footer role="contentinfo" id="site-footer">
+	<nav role="navigation" class="menu bottom-menu">
+		<ul class="menu-item">
+		
+      
+			<li><a href="/" >Home</a></li>
+		
+      
+			<li><a href="/about/" >About</a></li>
+		
+      
+			<li><a href="https://sfm.readthedocs.org" target="_blank">Documentation</a></li>
+		
+      
+			<li><a href="/resources/" >Resources</a></li>
+		
+      
+			<li><a href="https://github.com/gwu-libraries/sfm-ui" target="_blank">Github</a></li>
+		
+      
+			<li><a href="http://library.gwu.edu" target="_blank">George Washington University Libraries</a></li>
+		
+		</ul>
+	</nav><!-- /.bottom-menu -->
+	<a href="https://twitter.com/SocialFeedMgr" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @SocialFeedMgr</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+        <p class="copyright">&#169; 2016 <a href=""></a> powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> + <a href="http://mmistakes.github.io/skinny-bones-jekyll/" rel="nofollow">Skinny Bones</a>.</p>
+</footer>
+
+    </div>
+
+    <script src="/js/vendor/jquery-1.9.1.min.js"></script>
+    <script src="/js/main.js"></script>
+
+  </body>
+
+</html>

@@ -1,0 +1,12 @@
+# Site navigation links
+
+- title: About
+  url: /about/
+
+- title: Documentation 
+  url: http://sfm.readthedocs.org
+
+- title: Resources
+  url: /resources/
+
+
