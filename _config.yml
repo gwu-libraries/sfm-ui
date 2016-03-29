@@ -1,0 +1,51 @@
+# Site wide configuration
+
+title: Social Feed Manager
+description: "Social Feed Manager is open source software for librarians, researchers, and archivists to collect social media"
+logo: sfm-logo.png 
+teaser: teaser.png 
+locale: en
+url: /
+
+# Jekyll configuration
+
+sass:
+  sass_dir: _sass
+  style: compressed
+permalink: /:categories/:title/
+kramdown:
+  toc_levels: 1..2
+highlighter: rouge
+gems:
+  - jekyll-sitemap
+  - jekyll-gist
+
+
+# Octopress configuration
+# (not supported by github hosting)
+# Default extensions
+post_ext: md
+page_ext: md
+
+# Found in _templates/
+post_layout: article
+page_layout: article
+
+# Format titles with titlecase?
+titlecase: true
+
+
+# Site owner
+owner:
+  name: Social Feed Manager
+  email: lwrubel@gwu.edu
+  twitter: SocialFeedMgr
+  google:
+    ad-client:
+    ad-slot:
+  bio:
+  avatar: bio-photo.jpg # 160x160 px image for author byline
+  disqus-shortname:
+
+
+exclude: ["lib", "config.rb", ".sass-cache", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "*.sublime-project", "*.sublime-workspace", "Gemfile", "Gemfile.lock", "README.md", "LICENSE", "node_modules", "Gruntfile.js", "package.json"]
