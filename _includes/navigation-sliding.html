@@ -13,8 +13,8 @@
           {% if link.image %}<img src="{{ site.github.url }}/images/{{ link.image }}" alt="teaser" class="teaser">{% endif %}
           <div class="title">{{ link.title }}</div>
           {% if link.excerpt %}<p class="excerpt">{{ link.excerpt }}</p>{% endif %}
-          </a>
-          </li>{% endfor %}
+      </a>{% endif %}
+      </li>{% endfor %}
   </ul>
 </nav>
 <button type="button" id="js-menu-trigger" class="sliding-menu-button lines-button x2" role="button" aria-label="Toggle Navigation">
