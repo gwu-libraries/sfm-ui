@@ -1,0 +1,9 @@
+build-essential=11.6ubuntu6
+gettext=0.18.3.1-1ubuntu3
+python-dev=2.7.5-5ubuntu3
+zlib1g-dev=1:1.2.8.dfsg-1ubuntu1
+libpq-dev=9.3.11-0ubuntu0.14.04
+python-pip=1.5.4-1ubuntu3
+apache2=2.4.7-1ubuntu4.9
+libapache2-mod-wsgi=3.4-4ubuntu2.1.14.04.2
+git=1:1.9.1-1ubuntu0.2
