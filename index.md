@@ -6,7 +6,8 @@ image:
   feature: blue-bg.png
 ---
 <div class="tiles">
-  <div class="tile"><p>Social Feed Manager is open source software for libraries, archives, cultural heritage institutions and research organizations. It empowers those communities' researchers, faculty, students, and archivists to define and create collections of data from social media platforms. Social Feed Manager will harvest from Twitter, Tumblr, Flickr, and Sina Weibo and is extensible for other platforms.  In addition to collecting data from those platforms' APIs, it will collect linked web pages and media.</p></div> 
+  <div class="tile"><p>Social Feed Manager is open source software for libraries, archives, cultural heritage institutions and research organizations. It empowers those communities' researchers, faculty, students, and archivists to define and create collections of data from social media platforms. Social Feed Manager will harvest from Twitter, Tumblr, Flickr, and Sina Weibo and is extensible for other platforms.  In addition to collecting data from those platforms' APIs, it will collect linked web pages and media.</p>
+  <p>Members of the GW community who wish to access Twitter data will find more information at <a href="https://library.gwu.edu/scholarly-technology-group/social-feed-manager">GW Libraries.</a></p></div> 
   <div class="tile"><h2>Latest Posts</h2></div>
   {% for post in site.posts %}
 	{% include post-grid.html %}
