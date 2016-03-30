@@ -11,12 +11,12 @@ The latest in our social media harvesting experiments for the [Social Feed Manag
 2. For the researcher, being able to analyze the content. Though many researchers will need to export the social media content for use with other tools, having available some sort of an analytics service may meet the needs of some researchers and may lower the barrier to performing social media research.
 We also wanted to test the extensibility of the SFM architecture to make sure that additional services can be readily added.
 
-The ELK (Elasticsearch, Logstash, Kibana) stack was selected for this experiment. It was selected primarily on the intuition that it was a good fit, rather than an analysis of its features or a comparison against other options. For those not familiar with this stack, Kibana is the discovery and visualization interface, Elasticsearch is the data store, and Logstash loads Elasticsearch with data. We’ll refer to our own implementation as SFM-ELK.
+The ELK ([Elasticsearch](https://www.elastic.co/products/elasticsearch), [Logstash](https://www.elastic.co/products/logstash), [Kibana](https://www.elastic.co/products/kibana)) stack was selected for this experiment. It was selected primarily on the intuition that it was a good fit, rather than an analysis of its features or a comparison against other options. For those not familiar with this stack, Kibana is the discovery and visualization interface, Elasticsearch is the data store, and Logstash loads Elasticsearch with data. We’ll refer to our own implementation as SFM-ELK.
 
-In SFM infrastructure, harvesters, such as the Twitter harvester, invoke the APIs of social media platforms and record the results in WARC files. Harvesters publish warc_created messages to a message queue whenever a WARC file is created. This provides the critical hook for SFM-ELK to perform loading -- a message consumer application listens for warc_created messages. When it receives a warc_created message, it:
+In SFM infrastructure, harvesters, such as the Twitter harvester, invoke the APIs of social media platforms and record the results in [WARC files](https://en.wikipedia.org/wiki/Web_ARChive). Harvesters publish [warc_created messages](http://sfm.readthedocs.org/en/latest/messaging_spec.html#warc-created-message) to a message queue whenever a WARC file is created. This provides the critical hook for SFM-ELK to perform loading -- a message consumer application listens for warc_created messages. When it receives a warc_created message, it:
 
-1. Invokes the appropriate WARC iterator (e.g., TwitterRestWarcIter) to read the WARC file and output the social media records as line-oriented JSON.
-2. Pipes this to jq, which filters the JSON. Most types of social media records contain extraneous metadata which do not need to be indexed in Elasticsearch. Logstash supports various mechanisms for filtering and transforming loaded data, but jq proved better for JSON data.
+1. Invokes the appropriate WARC iterator (e.g., [TwitterRestWarcIter](https://github.com/gwu-libraries/sfm-twitter-harvester/blob/master/twitter_rest_warc_iter.py)) to read the WARC file and output the social media records as line-oriented JSON.
+2. Pipes this to [jq](https://stedolan.github.io/jq/), which filters the JSON. Most types of social media records contain extraneous metadata which do not need to be indexed in Elasticsearch. Logstash supports various mechanisms for filtering and transforming loaded data, but jq proved better for JSON data.
 3. Pipes this into Logstash, which loads it into Elasticsearch.
 Once properly loaded into Elasticsearch, the data is available for discovery and visualization using Kibana. Note that additional data is loaded as new WARC files are created.
 
@@ -40,7 +40,7 @@ To demonstrate the sort of visualizations that might be useful for a collection 
 
 Here’s each of those visualizations in a more readable size:
 
-![Tweet rate visualization](https://library.gwu.edu/scholarly-technology-group/posts/experiment-social-feed-manager-and-elk-stack)
+![Tweet rate visualization](https://library.gwu.edu/sites/default/files/news-events/Screen%20Shot%202016-01-13%20at%2010.01.26%20AM.png)
 
 ![Top URLs visualization](https://library.gwu.edu/sites/default/files/news-events/Screen%20Shot%202016-01-13%20at%2010.01.38%20AM.png)
 
