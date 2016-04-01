@@ -92,6 +92,7 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context["next_run_time"] = next_run_time(seed_set.id)
         context["harvests"] = Harvest.objects.filter(historical_seed_set__id=seed_set.id)
         context["diffs"] = diff_object_history(seed_set)
+        context["seed_list"] = seed_set.seeds.all()
         return context
 
 
