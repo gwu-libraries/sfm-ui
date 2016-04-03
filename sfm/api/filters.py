@@ -11,9 +11,8 @@ class ListFilter(Filter):
 
 class WarcFilter(FilterSet):
     # Allows queries like /api/v1/warcs/?seedset=39c00280274a4db0b1cb5bfa4d527a1e
-    seedset = CharFilter(name="harvest__seed_set__seedset_id")
-    seed = ListFilter(name="harvest__seed_set__seeds__seed_id", distinct=True)
-    # TODO: This will need to be changed to use historical seeds once #54 is completed.
+    seedset = CharFilter(name="harvest__historical_seed_set__seedset_id")
+    seed = ListFilter(name="harvest__historical_seeds__seed_id", distinct=True)
     harvest_date_start = IsoDateTimeFilter(name="harvest__date_started", lookup_type='gte')
     harvest_date_end = IsoDateTimeFilter(name="harvest__date_started", lookup_type='lte')
 
