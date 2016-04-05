@@ -3,8 +3,8 @@ from django.core.urlresolvers import reverse
 from django.test import RequestFactory, TestCase
 
 from ui.models import Collection, User, Credential, Seed, SeedSet
-from ui.views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView
-
+from ui.views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, \
+    SeedSetDetailView
 
 class CollectionListViewTests(TestCase):
     def setUp(self):
@@ -126,3 +126,31 @@ class SeedSetCreateViewTests(TestCase):
         response = SeedSetCreateView.as_view()(request, collection_pk=self.collection.pk)
         self.assertEqual(self.collection, response.context_data["form"].initial["collection"])
         self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class SeedSetDetailViewTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.group1 = Group.objects.create(name='testgroup1')
+        self.user1 = User.objects.create_user('testuser', 'testuser@example.com',
+                                              'password')
+        self.user1.groups.add(self.group1)
+        self.user1.save()
+        self.collection1 = Collection.objects.create(name='Test Collection One',
+                                                     group=self.group1)
+        self.credential1 = Credential.objects.create(user=self.user1,
+                                                     platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection1,
+                                              credential=self.credential1,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one',
+                                              )
+        self.seed = Seed.objects.create(seed_set=self.seedset, token='{}')
+
+    def test_seeds_list_visible(self):
+        request = self.factory.get("ui/seedsets/{}".format(self.seedset.id))
+        request.user = self.user1
+        response = SeedSetDetailView.as_view()(request, pk=self.seedset.id)
+        seed_list = response.context_data["seed_list"]
+        self.assertEqual(1, len(seed_list))
+        self.assertEqual(self.seed, seed_list[0])
