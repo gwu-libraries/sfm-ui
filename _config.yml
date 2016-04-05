@@ -5,7 +5,7 @@ description: "Social Feed Manager is open source software for librarians, resear
 logo: sfm-logo.png 
 teaser: teaser.png 
 locale: en
-url: //localhost:4000
+url: //gwu-libraries.github.io/sfm-ui
 
 # Jekyll configuration
 
