@@ -196,7 +196,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
                 ('seedset_id', models.CharField(default=ui.models.default_uuid, max_length=32, db_index=True)),
-                ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_filter', b'Twitter filter'), (b'flickr_user', b'Flickr user')])),
+                ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_user_timeline', b'Twitter user timeline'), (b'flickr_user', b'Flickr user'), (b'weibo_timeline', b'Weibo timeline')])),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -244,7 +244,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('seedset_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
-                ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_filter', b'Twitter filter'), (b'flickr_user', b'Flickr user')])),
+                ('harvest_type', models.CharField(max_length=255, choices=[(b'twitter_search', b'Twitter search'), (b'twitter_user_timeline', b'Twitter user timeline'), (b'flickr_user', b'Flickr user'), (b'weibo_timeline', b'Weibo timeline')])),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),

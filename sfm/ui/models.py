@@ -107,8 +107,11 @@ class SeedSet(models.Model):
     ]
     HARVEST_CHOICES = [
         ('twitter_search', 'Twitter search'),
-        ('twitter_filter', 'Twitter filter'),
-        ('flickr_user', 'Flickr user')
+        # ('twitter_filter', 'Twitter filter'),
+        ('twitter_user_timeline', 'Twitter user timeline'),
+        # ('twitter_sample', 'Twitter sample'),
+        ('flickr_user', 'Flickr user'),
+        ('weibo_timeline', 'Weibo timeline')
     ]
 
     seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
