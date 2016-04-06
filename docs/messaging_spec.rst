@@ -272,7 +272,115 @@ created during a harvest. Example::
             "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection",
             "id": "test_collection"
         }
+        "harvest": {
+            "id": "sfmui:45"
+        }
     }
 
 * The routing key will be `warc_created`.
 * Each warc created message will be for a single warc.
+
+---------------------------------
+ Exporting social media content
+---------------------------------
+
+Exporting is the process of extracting social media content from WARCs and writing
+to export files. The exported content may be a subset or derivate of the original
+content. A number of different export formats will be supported.
+
+Background information
+======================
+* A requester is an application that requests that an export be performed. A
+  requester may also want to monitor the status of an export. In the current
+  architecture, the SFM UI serves the role of requester.
+* Depending on the nature of the export, a single or multiple files may be produced.
+
+Flow
+====
+
+The following is the flow for an export:
+
+1. Requester publishes an export start message.
+2. Upon receiving the export start message, an exporter:
+
+   1. Makes calls to the SFM REST API to determine the WARC files from which to export.
+   2. Limits the content is specified by the export start message.
+   3. Writes to export files.
+3. Upon completing the export, the exporter publishes an export status message
+   with the status of `completed success` or `completed failure`.
+
+Export start message
+--------------------
+
+Export start messages specify the requests for an export. Example::
+
+    {
+        "id": "sfmui:45",
+        "type": "flickr_user",
+        "seedset": {
+            "id": "005b131f5f854402afa2b08a4b7ba960"
+        },
+        "path": "/sfm-data/exports/45",
+        "format": "csv",
+        "dedupe": true,
+        "item_date_start": "2015-07-28T11:17:36.640178",
+        "item_date_end": "2016-07-28T11:17:36.640178",
+        "harvest_date_start": "2015-07-28T11:17:36.640178",
+        "harvest_date_end": "2016-07-28T11:17:36.640178"
+    }
+
+Another example::
+
+    {
+        "id": "sfmui:45",
+        "type": "flickr_user",
+        "seeds": [
+            {
+                "id": "48722ac6154241f592fd74da775b7ab7",
+                "uid": "23972344@N05"
+            },
+            {
+                "id": "3ce76759a3ee40b894562a35359dfa54",
+                "uid": "85779209@N08"
+            }
+        ],
+        "path": "/sfm-data/exports/45",
+        "format": "json"
+    }
+
+* The routing key will be `export.start.<social media platform>.<type>`. For example,
+  `export.start.flickr.flickr_user`.
+* `id`: A globally unique identifier for the harvest, assigned by the requester.
+* `type`: Identifies the type of export, including the social media platform. The
+  export can use this to map to the appropriate export procedure.
+* `seeds`: A list of seeds to export. Each seed is represented by a map containing `id` and `uid`.
+* `seedset`: A map containing the `id` of the seedset to export.
+* Each export start message must have a `seeds` or `seedset` but not both.
+* `path`: A directory into which the export files should be placed. The directory may not exist.
+* `format`: A code for the format of the export. (Available formats may change.)
+* `dedupe`: If true, duplicate social media content should be removed.
+* `item_date_start` and `item_date_end`: The date of social media content should be within this range.
+* `harvest_date_start` and `harvest_date_end`: The harvest date of social media content should be within this range.
+
+Export status message
+----------------------
+
+Export status messages allow an exporter to provide information on the exports
+it performs. Example::
+
+    {
+        "id": "sfmui:45"
+        "status": "completed success",
+        "date_started": "2015-07-28T11:17:36.640044",
+        "date_ended": "2015-07-28T11:17:42.539470",
+        "infos": []
+        "warnings": [],
+        "errors": [],
+    }
+
+* The routing key will be `export.status.<social media platform>.<type>`. For example,
+  `export.status.flickr.flickr_user`.
+* `status`: Valid values are `completed success` or `completed failure`.
+* `infos`, `warnings`, and `errors`:  Lists of messages.  A message should be an object
+  (i.e., dictionary) containing a `code` and `message` entry.  Codes should be consistent
+  to allow message consumers to identify types of messages.

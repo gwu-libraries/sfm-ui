@@ -36,14 +36,14 @@ class JobsTests(TestCase):
         name, args, kwargs = mock_rabbit_worker.mock_calls[0]
         self.assertEqual("send_message", name)
         message = args[0]
-        self.assertEqual("collection:{}".format(self.collection.id), message["collection"]["id"])
-        self.assertEqual("/test-data/collection/{}".format(self.collection.id), message["collection"]["path"])
+        self.assertTrue(message["collection"]["id"])
+        self.assertEqual("/test-data/collection/{}".format(self.collection.collection_id), message["collection"]["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
         self.assertDictEqual({"token": "test_token1"}, message["seeds"][0])
         self.assertDictEqual({"uid": "test_uid2"}, message["seeds"][1])
         self.assertDictEqual({"token": "test_token3", "uid": "test_uid3"}, message["seeds"][2])
         self.assertEqual("test_type", message["type"])
-        self.assertTrue(message["id"].startswith("harvest:{}:".format(self.seedset.id)))
+        self.assertTrue(message["id"])
         self.assertEqual("harvest.start.test_platform.test_type", args[1])
 
         # Harvest model object created

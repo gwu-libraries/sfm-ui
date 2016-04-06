@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^ui/', include('ui.urls')),
+    url(r'^api/v1/', include('api.urls')),
 ]
