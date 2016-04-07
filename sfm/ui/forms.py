@@ -172,8 +172,8 @@ class CredentialFlickrForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = '__all__'
-        exclude = ['user', 'is_active']
+        fields = ['name', 'platform', 'key', 'secret', 'history_note']
+        exclude = []
         widgets = {
             'token': forms.HiddenInput(),
             'date_added': forms.HiddenInput(),
@@ -189,13 +189,23 @@ class CredentialFlickrForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+        super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'key',
+                'secret',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
-    def is_valid(self):
-        return super(CredentialFlickrForm, self).is_valid()
-
-    def full_clean(self):
-        return super(CredentialFlickrForm, self).full_clean()
 
     def save(self, commit=True):
         m = super(CredentialFlickrForm, self).save(commit=False)
@@ -217,8 +227,9 @@ class CredentialTwitterForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = '__all__'
-        exclude = ['user', 'is_active']
+        fields = ['name', 'platform', 'consumer_key', 'consumer_secret',
+                  'access_token', 'access_token_secret', 'history_note']
+        exclude = []
         widgets = {
             'token': forms.HiddenInput(),
             'date_added': forms.HiddenInput(),
@@ -234,13 +245,24 @@ class CredentialTwitterForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CredentialTwitterForm, self).__init__(*args, **kwargs)
-
-    def is_valid(self):
-        return super(CredentialTwitterForm, self).is_valid()
-
-    def full_clean(self):
-        return super(CredentialTwitterForm, self).full_clean()
+        super(CredentialTwitterForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'consumer_key',
+                'consumer_secret',
+                'access_token',
+                'access_token_secret',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
     def save(self, commit=True):
         m = super(CredentialTwitterForm, self).save(commit=False)
@@ -264,8 +286,9 @@ class CredentialWeiboForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = '__all__'
-        exclude = ['user', 'is_active']
+        fields = ['name', 'platform', 'api_key', 'api_secret', 'redirect_uri',
+                  'access_token', 'history_note']
+        exclude = []
         widgets = {
             'token': forms.HiddenInput(),
             'date_added': forms.HiddenInput(),
@@ -277,13 +300,26 @@ class CredentialWeiboForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CredentialWeiboForm, self).__init__(*args, **kwargs)
+        super(CredentialWeiboForm, self).__init__(*args, **kwargs)
+        self.fields['redirect_uri'].label = "Redirect URI"
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'api_key',
+                'api_secret',
+                'redirect_uri',
+                'access_token',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
-    def is_valid(self):
-        return super(CredentialWeiboForm, self).is_valid()
-
-    def full_clean(self):
-        return super(CredentialWeiboForm, self).full_clean()
 
     def save(self, commit=True):
         m = super(CredentialWeiboForm, self).save(commit=False)
@@ -300,9 +336,10 @@ class CredentialForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = '__all__'
-        exclude = ['user']
+        fields = ['name', 'platform', 'token', 'is_active', 'history_note']
+        exclude = []
         widgets = {
+            'platform': forms.TextInput(attrs={'readonly':'readonly'}),
             'date_added': forms.HiddenInput(),
             'history_note': HISTORY_NOTE_WIDGET
         }
@@ -316,13 +353,23 @@ class CredentialForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CredentialForm, self).__init__(*args, **kwargs)
-
-    def is_valid(self):
-        return super(CredentialForm, self).is_valid()
-
-    def full_clean(self):
-        return super(CredentialForm, self).full_clean()
+        super(CredentialForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'platform',
+                'token',
+                'is_active',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
     def save(self, commit=True):
         return super(CredentialForm, self).save(commit)
