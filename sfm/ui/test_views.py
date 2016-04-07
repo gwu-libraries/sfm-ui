@@ -3,8 +3,8 @@ from django.core.urlresolvers import reverse
 from django.test import RequestFactory, TestCase
 
 from ui.models import Collection, User, Credential, Seed, SeedSet
-from ui.views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, \
-    SeedSetDetailView
+from ui.views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, SeedSetDetailView, SeedUpdateView, SeedCreateView, SeedDetailView
+
 
 class CollectionListViewTests(TestCase):
     def setUp(self):
@@ -154,3 +154,87 @@ class SeedSetDetailViewTests(TestCase):
         seed_list = response.context_data["seed_list"]
         self.assertEqual(1, len(seed_list))
         self.assertEqual(self.seed, seed_list[0])
+
+
+class SeedCreateViewTests(TestCase):
+
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.collection = Collection.objects.create(name='Test Collection One',
+                                                    group=self.group)
+        self.credential = Credential.objects.create(user=self.user,
+                                                    platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              credential=self.credential,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one',
+                                              )
+        self.seed = Seed.objects.create(seed_set=self.seedset,
+                                        token="test token",
+                                        uid="123",
+                                        )
+        self.factory = RequestFactory()
+
+    def test_seed_form_seedset_collection(self):
+        '''
+        test that seedset and collection are loaded with seed form view
+        '''
+        request = self.factory.get(reverse("seed_create",
+                                           args=[self.seedset.pk]))
+        request.user = self.user
+        response = SeedCreateView.as_view()(request, seed_set_pk=self.seedset.pk)
+        self.assertEqual(self.seedset, response.context_data["form"].initial["seed_set"])
+        self.assertEqual(self.seedset, response.context_data["seed_set"])
+        self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class SeedTestsMixin:
+
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.collection = Collection.objects.create(name='Test Collection One',
+                                                    group=self.group)
+        self.credential = Credential.objects.create(user=self.user,
+                                                    platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              credential=self.credential,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one',
+                                              )
+        self.seed = Seed.objects.create(seed_set=self.seedset,
+                                        token="test token",
+                                        uid="123",
+                                        )
+        self.factory = RequestFactory()
+
+
+class SeedUpdateViewTests(SeedTestsMixin, TestCase):
+
+    def test_seed_update_collection(self):
+        """
+        test that collection loaded into seed update view
+        """
+        request = self.factory.get(reverse("seed_update", args=[self.seed.pk]))
+        request.user = self.user
+        response = SeedUpdateView.as_view()(request, pk=self.seed.pk)
+        self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class SeedDetailViewTests(SeedTestsMixin, TestCase):
+
+    def test_seed_detail_collection(self):
+        """
+        test that collection loaded into seed detail view
+        """
+        request = self.factory.get(reverse("seed_detail", args=[self.seed.pk]))
+        request.user = self.user
+        response = SeedDetailView.as_view()(request, pk=self.seed.pk)
+        self.assertEqual(self.collection, response.context_data["collection"])

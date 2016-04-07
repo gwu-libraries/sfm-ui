@@ -1,9 +1,12 @@
+from datetime import datetime
+import pytz
+
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
-from .forms import CollectionForm, SeedSetForm
+from .forms import CollectionForm, SeedSetForm, SeedForm
 from .views import CollectionUpdateView
-from .models import User, Collection, Credential
+from .models import User, Collection, Credential, SeedSet, Seed
 
 
 class CollectionFormTest(TestCase):
@@ -130,3 +133,33 @@ class SeedSetFormTest(TestCase):
         self.data['start_date'] = "01/01/2200"
         form = SeedSetForm(self.data, coll=self.collection.pk)
         self.assertFalse(form.is_valid())
+
+
+class SeedFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
+                                             password="test_password")
+        group = Group.objects.create(name="test_group")
+        self.collection = Collection.objects.create(group=group, name="test_collection")
+        self.credential = Credential.objects.create(user=user, platform="test_platform",
+                                                    token="{}")
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              name="test_seedset",
+                                              harvest_type="twitter_search",
+                                              credential=self.credential,
+                                              start_date=datetime(2100, 1, 1, 1, 30, tzinfo=pytz.utc),
+                                              end_date=datetime(2200, 1, 1, 1, 30, tzinfo=pytz.utc),
+                                              date_added=datetime(2016, 1, 1, 1, 30, tzinfo=pytz.utc),
+                                              schedule_minutes=60,
+                                              )
+        self.data = {
+            "token": "test_token",
+            "uid": "test_uid",
+            "seed_set": self.seedset.pk,
+            "date_added": "01/01/2016",
+        }
+
+    def test_valid_from(self):
+        form = SeedForm(self.data, seedset=self.seedset.pk)
+        self.assertTrue(form.is_valid())
