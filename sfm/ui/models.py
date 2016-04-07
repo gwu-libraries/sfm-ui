@@ -52,6 +52,7 @@ def history_save(self, *args, **kw):
 
 class Credential(models.Model):
 
+    name = models.CharField(max_length=255, default='Credential')
     user = models.ForeignKey(User, related_name='credentials')
     platform = models.CharField(max_length=255, blank=True,
                                 help_text='Platform name')
