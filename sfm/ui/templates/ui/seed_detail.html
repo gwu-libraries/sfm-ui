@@ -18,6 +18,9 @@
         <li>is_visible : {{ seed.is_visible }}</li>
         <li>is_active : {{ seed.is_active }}</li>
         <li>stats : {{ seed.stats }}</li>
+        <li>Diffs :
+        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
+        </li>
     </div>
     </form>
     </h2>

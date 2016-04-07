@@ -29,7 +29,7 @@ urlpatterns = patterns('',
                            views.SeedSetCreateView.as_view(),
                            name="seedset_create"),
 
-                       url(r'^seedsets/(?P<pk>\d+)/update/$',
+                       url(r'^seedsets/(?P<pk>\d+)/update/(?P<collection_pk>\d+)$',
                            views.SeedSetUpdateView.as_view(),
                            name="seedset_update"),
 
@@ -41,11 +41,7 @@ urlpatterns = patterns('',
                            views.SeedSetDetailView.as_view(),
                            name="seedset_detail"),
 
-                       url(r'^seedsets/$',
-                           views.SeedSetListView.as_view(),
-                           name="seedset_list"),
-
-                       url(r'^seeds/create/$',
+                       url(r'^seeds/create/(?P<seedset_pk>\d+)$',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
 
@@ -69,9 +65,25 @@ urlpatterns = patterns('',
                            views.CredentialDetailView.as_view(),
                            name="credential_detail"),
 
-                       url(r'^credentials/create/$',
-                           views.CredentialCreateView.as_view(),
-                           name="credential_create"),
+                       url(r'^credentials/twitter/create/$',
+                           views.CredentialTwitterCreateView.as_view(),
+                           name="credential_twitter_create"),
+
+                       url(r'^credentials/weibo/create/$',
+                           views.CredentialWeiboCreateView.as_view(),
+                           name="credential_weibo_create"),
+
+                       url(r'^credentials/flickr/create/$',
+                           views.CredentialFlickrCreateView.as_view(),
+                           name="credential_flickr_create"),
+
+                       url(r'^credentials/(?P<pk>\d+)/delete/$',
+                           views.CredentialDeleteView.as_view(),
+                           name="credential_delete"),
+
+                       url(r'^credentials/(?P<pk>\d+)/update/$',
+                           views.CredentialUpdateView.as_view(),
+                           name="credential_update"),
 
                        url(r'^credentials/$',
                            views.CredentialListView.as_view(),

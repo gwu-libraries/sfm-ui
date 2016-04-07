@@ -7,6 +7,7 @@ django-allauth==0.24.1
 django-braces==1.8.1
 django-crispy-forms==1.5.2
 django-jsonfield==0.9.15
+django-simple-history==1.8.0
 funcsigs==0.4
 futures==3.0.4
 iso8601==0.1.11

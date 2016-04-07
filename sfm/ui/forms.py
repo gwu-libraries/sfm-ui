@@ -5,8 +5,11 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
-
 from .models import Collection, SeedSet, Seed, Credential
+
+HISTORY_NOTE_LABEL = "Change Note"
+HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
+HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
 
 
 class CollectionForm(forms.ModelForm):
@@ -14,12 +17,18 @@ class CollectionForm(forms.ModelForm):
 
     class Meta:
         model = Collection
-        fields = ['name', 'description', 'group']
+        fields = ['name', 'description', 'group', 'history_note']
         exclude = []
-        widgets = None
+        widgets = {
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -37,7 +46,8 @@ class CollectionForm(forms.ModelForm):
                 '',
                 'name',
                 'description',
-                'group'
+                'group',
+                'history_note'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -52,14 +62,20 @@ class SeedSetForm(forms.ModelForm):
         model = SeedSet
         fields = ['name', 'harvest_type', 'description', 'collection',
                   'is_active', 'schedule_minutes', 'credential',
-                  'harvest_options', 'date_added', 'start_date', 'end_date']
+                  'harvest_options', 'date_added', 'start_date', 'end_date',
+                  'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
-                   'is_active': forms.HiddenInput}
+                   'is_active': forms.HiddenInput,
+                   'history_note': HISTORY_NOTE_WIDGET}
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -71,16 +87,17 @@ class SeedSetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'name',
-                'description',
                 'harvest_type',
+                'credential',
                 'harvest_options',
                 'schedule_minutes',
                 'start_date',
                 'end_date',
-                'credential',
+                'description',
                 'is_active',
                 'collection',
                 'date_added',
+                'history_note'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -122,10 +139,16 @@ class SeedForm(forms.ModelForm):
         model = Seed
         fields = '__all__'
         exclude = []
-        widgets = None
+        widgets = {
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
@@ -141,26 +164,216 @@ class SeedForm(forms.ModelForm):
         return super(SeedForm, self).save(commit)
 
 
+class CredentialFlickrForm(forms.ModelForm):
+
+    key = forms.CharField()
+    secret = forms.CharField()
+    platform = forms.CharField(widget = forms.HiddenInput(), initial='flickr')
+
+    class Meta:
+        model = Credential
+        fields = ['name', 'platform', 'key', 'secret', 'history_note']
+        exclude = []
+        widgets = {
+            'token': forms.HiddenInput(),
+            'date_added': forms.HiddenInput(),
+            'history_note': HISTORY_NOTE_WIDGET
+        }
+        localized_fields = None
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'key',
+                'secret',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
+
+
+    def save(self, commit=True):
+        m = super(CredentialFlickrForm, self).save(commit=False)
+        m.token = {
+            "key": self.cleaned_data["key"],
+            "secret": self.cleaned_data["secret"]
+        }
+        m.save()
+        return m
+
+
+class CredentialTwitterForm(forms.ModelForm):
+
+    consumer_key = forms.CharField()
+    consumer_secret = forms.CharField()
+    access_token = forms.CharField()
+    access_token_secret = forms.CharField()
+    platform = forms.CharField(widget = forms.HiddenInput(), initial='twitter')
+
+    class Meta:
+        model = Credential
+        fields = ['name', 'platform', 'consumer_key', 'consumer_secret',
+                  'access_token', 'access_token_secret', 'history_note']
+        exclude = []
+        widgets = {
+            'token': forms.HiddenInput(),
+            'date_added': forms.HiddenInput(),
+            'history_note': HISTORY_NOTE_WIDGET
+        }
+        localized_fields = None
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialTwitterForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'consumer_key',
+                'consumer_secret',
+                'access_token',
+                'access_token_secret',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
+
+    def save(self, commit=True):
+        m = super(CredentialTwitterForm, self).save(commit=False)
+        m.token = {
+            "consumer_key": self.cleaned_data["consumer_key"],
+            "consumer_secret": self.cleaned_data["consumer_secret"],
+            "access_token": self.cleaned_data["access_token"],
+            "access_token_secret": self.cleaned_data["access_token_secret"],
+        }
+        m.save()
+        return m
+
+
+class CredentialWeiboForm(forms.ModelForm):
+
+    api_key = forms.CharField()
+    api_secret = forms.CharField()
+    redirect_uri = forms.CharField()
+    access_token = forms.CharField()
+    platform = forms.CharField(widget = forms.HiddenInput(), initial='weibo')
+
+    class Meta:
+        model = Credential
+        fields = ['name', 'platform', 'api_key', 'api_secret', 'redirect_uri',
+                  'access_token', 'history_note']
+        exclude = []
+        widgets = {
+            'token': forms.HiddenInput(),
+            'date_added': forms.HiddenInput(),
+            'history_note': HISTORY_NOTE_WIDGET
+        }
+        localized_fields = None
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialWeiboForm, self).__init__(*args, **kwargs)
+        self.fields['redirect_uri'].label = "Redirect URI"
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'api_key',
+                'api_secret',
+                'redirect_uri',
+                'access_token',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
+
+
+    def save(self, commit=True):
+        m = super(CredentialWeiboForm, self).save(commit=False)
+        m.token = {
+            "api_key": self.cleaned_data["api_key"],
+            "api_secret": self.cleaned_data["api_secret"],
+            "redirect_uri": self.cleaned_data["redirect_uri"],
+            "access_token": self.cleaned_data["access_token"],
+        }
+        m.save()
+        return m
+
 class CredentialForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = '__all__'
+        fields = ['name', 'platform', 'token', 'is_active', 'history_note']
         exclude = []
-        widgets = None
+        widgets = {
+            'platform': forms.TextInput(attrs={'readonly':'readonly'}),
+            'date_added': forms.HiddenInput(),
+            'history_note': HISTORY_NOTE_WIDGET
+        }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        return super(CredentialForm, self).__init__(*args, **kwargs)
-
-    def is_valid(self):
-        return super(CredentialForm, self).is_valid()
-
-    def full_clean(self):
-        return super(CredentialForm, self).full_clean()
+        super(CredentialForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'platform',
+                'token',
+                'is_active',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
 
     def save(self, commit=True):
         return super(CredentialForm, self).save(commit)
