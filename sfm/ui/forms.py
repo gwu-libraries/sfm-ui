@@ -295,8 +295,12 @@ class CredentialWeiboForm(forms.ModelForm):
             'history_note': HISTORY_NOTE_WIDGET
         }
         localized_fields = None
-        labels = {}
-        help_texts = {}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
