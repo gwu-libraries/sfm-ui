@@ -56,7 +56,8 @@
         
           <ul class="nav navbar-nav navbar-right">
             {% if request.user.is_authenticated %}
-              <li><a href="/ui/collections">My Collections</a></li>
+			  <li><a href="/ui/collections">My Collections</a></li>
+			  <li><a href="/ui/credentials">My Credentials</a></li>
               <li><a href="/admin">Admin</a></li>
               <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
             {% else %}

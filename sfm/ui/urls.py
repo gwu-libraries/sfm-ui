@@ -65,9 +65,25 @@ urlpatterns = patterns('',
                            views.CredentialDetailView.as_view(),
                            name="credential_detail"),
 
-                       url(r'^credentials/create/$',
-                           views.CredentialCreateView.as_view(),
-                           name="credential_create"),
+                       url(r'^credentials/twitter/create/$',
+                           views.CredentialTwitterCreateView.as_view(),
+                           name="credential_twitter_create"),
+
+                       url(r'^credentials/weibo/create/$',
+                           views.CredentialWeiboCreateView.as_view(),
+                           name="credential_weibo_create"),
+
+                       url(r'^credentials/flickr/create/$',
+                           views.CredentialFlickrCreateView.as_view(),
+                           name="credential_flickr_create"),
+
+                       url(r'^credentials/(?P<pk>\d+)/delete/$',
+                           views.CredentialDeleteView.as_view(),
+                           name="credential_delete"),
+
+                       url(r'^credentials/(?P<pk>\d+)/update/$',
+                           views.CredentialUpdateView.as_view(),
+                           name="credential_update"),
 
                        url(r'^credentials/$',
                            views.CredentialListView.as_view(),

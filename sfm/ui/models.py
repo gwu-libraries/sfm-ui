@@ -51,10 +51,15 @@ def history_save(self, *args, **kw):
 
 
 class Credential(models.Model):
-
+    PLATFORM_CHOICES = [
+        ('twitter', 'twitter'),
+        ('flickr', 'flickr'),
+        ('weibo', 'weibo'),
+        ('tumblr', 'tumblr')
+    ]
+    name = models.CharField(max_length=255)
     user = models.ForeignKey(User, related_name='credentials')
-    platform = models.CharField(max_length=255, blank=True,
-                                help_text='Platform name')
+    platform = models.CharField(max_length=255, choices=PLATFORM_CHOICES)
     token = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)

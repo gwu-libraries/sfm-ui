@@ -6,6 +6,7 @@ from django.views.generic.list import ListView
 from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
+from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm
 from .models import Collection, SeedSet, Seed, Credential, Harvest
 from .sched import next_run_time
 from .utils import diff_object_history
@@ -233,14 +234,61 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CredentialCreateView(LoginRequiredMixin, CreateView):
+class CredentialTwitterCreateView(LoginRequiredMixin, CreateView):
     model = Credential
-    form_class = CredentialForm
+    form_class = CredentialTwitterForm
     template_name = 'ui/credential_create.html'
-    success_url = reverse_lazy('credential_detail')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CredentialTwitterCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialWeiboCreateView(LoginRequiredMixin, CreateView):
+    model = Credential
+    form_class = CredentialWeiboForm
+    template_name = 'ui/credential_create.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CredentialWeiboCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
+    model = Credential
+    form_class = CredentialFlickrForm
+    template_name = 'ui/credential_create.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CredentialFlickrCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
 
 
 class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
     allow_empty = True
+
+
+class CredentialUpdateView(UpdateView):
+    model = Credential
+    form_class = CredentialForm
+    template_name = 'ui/credential_update.html'
+
+    def get_success_url(self):
+        return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialDeleteView(DeleteView):
+    model = Credential
+    form_class = CredentialForm
+    success_url = reverse_lazy('credential_list')
