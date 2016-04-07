@@ -47,7 +47,6 @@
                    <tr>
   	              <th>Token</th>
 		      <th>uid</th>
-		      <th>Next harvest</th>
 		      <th>Active</th>
 	            </tr>
                 </thead>
@@ -55,7 +54,6 @@
 	           <tr>
 		      <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>   
 		      <td>{{ seed.uid }}</td>
-		      <td></td>
 		      <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
 		   </tr> 
                    {% endfor %} 

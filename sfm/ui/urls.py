@@ -41,7 +41,7 @@ urlpatterns = patterns('',
                            views.SeedSetDetailView.as_view(),
                            name="seedset_detail"),
 
-                       url(r'^seeds/create/(?P<seedset_pk>\d+)$',
+                       url(r'^seeds/create/(?P<seed_set_pk>\d+)$',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
 

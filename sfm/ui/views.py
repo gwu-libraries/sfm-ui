@@ -38,8 +38,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
-        collection = kwargs["object"]
-        context["diffs"] = diff_object_history(collection)
+        context["diffs"] = diff_object_history(self.object)
         return context
 
 
@@ -88,11 +87,10 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
-        seed_set = kwargs["object"]
-        context["next_run_time"] = next_run_time(seed_set.id)
-        context["harvests"] = Harvest.objects.filter(historical_seed_set__id=seed_set.id)
-        context["diffs"] = diff_object_history(seed_set)
-        context["seed_list"] = seed_set.seeds.all()
+        context["next_run_time"] = next_run_time(self.object.id)
+        context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
+        context["diffs"] = diff_object_history(self.object)
+        context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         return context
 
 
@@ -103,14 +101,12 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super(SeedSetCreateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(
-           pk=self.kwargs["collection_pk"])
+        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetCreateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(
-                                    pk=self.kwargs["collection_pk"])
+        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return context
 
     def get_form_kwargs(self):
@@ -130,14 +126,13 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_initial(self):
         initial = super(SeedSetUpdateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(
-                                    pk=self.kwargs["collection_pk"])
+        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(
-                                    pk=self.kwargs["collection_pk"])
+        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["seeds_list"] = Seed.objects.filter(seed_set=self.object.pk)
         return context
 
     def get_form_kwargs(self):
@@ -149,13 +144,13 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("seedset_detail", args=(self.object.pk,))
 
 
-class SeedSetDeleteView(DeleteView):
+class SeedSetDeleteView(LoginRequiredMixin, DeleteView):
     model = SeedSet
     template_name = 'ui/seedset_delete.html'
     success_url = reverse_lazy('seedset_list')
 
 
-class SeedListView(ListView):
+class SeedListView(LoginRequiredMixin, ListView):
     model = Seed
     template_name = 'ui/seed_list.html'
     paginate_by = 20
@@ -163,36 +158,65 @@ class SeedListView(ListView):
     paginate_orphans = 0
 
 
-class SeedDetailView(DetailView):
+class SeedDetailView(LoginRequiredMixin, DetailView):
     model = Seed
     template_name = 'ui/seed_detail.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
-        seed = kwargs["object"]
-        context["diffs"] = diff_object_history(seed)
+        # seed = self.object
+        context["diffs"] = diff_object_history(self.object)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.pk)
         return context
 
 
-class SeedCreateView(CreateView):
+class SeedCreateView(LoginRequiredMixin, CreateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_create.html'
-    success_url = reverse_lazy('seed_list')
+
+    def get_initial(self):
+        initial = super(SeedCreateView, self).get_initial()
+        initial["seed_set"] = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(SeedCreateView, self).get_context_data(**kwargs)
+        context["seed_set"] = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
+        context["collection"] = context["seed_set"].collection
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(SeedCreateView, self).get_form_kwargs()
+        kwargs["seedset"] = self.kwargs["seed_set_pk"]
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("seedset_detail", args=(self.kwargs["seed_set_pk"]))
 
 
-class SeedUpdateView(UpdateView):
+class SeedUpdateView(LoginRequiredMixin, UpdateView):
     model = Seed
     form_class = SeedForm
     template_name = 'ui/seed_update.html'
     initial = {'history_note': ''}
 
+    def get_form_kwargs(self):
+        kwargs = super(SeedUpdateView, self).get_form_kwargs()
+        kwargs["seedset"] = self.object.seed_set.pk
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(SeedUpdateView, self).get_context_data(**kwargs)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.pk)
+        return context
+
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
 
 
-class SeedDeleteView(DeleteView):
+class SeedDeleteView(LoginRequiredMixin, DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
     success_url = reverse_lazy('seed_list')
@@ -205,8 +229,7 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
-        credential = kwargs["object"]
-        context["diffs"] = diff_object_history(credential)
+        context["diffs"] = diff_object_history(self.object)
         return context
 
 

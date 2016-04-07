@@ -1,24 +1,35 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    {{ seed }}
+   {{ seed }}
 {% endblock %}
 
 {% block content %}
-    <h1><a href={% url "seed_list" %}>Seed</a></h1>
-    <h2>{{ seed }} | <a href={% url "seed_update" seed.pk %}>Update</a> | 
-    <form style="display:inline;" action={% url "seed_delete" seed.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ seed }}?')">{% csrf_token %}
-    <input type="submit" value="Delete" />
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a href={% url "collection_list" %}>My Collections</a></li>
+                <li><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></li>
+                <li><a href={% url "seedset_detail" seed.seed_set.pk %}>{{ seed.seed_set.name }}</a></li>   
+                <li class="active">{{ seed.token }}</a></li>
+            </ol>
+        </div>
+    </div>
+   <div class="row">
+       <div class="col-md-12">
+            <div class="page-header">
+               <h1>{{ seed.token }} <a class="btn btn-default" href={% url "seed_update" seed.pk %}>Edit</a></h1>
+            </div>
+       </div>
+    </div>
     <div>
-        <li>SeedSet : {{ seed.seed_set }}</li>
-        <li>Platform Token : {{ seed.platform_token }}</li>
-        <li>Platform UID : {{ seed.platform_uid }}</li>
-        <li>date_updated : {{ seed.date_updated }}</li>
-        <li>date_added : {{ seed.date_added }}</li>
-        <li>is_visible : {{ seed.is_visible }}</li>
-        <li>is_active : {{ seed.is_active }}</li>
-        <li>stats : {{ seed.stats }}</li>
-        <li>Diffs :
+        <li><strong>Token:</strong> {{ seed.token }}</li>
+        <li><strong>uid:</strong> {{ seed.uid }}</li>
+        <li><strong>Active:</strong> {{seed.is_active|yesno:"Yes,No" }}</li>
+        <li><strong>Valid:</strong> {{seed.is_valid|yesno:"Yes,No" }}</li>
+        <li><strong>Date updated:</strong> {{ seed.date_updated }}</li>
+        <li><strong>Date added</strong> {{ seed.date_added }}</li>
+        <li><strong>Diffs:</strong></li>
         {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
         </li>
     </div>
