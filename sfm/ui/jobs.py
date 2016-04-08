@@ -23,6 +23,7 @@ def seedset_harvest(seedset_pk):
     except ObjectDoesNotExist:
         log.error("Harvesting seedset %s failed because seedset does not exist", seedset_pk)
         return
+
     if not seed_set.is_active:
         log.debug("Ignoring Harvest for seedset as seedset %s is inactive", seedset_pk)
         return
@@ -33,6 +34,9 @@ def seedset_harvest(seedset_pk):
     for seed in seed_set.seeds.all():
         if seed.is_active:
             historical_seeds.append(seed.history.all()[0])
+        else:
+            log.debug("Seed %s is ignored from the harvest as it is inactive",
+                      seed)
     if not historical_seeds:
         log.warning("Seedset %s has no seeds", seedset_pk)
         return
@@ -59,16 +63,19 @@ def seedset_harvest(seedset_pk):
     # Seeds
     for historical_seed in historical_seeds:
         if historical_seed.is_active:
-            seed_map = {}
+            seed_map = dict()
+            seed_map["id"] = historical_seed.seed_id
             if historical_seed.token:
                 seed_map["token"] = historical_seed.token
             if historical_seed.uid:
                 seed_map["uid"] = historical_seed.uid
             message["seeds"].append(seed_map)
 
-    routing_key = "harvest.start.{}.{}".format(historical_credential.platform, harvest_type)
+    routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
+                                               harvest_type)
 
-    log.debug("Sending %s message to %s with id %s", harvest_type, routing_key, harvest_id)
+    log.debug("Sending %s message to %s with id %s", harvest_type,
+              routing_key, harvest_id)
 
     # Publish message to queue via rabbit worker
     RabbitWorker().send_message(message, routing_key)

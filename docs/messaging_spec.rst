@@ -108,12 +108,15 @@ Harvest start messages specify for a harvester the details of a harvest. Example
     {
         "id": "sfmui:45",
         "type": "flickr_user",
+        "path": "/tmp/test_collection/collection_id/seedset_id",
         "seeds": [
             {
+                "id": "seed_id_1",
                 "token": "justin.littman",
                 "uid": "131866249@N02"
             },
             {
+                "id": "seed_id_2",
                 "token": "library_of_congress"
             }
         ],
@@ -125,8 +128,7 @@ Harvest start messages specify for a harvester the details of a harvest. Example
             "secret": "1642649c54cc3ebe"
         },
         "collection": {
-            "id": "test_collection",
-            "path": "/tmp/test_collection"
+            "id": "test_collection"
         }
     }
 
@@ -135,11 +137,14 @@ Another example::
     {
         "id": "test:1",
         "type": "twitter_search",
+        "path": "/tmp/test_collection/collection_id/seedset_id",
         "seeds": [
             {
+                "id": "seed_id_3",
                 "token": "gwu"
             },
             {
+                "id": "seed_id_4",
                 "token": "gelman"
             }
         ],
@@ -150,8 +155,7 @@ Another example::
             "access_token_secret": "jK9QOmn5Vbbmfg2ANT6KgfmKRqV8ThXVQ1G6qQg8BCejvp"
         },
         "collection": {
-            "id": "test_collection",
-            "path": "/tmp/test_collection"
+            "id": "test_collection"
         }
     }
 
@@ -160,12 +164,13 @@ Another example::
 * `id`: A globally unique identifier for the harvest, assigned by the requester.
 * `type`: Identifies the type of harvest, including the social media platform. The
   harvester can use this to map to the appropriate api calls.
-* `seeds`: A list of seeds to harvest. Each seed is represented by a map containing `token` and (optionally) `uid`.
+* `seeds`: A list of seeds to harvest. Each seed is represented by a map containing `id`, `token` and (optionally) `uid`.
 * `options`: A name/value map containing additional options for the harvest.  The contents of the map
   are specific to the type of harvest. (That is, the seeds for a flickr photo are going to be
   different than the seeds for a twitter user timeline.)
 * `credentials`: All credentials that are necessary to access the social media platform.
   Credentials is a name/value map; the contents are specific to a social media platform.
+* `path`: The base path for the seed set.
 
 Web resource harvest start message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -178,17 +183,19 @@ other harvest start messages, with the differences noted below. Example::
         "id": "flickr:45",
         "parent_id": "sfmui:45",
         "type": "web",
+        "path": "/tmp/test_collection/collection_id/seedset_id",
         "seeds": [
             {
+                "id": "seed_id_5",
                 "token": "http://www.gwu.edu/"
             },
             {
+                "id": "seed_id_6",
                 "token": "http://library.gwu.edu/"
             }
         ],
         "collection": {
-            "id": "test_collection",
-            "path": "/tmp/test_collection"
+            "id": "test_collection"
         }
     }
 
@@ -226,10 +233,10 @@ it performs. Example::
             "user": 1
         },
         "token_updates": {
-            "131866249@N02": "j.littman"
+            "seed_id_1": "j.littman"
         },
         "uids": {
-            "library_of_congress": "671366249@N03"
+            "seed_id_2": "671366249@N03"
         },
         "warcs": {
             "count": 3
@@ -262,14 +269,13 @@ created during a harvest. Example::
 
     {
         "warc": {
-            "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection/2015/07/28/11/test_collection-flickr-2015-07-28T11:17:36Z.warc.gz",
+            "path": "tmp/collection/test_collection/seedset_id/2015/07/28/11/harvest_id-2015-07-28T11:17:36Z.warc.gz",,
             "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
             "bytes": 26146,
             "id": "test_collection-flickr-2015-07-28T11:17:36Z",
             "date_created": "2015-07-28T11:17:36.640178"
         },
         "collection": {
-            "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection",
             "id": "test_collection"
         }
         "harvest": {
