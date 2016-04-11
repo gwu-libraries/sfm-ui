@@ -18,12 +18,12 @@ The goal of this section is to get a `username` and `password` of weibo account.
 ### 1.1 Access to [weibo.com](http://www.weibo.com/)
 At the US areas, the weibo.com will be redirected to the the us.weibo.com. The page is as follows:
 
-![weibo index]({{ site.url }}/images/weibo/weibo_index.png)
+![weibo index]({{ site.github.url }}/images/weibo/weibo_index.png)
 
 ### 1.2 Sign up for Free
 Click the `开通微博(Open an Account)` button on the top-right menu, and the page could be like this:
 
-![weibo signup]({{ site.url }}/images/weibo/weibo_signup.png)
+![weibo signup]({{ site.github.url }}/images/weibo/weibo_signup.png)
 
 It has two ways to fill in the form: `Use Email` and `Use Mobile Phone` , but both of them need your phone number to verify the information. This guide will follow the `Use Mobile Phone`. The page is showing below:
 
