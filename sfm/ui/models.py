@@ -185,11 +185,13 @@ class Harvest(models.Model):
         (FAILURE, FAILURE),
         (RUNNING, RUNNING)
     )
-    historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests')
-    historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests')
+    harvest_type = models.CharField(max_length=255)
+    historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests', null=True)
+    historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
+    parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
     date_started = models.DateTimeField(blank=True, null=True)
@@ -203,10 +205,6 @@ class Harvest(models.Model):
     uids = JSONField(blank=True)
     warcs_count = models.PositiveIntegerField(default=0)
     warcs_bytes = models.BigIntegerField(default=0)
-
-    @property
-    def seed_set(self):
-        return self.historical_seed_set.history_object
 
     def __str__(self):
         return '<Harvest %s "%s">' % (self.id, self.harvest_id)

@@ -25,6 +25,8 @@ class SfmUiConsumer(BaseConsumer):
             self._on_warc_created_message()
         elif self.routing_key.startswith("export.status."):
             self._on_export_status_message()
+        elif self.routing_key == "harvest.start.web":
+            self._on_web_harvest_start_message()
         else:
             log.warn("Unexpected message with routing key %s: %s", self.routing_key, json.dumps(self.message, indent=4))
 
@@ -114,3 +116,34 @@ class SfmUiConsumer(BaseConsumer):
         except ObjectDoesNotExist:
             log.error("Export model object not found for export status message: %s",
                       json.dumps(self.message, indent=4))
+
+    def _on_web_harvest_start_message(self):
+        try:
+            log.debug("Creating harvest for web harvest with id %s", self.message["id"])
+            parent_harvest = Harvest.objects.get(harvest_id=self.message["parent_id"])
+            harvest = Harvest.objects.create(harvest_type=self.message["type"],
+                                             harvest_id=self.message["id"],
+                                             parent_harvest=parent_harvest,
+                                             seed_set=parent_harvest.seed_set)
+            harvest.save()
+        except ObjectDoesNotExist:
+            log.error("Harvest model object not found for web harvest status message: %s",
+                      json.dumps(self.message, indent=4))
+
+        # {
+        #     "id": "flickr:45",
+        #     "parent_id": "sfmui:45",
+        #     "type": "web",
+        #     "seeds": [
+        #         {
+        #             "token": "http://www.gwu.edu/"
+        #         },
+        #         {
+        #             "token": "http://library.gwu.edu/"
+        #         }
+        #     ],
+        #     "collection": {
+        #         "id": "test_collection",
+        #         "path": "/tmp/test_collection"
+        #     }
+        # }

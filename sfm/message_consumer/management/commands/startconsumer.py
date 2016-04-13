@@ -4,7 +4,8 @@ from message_consumer.sfm_ui_consumer import SfmUiConsumer
 from sfmutils.consumer import MqConfig, EXCHANGE
 
 QUEUE = "sfm_ui"
-ROUTING_KEYS = ["harvest.status.*", "harvest.status.*.*", "warc_created", "export.status.*", "export.status.*.*"]
+ROUTING_KEYS = ["harvest.status.*", "harvest.status.*.*", "warc_created", "export.status.*", "export.status.*.*",
+                "harvest.start.web"]
 
 
 class Command(BaseCommand):
