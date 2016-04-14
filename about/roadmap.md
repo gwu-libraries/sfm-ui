@@ -49,7 +49,7 @@ ads: false
 * UI: Contextual help
 * Harvester: Web (may push to next milestone)
 
-See [1.0 release description]({{ site.github.url }}/1-0-release)
+See [1.0 release description]({{ site.github.url }}/about/1-0-release)
 
 ## Post-release 1.0
 (ordering is very rough and will likely change)
