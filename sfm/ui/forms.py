@@ -6,6 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
 from .models import Collection, SeedSet, Seed, Credential
+import json
 
 HISTORY_NOTE_LABEL = "Change Note"
 HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
@@ -232,6 +233,7 @@ class CredentialFlickrForm(forms.ModelForm):
             "key": self.cleaned_data["key"],
             "secret": self.cleaned_data["secret"]
         }
+        m.token = json.dumps(m.token)
         m.save()
         return m
 
@@ -291,6 +293,7 @@ class CredentialTwitterForm(forms.ModelForm):
             "access_token": self.cleaned_data["access_token"],
             "access_token_secret": self.cleaned_data["access_token_secret"],
         }
+        m.token = json.dumps(m.token)
         m.save()
         return m
 
@@ -352,6 +355,7 @@ class CredentialWeiboForm(forms.ModelForm):
             "redirect_uri": self.cleaned_data["redirect_uri"],
             "access_token": self.cleaned_data["access_token"],
         }
+        m.token = json.dumps(m.token)
         m.save()
         return m
 
