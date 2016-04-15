@@ -4,8 +4,9 @@ import pytz
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
-from .forms import CollectionForm, SeedSetForm, SeedForm
-from .views import CollectionUpdateView
+from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialWeiboForm
+from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialForm
+from .views import CollectionUpdateView, CredentialUpdateView
 from .models import User, Collection, Credential, SeedSet, Seed
 
 
@@ -162,4 +163,115 @@ class SeedFormTest(TestCase):
 
     def test_valid_from(self):
         form = SeedForm(self.data, seedset=self.seedset.pk)
+        self.assertTrue(form.is_valid())
+
+
+class CredentialFlickrFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.path = "/ui/credentials/flickr/create/"
+        self.user = User.objects.create_superuser(username="test_user",
+                                             email="test_user@test.com",
+                                             password="test_password")
+        self.data = {
+            "name": "test_flickr_credential",
+            "user": self.user.pk,
+            "platform": "flickr",
+            "key":"dummy_key",
+            "secret":"dummy_secret",
+            "date_added": "04/14/2016",
+        }
+
+    def test__form(self):
+        form = CredentialFlickrForm(self.data)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        credential = form.save()
+        self.assertTrue(credential.token,
+                        '{"key":"dummy_key","secret":"dummy_secret"}')
+
+
+class CredentialTwitterFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.path = "/ui/credentials/flickr/create/"
+        self.user = User.objects.create_superuser(username="test_user",
+                                             email="test_user@test.com",
+                                             password="test_password")
+        self.data = {
+            "name": "test_twitter_credential",
+            "user": self.user.pk,
+            "platform": "twitter",
+            "consumer_key": "dummy_consumer_key",
+            "consumer_secret": "dummy_consumer_secret",
+            "access_token": "dummy_access_token",
+            "access_token_secret": "dummy_access_token_secret",
+            "date_added": "04/14/2016",
+        }
+
+    def test_form(self):
+        form = CredentialTwitterForm(self.data)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        credential = form.save()
+        self.assertTrue(credential.token,
+                        '{"consumer_key": "dummy_consumer_key",'
+                        '"consumer_secret": "dummy_consumer_secret",'
+                        '"access_token": "dummy_access_token",'
+                        '"access_token_secret": "dummy_access_token_secret"}')
+
+
+class CredentialWeiboFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.path = "/ui/credentials/flickr/create/"
+        self.user = User.objects.create_superuser(username="test_user",
+                                             email="test_user@test.com",
+                                             password="test_password")
+        self.data = {
+            "name": "test_weibo_credential",
+            "user": self.user.pk,
+            "platform": "weibo",
+            "api_key": "dummy_api_key",
+            "api_secret": "dummy_api_secret",
+            "redirect_uri": "dummy_redirect_uri",
+            "access_token": "dummy_access_token",
+            "date_added": "04/14/2016",
+        }
+
+    def test_form(self):
+        form = CredentialWeiboForm(self.data)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        credential = form.save()
+        self.assertTrue(credential.token,
+                        '{"api_key": "dummy_api_key",'
+                        '"api_secret": "dummy_api_secret",'
+                        '"redirect_uri": "dummy_redirect_uri",'
+                        '"access_token": "dummy_access_token"}')
+
+
+class CredentialUpdateFormTest(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        user = User.objects.create_superuser(username="test_user",
+                                             email="test_user@test.com",
+                                             password="test_password")
+        self.credential = Credential.objects.create(user=user,
+                                                    name='Test Credential',
+                                                    platform='test platform',
+                                                    token='{"key1":"key1","key2":"key2"}')
+        self.path = '/ui/credentials/' + str(self.credential.pk) + '/update/'
+
+    def test_valid_data(self):
+        request = self.factory.get(self.path)
+        response = CredentialUpdateView.as_view()(request,
+                                                  pk=self.credential.pk)
+        form = CredentialForm({
+            'name': 'my test credential updated name',
+            'token': '{"key1":"updated_key1","key2","update_key2"}',
+            'history_note': 'Test Update'
+        })
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(form.is_valid())
