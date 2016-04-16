@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ collection.name }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
+      <li><a href={% url "seedset_detail" seedset.pk %} >{{ seedset.name }}</a></li>
+      <li class="active">Export</li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    <p>
+        {% if not export.seed_set %}
+            <p><strong>Selected seeds:</strong>
+            <ul>
+            {% for seed in export.seeds.all %}
+                <li>{{ seed }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+    </p>
+    <p><strong>Requested:</strong> {{ export.date_requested }}</p>
+    <p><strong>Status:</strong> {{ export.status }}</p>
+    <p><strong>Export type:</strong> {{ export.export_type }}</p>
+    <p><strong>Format:</strong> {{ export.export_format }}</p>
+    <p><strong>Dedupe:</strong> {{ export.dedupe }}</p>
+    <p><strong>Item start date:</strong> {{ export.item_date_start }}</p>
+    <p><strong>Item end date:</strong> {{ export.item_date_end }}</p>
+    <p><strong>Harvest start date:</strong> {{ export.harvest_date_start }}</p>
+    <p><strong>Harvest end date:</strong> {{ export.harvest_date_end }}</p>
+
+    </div>
+</div>
+{% if fileinfos %}
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Files</h4></div>
+        <div class="panel-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Filename</th>
+                  <th>Size</th>
+                </tr>
+              </thead>
+            {% for filename, bytes in fileinfos %}
+                <tr>
+                    <td><a href={% url "export_file" export.pk filename %}>{{ filename }}</a></td>
+                    <td>{{ bytes|filesizeformat }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

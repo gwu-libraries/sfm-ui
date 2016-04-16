@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.conf import settings
 import json
 from mock import MagicMock, patch
 from .jobs import seedset_harvest
@@ -37,7 +38,9 @@ class JobsTests(TestCase):
         self.assertEqual("send_message", name)
         message = args[0]
         self.assertTrue(message["collection"]["id"])
-        self.assertEqual("/test-data/collection/{}/{}".format(self.collection.collection_id, self.seedset.seedset_id), message["path"])
+        self.assertEqual(
+            "{}/collection/{}/{}".format(settings.SFM_DATA_DIR, self.collection.collection_id, self.seedset.seedset_id),
+            message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
         self.assertDictEqual({"token": "test_token1"}, message["seeds"][0])
         self.assertDictEqual({"uid": "test_uid2"}, message["seeds"][1])

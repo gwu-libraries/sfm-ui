@@ -5,8 +5,12 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
-from .models import Collection, SeedSet, Seed, Credential
+from .models import Collection, SeedSet, Seed, Credential, Export
+
 import json
+import logging
+
+log = logging.getLogger(__name__)
 
 HISTORY_NOTE_LABEL = "Change Note"
 HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
@@ -188,7 +192,7 @@ class CredentialFlickrForm(forms.ModelForm):
 
     key = forms.CharField()
     secret = forms.CharField()
-    platform = forms.CharField(widget = forms.HiddenInput(), initial='flickr')
+    platform = forms.CharField(widget=forms.HiddenInput(), initial='flickr')
 
     class Meta:
         model = Credential
@@ -226,7 +230,6 @@ class CredentialFlickrForm(forms.ModelForm):
             )
         )
 
-
     def save(self, commit=True):
         m = super(CredentialFlickrForm, self).save(commit=False)
         m.token = {
@@ -244,7 +247,7 @@ class CredentialTwitterForm(forms.ModelForm):
     consumer_secret = forms.CharField()
     access_token = forms.CharField()
     access_token_secret = forms.CharField()
-    platform = forms.CharField(widget = forms.HiddenInput(), initial='twitter')
+    platform = forms.CharField(widget=forms.HiddenInput(), initial='twitter')
 
     class Meta:
         model = Credential
@@ -304,7 +307,7 @@ class CredentialWeiboForm(forms.ModelForm):
     api_secret = forms.CharField()
     redirect_uri = forms.CharField()
     access_token = forms.CharField()
-    platform = forms.CharField(widget = forms.HiddenInput(), initial='weibo')
+    platform = forms.CharField(widget=forms.HiddenInput(), initial='weibo')
 
     class Meta:
         model = Credential
@@ -346,7 +349,6 @@ class CredentialWeiboForm(forms.ModelForm):
             )
         )
 
-
     def save(self, commit=True):
         m = super(CredentialWeiboForm, self).save(commit=False)
         m.token = {
@@ -359,6 +361,7 @@ class CredentialWeiboForm(forms.ModelForm):
         m.save()
         return m
 
+
 class CredentialForm(forms.ModelForm):
 
     class Meta:
@@ -366,7 +369,7 @@ class CredentialForm(forms.ModelForm):
         fields = ['name', 'platform', 'token', 'is_active', 'history_note']
         exclude = []
         widgets = {
-            'platform': forms.TextInput(attrs={'readonly':'readonly'}),
+            'platform': forms.TextInput(attrs={'readonly': 'readonly'}),
             'date_added': forms.HiddenInput(),
             'history_note': HISTORY_NOTE_WIDGET
         }
@@ -400,3 +403,51 @@ class CredentialForm(forms.ModelForm):
 
     def save(self, commit=True):
         return super(CredentialForm, self).save(commit)
+
+
+class ExportForm(forms.ModelForm):
+
+    class Meta:
+        model = Export
+        fields = ['seeds', 'export_format', 'dedupe',
+                  'item_date_start', 'item_date_end',
+                  'harvest_date_start', 'harvest_date_end']
+        localized_fields = None
+        error_messages = {}
+        help_texts = {
+            'seeds': "If no seeds are selected, all seeds will be exported."
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.seedset = SeedSet.objects.get(pk=kwargs.pop("seedset"))
+        super(ExportForm, self).__init__(*args, **kwargs)
+        self.fields["seeds"].queryset = self.seedset.seeds.all()
+        cancel_url = reverse('export_detail', args=[self.seedset.id])
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'seeds',
+                'export_format',
+                'dedupe',
+                'item_date_start',
+                'item_date_end',
+                'harvest_date_start',
+                'harvest_date_end'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel',
+                       onclick="window.location.href='{0}'".format(cancel_url))
+            )
+        )
+
+    def save(self, commit=True):
+        m = super(ExportForm, self).save(commit=False)
+        # This may need to change.
+        m.export_type = self.seedset.harvest_type
+        if not self.cleaned_data.get("seeds"):
+            m.seed_set = self.seedset
+        m.save()
+        self.save_m2m()
+        return m

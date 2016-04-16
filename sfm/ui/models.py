@@ -238,8 +238,9 @@ class Export(models.Model):
         ("tsv", "Tab separated values (TSV)"),
         ("html", "HTML"),
         ("xlsx", "Excel (XLSX)"),
-        ("json", "JSON"),
-        ("json_full", "Full JSON")
+        ("json", "JSON of limited fields"),
+        ("json_full", "Full JSON"),
+        ("dehydrate", "Text file of identifiers (dehydrate)")
     )
     user = models.ForeignKey(User, related_name='exports')
     seed_set = models.ForeignKey(SeedSet, blank=True, null=True)

@@ -1,4 +1,6 @@
 from .common import *
+import tempfile
+import os
 
 DATABASES = {
     # for unit tests
@@ -8,7 +10,7 @@ DATABASES = {
     }
 }
 
-SFM_DATA_DIR="/test-data"
+SFM_DATA_DIR=os.path.join(tempfile.gettempdir(), "test-data")
 
 SCHEDULER_DB_URL = "sqlite:///testdb"
 

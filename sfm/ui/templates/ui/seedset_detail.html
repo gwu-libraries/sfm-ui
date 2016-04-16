@@ -39,28 +39,32 @@
    </div>
 </div>
 <div class="row">
-   <div class="panel panel-default">
-      <div class="panel-heading"><h4>Seeds</h4></div>
-         <div class="panel-body">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Seeds</h4></div>
+        <div class="panel-body">
             <table class="table">
-               <thead>
-                   <tr>
-  	              <th>Token</th>
-		      <th>uid</th>
-		      <th>Active</th>
-	            </tr>
+                <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>uid</th>
+                    <th>Active</th>
+                </tr>
                 </thead>
-	        {% for seed in seed_list %}
-	           <tr>
-		      <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>   
-		      <td>{{ seed.uid }}</td>
-		      <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
-		   </tr> 
-                   {% endfor %} 
-               </table>
-               <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}">Add Seed</a>
-	    </div> 
-	</div>
+                {% for seed in seed_list %}
+                <tr>
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+                    <td>{{ seed.uid }}</td>
+                    <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}">Add Seed</a>
+        </div>
     </div>
-</div>  
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p><a class="btn btn-primary" value="Request Export" href="{% url "export_create" seedset.id %}">Request Export</a></p>
+    </div>
+</div>
 {% endblock %}

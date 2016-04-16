@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}
+    Exports
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <h1>My Exports</h1>
+</div>
+<div class="row">
+    {% for collection, seedset, export in export_list %}
+    <div class="col-md-7"><p><a href={% url "export_detail" export.pk %}>Export from {{ collection.name }} > {{ seedset.name }}</a></p></div>
+    <div class="col-md-1"><p>{{ export.status }} </p></div>
+    <div class="col-md-4"><p>Requested {{ export.date_requested }}</p></div>
+    {% empty %}
+    <div class="col-md-12"><p>No exports yet.</p></div>
+    {% endfor %}
+</div>
+{% endblock %}
