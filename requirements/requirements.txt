@@ -1,2 +1,2 @@
 -r common.txt
-git+https://github.com/gwu-libraries/sfm-utils.git@0.2.0#egg=sfmutils
+git+https://github.com/gwu-libraries/sfm-utils.git@0.3.0#egg=sfmutils
