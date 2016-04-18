@@ -194,7 +194,7 @@ class SeedCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse("seedset_detail", args=(self.kwargs["seed_set_pk"]))
+        return reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],))
 
 
 class SeedUpdateView(LoginRequiredMixin, UpdateView):
