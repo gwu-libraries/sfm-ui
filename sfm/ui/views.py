@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.http import StreamingHttpResponse, Http404
 from django.core.exceptions import PermissionDenied
 from braces.views import LoginRequiredMixin
+from django.views.generic.base import RedirectView
+from django.shortcuts import get_object_or_404
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm, ExportForm
@@ -101,6 +103,8 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        # Require seeds to toggle active
+        context["can_toggle_active"] = len(self.object.seeds.all()) > 0
         return context
 
 
@@ -153,6 +157,17 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
 
+
+class SeedSetToggleActiveView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "seedset_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        seedset = get_object_or_404(SeedSet, pk=kwargs['pk'])
+        seedset.is_active = not seedset.is_active
+        seedset.save()
+        return super(SeedSetToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 class SeedSetDeleteView(LoginRequiredMixin, DeleteView):
     model = SeedSet

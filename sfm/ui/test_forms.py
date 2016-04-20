@@ -109,7 +109,6 @@ class SeedSetFormTest(TestCase):
             'credential': self.credential.pk,
             'harvest_type': 'twitter_search',
             'name': 'my test seedset',
-            'start_date': '01/01/2100',
             'end_date': '01/01/2200',
             'date_added': '03/16/2016',
             'schedule_minutes': '60'
@@ -119,19 +118,8 @@ class SeedSetFormTest(TestCase):
         form = SeedSetForm(self.data, coll=self.collection.pk)
         self.assertTrue(form.is_valid())
 
-    def test_start_date_after_now(self):
-        self.data['start_date'] = "01/01/2000"
-        form = SeedSetForm(self.data, coll=self.collection.pk)
-        self.assertFalse(form.is_valid())
-
     def test_end_date_after_now(self):
         self.data['end_date'] = "01/01/2000"
-        form = SeedSetForm(self.data, coll=self.collection.pk)
-        self.assertFalse(form.is_valid())
-
-    def test_end_date_after_start_date(self):
-        self.data['end_date'] = "01/01/2100"
-        self.data['start_date'] = "01/01/2200"
         form = SeedSetForm(self.data, coll=self.collection.pk)
         self.assertFalse(form.is_valid())
 
@@ -149,7 +137,6 @@ class SeedFormTest(TestCase):
                                               name="test_seedset",
                                               harvest_type="twitter_search",
                                               credential=self.credential,
-                                              start_date=datetime(2100, 1, 1, 1, 30, tzinfo=pytz.utc),
                                               end_date=datetime(2200, 1, 1, 1, 30, tzinfo=pytz.utc),
                                               date_added=datetime(2016, 1, 1, 1, 30, tzinfo=pytz.utc),
                                               schedule_minutes=60,

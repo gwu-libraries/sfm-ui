@@ -18,7 +18,8 @@
    <div class="row">
        <div class="col-md-12">
             <div class="page-header">
-               <h1>{{ seed.token }} <a class="btn btn-default" href={% url "seed_update" seed.pk %}>Edit</a></h1>
+               <h1>{{ seed.token }} <a class="btn btn-default" href={% url "seed_update" seed.pk %} {% if seed.seed_set.is_active %}disabled="disabled"{% endif %}>Edit</a></h1>
+               {% if seed.seed_set.is_active %}<span class="label label-warning">Pause seedset harvesting to enable editing.</span>{% endif %}
             </div>
        </div>
     </div>
@@ -33,6 +34,4 @@
         {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
         </li>
     </div>
-    </form>
-    </h2>
 {% endblock %}

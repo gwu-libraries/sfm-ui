@@ -33,6 +33,10 @@ urlpatterns = patterns('',
                            views.SeedSetUpdateView.as_view(),
                            name="seedset_update"),
 
+                       url(r'^seedsets/(?P<pk>\d+)/toggle/$',
+                           views.SeedSetToggleActiveView.as_view(),
+                           name="seedset_toggle_active"),
+
                        url(r'^seedsets/(?P<pk>\d+)/delete/$',
                            views.SeedSetDeleteView.as_view(),
                            name="seedset_delete"),

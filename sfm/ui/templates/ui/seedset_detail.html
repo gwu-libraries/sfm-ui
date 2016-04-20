@@ -17,7 +17,8 @@
 <div class="row">
    <div class="col-md-12">
      <div class="page-header">
-        <h1>{{ seedset.name }} <a class="btn btn-default" href={% url "seedset_update" seedset.pk seedset.collection.pk %}>Edit</a></h1>
+        <h1>{{ seedset.name }} <a class="btn btn-default" href={% url "seedset_update" seedset.pk seedset.collection.pk %} {% if seedset.is_active %}disabled="disabled"{% endif %} >Edit</a></h1>
+        {% if seedset.is_active %}<span class="label label-warning">Pause harvesting to enable editing and adding seeds.</span>{% endif %}
      </div>
    </div>
 </div>
@@ -28,7 +29,6 @@
 	<p><strong>Harvest options: </strong> {{ seedset.harvest_options }}</p>
 	<p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
         <p><strong>Next harvest</strong> {{ next_run_time }}</p>
-        <p><strong>Start date:</strong> {{ seedset.start_date }}</p>
         <p><strong>End date: </strong> {{ seedset.end_date }}</p>
         <p><strong>Created:</strong> {{ seedset.date_added }}</p>
         <p><strong>Description:</strong> {{seedset.description }}</p>
@@ -59,19 +59,39 @@
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+                    <td><a href="{% url " seed_detail" seed.pk %}">{{ seed.token }}</a></td>
                     <td>{{ seed.uid }}</td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
                 </tr>
                 {% endfor %}
             </table>
-            <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}">Add Seed</a>
+            <a class="btn btn-primary" value="Add Seed" href="{% url " seed_create" seedset.id %}" {% if
+            seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
         </div>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <p><a class="btn btn-primary" value="Request Export" href="{% url "export_create" seedset.id %}">Request Export</a></p>
+        <form method="post" action="{% url " seedset_toggle_active
+        " seedset.id %}">
+        {% csrf_token %}
+        {% if seedset.is_active %}
+        <input type="submit" value="Pause harvesting" class="btn btn-primary">
+        {% else %}
+        {% if can_toggle_active %}
+        <input type="submit" value="Start/resume harvesting" class="btn btn-primary">
+        {% else %}
+        <input type="submit" value="Start/resume harvesting" class="btn btn-primary" disabled="disabled">
+        <span class="label label-warning">Add a seed to enable harvesting.</span>
+        {% endif %}
+        {% endif %}
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p><a class="btn btn-primary" value="Request Export" href="{% url " export_create" seedset.id %}">Request
+            Export</a></p>
     </div>
 </div>
 {% endblock %}

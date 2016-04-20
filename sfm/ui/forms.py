@@ -76,14 +76,12 @@ class SeedSetForm(forms.ModelForm):
     class Meta:
         model = SeedSet
         fields = ['name', 'harvest_type', 'description', 'collection',
-                  'is_active', 'schedule_minutes', 'credential',
-                  'harvest_options', 'date_added', 'start_date', 'end_date',
+                  'schedule_minutes', 'credential',
+                  'harvest_options', 'date_added', 'end_date',
                   'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
-                   'is_active': forms.HiddenInput,
-                   'start_date': DATETIME_WIDGET,
                    'end_date': DATETIME_WIDGET,
                    'history_note': HISTORY_NOTE_WIDGET}
         localized_fields = None
@@ -108,10 +106,8 @@ class SeedSetForm(forms.ModelForm):
                 'credential',
                 'harvest_options',
                 'schedule_minutes',
-                'start_date',
                 'end_date',
                 'description',
-                'is_active',
                 'collection',
                 'date_added',
                 'history_note'
@@ -123,14 +119,6 @@ class SeedSetForm(forms.ModelForm):
             )
         )
 
-    def clean_start_date(self):
-        data = self.cleaned_data.get('start_date', None)
-        if data:
-            if data < timezone.now():
-                raise forms.ValidationError(
-                    'Start date must be later than current date and time.')
-            return data
-
     def clean_end_date(self):
         data = self.cleaned_data.get('end_date', None)
         if data:
@@ -138,16 +126,6 @@ class SeedSetForm(forms.ModelForm):
                 raise forms.ValidationError(
                     'End date must be later than current date and time.')
             return data
-
-    def clean(self):
-        cleaned_data = super(SeedSetForm, self).clean()
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
-
-        if start_date and end_date:
-            if end_date < start_date:
-                raise forms.ValidationError(
-                    'End date must be later than start date.')
 
 
 class SeedForm(forms.ModelForm):

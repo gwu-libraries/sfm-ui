@@ -121,16 +121,13 @@ class SeedSet(models.Model):
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule")
     harvest_options = models.TextField(blank=True)
     stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-    start_date = models.DateTimeField(blank=True,
-                                      null=True,
-                                      help_text="If blank, will start now.")
     end_date = models.DateTimeField(blank=True,
                                     null=True,
                                     help_text="If blank, will continue until stopped.")
@@ -140,7 +137,7 @@ class SeedSet(models.Model):
     class Meta:
         diff_fields = (
             "collection", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
-            "harvest_options", "start_date", "end_date")
+            "harvest_options", "end_date")
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
