@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 
 @transaction.atomic
-def seedset_harvest(seedset_id):
+def seedset_harvest(seedset_pk):
 
     message = {
         "collection": {},
@@ -19,12 +19,12 @@ def seedset_harvest(seedset_id):
 
     # Retrieve seedset
     try:
-        seed_set = SeedSet.objects.get(id=seedset_id)
+        seed_set = SeedSet.objects.get(id=seedset_pk)
     except ObjectDoesNotExist:
-        log.error("Harvesting seedset %s failed because seedset does not exist", seedset_id)
+        log.error("Harvesting seedset %s failed because seedset does not exist", seedset_pk)
         return
     if not seed_set.is_active:
-        log.debug("Ignoring Harvest for seedset as seedset %s is inactive", seedset_id)
+        log.debug("Ignoring Harvest for seedset as seedset %s is inactive", seedset_pk)
         return
 
     historical_seed_set = seed_set.history.all()[0]
@@ -34,7 +34,7 @@ def seedset_harvest(seedset_id):
         if seed.is_active:
             historical_seeds.append(seed.history.all()[0])
     if not historical_seeds:
-        log.warning("Seedset %s has no seeds", seedset_id)
+        log.warning("Seedset %s has no seeds", seedset_pk)
         return
 
     # Id
@@ -44,7 +44,7 @@ def seedset_harvest(seedset_id):
     # Collection
     collection = historical_seed_set.collection
     message["collection"]["id"] = collection.collection_id
-    message["collection"]["path"] = "{}/collection/{}".format(settings.SFM_DATA_DIR, collection.collection_id)
+    message["path"] = "{}/collection/{}/{}".format(settings.SFM_DATA_DIR, collection.collection_id, seed_set.seedset_id)
 
     # Credential
     message["credentials"] = json.loads(str(historical_credential.token))
