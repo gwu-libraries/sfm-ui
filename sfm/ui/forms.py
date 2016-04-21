@@ -140,7 +140,6 @@ class SeedForm(forms.ModelForm):
             'uid': forms.TextInput(attrs={'size': '40'}),
             'seed_set': forms.HiddenInput,
             'date_added': forms.HiddenInput,
-            'is_active': forms.HiddenInput,
             'is_valid': forms.HiddenInput,
             'history_note': HISTORY_NOTE_WIDGET
         }
@@ -163,6 +162,7 @@ class SeedForm(forms.ModelForm):
                 '',
                 'token',
                 'uid',
+                'is_active',
                 'history_note'
             ),
             FormActions(

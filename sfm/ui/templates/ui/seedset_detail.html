@@ -45,6 +45,7 @@
                  </p>         
    </div>
 </div>
+{% if has_seeds_list %}
 <div class="row">
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Seeds</h4></div>
@@ -70,21 +71,21 @@
         </div>
     </div>
 </div>
+{% endif %}
 <div class="row">
-    <div class="col-md-12">
-        <form method="post" action="{% url " seedset_toggle_active
-        " seedset.id %}">
-        {% csrf_token %}
-        {% if seedset.is_active %}
-        <input type="submit" value="Pause harvesting" class="btn btn-primary">
-        {% else %}
-        {% if can_toggle_active %}
-        <input type="submit" value="Start/resume harvesting" class="btn btn-primary">
-        {% else %}
-        <input type="submit" value="Start/resume harvesting" class="btn btn-primary" disabled="disabled">
-        <span class="label label-warning">Add a seed to enable harvesting.</span>
-        {% endif %}
-        {% endif %}
+  <div class="col-md-12">
+        <form method="post" action="{% url "seedset_toggle_active" seedset.id %}">
+            {% csrf_token %}
+            {% if seedset.is_active %}
+                <input type="submit" value="Pause harvesting" class="btn btn-primary">
+            {% else %}
+                {% if not seed_count_message %}
+                    <input type="submit" value="Start/resume harvesting" class="btn btn-primary">
+                {% else %}
+                    <input type="submit" value="Start/resume harvesting" class="btn btn-primary" disabled="disabled">
+                    <span class="label label-warning">{{ seed_count_message }}</span>
+                {% endif %}
+            {% endif %}
         </form>
     </div>
 </div>

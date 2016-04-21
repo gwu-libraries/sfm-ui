@@ -100,6 +100,12 @@ class Collection(models.Model):
 
 @python_2_unicode_compatible
 class SeedSet(models.Model):
+    TWITTER_SEARCH = 'twitter_search'
+    TWITTER_FILTER = "twitter_filter"
+    TWITTER_USER_TIMELINE = 'twitter_user_timeline'
+    TWITTER_SAMPLE = 'twitter_sample'
+    FLICKR_USER = 'flickr_user'
+    WEIBO_TIMELINE = 'weibo_timeline'
     SCHEDULE_CHOICES = [
         (60, 'Every hour'),
         (60 * 24, 'Every day'),
@@ -107,14 +113,18 @@ class SeedSet(models.Model):
         (60 * 24 * 7 * 4, 'Every 4 weeks')
     ]
     HARVEST_CHOICES = [
-        ('twitter_search', 'Twitter search'),
-        # ('twitter_filter', 'Twitter filter'),
-        ('twitter_user_timeline', 'Twitter user timeline'),
-        # ('twitter_sample', 'Twitter sample'),
-        ('flickr_user', 'Flickr user'),
-        ('weibo_timeline', 'Weibo timeline')
+        (TWITTER_SEARCH, 'Twitter search'),
+        (TWITTER_FILTER, 'Twitter filter'),
+        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
+        (TWITTER_SAMPLE, 'Twitter sample'),
+        (FLICKR_USER, 'Flickr user'),
+        (WEIBO_TIMELINE, 'Weibo timeline')
     ]
-
+    REQUIRED_SEED_COUNTS = {
+        TWITTER_FILTER: 1,
+        TWITTER_SAMPLE: 0,
+        WEIBO_TIMELINE: 0
+    }
     seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection = models.ForeignKey(Collection, related_name='seed_sets')
     credential = models.ForeignKey(Credential, related_name='seed_sets')
@@ -141,6 +151,20 @@ class SeedSet(models.Model):
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
+
+    def required_seed_count(self):
+        """
+        Returns the number of seeds that are required for this harvest type.
+
+        If None, then 1 or more is required.
+        """
+        return self.REQUIRED_SEED_COUNTS.get(str(self.harvest_type))
+
+    def active_seed_count(self):
+        """
+        Returns the number of active seeds.
+        """
+        return self.seeds.filter(is_active=True).count()
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
