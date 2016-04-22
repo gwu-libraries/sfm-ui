@@ -125,6 +125,7 @@ class SeedSet(models.Model):
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }
+    STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
     seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection = models.ForeignKey(Collection, related_name='seed_sets')
     credential = models.ForeignKey(Credential, related_name='seed_sets')
@@ -166,6 +167,20 @@ class SeedSet(models.Model):
         """
         return self.seeds.filter(is_active=True).count()
 
+    def last_harvest(self):
+        """
+        Returns the most recent harvest or None if no harvests.
+
+        Web harvests are excluded.
+        """
+        return self.harvests.exclude(harvest_type = "web").order_by("-date_requested").first()
+
+    def is_streaming(self):
+        """
+        Returns True if a streaming harvest type.
+        """
+        return self.harvest_type in SeedSet.STREAMING_HARVEST_TYPES
+
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
 
@@ -199,17 +214,20 @@ class Harvest(models.Model):
     SUCCESS = "completed success"
     FAILURE = "completed failure"
     RUNNING = "running"
+    STOP_REQUESTED = "stop requested"
     STATUS_CHOICES = (
         (REQUESTED, REQUESTED),
         (SUCCESS, SUCCESS),
         (FAILURE, FAILURE),
-        (RUNNING, RUNNING)
+        (RUNNING, RUNNING),
+        (STOP_REQUESTED, STOP_REQUESTED)
     )
     harvest_type = models.CharField(max_length=255)
     historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests', null=True)
     historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
+    harvest_type = models.CharField(max_length=255)
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
     parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)

@@ -2,12 +2,12 @@ from django.test import TestCase
 from django.conf import settings
 import json
 from mock import MagicMock, patch
-from .jobs import seedset_harvest
+from .jobs import seedset_harvest, seedset_stop
 from .models import SeedSet, Collection, Seed, Credential, Group, User, Harvest
 from .rabbit import RabbitWorker
 
 
-class JobsTests(TestCase):
+class StartJobsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
                                                   password="test_password")
@@ -40,7 +40,7 @@ class JobsTests(TestCase):
         message = args[0]
         self.assertTrue(message["collection"]["id"])
         self.assertEqual(
-            "{}/collection/{}/{}".format(settings.SFM_DATA_DIR, self.collection.collection_id, self.seedset.seedset_id),
+            "{}/collection/{}/{}".format(settings.SFM_DATA_DIR, self.collection.collection_id, seedset.seedset_id),
             message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
         self.assertDictEqual({"token": "test_token1", "id": "1"}, message["seeds"][0])
@@ -55,7 +55,7 @@ class JobsTests(TestCase):
         self.assertIsNotNone(harvest.date_requested)
         self.assertEqual(seedset, harvest.seed_set)
         self.assertEqual(Harvest.REQUESTED, harvest.status)
-        self.assertEqual("test_type", harvest.harvest_type)
+        self.assertEqual(SeedSet.TWITTER_USER_TIMELINE, harvest.harvest_type)
 
     @patch("ui.jobs.RabbitWorker", autospec=True)
     def test_missing_seedset_harvest(self, mock_rabbit_worker_class):
@@ -82,8 +82,9 @@ class JobsTests(TestCase):
         self.assertEqual("send_message", name)
         message = args[0]
         self.assertTrue(message["collection"]["id"])
-        self.assertEqual("/test-data/collection/{}".format(self.collection.collection_id),
-                         message["collection"]["path"])
+        self.assertEqual(
+            "{}/collection/{}/{}".format(settings.SFM_DATA_DIR, self.collection.collection_id, seedset.seedset_id),
+            message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
         self.assertFalse("seeds" in message)
         self.assertEqual(SeedSet.TWITTER_SAMPLE, message["type"])
@@ -121,4 +122,52 @@ class JobsTests(TestCase):
 
         # Error should be logged and nothing happens
         seedset_harvest(seedset.id)
+        mock_rabbit_worker.assert_not_called()
+
+
+class StopJobsTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
+                                                  password="test_password")
+        self.group = Group.objects.create(name="test_group")
+        self.collection = Collection.objects.create(group=self.group, name="test_collection")
+        self.credential_token = {"key": "test_key"}
+        self.credential = Credential.objects.create(user=self.user, platform="test_platform",
+                                                    token=json.dumps(self.credential_token))
+        self.seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
+                                              harvest_type=SeedSet.TWITTER_SAMPLE, name="test_seedset", is_active=True)
+
+        self.historical_seed_set = self.seedset.history.all()[0]
+        self.historical_credential = self.historical_seed_set.credential.history.all()[0]
+
+    @patch("ui.jobs.RabbitWorker", autospec=True)
+    def test_stop_harvest(self, mock_rabbit_worker_class):
+        harvest = Harvest.objects.create(harvest_type=SeedSet.TWITTER_SAMPLE,
+                                         seed_set=self.seedset,
+                                         historical_seed_set=self.historical_seed_set,
+                                         historical_credential=self.historical_credential)
+
+        mock_rabbit_worker = MagicMock(spec=RabbitWorker)
+        mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
+
+        seedset_stop(self.seedset.id)
+
+        # Harvest stop message sent
+        name, args, kwargs = mock_rabbit_worker.mock_calls[0]
+        self.assertEqual("send_message", name)
+        message = args[0]
+        self.assertEqual(message["id"], harvest.harvest_id)
+        self.assertEqual("harvest.stop.test_platform.twitter_sample", args[1])
+
+        # Harvest model object update
+        harvest = Harvest.objects.get(harvest_id=message["id"])
+        self.assertEqual(Harvest.STOP_REQUESTED, harvest.status)
+
+    @patch("ui.jobs.RabbitWorker", autospec=True)
+    def test_missing_seedset(self, mock_rabbit_worker_class):
+        mock_rabbit_worker = MagicMock(spec=RabbitWorker)
+        mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
+
+        # Error should be logged and nothing happens
+        seedset_stop(1234567)
         mock_rabbit_worker.assert_not_called()

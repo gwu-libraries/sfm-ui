@@ -1,7 +1,7 @@
 from django.test import TestCase
 import json
 from mock import patch, ANY, call
-from .models import SeedSet, Collection, Credential, Group, User
+from .models import SeedSet, Collection, Credential, Group, User, Harvest
 from jobs import seedset_harvest
 from datetime import datetime
 import pytz
@@ -23,12 +23,10 @@ class ScheduleTests(TestCase):
         post_save.connect(schedule_harvest_receiver, sender=SeedSet)
         pre_delete.connect(unschedule_harvest_receiver, sender=SeedSet)
 
-    # Modify Seedset
     @patch("ui.sched.sched", autospec=True)
     def test_modify_seedset(self, mock_scheduler):
 
         # Add seedset
-        # mock_scheduler.get_job.side_effect = [None, True, True, True]
         mock_scheduler.get_job.side_effect = [None, None, True, True]
         end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
         seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
@@ -131,3 +129,45 @@ class ScheduleTests(TestCase):
         seedset.delete()
         mock_scheduler.get_job.assert_has_calls([call(str(seedset_id)), call("end_{}".format(seedset_id))])
         mock_scheduler.remove_job.assert_called_once_with(str(seedset_id))
+
+    @patch("ui.sched.sched", autospec=True)
+    @patch("ui.sched.seedset_stop")
+    def test_modify_streaming_seedset(self, mock_seedset_stop, mock_scheduler):
+        # Add seedset
+        mock_scheduler.get_job.side_effect = [None, None, True, True]
+        end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
+        seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
+                                         harvest_type=SeedSet.TWITTER_SAMPLE, name="test_seedset", is_active=True,
+                                         end_date=end_date)
+        seedset_id = seedset.id
+
+        mock_scheduler.get_job.assert_has_calls([call(str(seedset_id)), call("end_{}".format(seedset_id))])
+        mock_scheduler.remove_job.assert_not_called()
+        mock_seedset_stop.assert_not_called()
+        # Using actual calls since ANY doesn't work with has_calls
+        actual_calls = mock_scheduler.add_job.mock_calls
+        # Add job called to add toggle_seedset_inactive.
+        mock_scheduler.add_job.assert_has_calls([call(toggle_seedset_inactive,
+                                                      args=[seedset_id],
+                                                      id="end_{}".format(seedset_id),
+                                                      name=actual_calls[1][2]["name"],
+                                                      run_date=end_date,
+                                                      trigger="date")
+                                                 ])
+
+        # Add a harvest
+        historical_seed_set = seedset.history.all()[0]
+        historical_credential = historical_seed_set.credential.history.all()[0]
+
+        Harvest.objects.create(seed_set=seedset,
+                               historical_seed_set=historical_seed_set,
+                               historical_credential=historical_credential)
+        # Modify seedset
+        seedset.end_date = None
+        seedset.is_active = False
+        mock_scheduler.reset_mock()
+        seedset.save()
+
+        mock_scheduler.get_job.assert_has_calls([call(str(seedset_id)), call("end_{}".format(seedset_id))])
+        mock_scheduler.remove_job.assert_has_calls([call(str(seedset_id)), call("end_{}".format(seedset_id))])
+        mock_seedset_stop.assert_called_once_with(seedset_id)

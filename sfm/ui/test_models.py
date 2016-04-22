@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import User, Collection, Credential, SeedSet, Seed, Group
+from .models import User, Collection, Credential, SeedSet, Seed, Group, Harvest
 
 
 class SeedsetTest(TestCase):
@@ -15,8 +15,7 @@ class SeedsetTest(TestCase):
         seedset = SeedSet.objects.create(collection=self.collection,
                                          name="test_seedset",
                                          harvest_type=SeedSet.TWITTER_SEARCH,
-                                         credential=self.credential,
-                                         )
+                                         credential=self.credential)
         self.assertIsNone(seedset.required_seed_count())
 
         seedset.harvest_type = SeedSet.TWITTER_SAMPLE
@@ -26,8 +25,7 @@ class SeedsetTest(TestCase):
         seedset = SeedSet.objects.create(collection=self.collection,
                                          name="test_seedset",
                                          harvest_type=SeedSet.TWITTER_SEARCH,
-                                         credential=self.credential,
-                                         )
+                                         credential=self.credential)
         self.assertEqual(0, seedset.active_seed_count())
 
         Seed.objects.create(seed_set=seedset, token='{}', is_active=True)
@@ -35,3 +33,40 @@ class SeedsetTest(TestCase):
 
         Seed.objects.create(seed_set=seedset, token='{}', is_active=False)
         self.assertEqual(1, seedset.active_seed_count())
+
+    def test_is_streaming(self):
+        seedset = SeedSet.objects.create(collection=self.collection,
+                                         name="test_seedset",
+                                         harvest_type=SeedSet.TWITTER_SEARCH,
+                                         credential=self.credential)
+        self.assertFalse(seedset.is_streaming())
+
+        seedset.harvest_type = SeedSet.TWITTER_FILTER
+        self.assertTrue(seedset.is_streaming())
+
+    def test_last_harvest(self):
+        seedset = SeedSet.objects.create(collection=self.collection,
+                                         name="test_seedset",
+                                         harvest_type=SeedSet.TWITTER_SEARCH,
+                                         credential=self.credential)
+        self.assertIsNone(seedset.last_harvest())
+
+        historical_seed_set = seedset.history.all()[0]
+        historical_credential = historical_seed_set.credential.history.all()[0]
+
+        harvest1 = Harvest.objects.create(seed_set=seedset,
+                                          historical_seed_set=historical_seed_set,
+                                          historical_credential=historical_credential)
+        self.assertEqual(harvest1, seedset.last_harvest())
+
+        harvest2 = Harvest.objects.create(seed_set=seedset,
+                                          historical_seed_set=historical_seed_set,
+                                          historical_credential=historical_credential)
+
+        self.assertEqual(harvest2, seedset.last_harvest())
+
+        Harvest.objects.create(harvest_type="web", seed_set=seedset,
+                               historical_seed_set=historical_seed_set,
+                               historical_credential=historical_credential)
+
+        self.assertEqual(harvest2, seedset.last_harvest())

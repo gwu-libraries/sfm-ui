@@ -60,14 +60,13 @@
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
-                    <td><a href="{% url " seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
                     <td>{{ seed.uid }}</td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
                 </tr>
                 {% endfor %}
             </table>
-            <a class="btn btn-primary" value="Add Seed" href="{% url " seed_create" seedset.id %}" {% if
-            seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
+            <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
         </div>
     </div>
 </div>
@@ -91,8 +90,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <p><a class="btn btn-primary" value="Request Export" href="{% url " export_create" seedset.id %}">Request
-            Export</a></p>
+        <p><a class="btn btn-primary" value="Request Export" href="{% url "export_create" seedset.id %}">Request Export</a></p>
     </div>
 </div>
 {% endblock %}

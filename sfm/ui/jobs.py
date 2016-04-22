@@ -91,3 +91,34 @@ def seedset_harvest(seedset_pk):
                                      historical_seed_set=historical_seed_set,
                                      historical_credential=historical_credential)
     harvest.historical_seeds.add(*historical_seeds)
+
+
+@transaction.atomic
+def seedset_stop(seedset_id):
+
+    # Retrieve seedset
+    try:
+        seed_set = SeedSet.objects.get(id=seedset_id)
+    except ObjectDoesNotExist:
+        log.error("Stopping harvest of %s failed because seedset does not exist", seedset_id)
+        return
+    harvest = seed_set.last_harvest()
+    assert seed_set.is_streaming()
+    if harvest is None or harvest.status not in (Harvest.REQUESTED, Harvest.RUNNING):
+        log.debug("Ignoring stop harvest of seedset since %s does not have a running harvest.")
+        return
+
+    message = {
+        "id": harvest.harvest_id
+    }
+
+    routing_key = "harvest.stop.{}.{}".format(harvest.historical_credential.platform, harvest.harvest_type)
+
+    log.debug("Sending %s stop message to %s with id %s", harvest.harvest_type, routing_key, harvest.harvest_id)
+
+    # Publish message to queue via rabbit worker
+    RabbitWorker().send_message(message, routing_key)
+
+    # Update harvest model instance
+    harvest.status = Harvest.STOP_REQUESTED
+    harvest.save()
