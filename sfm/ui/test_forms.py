@@ -182,13 +182,12 @@ class CredentialFlickrFormTest(TestCase):
             "date_added": "04/14/2016",
         }
 
-    def test__form(self):
+    def test_form(self):
         form = CredentialFlickrForm(self.data)
         form.instance.user = self.user
         self.assertTrue(form.is_valid())
         credential = form.save()
-        self.assertTrue(credential.token,
-                        '{"key":"dummy_key","secret":"dummy_secret"}')
+        self.assertJSONEqual(credential.token, '{"key":"dummy_key","secret":"dummy_secret"}')
 
 
 class CredentialTwitterFormTest(TestCase):
@@ -214,8 +213,7 @@ class CredentialTwitterFormTest(TestCase):
         form.instance.user = self.user
         self.assertTrue(form.is_valid())
         credential = form.save()
-        self.assertTrue(credential.token,
-                        '{"consumer_key": "dummy_consumer_key",'
+        self.assertJSONEqual(credential.token, '{"consumer_key": "dummy_consumer_key",'
                         '"consumer_secret": "dummy_consumer_secret",'
                         '"access_token": "dummy_access_token",'
                         '"access_token_secret": "dummy_access_token_secret"}')
@@ -244,7 +242,7 @@ class CredentialWeiboFormTest(TestCase):
         form.instance.user = self.user
         self.assertTrue(form.is_valid())
         credential = form.save()
-        self.assertTrue(credential.token,
+        self.assertJSONEqual(credential.token,
                         '{"api_key": "dummy_api_key",'
                         '"api_secret": "dummy_api_secret",'
                         '"redirect_uri": "dummy_redirect_uri",'
@@ -270,7 +268,7 @@ class CredentialUpdateFormTest(TestCase):
                                                   pk=self.credential.pk)
         form = CredentialForm({
             'name': 'my test credential updated name',
-            'token': '{"key1":"updated_key1","key2","update_key2"}',
+            'token': {"key1":"updated_key1","key2":"updated_key2"},
             'history_note': 'Test Update'
         })
         self.assertEqual(response.status_code, 200)
