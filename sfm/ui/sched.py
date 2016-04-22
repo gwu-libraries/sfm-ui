@@ -19,8 +19,8 @@ def start_sched():
     sched.start()
 
 
-def next_run_time(seedset_id):
-    job_id = str(seedset_id)
+def next_run_time(seedset_pk):
+    job_id = str(seedset_pk)
     job = sched.get_job(job_id)
     if job:
         return job.next_run_time
@@ -28,24 +28,24 @@ def next_run_time(seedset_id):
         return None
 
 
-def unschedule_harvest(seedset_id):
-    job_id = str(seedset_id)
+def unschedule_harvest(seedset_pk):
+    job_id = str(seedset_pk)
     if sched.get_job(job_id) is not None:
         log.debug("Unscheduling job %s", job_id)
         sched.remove_job(job_id)
 
 
-def schedule_harvest(seedset_id, is_active, schedule_minutes, start_date=None, end_date=None):
+def schedule_harvest(seedset_pk, is_active, schedule_minutes, start_date=None, end_date=None):
     assert schedule_minutes
 
-    unschedule_harvest(seedset_id)
-    log.debug("Seedset %s is active = %s", seedset_id, is_active)
+    unschedule_harvest(seedset_pk)
+    log.debug("Seedset %s is active = %s", seedset_pk, is_active)
     if is_active:
-        name = "Harvest ({}) for seedset {}".format(schedule_minutes, seedset_id)
+        name = "Harvest ({}) for seedset {}".format(schedule_minutes, seedset_pk)
         log.debug("Scheduling job %s", name)
         sched.add_job(seedset_harvest,
-                  args=[seedset_id],
-                  id=str(seedset_id),
+                  args=[seedset_pk],
+                  id=str(seedset_pk),
                   name=name,
                   trigger='interval',
                   start_date=start_date,
