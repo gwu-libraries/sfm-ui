@@ -23,8 +23,9 @@ class ConsumerTest(TestCase):
         historical_credential = historical_seed_set.credential.history.all()[0]
 
         self.harvest = Harvest.objects.create(harvest_id="test:1",
-                               historical_seed_set=historical_seed_set,
-                               historical_credential=historical_credential)
+                                              seed_set=seed_set,
+                                              historical_seed_set=historical_seed_set,
+                                              historical_credential=historical_credential)
         Export.objects.create(export_id="test:2", user=user, export_type="test_type")
         self.consumer = SfmUiConsumer()
 
@@ -149,3 +150,29 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], export.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], export.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], export.errors)
+
+    def test_web_harvest_start_on_message(self):
+        self.consumer.routing_key = "harvest.start.web"
+        self.consumer.message = {
+            "id": "webtest:1",
+            "parent_id": self.harvest.harvest_id,
+            "type": "web",
+            "seeds": [
+                {
+                    "token": "http://www.gwu.edu/"
+                }
+            ],
+            "collection": {
+                "id": "test_collection",
+                "path": "/tmp/test_collection"
+            }
+        }
+
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check new harvest model object
+        harvest = Harvest.objects.get(harvest_id="webtest:1")
+        self.assertEqual("web", harvest.harvest_type)
+        self.assertEqual(self.harvest, harvest.parent_harvest)
+        self.assertEqual(harvest.status, "requested")

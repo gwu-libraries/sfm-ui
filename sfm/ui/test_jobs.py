@@ -51,7 +51,7 @@ class JobsTests(TestCase):
         self.assertIsNotNone(harvest.date_requested)
         self.assertEqual(self.seedset, harvest.seed_set)
         self.assertEqual(Harvest.REQUESTED, harvest.status)
-
+        self.assertEqual("test_type", harvest.harvest_type)
 
     def test_missing_seedset_harvest(self):
         # Error should be logged and nothing happens

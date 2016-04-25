@@ -67,6 +67,7 @@ class Migration(migrations.Migration):
             name='Credential',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(default=b'Credential', max_length=255)),
                 ('platform', models.CharField(help_text=b'Platform name', max_length=255, blank=True)),
                 ('token', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -105,6 +106,7 @@ class Migration(migrations.Migration):
             name='Harvest',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('harvest_type', models.CharField(max_length=255)),
                 ('harvest_id', models.CharField(default=ui.models.default_uuid, unique=True, max_length=32)),
                 ('status', models.CharField(default=b'requested', max_length=20, choices=[(b'requested', b'requested'), (b'completed success', b'completed success'), (b'completed failure', b'completed failure'), (b'running', b'running')])),
                 ('date_requested', models.DateTimeField(default=django.utils.timezone.now, blank=True)),
@@ -149,6 +151,7 @@ class Migration(migrations.Migration):
             name='HistoricalCredential',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
+                ('name', models.CharField(default=b'Credential', max_length=255)),
                 ('platform', models.CharField(help_text=b'Platform name', max_length=255, blank=True)),
                 ('token', models.TextField(blank=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -290,17 +293,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='harvest',
             name='historical_credential',
-            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCredential'),
+            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCredential', null=True),
         ),
         migrations.AddField(
             model_name='harvest',
             name='historical_seed_set',
-            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalSeedSet'),
+            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalSeedSet', null=True),
         ),
         migrations.AddField(
             model_name='harvest',
             name='historical_seeds',
             field=models.ManyToManyField(related_name='historical_harvests', to='ui.HistoricalSeed'),
+        ),
+        migrations.AddField(
+            model_name='harvest',
+            name='parent_harvest',
+            field=models.ForeignKey(related_name='child_harvests', to='ui.Harvest', null=True),
+        ),
+        migrations.AddField(
+            model_name='harvest',
+            name='seed_set',
+            field=models.ForeignKey(related_name='harvests', to='ui.SeedSet'),
         ),
         migrations.AddField(
             model_name='export',

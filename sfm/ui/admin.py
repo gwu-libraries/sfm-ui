@@ -135,11 +135,11 @@ class HistoricalSeed(a.ModelAdmin):
 
 class Harvest(a.ModelAdmin):
     fields = (
-       'harvest_id', 'historical_seed_set', 'historical_seeds', 'historical_credential',
-       'status', 'date_requested', 'date_started', 'date_ended', 'stats',
+       'harvest_type', 'harvest_id', 'historical_seed_set', 'historical_seeds', 'historical_credential',
+       'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended', 'stats',
        'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
-    list_display = ['id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested', 'date_updated']
-    list_filter = ['status', 'date_requested', 'date_updated']
+    list_display = ['harvest_type', 'id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested', 'date_updated']
+    list_filter = ['harvest_type', 'status', 'date_requested', 'date_updated']
     search_fields = ['id', 'harvest_id']
 
 

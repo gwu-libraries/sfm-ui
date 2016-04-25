@@ -74,7 +74,9 @@ def seedset_harvest(seedset_pk):
     RabbitWorker().send_message(message, routing_key)
 
     # Record harvest model instance
-    harvest = Harvest.objects.create(harvest_id=harvest_id,
+    harvest = Harvest.objects.create(harvest_type=harvest_type,
+                                     harvest_id=harvest_id,
+                                     seed_set=seed_set,
                                      historical_seed_set=historical_seed_set,
                                      historical_credential=historical_credential)
     harvest.historical_seeds.add(*historical_seeds)
