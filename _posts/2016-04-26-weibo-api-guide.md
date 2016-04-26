@@ -18,35 +18,35 @@ The goal of this section is to get a `username` and `password` for a weibo accou
 ### 1.1 Access to [weibo.com](http://www.weibo.com/)
 In the United States, [weibo.com](http://www.weibo.com/) will be redirected to us.weibo.com. The page is as follows:
 
-![weibo index](/images/weibo/weibo_index.png)
+![weibo index]({{ site.github.url }}/images/weibo/weibo_index.png)
 
 ### 1.2 Sign Up
 Click the `开通微博(Open an Account)` button on the top-right menu. The page may look like this:
 
-![weibo signup](/images/weibo/weibo_signup.png)
+![weibo signup]({{ site.github.url }}/images/weibo/weibo_signup.png)
 
 It has two ways to fill in the form: `Use Email` and `Use Mobile Phone`, but both of them need your phone number to verify the information. This guide will follow the `Use Mobile Phone` path. The page is shown below:
 
-![weibo signup mobile](/images/weibo/weibo_signup_mobile.png)
+![weibo signup mobile]({{ site.github.url }}/images/weibo/weibo_signup_mobile.png)
 
 Choose the area code for your phone number and after completing all the fields, click the orange button to go to the next step.
 
 ### 1.3 Update Information
 In this step, you need to provide your basic information. For the gender,`男` (on the left) means male and `女` (on the right) means female.
 
-![weibo update info](/images/weibo/weibo_update_info.png)
+![weibo update info]({{ site.github.url }}/images/weibo/weibo_update_info.png)
 
 Click the orange button to continue.
 
 ### 1.4 Select Interests
 Choose at least one of the interests on the page and click the orange button to enter Weibo World.
 
-![weibo interests](/images/weibo/weibo_interests.png)
+![weibo interests]({{ site.github.url }}/images/weibo/weibo_interests.png)
 
 ### 1.5 Weibo World
 If all the steps above go well, you are now in the Weibo World.
 
-![weibo interests](/images/weibo/weibo_world.png)
+![weibo interests]({{ site.github.url }}/images/weibo/weibo_world.png)
 
 If you want to log in next time, just go to [weibo.com](http://www.weibo.com/), click the `登录微博(Sign in)` button and sign in with your phone number and password.
 
@@ -62,18 +62,18 @@ If you already have all of them, please go to the next [section](#get-access-tok
 ### 2.1 Go to [http://open.weibo.com](http://open.weibo.com/)
 Assuming you have no problem with your firewall blocking weibo.com, please go to [http://open.weibo.com](http://open.weibo.com/) and you will see the following page:
 
-![weibo app](/images/weibo/weibo_app.png)
+![weibo app]({{ site.github.url }}/images/weibo/weibo_app.png)
 
 Click the `登录(Login)` button on the top-right and sign in with your phone number (adding `001` before your number if it does not work at first) and password.
 
 ### 2.2 Fill in Basic Information
 If successful, click the avatar on the top-right of the screen, and then click the `编辑开发者信息(Update Information)` which is the first option in the menu that pops up.
 
-![weibo basic info](/images/weibo/weibo_basic_info.png)
+![weibo basic info]({{ site.github.url }}/images/weibo/weibo_basic_info.png)
 
 Next, you will go to the basic information pages, which may look like this:
 
-![weibo fill basic](/images/weibo/weibo_fill_basic.png)
+![weibo fill basic]({{ site.github.url }}/images/weibo/weibo_fill_basic.png)
 
 You can use your browser's translation tool (such as what Chrome has) to translate all the fields to your preferred language.
 
@@ -87,41 +87,41 @@ Some of the fields in English:
 
 For the *Emergency contact name* and *Emergency contact phone*, you can simply fill in your own phone number. After completing all of the fields correctly, there will be a green mark on the right. Click the `确认(OK)` button and you should see a confirmation message with a request to send confirmation email. Click the `确认(OK)` button again.
 
-![weibo confirm email](/images/weibo/weibo_confirm_email.png)
+![weibo confirm email]({{ site.github.url }}/images/weibo/weibo_confirm_email.png)
 
 On the next page, it will show whether the confirmation email has been sent successfully. After five seconds, you will be redirected to the home page. Now, you need to sign in your email account to confirm the information.
 
 ### 2.3 Confirm Your Account
 Log in your email account and look for an email from weibo_app@vip.sina.com. The email may look like this:
 
-![weibo confirm link](/images/weibo/weibo_confirm_link.png)
+![weibo confirm link]({{ site.github.url }}/images/weibo/weibo_confirm_link.png)
 
 If you don't receive the confirmation email, you need to check the spam. If it still doesn't work, please try again with another email address.
 
 ### 2.4 Create a Web Application
 If all of the above go smoothly, please go to [open.weibo.com](http://open.weibo.com) and click the `微连接(Microjoining)` link on the menu bar.
 
-![weibo menu app](/images/weibo/weibo_menu_app.png)
+![weibo menu app]({{ site.github.url }}/images/weibo/weibo_menu_app.png)
 
 Next, you should see a page with types of applications. What most people should choose is `网页应用(Web Application)`.
 
-![weibo app type](/images/weibo/weibo_app_type.png)
+![weibo app type]({{ site.github.url }}/images/weibo/weibo_app_type.png)
 
 You will need to provide an `应用名称(Application Name)`, which must be unique, on the next page. When you are done, click the `创建(Create)` button.
 
-![weibo app create](/images/weibo/weibo_app_create.png)
+![weibo app create]({{ site.github.url }}/images/weibo/weibo_app_create.png)
 
 If successful, you will be redirected to the application manager page. Now, the `App Key` and `App Secret` will display on this page. To set a `Redirect URI`, just click the `高级信息(Advanced Information)` in the sub-menu.
 
-![weibo app done](/images/weibo/weibo_app_done.png)
+![weibo app done]({{ site.github.url }}/images/weibo/weibo_app_done.png)
 
 Then, locate the bar starting with the words OAuth2.0 `接权设置(OAuth2.0 Authorization Setting)`, and click the button `编辑(Edit)` on the right side of the bar.
 
-![weibo uri set1](/images/weibo/weibo_uri_set_1.png)
+![weibo uri set1]({{ site.github.url }}/images/weibo/weibo_uri_set_1.png)
 
 Finally, you should fill in the two empty fields with any valid URL address. In most cases, it does not matter what you input. Click the green `提交(Submit)` button when you are done.
 
-![weibo uri set2](/images/weibo/weibo_uri_set_2.png)
+![weibo uri set2]({{ site.github.url }}/images/weibo/weibo_uri_set_2.png)
 
 If you complete all the sections above, you should have the `App Key`, `App Secret` and `Redirect URI`.
 
@@ -148,11 +148,11 @@ To obtain an authentication code, you need to use the [Authorization Service](ht
 
 With the correct information, the new page should look like this:
 
-![weibo auth btn](/images/weibo/weibo_auth_btn.png)
+![weibo auth btn]({{ site.github.url }}/images/weibo/weibo_auth_btn.png)
 
 Click the red `授权(Authorize)` button, and you will be redirected to the URL you have provided. Copy the code in the URL to go to next step.
 
-![weibo auth code](/images/weibo/weibo_auth_code.png)
+![weibo auth code]({{ site.github.url }}/images/weibo/weibo_auth_code.png)
 
 If you have logged out of the session in the previous steps, it may require you sign in with your weibo account again.
 
