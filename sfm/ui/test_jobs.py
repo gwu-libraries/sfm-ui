@@ -19,9 +19,9 @@ class JobsTests(TestCase):
         self.seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
                                               harvest_type="test_type", name="test_seedset",
                                               harvest_options=json.dumps(self.harvest_options))
-        Seed.objects.create(seed_set=self.seedset, token="test_token1")
-        Seed.objects.create(seed_set=self.seedset, uid="test_uid2")
-        Seed.objects.create(seed_set=self.seedset, token="test_token3", uid="test_uid3")
+        Seed.objects.create(seed_set=self.seedset, token="test_token1", seed_id="1")
+        Seed.objects.create(seed_set=self.seedset, uid="test_uid2", seed_id="2")
+        Seed.objects.create(seed_set=self.seedset, token="test_token3", uid="test_uid3", seed_id="3")
         # Creating Inactive seed which will be ignored from harvest
         Seed.objects.create(seed_set=self.seedset, uid="test_uid4", is_active=False)
 
@@ -39,9 +39,9 @@ class JobsTests(TestCase):
         self.assertTrue(message["collection"]["id"])
         self.assertEqual("/test-data/collection/{}/{}".format(self.collection.collection_id, self.seedset.seedset_id), message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
-        self.assertDictEqual({"token": "test_token1"}, message["seeds"][0])
-        self.assertDictEqual({"uid": "test_uid2"}, message["seeds"][1])
-        self.assertDictEqual({"token": "test_token3", "uid": "test_uid3"}, message["seeds"][2])
+        self.assertDictEqual({"token": "test_token1", "id": "1"}, message["seeds"][0])
+        self.assertDictEqual({"uid": "test_uid2", "id": "2"}, message["seeds"][1])
+        self.assertDictEqual({"token": "test_token3", "uid": "test_uid3", "id": "3"}, message["seeds"][2])
         self.assertEqual("test_type", message["type"])
         self.assertTrue(message["id"])
         self.assertEqual("harvest.start.test_platform.test_type", args[1])

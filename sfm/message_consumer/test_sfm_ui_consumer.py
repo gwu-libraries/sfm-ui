@@ -17,8 +17,8 @@ class ConsumerTest(TestCase):
         seed_set = SeedSet.objects.create(collection=collection, credential=credential,
                                           harvest_type="test_type", name="test_seedset",
                                           harvest_options=json.dumps({}))
-        Seed.objects.create(seed_set=seed_set, uid="131866249@N02")
-        Seed.objects.create(seed_set=seed_set, token="library_of_congress")
+        Seed.objects.create(seed_set=seed_set, uid="131866249@N02", seed_id='1')
+        Seed.objects.create(seed_set=seed_set, token="library_of_congress", seed_id='2')
         historical_seed_set = seed_set.history.all()[0]
         historical_credential = historical_seed_set.credential.history.all()[0]
 
@@ -44,10 +44,10 @@ class ConsumerTest(TestCase):
                 "user": 1
             },
             "token_updates": {
-                "131866249@N02": "j.littman"
+                "1": "j.littman"
             },
             "uids": {
-                "library_of_congress": "671366249@N03"
+                "2": "671366249@N03"
             },
             "warcs": {
                 "count": 3,
@@ -62,10 +62,10 @@ class ConsumerTest(TestCase):
         self.assertEqual("completed success", harvest.status)
         self.assertEqual(12, harvest.stats["photo"])
         self.assertDictEqual({
-            "131866249@N02": "j.littman"
+            "1": "j.littman"
         }, harvest.token_updates)
         self.assertDictEqual({
-            "library_of_congress": "671366249@N03"
+            "2": "671366249@N03"
         }, harvest.uids)
         self.assertEqual(3, harvest.warcs_count)
         self.assertEqual(345234242, harvest.warcs_bytes)
@@ -76,10 +76,10 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
 
         # Check updated seeds
-        seed1 = Seed.objects.get(uid="131866249@N02")
+        seed1 = Seed.objects.get(seed_id="1")
         self.assertEqual("j.littman", seed1.token)
         self.assertTrue(seed1.history_note.startswith("Changed token"))
-        seed2 = Seed.objects.get(token="library_of_congress")
+        seed2 = Seed.objects.get(seed_id="2")
         self.assertEqual("671366249@N03", seed2.uid)
         self.assertTrue(seed2.history_note.startswith("Changed uid"))
 
