@@ -4,8 +4,8 @@ import pytz
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
-from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialWeiboForm
-from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialForm
+from .forms import CollectionForm, SeedSetForm, SeedForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, \
+    CredentialTwitterForm, CredentialForm
 from .views import CollectionUpdateView, CredentialUpdateView
 from .models import User, Collection, Credential, SeedSet, Seed
 
@@ -273,3 +273,43 @@ class CredentialUpdateFormTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(form.is_valid())
+
+
+class TestExportForm(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
+                                                  password="test_password")
+        group = Group.objects.create(name="test_group")
+        self.collection = Collection.objects.create(group=group, name="test_collection")
+        self.credential = Credential.objects.create(user=self.user, platform="test_platform",
+                                                    token="{}")
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              name="test_seedset",
+                                              harvest_type="twitter_search",
+                                              credential=self.credential)
+        self.seed = Seed.objects.create(token="test",
+                                        seed_set=self.seedset)
+        self.data = {
+            "export_format": "csv"
+        }
+
+    def test_valid_seedset_form(self):
+        form = ExportForm(self.data, seedset=self.seedset.pk)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        export = form.save()
+        self.assertEquals(0, len(export.seeds.all()))
+        self.assertEqual(self.seedset, export.seed_set)
+        self.assertEqual("twitter_search", export.export_type)
+
+    def test_valid_seeds_form(self):
+        data = dict(self.data)
+        data["seeds"] = (self.seed.pk,)
+        form = ExportForm(data, seedset=self.seedset.pk)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        export = form.save()
+        self.assertEquals(1, len(export.seeds.all()))
+        self.assertIsNone(export.seed_set)
+        self.assertEqual("twitter_search", export.export_type)

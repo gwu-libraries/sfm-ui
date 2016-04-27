@@ -3,13 +3,18 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404
+from django.http import StreamingHttpResponse, Http404
+from django.core.exceptions import PermissionDenied
 from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
-from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm
-from .models import Collection, SeedSet, Seed, Credential, Harvest
+from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm, ExportForm
+from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
 from .sched import next_run_time
 from .utils import diff_object_history
+
+import os
 import logging
 
 log = logging.getLogger(__name__)
@@ -266,6 +271,7 @@ class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ui/credential_create.html'
 
     def form_valid(self, form):
+        # This will set user
         form.instance.user = self.request.user
         return super(CredentialFlickrCreateView, self).form_valid(form)
 
@@ -286,3 +292,113 @@ class CredentialUpdateView(UpdateView):
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
 
+
+class ExportListView(LoginRequiredMixin, ListView):
+    model = Export
+    template_name = 'ui/export_list.html'
+    paginate_by = 20
+    allow_empty = True
+    paginate_orphans = 0
+
+    def get_context_data(self, **kwargs):
+        context = super(ExportListView, self).get_context_data(**kwargs)
+        exports = Export.objects.filter(
+            user=self.request.user).order_by(
+            '-date_requested')
+        export_list = []
+        for export in exports:
+            seeds = list(export.seeds.all())
+            seedset = seeds[0].seed_set if seeds else export.seed_set
+            export_list.append((seedset.collection, seedset, export))
+        context['export_list'] = export_list
+        return context
+
+
+class ExportCreateView(LoginRequiredMixin, CreateView):
+    model = Export
+    form_class = ExportForm
+    template_name = 'ui/export_create.html'
+
+    def get_initial(self):
+        initial = super(ExportCreateView, self).get_initial()
+        initial["seedset"] = SeedSet.objects.get(pk=self.kwargs["seedset_pk"])
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(ExportCreateView, self).get_context_data(**kwargs)
+        context["seedset"] = SeedSet.objects.get(pk=self.kwargs["seedset_pk"])
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(ExportCreateView, self).get_form_kwargs()
+        kwargs["seedset"] = self.kwargs["seedset_pk"]
+        return kwargs
+
+    def form_valid(self, form):
+        # This will set user
+        form.instance.user = self.request.user
+        return super(ExportCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('export_detail', args=(self.object.pk,))
+
+
+def _get_fileinfos(path):
+    """
+    Returns list of file names, bytes within directory
+    """
+    fileinfos = list()
+    if os.path.exists(path):
+        contents = os.listdir(path)
+        for item in contents:
+            path = os.path.join(path, item)
+            if os.path.isfile(path):
+                fileinfos.append((item, os.path.getsize(path)))
+    return fileinfos
+
+
+class ExportDetailView(LoginRequiredMixin, DetailView):
+    model = Export
+    template_name = 'ui/export_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ExportDetailView, self).get_context_data(**kwargs)
+        seeds = list(self.object.seeds.all())
+        seedset = seeds[0].seed_set if seeds else self.object.seed_set
+        context["collection"] = seedset.collection
+        context["seedset"] = seedset
+        context["fileinfos"] = _get_fileinfos(self.object.path) if self.object.status == Export.SUCCESS else ()
+        return context
+
+
+def _read_file_chunkwise(file_obj):
+    """
+    Reads file in 32Kb chunks
+    """
+    while True:
+        data = file_obj.read(32768)
+        if not data:
+            break
+        yield data
+
+
+def export_file(request, pk, file_name):
+    """
+    Allows authorized user to export a file.
+
+    Adapted from https://github.com/ASKBOT/django-directory
+    """
+    export = get_object_or_404(Export, pk=pk)
+    if (request.user == export.user) or request.user.is_superuser:
+        filepath = os.path.join(export.path, file_name)
+        log.debug("Exporting %s", filepath)
+        if os.path.exists(filepath):
+            response = StreamingHttpResponse()
+            response['Content-Disposition'] = 'attachment; filename=%s' % file_name
+            file_obj = open(filepath)
+            response.streaming_content = _read_file_chunkwise(file_obj)
+            return response
+        else:
+            raise Http404
+    else:
+        raise PermissionDenied

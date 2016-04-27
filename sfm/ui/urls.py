@@ -84,4 +84,20 @@ urlpatterns = patterns('',
                        url(r'^credentials/$',
                            views.CredentialListView.as_view(),
                            name="credential_list"),
+
+                       url(r'^exports/$',
+                           views.ExportListView.as_view(),
+                           name="export_list"),
+
+                       url(r'^exports/create/(?P<seedset_pk>\d+)$',
+                           views.ExportCreateView.as_view(),
+                           name="export_create"),
+
+                       url(r'^exports/(?P<pk>\d+)/$',
+                           views.ExportDetailView.as_view(),
+                           name="export_detail"),
+
+                       url(r'^exports/(?P<pk>\d+)/file/(?P<file_name>.*)$',
+                           views.export_file,
+                           name='export_file')
                        )

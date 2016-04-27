@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed, Warc, Export
 import json
-from message_consumer.sfm_ui_consumer import SfmUiConsumer
+from sfm_ui_consumer import SfmUiConsumer
 import iso8601
 
 

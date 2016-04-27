@@ -1,9 +1,15 @@
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.test import RequestFactory, TestCase
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
-from ui.models import Collection, User, Credential, Seed, SeedSet
-from ui.views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, SeedSetDetailView, SeedUpdateView, SeedCreateView, SeedDetailView
+from .models import Collection, User, Credential, Seed, SeedSet, Export
+from .views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, \
+    SeedSetDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file
+
+import os
+import shutil
 
 
 class CollectionListViewTests(TestCase):
@@ -180,9 +186,9 @@ class SeedCreateViewTests(TestCase):
         self.factory = RequestFactory()
 
     def test_seed_form_seedset_collection(self):
-        '''
+        """
         test that seedset and collection are loaded with seed form view
-        '''
+        """
         request = self.factory.get(reverse("seed_create",
                                            args=[self.seedset.pk]))
         request.user = self.user
@@ -193,7 +199,6 @@ class SeedCreateViewTests(TestCase):
 
 
 class SeedTestsMixin:
-
     def setUp(self):
         self.group = Group.objects.create(name='testgroup1')
         self.user = User.objects.create_user('testuser', 'testuser@example.com',
@@ -238,3 +243,130 @@ class SeedDetailViewTests(SeedTestsMixin, TestCase):
         request.user = self.user
         response = SeedDetailView.as_view()(request, pk=self.seed.pk)
         self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class ExportDetailViewTests(TestCase):
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.collection = Collection.objects.create(name='Test Collection One',
+                                                    group=self.group)
+        self.credential = Credential.objects.create(user=self.user,
+                                                    platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              credential=self.credential,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one')
+        self.seed = Seed.objects.create(seed_set=self.seedset,
+                                        token="test token",
+                                        uid="123")
+        self.factory = RequestFactory()
+
+    def _write_test_file(self, export):
+        os.makedirs(export.path)
+        self.export_file = os.path.join(export.path, "test.csv")
+        with open(self.export_file, "w") as f:
+            f.write("test")
+
+    def tearDown(self):
+        if os.path.exists(settings.SFM_DATA_DIR):
+            shutil.rmtree(settings.SFM_DATA_DIR)
+
+    def test_export_detail_seedset(self):
+        export = Export.objects.create(user=self.user,
+                                       seed_set=self.seedset,
+                                       export_type="flickr_user",
+                                       export_format="csv",
+                                       status=Export.SUCCESS)
+        self._write_test_file(export)
+        request = self.factory.get(reverse("export_detail", args=[export.pk]))
+        request.user = self.user
+        response = ExportDetailView.as_view()(request, pk=export.pk)
+        self.assertEqual(self.collection, response.context_data["collection"])
+        self.assertEqual(self.seedset, response.context_data["seedset"])
+        self.assertEqual([("test.csv", 4)], response.context_data["fileinfos"])
+
+    def test_export_detail_seedset_only_if_success(self):
+        export = Export.objects.create(user=self.user,
+                                       seed_set=self.seedset,
+                                       export_type="flickr_user",
+                                       export_format="csv",
+                                       status=Export.REQUESTED)
+        self._write_test_file(export)
+        request = self.factory.get(reverse("export_detail", args=[export.pk]))
+        request.user = self.user
+        response = ExportDetailView.as_view()(request, pk=export.pk)
+        self.assertEqual((), response.context_data["fileinfos"])
+
+    def test_export_detail_seed(self):
+        export = Export.objects.create(user=self.user,
+                                       export_type="flickr_user",
+                                       export_format="csv",
+                                       status=Export.SUCCESS)
+        export.seeds.add(self.seed)
+        export.save()
+        self._write_test_file(export)
+        request = self.factory.get(reverse("export_detail", args=[export.pk]))
+        request.user = self.user
+        response = ExportDetailView.as_view()(request, pk=export.pk)
+        self.assertEqual(self.collection, response.context_data["collection"])
+        self.assertEqual(self.seedset, response.context_data["seedset"])
+        self.assertEqual([("test.csv", 4)], response.context_data["fileinfos"])
+
+
+class ExportFileTest(TestCase):
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user2 = User.objects.create_user('testuser2', 'testuser2@example.com',
+                                              'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.superuser = User.objects.create_superuser('testsuperuser', 'testsuperuser@example.com',
+                                                       'password')
+        self.collection = Collection.objects.create(name='Test Collection One',
+                                                    group=self.group)
+        self.credential = Credential.objects.create(user=self.user,
+                                                    platform='test platform')
+        self.seedset = SeedSet.objects.create(collection=self.collection,
+                                              credential=self.credential,
+                                              harvest_type='test harvest type',
+                                              name='Test seedset one',
+                                              )
+        self.export = Export.objects.create(user=self.user,
+                                            seed_set=self.seedset,
+                                            export_type="flickr_user",
+                                            export_format="csv")
+        os.makedirs(self.export.path)
+        self.export_file = os.path.join(self.export.path, "test.csv")
+        with open(self.export_file, "w") as f:
+            f.write("test")
+        self.factory = RequestFactory()
+
+    def tearDown(self):
+        if os.path.exists(settings.SFM_DATA_DIR):
+            shutil.rmtree(settings.SFM_DATA_DIR)
+
+    def test_export_file_by_user(self):
+        request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
+        request.user = self.user
+        response = export_file(request, self.export.pk, "test.csv")
+        self.assertEquals(response["content-disposition"], "attachment; filename=test.csv")
+        self.assertEquals("test", "".join(response.streaming_content))
+
+    def test_export_file_by_superuser(self):
+        request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
+        request.user = self.superuser
+        response = export_file(request, self.export.pk, "test.csv")
+        self.assertEquals(response["content-disposition"], "attachment; filename=test.csv")
+        self.assertEquals("test", "".join(response.streaming_content))
+
+    def test_file_not_found(self):
+        request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
+        request.user = self.user2
+        with self.assertRaises(PermissionDenied):
+            export_file(request, self.export.pk, "test.csv")
