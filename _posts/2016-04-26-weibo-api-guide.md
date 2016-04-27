@@ -2,18 +2,18 @@
 layout: article
 permalink: /posts/2016-04-26-weibo-api-guide
 title: "Weibo API Guide"
-excerpt: "A guide for programmers and researchers who intend to use Weibo's API. I am writing this guide to support the Social Feed Manager project."
+excerpt: "This is a guide for programmers and researchers who intend to use Weibo's API. Since the current [official documentation](http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5) hasn't been updated for a long time, I am writing this guide to support using [Social Feed Manager](http://go.gwu.edu/sfm) with Weibo's API."
 author: victor_tan
 tags: [weibo, API, guide, sfm]
 ---
 	
 This is a guide for programmers and researchers who intend to use Weibo's API. Since the current [official documentation](http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5) hasn't been updated for a long time, I am writing this guide to support using [Social Feed Manager](http://go.gwu.edu/sfm) with Weibo's API. 
 
-I highly recommend you ask someone with a Chinese language background if you feel stuck when following this guide. Please make sure you can access to Weibo websites without any problems. Otherwise,it will be hard to complete all the sections.
+I highly recommend you ask someone with a Chinese language background if you feel stuck when following this guide. Also make sure you can access to Weibo's websites without any problem--some organizations' firewalls block access to weibo.com. Otherwise, it will be hard to complete all the sections.
 
 
 ## 1. Sign Up for a Weibo Account
-The goal of this section is to get a `username` and `password` for a weibo account.If you already have one, please go to the next [section](#set-up-a-web-application).
+The goal of this section is to get a `username` and `password` for a weibo account. If you already have one, please go to the next [section](#set-up-a-web-application).
 
 ### 1.1 Access to [weibo.com](http://www.weibo.com/)
 In the United States, [weibo.com](http://www.weibo.com/) will be redirected to us.weibo.com. The page is as follows:
