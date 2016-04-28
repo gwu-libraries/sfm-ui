@@ -64,7 +64,7 @@ class Credential(models.Model):
     history = HistoricalRecords()
 
     class Meta:
-        diff_fields = ("platform", "token", "is_active")
+        diff_fields = ("name", "platform", "token", "is_active")
 
     def __str__(self):
         return '<Credential %s "%s">' % (self.id, self.platform)
