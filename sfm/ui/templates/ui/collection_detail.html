@@ -61,7 +61,9 @@
                 </tr>
             {% endfor %}
             </table>
-	    <a class="btn btn-primary" value="Add Seedset" href="{% url "seedset_create" collection.id %}">Add Seedset</a>
+            {% for harvest_type, harvest_label in harvest_types %}
+                <a class="btn btn-primary" value="Add {{ harvest_label }}" href="{% url "seedset_create" collection.id harvest_type %}">Add {{ harvest_label }}</a>
+            {% endfor %}
         </div>
     </div>
 </div>

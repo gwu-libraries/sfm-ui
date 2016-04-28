@@ -5,8 +5,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, \
-    CredentialTwitterForm, CredentialForm
-from .views import CollectionUpdateView, CredentialUpdateView
+    CredentialTwitterForm
+from .views import CollectionUpdateView
 from .models import User, Collection, Credential, SeedSet, Seed
 
 
@@ -158,14 +158,14 @@ class CredentialFlickrFormTest(TestCase):
         self.factory = RequestFactory()
         self.path = "/ui/credentials/flickr/create/"
         self.user = User.objects.create_superuser(username="test_user",
-                                             email="test_user@test.com",
-                                             password="test_password")
+                                                  email="test_user@test.com",
+                                                  password="test_password")
         self.data = {
             "name": "test_flickr_credential",
             "user": self.user.pk,
             "platform": "flickr",
-            "key":"dummy_key",
-            "secret":"dummy_secret",
+            "key": "dummy_key",
+            "secret": "dummy_secret",
             "date_added": "04/14/2016",
         }
 
@@ -182,8 +182,8 @@ class CredentialTwitterFormTest(TestCase):
         self.factory = RequestFactory()
         self.path = "/ui/credentials/flickr/create/"
         self.user = User.objects.create_superuser(username="test_user",
-                                             email="test_user@test.com",
-                                             password="test_password")
+                                                  email="test_user@test.com",
+                                                  password="test_password")
         self.data = {
             "name": "test_twitter_credential",
             "user": self.user.pk,
@@ -201,9 +201,9 @@ class CredentialTwitterFormTest(TestCase):
         self.assertTrue(form.is_valid())
         credential = form.save()
         self.assertJSONEqual(credential.token, '{"consumer_key": "dummy_consumer_key",'
-                        '"consumer_secret": "dummy_consumer_secret",'
-                        '"access_token": "dummy_access_token",'
-                        '"access_token_secret": "dummy_access_token_secret"}')
+                                               '"consumer_secret": "dummy_consumer_secret",'
+                                               '"access_token": "dummy_access_token",'
+                                               '"access_token_secret": "dummy_access_token_secret"}')
 
 
 class CredentialWeiboFormTest(TestCase):
@@ -211,8 +211,8 @@ class CredentialWeiboFormTest(TestCase):
         self.factory = RequestFactory()
         self.path = "/ui/credentials/flickr/create/"
         self.user = User.objects.create_superuser(username="test_user",
-                                             email="test_user@test.com",
-                                             password="test_password")
+                                                  email="test_user@test.com",
+                                                  password="test_password")
         self.data = {
             "name": "test_weibo_credential",
             "user": self.user.pk,
@@ -230,36 +230,10 @@ class CredentialWeiboFormTest(TestCase):
         self.assertTrue(form.is_valid())
         credential = form.save()
         self.assertJSONEqual(credential.token,
-                        '{"api_key": "dummy_api_key",'
-                        '"api_secret": "dummy_api_secret",'
-                        '"redirect_uri": "dummy_redirect_uri",'
-                        '"access_token": "dummy_access_token"}')
-
-
-class CredentialUpdateFormTest(TestCase):
-
-    def setUp(self):
-        self.factory = RequestFactory()
-        user = User.objects.create_superuser(username="test_user",
-                                             email="test_user@test.com",
-                                             password="test_password")
-        self.credential = Credential.objects.create(user=user,
-                                                    name='Test Credential',
-                                                    platform='test platform',
-                                                    token='{"key1":"key1","key2":"key2"}')
-        self.path = '/ui/credentials/' + str(self.credential.pk) + '/update/'
-
-    def test_valid_data(self):
-        request = self.factory.get(self.path)
-        response = CredentialUpdateView.as_view()(request,
-                                                  pk=self.credential.pk)
-        form = CredentialForm({
-            'name': 'my test credential updated name',
-            'token': {"key1":"updated_key1","key2":"updated_key2"},
-            'history_note': 'Test Update'
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(form.is_valid())
+                             '{"api_key": "dummy_api_key",'
+                             '"api_secret": "dummy_api_secret",'
+                             '"redirect_uri": "dummy_redirect_uri",'
+                             '"access_token": "dummy_access_token"}')
 
 
 class TestExportForm(TestCase):

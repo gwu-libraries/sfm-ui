@@ -51,11 +51,17 @@ def history_save(self, *args, **kw):
 
 
 class Credential(models.Model):
-
-    name = models.CharField(max_length=255, default='Credential')
+    TWITTER = "twitter"
+    FLICKR = "flickr"
+    WEIBO = "weibo"
+    PLATFORM_CHOICES = [
+        (TWITTER, 'Twitter'),
+        (FLICKR, 'Flickr'),
+        (WEIBO, 'Weibo')
+    ]
+    name = models.CharField(max_length=255)
     user = models.ForeignKey(User, related_name='credentials')
-    platform = models.CharField(max_length=255, blank=True,
-                                help_text='Platform name')
+    platform = models.CharField(max_length=255, help_text='Platform name', choices=PLATFORM_CHOICES)
     token = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
@@ -134,7 +140,7 @@ class SeedSet(models.Model):
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=False)
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
-                                                   verbose_name="schedule")
+                                                   verbose_name="schedule", null=True)
     harvest_options = models.TextField(blank=True)
     stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)

@@ -10,7 +10,8 @@ class DiffTests(TestCase):
         self.group = Group.objects.create(name="test_group")
         self.collection = Collection.objects.create(group=self.group, name="test_collection")
         self.original_credential_token = "original token"
-        self.credential = Credential.objects.create(user=self.user, platform="test_platform",
+        self.credential = Credential.objects.create(name="test_credential",
+                                                    user=self.user, platform="test_platform",
                                                     token=self.original_credential_token)
         self.changed_credential_token = "changed token"
         self.credential.token = self.changed_credential_token
@@ -36,7 +37,7 @@ class DiffTests(TestCase):
 
         diff = diff_historical_object(None, historical_credential)
         self.assertDictEqual(
-            {"name": (None, "Credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
+            {"name": (None, "test_credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
              "is_active": (None, True)},
             diff.fields)
         self.assertEqual(self.user, diff.user)
@@ -48,7 +49,7 @@ class DiffTests(TestCase):
         self.assertDictEqual({"token": (self.original_credential_token, self.changed_credential_token)},
                              diffs[0].fields)
         self.assertDictEqual(
-            {"name": (None, "Credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
+            {"name": (None, "test_credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
              "is_active": (None, True)},
             diffs[1].fields)
 

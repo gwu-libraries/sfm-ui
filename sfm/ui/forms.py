@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Button, Submit
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
 from .models import Collection, SeedSet, Seed, Credential, Export
 from datetimewidget.widgets import DateTimeWidget
@@ -128,6 +128,214 @@ class SeedSetForm(forms.ModelForm):
             return data
 
 
+class BaseSeedSetForm(forms.ModelForm):
+
+    class Meta:
+        model = SeedSet
+        fields = ['name', 'description', 'collection',
+                  'schedule_minutes', 'credential', 'end_date',
+                  'history_note']
+        exclude = []
+        widgets = {'collection': forms.HiddenInput,
+                   'history_note': HISTORY_NOTE_WIDGET}
+        labels = {
+            'history_note': HISTORY_NOTE_LABEL
+        }
+        help_texts = {
+            'history_note': HISTORY_NOTE_HELP
+        }
+        error_messages = {}
+
+    def __init__(self, *args, **kwargs):
+        self.coll = kwargs.pop("coll", None)
+        super(BaseSeedSetForm, self).__init__(*args, **kwargs)
+        cancel_url = reverse('collection_detail', args=[self.coll])
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'name',
+                'credential',
+                Div(),
+                'schedule_minutes',
+                'end_date',
+                'description',
+                'collection',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel',
+                       onclick="window.location.href='{0}'".format(cancel_url))
+            )
+        )
+
+    def clean_end_date(self):
+        data = self.cleaned_data.get('end_date', None)
+        if data:
+            if data < timezone.now():
+                raise forms.ValidationError(
+                    'End date must be later than current date and time.')
+            return data
+
+
+class TwitterUserTimelineForm(BaseSeedSetForm):
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(TwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].append('incremental')
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(TwitterUserTimelineForm, self).save(commit=False)
+        m.harvest_type = SeedSet.TWITTER_USER_TIMELINE
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.save()
+        return m
+
+
+class TwitterSearchForm(BaseSeedSetForm):
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(TwitterSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].append('incremental')
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(TwitterSearchForm, self).save(commit=False)
+        m.harvest_type = SeedSet.TWITTER_SEARCH
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.save()
+        return m
+
+
+class TwitterSampleForm(BaseSeedSetForm):
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    class Meta(BaseSeedSetForm.Meta):
+        exclude = ('schedule_minutes',)
+
+    def __init__(self, *args, **kwargs):
+        super(TwitterSampleForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].append('incremental')
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(TwitterSampleForm, self).save(commit=False)
+        m.harvest_type = SeedSet.TWITTER_SAMPLE
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.schedule_minutes = None
+        m.save()
+        return m
+
+
+class TwitterFilterForm(BaseSeedSetForm):
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    class Meta(BaseSeedSetForm.Meta):
+        exclude = ('schedule_minutes',)
+
+    def __init__(self, *args, **kwargs):
+        super(TwitterFilterForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].append('incremental')
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(TwitterFilterForm, self).save(commit=False)
+        m.harvest_type = SeedSet.TWITTER_FILTER
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.schedule_minutes = None
+        m.save()
+        return m
+
+
+class FlickrUserForm(BaseSeedSetForm):
+    #TODO Get correct sizes from https://www.flickr.com/services/api/flickr.photos.getSizes.html
+    SIZE_OPTIONS = (
+        ("Thumbnail", "Thumbnail"),
+        ("Large", "Large"),
+        ("Original", "Original")
+    )
+    sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"))
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(FlickrUserForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].extend(('sizes','incremental'))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+                self.fields['sizes'].initial = harvest_options["sizes"]
+
+    def save(self, commit=True):
+        m = super(FlickrUserForm, self).save(commit=False)
+        m.harvest_type = SeedSet.FLICKR_USER
+        log.info("")
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "sizes": self.cleaned_data["sizes"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.save()
+        return m
+
+
+class WeiboTimelineForm(BaseSeedSetForm):
+    incremental = forms.BooleanField(initial=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(WeiboTimelineForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][2].append('incremental')
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(WeiboTimelineForm, self).save(commit=False)
+        m.harvest_type = SeedSet.WEIBO_TIMELINE
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.save()
+        return m
+
+
+
 class SeedForm(forms.ModelForm):
 
     class Meta:
@@ -178,18 +386,15 @@ class SeedForm(forms.ModelForm):
         return super(SeedForm, self).is_valid()
 
 
-class CredentialFlickrForm(forms.ModelForm):
-
-    key = forms.CharField()
-    secret = forms.CharField()
-    platform = forms.CharField(widget=forms.HiddenInput(), initial='flickr')
+class BaseCredentialForm(forms.ModelForm):
 
     class Meta:
         model = Credential
-        fields = ['name', 'platform', 'key', 'secret', 'history_note']
+        fields = ['name', 'history_note']
         exclude = []
         widgets = {
-            'token': forms.HiddenInput(),
+            # 'platform': forms.HiddenInput(),
+            #TODO: Is this necessary?
             'date_added': forms.HiddenInput(),
             'history_note': HISTORY_NOTE_WIDGET
         }
@@ -203,15 +408,15 @@ class CredentialFlickrForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
-        super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+        super(BaseCredentialForm, self).__init__(*args, **kwargs)
         # set up crispy forms helper
         self.helper = FormHelper(self)
+        # set up crispy forms helper
         self.helper.layout = Layout(
             Fieldset(
                 '',
                 'name',
-                'key',
-                'secret',
+                Div(),
                 'history_note'
             ),
             FormActions(
@@ -220,8 +425,23 @@ class CredentialFlickrForm(forms.ModelForm):
             )
         )
 
+
+class CredentialFlickrForm(BaseCredentialForm):
+    key = forms.CharField(required=True)
+    secret = forms.CharField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialFlickrForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][1].extend(['key', 'secret'])
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            self.fields['key'].initial = token.get('key')
+            self.fields['secret'].initial = token.get('secret')
+
     def save(self, commit=True):
         m = super(CredentialFlickrForm, self).save(commit=False)
+        m.platform = Credential.FLICKR
         m.token = {
             "key": self.cleaned_data["key"],
             "secret": self.cleaned_data["secret"]
@@ -231,168 +451,65 @@ class CredentialFlickrForm(forms.ModelForm):
         return m
 
 
-class CredentialTwitterForm(forms.ModelForm):
-
-    consumer_key = forms.CharField()
-    consumer_secret = forms.CharField()
-    access_token = forms.CharField()
-    access_token_secret = forms.CharField()
-    platform = forms.CharField(widget=forms.HiddenInput(), initial='twitter')
-
-    class Meta:
-        model = Credential
-        fields = ['name', 'platform', 'consumer_key', 'consumer_secret',
-                  'access_token', 'access_token_secret', 'history_note']
-        exclude = []
-        widgets = {
-            'token': forms.HiddenInput(),
-            'date_added': forms.HiddenInput(),
-            'history_note': HISTORY_NOTE_WIDGET
-        }
-        localized_fields = None
-        labels = {
-            'history_note': HISTORY_NOTE_LABEL
-        }
-        help_texts = {
-            'history_note': HISTORY_NOTE_HELP
-        }
-        error_messages = {}
+class CredentialTwitterForm(BaseCredentialForm):
+    consumer_key = forms.CharField(required=True)
+    consumer_secret = forms.CharField(required=True)
+    access_token = forms.CharField(required=True)
+    access_token_secret = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(CredentialTwitterForm, self).__init__(*args, **kwargs)
-        # set up crispy forms helper
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                '',
-                'name',
-                'consumer_key',
-                'consumer_secret',
-                'access_token',
-                'access_token_secret',
-                'history_note'
-            ),
-            FormActions(
-                Submit('submit', 'Save'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
-            )
-        )
+        self.helper.layout[0][1].extend(['consumer_key', 'consumer_key', 'access_token', 'access_token_secret'])
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            self.fields['consumer_key'].initial = token.get('consumer_key')
+            self.fields['consumer_secret'].initial = token.get('consumer_secret')
+            self.fields['access_token'].initial = token.get('access_token')
+            self.fields['access_token_secret'].initial = token.get('access_token_secret')
 
     def save(self, commit=True):
         m = super(CredentialTwitterForm, self).save(commit=False)
-        m.token = {
+        m.platform = Credential.TWITTER
+        token = {
             "consumer_key": self.cleaned_data["consumer_key"],
             "consumer_secret": self.cleaned_data["consumer_secret"],
             "access_token": self.cleaned_data["access_token"],
             "access_token_secret": self.cleaned_data["access_token_secret"],
         }
-        m.token = json.dumps(m.token)
+        m.token = json.dumps(token)
         m.save()
         return m
 
 
-class CredentialWeiboForm(forms.ModelForm):
-
-    api_key = forms.CharField()
-    api_secret = forms.CharField()
-    redirect_uri = forms.CharField()
-    access_token = forms.CharField()
-    platform = forms.CharField(widget=forms.HiddenInput(), initial='weibo')
-
-    class Meta:
-        model = Credential
-        fields = ['name', 'platform', 'api_key', 'api_secret', 'redirect_uri',
-                  'access_token', 'history_note']
-        exclude = []
-        widgets = {
-            'token': forms.HiddenInput(),
-            'date_added': forms.HiddenInput(),
-            'history_note': HISTORY_NOTE_WIDGET
-        }
-        localized_fields = None
-        labels = {
-            'history_note': HISTORY_NOTE_LABEL
-        }
-        help_texts = {
-            'history_note': HISTORY_NOTE_HELP
-        }
-        error_messages = {}
+class CredentialWeiboForm(BaseCredentialForm):
+    api_key = forms.CharField(required=True)
+    api_secret = forms.CharField(required=True)
+    redirect_uri = forms.CharField(required=True)
+    access_token = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(CredentialWeiboForm, self).__init__(*args, **kwargs)
-        self.fields['redirect_uri'].label = "Redirect URI"
-        # set up crispy forms helper
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                '',
-                'name',
-                'api_key',
-                'api_secret',
-                'redirect_uri',
-                'access_token',
-                'history_note'
-            ),
-            FormActions(
-                Submit('submit', 'Save'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
-            )
-        )
+        self.helper.layout[0][1].extend(['api_key', 'api_secret', 'redirect_uri', 'access_token'])
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            self.fields['api_key'].initial = token.get('api_key')
+            self.fields['api_secret'].initial = token.get('api_secret')
+            self.fields['redirect_uri'].initial = token.get('redirect_uri')
+            self.fields['access_token'].initial = token.get('access_token')
 
     def save(self, commit=True):
         m = super(CredentialWeiboForm, self).save(commit=False)
-        m.token = {
+        m.platform = Credential.WEIBO
+        token = {
             "api_key": self.cleaned_data["api_key"],
             "api_secret": self.cleaned_data["api_secret"],
             "redirect_uri": self.cleaned_data["redirect_uri"],
             "access_token": self.cleaned_data["access_token"],
         }
-        m.token = json.dumps(m.token)
+        m.token = json.dumps(token)
         m.save()
         return m
-
-
-class CredentialForm(forms.ModelForm):
-
-    class Meta:
-        model = Credential
-        fields = ['name', 'platform', 'token', 'is_active', 'history_note']
-        exclude = []
-        widgets = {
-            'platform': forms.TextInput(attrs={'readonly': 'readonly'}),
-            'date_added': forms.HiddenInput(),
-            'history_note': HISTORY_NOTE_WIDGET
-        }
-        localized_fields = None
-        labels = {
-            'history_note': HISTORY_NOTE_LABEL
-        }
-        help_texts = {
-            'history_note': HISTORY_NOTE_HELP
-        }
-        error_messages = {}
-
-    def __init__(self, *args, **kwargs):
-        super(CredentialForm, self).__init__(*args, **kwargs)
-        # set up crispy forms helper
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                '',
-                'name',
-                'platform',
-                'token',
-                'is_active',
-                'history_note'
-            ),
-            FormActions(
-                Submit('submit', 'Save'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
-            )
-        )
-
-    def save(self, commit=True):
-        return super(CredentialForm, self).save(commit)
 
 
 class ExportForm(forms.ModelForm):

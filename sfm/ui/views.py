@@ -10,8 +10,8 @@ from braces.views import LoginRequiredMixin
 from django.views.generic.base import RedirectView
 from django.shortcuts import get_object_or_404
 
-from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
-from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm, ExportForm
+from .forms import CollectionForm, SeedSetForm, SeedForm, ExportForm
+import forms
 from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
 from .sched import next_run_time
 from .utils import diff_object_history
@@ -51,6 +51,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
         context["diffs"] = diff_object_history(self.object)
+        context["harvest_types"] = SeedSet.HARVEST_CHOICES
         return context
 
 
@@ -119,9 +120,19 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+def _get_seedset_form_class(harvest_type):
+    return "{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
+
+
+def _get_harvest_type_name(harvest_type):
+    for harvest_type_choice, harvest_type_name in SeedSet.HARVEST_CHOICES:
+        if harvest_type_choice == harvest_type:
+            return harvest_type_name
+
+
 class SeedSetCreateView(LoginRequiredMixin, CreateView):
     model = SeedSet
-    form_class = SeedSetForm
+    # form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
 
     def get_initial(self):
@@ -132,6 +143,7 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(SeedSetCreateView, self).get_context_data(**kwargs)
         context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["harvest_type_name"] = _get_harvest_type_name(self.kwargs["harvest_type"])
         return context
 
     def get_form_kwargs(self):
@@ -139,20 +151,17 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
         kwargs["coll"] = self.kwargs["collection_pk"]
         return kwargs
 
+    def get_form_class(self):
+        return getattr(forms, _get_seedset_form_class(self.kwargs["harvest_type"]))
+
     def get_success_url(self):
         return reverse('seedset_detail', args=(self.object.pk,))
 
 
 class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     model = SeedSet
-    form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
     initial = {'history_note': ''}
-
-    def get_initial(self):
-        initial = super(SeedSetUpdateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
-        return initial
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
@@ -163,8 +172,11 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
-        kwargs["coll"] = self.kwargs["collection_pk"]
+        kwargs["coll"] = self.object.collection.pk
         return kwargs
+
+    def get_form_class(self):
+        return getattr(forms, _get_seedset_form_class(self.object.harvest_type))
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
@@ -269,45 +281,61 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         context["diffs"] = diff_object_history(self.object)
         return context
 
-
-class CredentialTwitterCreateView(LoginRequiredMixin, CreateView):
+class CredentialCreateView(LoginRequiredMixin, CreateView):
     model = Credential
-    form_class = CredentialTwitterForm
     template_name = 'ui/credential_create.html'
+
+    def get_form_class(self):
+        class_name = "Credential{}Form".format(self.kwargs["platform"].title())
+        return getattr(forms, class_name)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(CredentialTwitterCreateView, self).form_valid(form)
+        return super(CredentialCreateView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
 
 
-class CredentialWeiboCreateView(LoginRequiredMixin, CreateView):
-    model = Credential
-    form_class = CredentialWeiboForm
-    template_name = 'ui/credential_create.html'
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super(CredentialWeiboCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse("credential_detail", args=(self.object.pk,))
-
-
-class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
-    model = Credential
-    form_class = CredentialFlickrForm
-    template_name = 'ui/credential_create.html'
-
-    def form_valid(self, form):
-        # This will set user
-        form.instance.user = self.request.user
-        return super(CredentialFlickrCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse("credential_detail", args=(self.object.pk,))
+# class CredentialTwitterCreateView(LoginRequiredMixin, CreateView):
+#     model = Credential
+#     form_class = CredentialTwitterForm
+#     template_name = 'ui/credential_create.html'
+#
+#     def form_valid(self, form):
+#         form.instance.user = self.request.user
+#         return super(CredentialTwitterCreateView, self).form_valid(form)
+#
+#     def get_success_url(self):
+#         return reverse("credential_detail", args=(self.object.pk,))
+#
+#
+# class CredentialWeiboCreateView(LoginRequiredMixin, CreateView):
+#     model = Credential
+#     form_class = CredentialWeiboForm
+#     template_name = 'ui/credential_create.html'
+#
+#     def form_valid(self, form):
+#         form.instance.user = self.request.user
+#         return super(CredentialWeiboCreateView, self).form_valid(form)
+#
+#     def get_success_url(self):
+#         return reverse("credential_detail", args=(self.object.pk,))
+#
+#
+# class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
+#     model = Credential
+#     form_class = CredentialFlickrForm
+#     template_name = 'ui/credential_create.html'
+#
+#     def form_valid(self, form):
+#         # This will set user
+#         form.instance.user = self.request.user
+#         return super(CredentialFlickrCreateView, self).form_valid(form)
+#
+#     def get_success_url(self):
+#         return reverse("credential_detail", args=(self.object.pk,))
 
 
 class CredentialListView(LoginRequiredMixin, ListView):
@@ -316,12 +344,17 @@ class CredentialListView(LoginRequiredMixin, ListView):
     allow_empty = True
 
 
-class CredentialUpdateView(UpdateView):
+class CredentialUpdateView(LoginRequiredMixin, UpdateView):
     model = Credential
-    form_class = CredentialForm
+    # form_class = CredentialForm
     template_name = 'ui/credential_update.html'
 
+    def get_form_class(self):
+        class_name = "Credential{}Form".format(self.object.platform.title())
+        return getattr(forms, class_name)
+
     def get_success_url(self):
+        log.info("Foo")
         return reverse("credential_detail", args=(self.object.pk,))
 
 
