@@ -29,7 +29,8 @@ DEBUG = env.get('SFM_DEBUG', 'True') == 'True'
 # Host/domain names that this Django site can serve.
 # Used when DEBUG = False
 # See https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.get('SFM_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# This will remove ports if provided.
+ALLOWED_HOSTS = (env.get('SFM_HOST', 'localhost').split(":")[0])
 
 # Application definition
 
@@ -158,3 +159,12 @@ PERFORM_EXPORTS = True
 
 # Add a 5 minute schedule interval. This is useful for dev and testing.
 FIVE_MINUTE_SCHEDULE = env.get('SFM_FIVE_MINUTE_SCHEDULE', 'False') == 'True'
+
+# Whether to send emails.
+PERFORM_EMAILS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env.get('SFM_SMTP_HOST', 'smtp.gmail.com')
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env.get('SFM_EMAIL_USER')
+EMAIL_HOST_PASSWORD = env.get('SFM_EMAIL_PASSWORD')
+EMAIL_USE_TLS = True

@@ -1,6 +1,6 @@
 sfmdevrabbit:
     image: rabbitmq@sha256:397382d2b222f3a298a6c74e93f348fb16f9a7fde2c02ba14122624d852daae3
-    #RabbatMQ 3-management
+    #RabbitMQ 3-management
     ports:
         - "15672:15672"
     restart: always
@@ -26,12 +26,15 @@ sfmdevapp:
     environment:
         - TZ=EST
         - SFM_DEBUG=True
+        - SFM_SMTP_HOST=smtp.gmail.com
+        - SFM_EMAIL_USER=justinlittman@email.gwu.edu
+        - SFM_EMAIL_PASSWORD=password
         #Turn on logging
         #- SFM_DJANGO_LOG=DEBUG
         #- SFM_DJANGO_REQUEST_LOG=DEBUG
         #- SFM_APSCHEDULER_LOG=DEBUG
         #- SFM_UI_LOG=DEBUG
         #If not running on localhost
-        #- SFM_ALLOWED_HOSTS=myserver.mydomain.edu
+        #- SFM_HOST=myserver.mydomain.edu
         #Add 5 minute harvest interval
         #- SFM_FIVE_MINUTE_SCHEDULE=True

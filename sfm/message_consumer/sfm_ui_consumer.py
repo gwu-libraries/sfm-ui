@@ -2,9 +2,14 @@ import logging
 from sfmutils.consumer import BaseConsumer
 from ui.models import Harvest, SeedSet, Seed, Warc, Export
 import json
+from django.core.mail import send_mail
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
 import iso8601
 import time
+from smtplib import SMTPException
 
 log = logging.getLogger(__name__)
 
@@ -102,7 +107,6 @@ class SfmUiConsumer(BaseConsumer):
             log.debug("Updating export with id %s", self.message["id"])
             # Retrieve export model object
             export = Export.objects.get(export_id=self.message["id"])
-
             # And update export model object
             export.status = self.message["status"]
             export.infos = self.message.get("infos", [])
@@ -112,6 +116,37 @@ class SfmUiConsumer(BaseConsumer):
             if "date_ended" in self.message:
                 export.date_ended = iso8601.parse_date(self.message["date_ended"])
             export.save()
+
+            # Get reciever's email address
+            receiver_email = export.user.email
+            if receiver_email:
+                export_url = 'http://{}{}'.format(Site.objects.get_current().domain,
+                                                  reverse('export_detail', args=(export.id,)))
+
+                # Send Status mail
+                if settings.PERFORM_EMAILS:
+                    seed_set = export.seed_set if export.seed_set else export.seeds.first().seed_set
+                    mail_message = None
+                    mail_subject = None
+                    if export.status == 'completed success':
+                        mail_message = "Your export of {} is ready. You can retrieve it from {}.".format(seed_set.name,
+                                                                                                         export_url)
+                        mail_subject = "SFM Export is ready"
+                    elif export.status == 'completed failure':
+                        mail_message = "Your export of {} failed. You can get more information from {}".format(
+                            seed_set.name, export_url)
+                        mail_subject = "SFM Export failed"
+                    else:
+                        log.debug("Unhandled export status: %s", export.status)
+                    if mail_message:
+                        try:
+                            log.debug("Sending email to %s: %s", receiver_email, mail_subject)
+                            send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                                      [receiver_email], fail_silently=False)
+                        except SMTPException, ex:
+                            log.error("Error sending email: %s", ex)
+            else:
+                log.warn("No email address for %s", export.user)
 
         except ObjectDoesNotExist:
             log.error("Export model object not found for export status message: %s",
@@ -129,21 +164,3 @@ class SfmUiConsumer(BaseConsumer):
         except ObjectDoesNotExist:
             log.error("Harvest model object not found for web harvest status message: %s",
                       json.dumps(self.message, indent=4))
-
-        # {
-        #     "id": "flickr:45",
-        #     "parent_id": "sfmui:45",
-        #     "type": "web",
-        #     "seeds": [
-        #         {
-        #             "token": "http://www.gwu.edu/"
-        #         },
-        #         {
-        #             "token": "http://library.gwu.edu/"
-        #         }
-        #     ],
-        #     "collection": {
-        #         "id": "test_collection",
-        #         "path": "/tmp/test_collection"
-        #     }
-        # }
