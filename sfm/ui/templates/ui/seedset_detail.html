@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load ui_extras %}
 {% block title %}
     {{ seedset }}
 {% endblock %}
@@ -26,7 +27,7 @@
    <div class="col-md-12">
         <p><strong>Harvest type:</strong> {{ seedset.get_harvest_type_display }}</p>
         <p><strong>Credential: </strong> {{ seedset.credential.token }}</p>
-	    <p><strong>Harvest options: </strong> {{ seedset.harvest_options }}</p>
+	    {{ seedset.harvest_options|json }}
 	    {% if seedset.schedule_minutes %}
             <p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
             <p><strong>Next harvest</strong> {{ next_run_time }}</p>
@@ -56,13 +57,13 @@
                 <thead>
                 <tr>
                     <th>Token</th>
-                    <th>uid</th>
+                    <th>Uid</th>
                     <th>Active</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td>{{ seed.uid }}</td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
                 </tr>

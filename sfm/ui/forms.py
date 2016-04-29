@@ -71,61 +71,60 @@ class CollectionForm(forms.ModelForm):
         )
 
 
-class SeedSetForm(forms.ModelForm):
-
-    class Meta:
-        model = SeedSet
-        fields = ['name', 'harvest_type', 'description', 'collection',
-                  'schedule_minutes', 'credential',
-                  'harvest_options', 'date_added', 'end_date',
-                  'history_note']
-        exclude = []
-        widgets = {'collection': forms.HiddenInput,
-                   'date_added': forms.HiddenInput,
-                   'end_date': DATETIME_WIDGET,
-                   'history_note': HISTORY_NOTE_WIDGET}
-        localized_fields = None
-        labels = {
-            'history_note': HISTORY_NOTE_LABEL
-        }
-        help_texts = {
-            'history_note': HISTORY_NOTE_HELP
-        }
-        error_messages = {}
-
-    def __init__(self, *args, **kwargs):
-        self.coll = kwargs.pop("coll", None)
-        super(SeedSetForm, self).__init__(*args, **kwargs)
-        cancel_url = reverse('collection_detail', args=[self.coll])
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                '',
-                'name',
-                'harvest_type',
-                'credential',
-                'harvest_options',
-                'schedule_minutes',
-                'end_date',
-                'description',
-                'collection',
-                'date_added',
-                'history_note'
-            ),
-            FormActions(
-                Submit('submit', 'Save'),
-                Button('cancel', 'Cancel',
-                       onclick="window.location.href='{0}'".format(cancel_url))
-            )
-        )
-
-    def clean_end_date(self):
-        data = self.cleaned_data.get('end_date', None)
-        if data:
-            if data < timezone.now():
-                raise forms.ValidationError(
-                    'End date must be later than current date and time.')
-            return data
+# class SeedSetForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = SeedSet
+#         fields = ['name', 'harvest_type', 'description', 'collection',
+#                   'schedule_minutes', 'credential',
+#                   'harvest_options', 'date_added', 'end_date',
+#                   'history_note']
+#         exclude = []
+#         widgets = {'collection': forms.HiddenInput,
+#                    'date_added': forms.HiddenInput,
+#                    'history_note': HISTORY_NOTE_WIDGET}
+#         localized_fields = None
+#         labels = {
+#             'history_note': HISTORY_NOTE_LABEL
+#         }
+#         help_texts = {
+#             'history_note': HISTORY_NOTE_HELP
+#         }
+#         error_messages = {}
+#
+#     def __init__(self, *args, **kwargs):
+#         self.coll = kwargs.pop("coll", None)
+#         super(SeedSetForm, self).__init__(*args, **kwargs)
+#         cancel_url = reverse('collection_detail', args=[self.coll])
+#         self.helper = FormHelper(self)
+#         self.helper.layout = Layout(
+#             Fieldset(
+#                 '',
+#                 'name',
+#                 'harvest_type',
+#                 'credential',
+#                 'harvest_options',
+#                 'schedule_minutes',
+#                 'end_date',
+#                 'description',
+#                 'collection',
+#                 'date_added',
+#                 'history_note'
+#             ),
+#             FormActions(
+#                 Submit('submit', 'Save'),
+#                 Button('cancel', 'Cancel',
+#                        onclick="window.location.href='{0}'".format(cancel_url))
+#             )
+#         )
+#
+#     def clean_end_date(self):
+#         data = self.cleaned_data.get('end_date', None)
+#         if data:
+#             if data < timezone.now():
+#                 raise forms.ValidationError(
+#                     'End date must be later than current date and time.')
+#             return data
 
 
 class BaseSeedSetForm(forms.ModelForm):
@@ -179,11 +178,11 @@ class BaseSeedSetForm(forms.ModelForm):
             return data
 
 
-class TwitterUserTimelineForm(BaseSeedSetForm):
+class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(TwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
@@ -192,7 +191,7 @@ class TwitterUserTimelineForm(BaseSeedSetForm):
                 self.fields['incremental'].initial = harvest_options["incremental"]
 
     def save(self, commit=True):
-        m = super(TwitterUserTimelineForm, self).save(commit=False)
+        m = super(SeedSetTwitterUserTimelineForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_USER_TIMELINE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"]
@@ -202,11 +201,11 @@ class TwitterUserTimelineForm(BaseSeedSetForm):
         return m
 
 
-class TwitterSearchForm(BaseSeedSetForm):
+class SeedSetTwitterSearchForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(TwitterSearchForm, self).__init__(*args, **kwargs)
+        super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
@@ -215,7 +214,7 @@ class TwitterSearchForm(BaseSeedSetForm):
                 self.fields['incremental'].initial = harvest_options["incremental"]
 
     def save(self, commit=True):
-        m = super(TwitterSearchForm, self).save(commit=False)
+        m = super(SeedSetTwitterSearchForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_SEARCH
         harvest_options = {
             "incremental": self.cleaned_data["incremental"]
@@ -225,14 +224,14 @@ class TwitterSearchForm(BaseSeedSetForm):
         return m
 
 
-class TwitterSampleForm(BaseSeedSetForm):
+class SeedSetTwitterSampleForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     class Meta(BaseSeedSetForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
-        super(TwitterSampleForm, self).__init__(*args, **kwargs)
+        super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
@@ -241,7 +240,7 @@ class TwitterSampleForm(BaseSeedSetForm):
                 self.fields['incremental'].initial = harvest_options["incremental"]
 
     def save(self, commit=True):
-        m = super(TwitterSampleForm, self).save(commit=False)
+        m = super(SeedSetTwitterSampleForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_SAMPLE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"]
@@ -252,14 +251,14 @@ class TwitterSampleForm(BaseSeedSetForm):
         return m
 
 
-class TwitterFilterForm(BaseSeedSetForm):
+class SeedSetTwitterFilterForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     class Meta(BaseSeedSetForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
-        super(TwitterFilterForm, self).__init__(*args, **kwargs)
+        super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
@@ -268,7 +267,7 @@ class TwitterFilterForm(BaseSeedSetForm):
                 self.fields['incremental'].initial = harvest_options["incremental"]
 
     def save(self, commit=True):
-        m = super(TwitterFilterForm, self).save(commit=False)
+        m = super(SeedSetTwitterFilterForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_FILTER
         harvest_options = {
             "incremental": self.cleaned_data["incremental"]
@@ -279,7 +278,7 @@ class TwitterFilterForm(BaseSeedSetForm):
         return m
 
 
-class FlickrUserForm(BaseSeedSetForm):
+class SeedSetFlickrUserForm(BaseSeedSetForm):
     #TODO Get correct sizes from https://www.flickr.com/services/api/flickr.photos.getSizes.html
     SIZE_OPTIONS = (
         ("Thumbnail", "Thumbnail"),
@@ -290,19 +289,19 @@ class FlickrUserForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(FlickrUserForm, self).__init__(*args, **kwargs)
+        super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].extend(('sizes','incremental'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
+            if "sizes" in harvest_options:
                 self.fields['sizes'].initial = harvest_options["sizes"]
 
     def save(self, commit=True):
-        m = super(FlickrUserForm, self).save(commit=False)
+        m = super(SeedSetFlickrUserForm, self).save(commit=False)
         m.harvest_type = SeedSet.FLICKR_USER
-        log.info("")
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
             "sizes": self.cleaned_data["sizes"]
@@ -312,11 +311,11 @@ class FlickrUserForm(BaseSeedSetForm):
         return m
 
 
-class WeiboTimelineForm(BaseSeedSetForm):
+class SeedSetWeiboTimelineForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(WeiboTimelineForm, self).__init__(*args, **kwargs)
+        super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
@@ -325,7 +324,7 @@ class WeiboTimelineForm(BaseSeedSetForm):
                 self.fields['incremental'].initial = harvest_options["incremental"]
 
     def save(self, commit=True):
-        m = super(WeiboTimelineForm, self).save(commit=False)
+        m = super(SeedSetWeiboTimelineForm, self).save(commit=False)
         m.harvest_type = SeedSet.WEIBO_TIMELINE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"]
@@ -335,41 +334,33 @@ class WeiboTimelineForm(BaseSeedSetForm):
         return m
 
 
-
-class SeedForm(forms.ModelForm):
+class BaseSeedForm(forms.ModelForm):
 
     class Meta:
         model = Seed
-        fields = ['seed_set', 'token', 'uid', 'is_active', 'is_valid',
-                  'date_added', 'history_note']
+        fields = ['seed_set', 'is_active',
+                  'history_note']
         exclude = []
         widgets = {
-            'token': forms.TextInput(attrs={'size': '40'}),
-            'uid': forms.TextInput(attrs={'size': '40'}),
             'seed_set': forms.HiddenInput,
-            'date_added': forms.HiddenInput,
-            'is_valid': forms.HiddenInput,
             'history_note': HISTORY_NOTE_WIDGET
         }
-        localized_fields = None
         labels = {
             'history_note': HISTORY_NOTE_LABEL
         }
         help_texts = {
             'history_note': HISTORY_NOTE_HELP
         }
-        error_messages = {}
 
     def __init__(self, *args, **kwargs):
         self.seedset = kwargs.pop("seedset", None)
-        super(SeedForm, self).__init__(*args, **kwargs)
+        super(BaseSeedForm, self).__init__(*args, **kwargs)
         cancel_url = reverse('seedset_detail', args=[self.seedset])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'token',
-                'uid',
+                Div(),
                 'is_active',
                 'history_note'
             ),
@@ -380,11 +371,152 @@ class SeedForm(forms.ModelForm):
             )
         )
 
-        return super(SeedForm, self).__init__(*args, **kwargs)
+        return super(BaseSeedForm, self).__init__(*args, **kwargs)
 
-    def is_valid(self):
-        return super(SeedForm, self).is_valid()
 
+class SeedTwitterUserTimelineForm(BaseSeedForm):
+
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token', 'uid']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Screen name"
+        labels["uid"] = "User id"
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.TextInput(attrs={'size': '40'})
+        widgets["uid"] = forms.TextInput(attrs={'size': '40'})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('token', 'uid'))
+
+
+class SeedTwitterSearchForm(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Query"
+        help_texts = dict(BaseSeedForm.Meta.help_texts)
+        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search">these instructions</a> for ' \
+                              'writing a query.'
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.Textarea(attrs={'rows': 4})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].append('token')
+
+
+class SeedTwitterFilterForm(BaseSeedForm):
+    track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text='Keywords to track. Phrases of keywords are specified by a comma-separated list. '
+                                      'See <a '
+                                      'href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
+                                      'track</a> for more information.')
+    follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                             help_text='A comma separated list of user IDs, indicating the users to return statuses '
+                                       'for in the stream. See <a '
+                                       'href="https://dev.twitter.com/streaming/overview/request-parameters#follow">'
+                                       'follow</a> for more information.')
+    locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                                help_text='Specifies a set of bounding boxes to track. See <a href='
+                                          '"https://dev.twitter.com/streaming/overview/request-parameters#locations">'
+                                          'locations</a> for more information.')
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterFilterForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('track', 'follow', 'locations'))
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            if 'track' in token:
+                self.fields['track'].initial = token['track']
+            if 'follow' in token:
+                self.fields['follow'].initial = token['follow']
+            if 'locations' in token:
+                self.fields['locations'].initial = token['locations']
+
+    def save(self, commit=True):
+        m = super(SeedTwitterFilterForm, self).save(commit=False)
+        token = dict()
+        if self.cleaned_data['track']:
+            token['track'] = self.cleaned_data['track']
+        if self.cleaned_data['follow']:
+            token['follow'] = self.cleaned_data['follow']
+        if self.cleaned_data['locations']:
+            token['locations'] = self.cleaned_data['locations']
+        m.token = json.dumps(token)
+        m.save()
+        return m
+
+
+class SeedFlickrUserForm(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token', 'uid']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Username"
+        labels["uid"] = "NSID"
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.TextInput(attrs={'size': '40'})
+        widgets["uid"] = forms.TextInput(attrs={'size': '40'})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedFlickrUserForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('token', 'uid'))
+
+
+
+# class SeedForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Seed
+#         fields = ['seed_set', 'token', 'uid', 'is_active', 'is_valid',
+#                   'date_added', 'history_note']
+#         exclude = []
+#         widgets = {
+#             'token': forms.TextInput(attrs={'size': '40'}),
+#             'uid': forms.TextInput(attrs={'size': '40'}),
+#             'seed_set': forms.HiddenInput,
+#             'date_added': forms.HiddenInput,
+#             'is_valid': forms.HiddenInput,
+#             'history_note': HISTORY_NOTE_WIDGET
+#         }
+#         localized_fields = None
+#         labels = {
+#             'history_note': HISTORY_NOTE_LABEL
+#         }
+#         help_texts = {
+#             'history_note': HISTORY_NOTE_HELP
+#         }
+#         error_messages = {}
+#
+#     def __init__(self, *args, **kwargs):
+#         self.seedset = kwargs.pop("seedset", None)
+#         super(SeedForm, self).__init__(*args, **kwargs)
+#         cancel_url = reverse('seedset_detail', args=[self.seedset])
+#         self.helper = FormHelper(self)
+#         self.helper.layout = Layout(
+#             Fieldset(
+#                 '',
+#                 'token',
+#                 'uid',
+#                 'is_active',
+#                 'history_note'
+#             ),
+#             FormActions(
+#                 Submit('submit', 'Save'),
+#                 Button('cancel', 'Cancel',
+#                        onclick="window.location.href='{0}'".format(cancel_url))
+#             )
+#         )
+#
+#         return super(SeedForm, self).__init__(*args, **kwargs)
+#
+#     def is_valid(self):
+#         return super(SeedForm, self).is_valid()
+#
 
 class BaseCredentialForm(forms.ModelForm):
 
@@ -393,9 +525,6 @@ class BaseCredentialForm(forms.ModelForm):
         fields = ['name', 'history_note']
         exclude = []
         widgets = {
-            # 'platform': forms.HiddenInput(),
-            #TODO: Is this necessary?
-            'date_added': forms.HiddenInput(),
             'history_note': HISTORY_NOTE_WIDGET
         }
         localized_fields = None

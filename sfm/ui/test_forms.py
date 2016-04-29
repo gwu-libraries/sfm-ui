@@ -4,8 +4,8 @@ import pytz
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
-from .forms import CollectionForm, SeedSetForm, SeedForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, \
-    CredentialTwitterForm
+from .forms import CollectionForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, CredentialTwitterForm, \
+    SeedSetTwitterSearchForm, SeedTwitterUserTimelineForm
 from .views import CollectionUpdateView
 from .models import User, Collection, Credential, SeedSet, Seed
 
@@ -115,12 +115,12 @@ class SeedSetFormTest(TestCase):
         }
 
     def test_valid_form(self):
-        form = SeedSetForm(self.data, coll=self.collection.pk)
+        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk)
         self.assertTrue(form.is_valid())
 
     def test_end_date_after_now(self):
         self.data['end_date'] = "01/01/2000"
-        form = SeedSetForm(self.data, coll=self.collection.pk)
+        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk)
         self.assertFalse(form.is_valid())
 
 
@@ -149,7 +149,7 @@ class SeedFormTest(TestCase):
         }
 
     def test_valid_from(self):
-        form = SeedForm(self.data, seedset=self.seedset.pk)
+        form = SeedTwitterUserTimelineForm(self.data, seedset=self.seedset.pk)
         self.assertTrue(form.is_valid())
 
 

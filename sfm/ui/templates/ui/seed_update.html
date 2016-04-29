@@ -11,14 +11,14 @@
            <li><a href={% url "collection_list" %}>My Collections</a></li>
            <li><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></li>
            <li><a href={% url "seedset_detail" seed.seed_set.pk %}>{{ seed.seed_set.name }}</a></li>
-           <li class="active">{{ seed.token }}</a></li>
+           <li class="active">{{ seed.seed_set.get_harvest_type_display }} seed</a></li>
        </ol>
    </div>
 </div>
 <div class="row">
    <div class="col-md-12">
        <div class="page-header">
-           <h1>{{ seed.token }}</h1>
+           <h1>{{ seed.seed_set.get_harvest_type_display }} seed</h1>
        </div> 
    </div>         
 </div>

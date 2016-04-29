@@ -114,10 +114,10 @@ class SeedSetCreateViewTests(TestCase):
         self.collection = Collection.objects.create(name='Test Collection One',
                                                     group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform=Credential.TWITTER)
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_FILTER,
                                               name='Test seedset one',
                                               )
         self.factory = RequestFactory()
@@ -127,9 +127,10 @@ class SeedSetCreateViewTests(TestCase):
         simple test that seedset form loads with collection
         """
         request = self.factory.get(reverse('seedset_create',
-                                   args=[self.collection.pk]))
+                                   args=[self.collection.pk, SeedSet.TWITTER_FILTER]))
         request.user = self.user
-        response = SeedSetCreateView.as_view()(request, collection_pk=self.collection.pk)
+        response = SeedSetCreateView.as_view()(request, collection_pk=self.collection.pk,
+                                               harvest_type=SeedSet.TWITTER_FILTER)
         self.assertEqual(self.collection, response.context_data["form"].initial["collection"])
         self.assertEqual(self.collection, response.context_data["collection"])
 
@@ -176,7 +177,7 @@ class SeedCreateViewTests(TestCase):
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_USER_TIMELINE,
                                               name='Test seedset one',
                                               )
         self.seed = Seed.objects.create(seed_set=self.seedset,
@@ -211,7 +212,7 @@ class SeedTestsMixin:
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_USER_TIMELINE,
                                               name='Test seedset one',
                                               )
         self.seed = Seed.objects.create(seed_set=self.seedset,

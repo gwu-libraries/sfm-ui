@@ -10,7 +10,7 @@
     <ol class="breadcrumb">
       <li><a href={% url "collection_list" %}>My Collections</a></li>
       <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
-      <li class="active">Add Seedset</li>
+      <li class="active">Add {{ harvest_type_name }}</li>
     </ol>
   </div>
 </div>
