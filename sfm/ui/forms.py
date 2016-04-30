@@ -290,7 +290,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('sizes','incremental'))
+        self.helper.layout[0][2].extend(('sizes', 'incremental'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -370,8 +370,6 @@ class BaseSeedForm(forms.ModelForm):
                        onclick="window.location.href='{0}'".format(cancel_url))
             )
         )
-
-        return super(BaseSeedForm, self).__init__(*args, **kwargs)
 
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
@@ -467,56 +465,42 @@ class SeedFlickrUserForm(BaseSeedForm):
         self.helper.layout[0][0].extend(('token', 'uid'))
 
 
+class BaseBulkSeedForm(forms.Form):
+    tokens = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 20}),
+                             help_text="Enter each seed on a separate line.")
+    history_note = forms.CharField(label=HISTORY_NOTE_LABEL, widget=HISTORY_NOTE_WIDGET, help_text=HISTORY_NOTE_HELP,
+                                   required=False)
 
-# class SeedForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Seed
-#         fields = ['seed_set', 'token', 'uid', 'is_active', 'is_valid',
-#                   'date_added', 'history_note']
-#         exclude = []
-#         widgets = {
-#             'token': forms.TextInput(attrs={'size': '40'}),
-#             'uid': forms.TextInput(attrs={'size': '40'}),
-#             'seed_set': forms.HiddenInput,
-#             'date_added': forms.HiddenInput,
-#             'is_valid': forms.HiddenInput,
-#             'history_note': HISTORY_NOTE_WIDGET
-#         }
-#         localized_fields = None
-#         labels = {
-#             'history_note': HISTORY_NOTE_LABEL
-#         }
-#         help_texts = {
-#             'history_note': HISTORY_NOTE_HELP
-#         }
-#         error_messages = {}
-#
-#     def __init__(self, *args, **kwargs):
-#         self.seedset = kwargs.pop("seedset", None)
-#         super(SeedForm, self).__init__(*args, **kwargs)
-#         cancel_url = reverse('seedset_detail', args=[self.seedset])
-#         self.helper = FormHelper(self)
-#         self.helper.layout = Layout(
-#             Fieldset(
-#                 '',
-#                 'token',
-#                 'uid',
-#                 'is_active',
-#                 'history_note'
-#             ),
-#             FormActions(
-#                 Submit('submit', 'Save'),
-#                 Button('cancel', 'Cancel',
-#                        onclick="window.location.href='{0}'".format(cancel_url))
-#             )
-#         )
-#
-#         return super(SeedForm, self).__init__(*args, **kwargs)
-#
-#     def is_valid(self):
-#         return super(SeedForm, self).is_valid()
-#
+    def __init__(self, *args, **kwargs):
+        self.seedset = kwargs.pop("seedset", None)
+        super(BaseBulkSeedForm, self).__init__(*args, **kwargs)
+        cancel_url = reverse('seedset_detail', args=[self.seedset])
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'tokens',
+                'history_note'
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel',
+                       onclick="window.location.href='{0}'".format(cancel_url))
+            )
+        )
+
+
+class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
+    def __init__(self, *args, **kwargs):
+        super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        self.fields['tokens'].label = "Screen names"
+
+
+class BulkSeedFlickrUserForm(BaseBulkSeedForm):
+    def __init__(self, *args, **kwargs):
+        super(BulkSeedFlickrUserForm, self).__init__(*args, **kwargs)
+        self.fields['tokens'].label = "Username"
+
 
 class BaseCredentialForm(forms.ModelForm):
 

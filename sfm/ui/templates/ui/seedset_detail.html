@@ -70,6 +70,9 @@
                 {% endfor %}
             </table>
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
+            {% if can_add_bulk_seeds %}
+                <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+            {% endif %}
         </div>
     </div>
 </div>

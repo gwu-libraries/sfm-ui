@@ -49,6 +49,10 @@ urlpatterns = patterns('',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
 
+                       url(r'^seeds/bulk/(?P<seed_set_pk>\d+)$',
+                           views.BulkSeedCreateView.as_view(),
+                           name="bulk_seed_create"),
+
                        url(r'^seeds/(?P<pk>\d+)/update/$',
                            views.SeedUpdateView.as_view(),
                            name="seed_update"),

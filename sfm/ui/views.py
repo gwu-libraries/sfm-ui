@@ -3,11 +3,12 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.http import StreamingHttpResponse, Http404
+from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from braces.views import LoginRequiredMixin
-from django.views.generic.base import RedirectView
-from django.shortcuts import get_object_or_404
+from django.views.generic.base import RedirectView, View
+from django.shortcuts import get_object_or_404, render
+
 
 from .forms import CollectionForm, ExportForm
 import forms
@@ -116,6 +117,8 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         elif self.object.required_seed_count() is None and self.object.active_seed_count() == 0:
             seed_count_message = "To enable harvesting, make sure there is at least 1 active seed."
         context["seed_count_message"] = seed_count_message
+        # Harvest types that are not limited support bulk add
+        context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         return context
 
 
@@ -277,6 +280,44 @@ class SeedDeleteView(LoginRequiredMixin, DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
     success_url = reverse_lazy('seed_list')
+
+
+class BulkSeedCreateView(LoginRequiredMixin, View):
+    template_name = 'ui/bulk_seed_create.html'
+
+    def get(self, request, *args, **kwargs):
+        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
+        form = self._form_class(seed_set)(initial={}, seedset=kwargs["seed_set_pk"])
+        return self._render(request, form, seed_set)
+
+    def post(self, request, *args, **kwargs):
+        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
+        form = self._form_class(seed_set)(request.POST, seedset=kwargs["seed_set_pk"])
+        if form.is_valid():
+            log.info(form.cleaned_data['history_note'] is None)
+            tokens = form.cleaned_data['tokens'].splitlines()
+            for token in (t.strip() for t in tokens):
+                if token:
+                    if not Seed.objects.filter(seed_set=seed_set, token=token).exists():
+                        log.debug("Creating seed %s for seedset %s", token, seed_set.pk)
+                        Seed.objects.create(token=token,
+                                            seed_set=seed_set,
+                                            history_note=form.cleaned_data['history_note'])
+                    else:
+                        log.debug("Skipping creating seed %s for seedset %s since it exists", token, seed_set.pk)
+            # <process form cleaned data>
+            return HttpResponseRedirect(reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],)))
+
+        return self._render(request, form, seed_set)
+
+    @staticmethod
+    def _form_class(seed_set):
+        return getattr(forms, "BulkSeed{}Form".format(seed_set.harvest_type.replace("_", " ").title().replace(" ", "")))
+
+    def _render(self, request, form, seed_set):
+        return render(request, self.template_name,
+                      {'form': form, 'seed_set': seed_set, 'collection': seed_set.collection,
+                       'harvest_type_name': _get_harvest_type_name(seed_set.harvest_type)})
 
 
 class CredentialDetailView(LoginRequiredMixin, DetailView):

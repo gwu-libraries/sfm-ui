@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, Client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
@@ -244,6 +244,32 @@ class SeedDetailViewTests(SeedTestsMixin, TestCase):
         request.user = self.user
         response = SeedDetailView.as_view()(request, pk=self.seed.pk)
         self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
+    def setUp(self):
+        SeedTestsMixin.setUp(self)
+        self.client = Client()
+        self.assertTrue(self.client.login(username=self.user.username, password='password'))
+
+    def test_get(self):
+        response = self.client.get(reverse("bulk_seed_create", args=[self.seedset.pk]))
+        self.assertTrue(response.context["form"])
+        self.assertEqual(self.seedset, response.context["seed_set"])
+        self.assertEqual(self.collection, response.context["collection"])
+        self.assertEqual("Twitter user timeline", response.context["harvest_type_name"])
+
+    def test_post(self):
+
+        response = self.client.post(reverse("bulk_seed_create", args=[self.seedset.pk]), {'tokens':"""
+        test token
+
+        test token2
+          test token3
+        """})
+        self.assertEqual(3, Seed.objects.filter(seed_set=self.seedset).count())
+        self.assertTrue(Seed.objects.filter(seed_set=self.seedset, token='test token3').exists())
+        self.assertTrue(response.url.endswith('/ui/seedsets/1/'))
 
 
 class ExportDetailViewTests(TestCase):
