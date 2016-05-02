@@ -71,62 +71,6 @@ class CollectionForm(forms.ModelForm):
         )
 
 
-# class SeedSetForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = SeedSet
-#         fields = ['name', 'harvest_type', 'description', 'collection',
-#                   'schedule_minutes', 'credential',
-#                   'harvest_options', 'date_added', 'end_date',
-#                   'history_note']
-#         exclude = []
-#         widgets = {'collection': forms.HiddenInput,
-#                    'date_added': forms.HiddenInput,
-#                    'history_note': HISTORY_NOTE_WIDGET}
-#         localized_fields = None
-#         labels = {
-#             'history_note': HISTORY_NOTE_LABEL
-#         }
-#         help_texts = {
-#             'history_note': HISTORY_NOTE_HELP
-#         }
-#         error_messages = {}
-#
-#     def __init__(self, *args, **kwargs):
-#         self.coll = kwargs.pop("coll", None)
-#         super(SeedSetForm, self).__init__(*args, **kwargs)
-#         cancel_url = reverse('collection_detail', args=[self.coll])
-#         self.helper = FormHelper(self)
-#         self.helper.layout = Layout(
-#             Fieldset(
-#                 '',
-#                 'name',
-#                 'harvest_type',
-#                 'credential',
-#                 'harvest_options',
-#                 'schedule_minutes',
-#                 'end_date',
-#                 'description',
-#                 'collection',
-#                 'date_added',
-#                 'history_note'
-#             ),
-#             FormActions(
-#                 Submit('submit', 'Save'),
-#                 Button('cancel', 'Cancel',
-#                        onclick="window.location.href='{0}'".format(cancel_url))
-#             )
-#         )
-#
-#     def clean_end_date(self):
-#         data = self.cleaned_data.get('end_date', None)
-#         if data:
-#             if data < timezone.now():
-#                 raise forms.ValidationError(
-#                     'End date must be later than current date and time.')
-#             return data
-
-
 class BaseSeedSetForm(forms.ModelForm):
 
     class Meta:
@@ -279,9 +223,11 @@ class SeedSetTwitterFilterForm(BaseSeedSetForm):
 
 
 class SeedSetFlickrUserForm(BaseSeedSetForm):
-    #TODO Get correct sizes from https://www.flickr.com/services/api/flickr.photos.getSizes.html
+    # See https://www.flickr.com/services/api/flickr.photos.getSizes.html
     SIZE_OPTIONS = (
         ("Thumbnail", "Thumbnail"),
+        ("Small", "Small"),
+        ("Medium", "Medium"),
         ("Large", "Large"),
         ("Original", "Original")
     )
@@ -572,7 +518,7 @@ class CredentialTwitterForm(BaseCredentialForm):
 
     def __init__(self, *args, **kwargs):
         super(CredentialTwitterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][1].extend(['consumer_key', 'consumer_key', 'access_token', 'access_token_secret'])
+        self.helper.layout[0][1].extend(['consumer_key', 'consumer_secret', 'access_token', 'access_token_secret'])
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
             self.fields['consumer_key'].initial = token.get('consumer_key')

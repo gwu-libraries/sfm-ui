@@ -355,8 +355,8 @@ class CredentialListView(LoginRequiredMixin, ListView):
 
 class CredentialUpdateView(LoginRequiredMixin, UpdateView):
     model = Credential
-    # form_class = CredentialForm
     template_name = 'ui/credential_update.html'
+    initial = {'history_note': ''}
 
     def get_form_class(self):
         class_name = "Credential{}Form".format(self.object.platform.title())
