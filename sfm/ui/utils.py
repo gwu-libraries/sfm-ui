@@ -45,3 +45,15 @@ def diff_object_history(obj):
         diffs.append(diff_historical_object(historical_objects[i + 1] if i < len(historical_objects) - 1 else None,
                                             historical_object))
     return diffs
+
+
+def diff_field_changed(obj):
+    """
+    Returns True if a diff field was changed the last time this object was saved.
+
+    This is determined by comparing the date_updated fields of the object and
+    the first historical object.
+    :param obj: the object which has a history
+    :return: True if a diff field was changed
+    """
+    return obj.date_updated == obj.history.first().date_updated

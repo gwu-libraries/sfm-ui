@@ -175,7 +175,6 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
-        # seed = self.object
         context["diffs"] = diff_object_history(self.object)
         context["collection"] = Collection.objects.get(id=self.object.seed_set.pk)
         return context

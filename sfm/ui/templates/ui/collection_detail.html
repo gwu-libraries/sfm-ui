@@ -25,10 +25,16 @@
     <p><strong>Created:</strong> {{collection.date_added }}</p>
     <!--  add later <p>Last harvested</p> -->
     <p><strong>Group:</strong> {{collection.group }}</p>
+    {% if collection.stats %}
+        <p><strong>Stats:</strong><ul>
+            {% for item, count in collection.stats.items %}
+                <li>{{ item }}: {{ count }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
     <p>Changes:
         {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
     </p>
-
     </div>
 </div>
 <div class="row">

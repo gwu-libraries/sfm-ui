@@ -4,6 +4,7 @@ from django.conf import settings
 import logging
 from jobs import seedset_harvest
 import datetime
+from utils import diff_field_changed
 
 log = logging.getLogger(__name__)
 
@@ -44,22 +45,25 @@ def schedule_harvest(seedset_pk, is_active, schedule_minutes, start_date=None, e
         name = "Harvest ({}) for seedset {}".format(schedule_minutes, seedset_pk)
         log.debug("Scheduling job %s", name)
         sched.add_job(seedset_harvest,
-                  args=[seedset_pk],
-                  id=str(seedset_pk),
-                  name=name,
-                  trigger='interval',
-                  start_date=start_date,
-                  end_date=end_date,
-                  minutes=schedule_minutes)
+                      args=[seedset_pk],
+                      id=str(seedset_pk),
+                      name=name,
+                      trigger='interval',
+                      start_date=start_date,
+                      end_date=end_date,
+                      minutes=schedule_minutes)
 
 
 def schedule_harvest_receiver(sender, **kwargs):
     assert kwargs["instance"]
     seedset = kwargs["instance"]
 
-    schedule_harvest(seedset.id, seedset.is_active, seedset.schedule_minutes,
-                     start_date=seedset.start_date or datetime.datetime.now() + datetime.timedelta(seconds=15),
-                     end_date=seedset.end_date or None)
+    if diff_field_changed(seedset):
+        schedule_harvest(seedset.id, seedset.is_active, seedset.schedule_minutes,
+                         start_date=seedset.start_date or datetime.datetime.now() + datetime.timedelta(seconds=15),
+                         end_date=seedset.end_date or None)
+    else:
+        log.debug("Skipping scheduling harvest of seedset %s since nothing significant changed.", seedset.pk)
 
 
 def unschedule_harvest_receiver(sender, **kwargs):

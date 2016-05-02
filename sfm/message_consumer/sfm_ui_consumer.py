@@ -80,9 +80,27 @@ class SfmUiConsumer(BaseConsumer):
                 except ObjectDoesNotExist:
                     log.error("Seed model object with seed_id %s not found to update uid to %s", id, uid)
 
+            # Update stats on seed set and collection
+            if self.message["status"] == Harvest.SUCCESS:
+                self._update_stats(harvest.seed_set)
+                self._update_stats(harvest.seed_set.collection)
+
         except ObjectDoesNotExist:
             log.error("Harvest model object not found for harvest status message: %s",
                       json.dumps(self.message, indent=4))
+
+    def _update_stats(self, stats_obj):
+        stats = stats_obj.stats or {}
+
+        summary = self.message.get("summary", {})
+        for item, count in summary.items():
+            if item in stats:
+                stats[item] += count
+            else:
+                stats[item] = count
+
+        stats_obj.stats = stats
+        stats_obj.save()
 
     def _on_warc_created_message(self):
         try:
