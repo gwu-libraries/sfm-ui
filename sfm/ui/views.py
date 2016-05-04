@@ -14,7 +14,7 @@ from .forms import CollectionForm, ExportForm
 import forms
 from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
 from .sched import next_run_time
-from .utils import diff_object_history
+from .utils import diff_object_history, clean_token
 
 import os
 import logging
@@ -296,7 +296,7 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         if form.is_valid():
             log.info(form.cleaned_data['history_note'] is None)
             tokens = form.cleaned_data['tokens'].splitlines()
-            for token in (t.strip() for t in tokens):
+            for token in (clean_token(t) for t in tokens):
                 if token:
                     if not Seed.objects.filter(seed_set=seed_set, token=token).exists():
                         log.debug("Creating seed %s for seedset %s", token, seed_set.pk)

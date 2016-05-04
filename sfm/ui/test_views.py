@@ -265,7 +265,7 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
         test token
 
         test token2
-          test token3
+          @test token3
         """})
         self.assertEqual(3, Seed.objects.filter(seed_set=self.seedset).count())
         self.assertTrue(Seed.objects.filter(seed_set=self.seedset, token='test token3').exists())

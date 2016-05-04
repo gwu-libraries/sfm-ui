@@ -7,6 +7,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
 from .models import Collection, SeedSet, Seed, Credential, Export
 from datetimewidget.widgets import DateTimeWidget
+from .utils import clean_token
 
 import json
 import logging
@@ -25,6 +26,13 @@ DATETIME_WIDGET = DateTimeWidget(
         'showMeridian': True
     }
 )
+
+TWITTER_MEDIA_LABEL = "Media"
+TWITTER_MEDIA_HELP = "Perform web harvests of media (e.g., images) embedded in tweets."
+TWITTER_WEB_RESOURCES_LABEL = "Web resources"
+TWITTER_WEB_RESOURCES_HELP = "Perform web harvests of resources (e.g., web pages) linked in tweets."
+INCREMENTAL_LABEL = "Incremental"
+INCREMENTAL_HELP = "Only harvest new items."
 
 
 class CollectionForm(forms.ModelForm):
@@ -123,22 +131,32 @@ class BaseSeedSetForm(forms.ModelForm):
 
 
 class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
-    incremental = forms.BooleanField(initial=True, required=False)
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
+                                      label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
+                                              label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
+        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
+            if "media" in harvest_options:
+                self.fields['media_option'].initial = harvest_options["media"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(SeedSetTwitterUserTimelineForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_USER_TIMELINE
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"]
+            "incremental": self.cleaned_data["incremental"],
+            "media": self.cleaned_data["media_option"],
+            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
@@ -146,22 +164,32 @@ class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
 
 
 class SeedSetTwitterSearchForm(BaseSeedSetForm):
-    incremental = forms.BooleanField(initial=True, required=False)
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
+                                      label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
+                                              label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
+        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
+            if "media" in harvest_options:
+                self.fields['media_option'].initial = harvest_options["media"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(SeedSetTwitterSearchForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_SEARCH
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"]
+            "incremental": self.cleaned_data["incremental"],
+            "media": self.cleaned_data["media_option"],
+            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
@@ -169,25 +197,30 @@ class SeedSetTwitterSearchForm(BaseSeedSetForm):
 
 
 class SeedSetTwitterSampleForm(BaseSeedSetForm):
-    incremental = forms.BooleanField(initial=True, required=False)
+    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
+                                      label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
+                                              label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseSeedSetForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
-
+        self.helper.layout[0][2].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
-            if "incremental" in harvest_options:
-                self.fields['incremental'].initial = harvest_options["incremental"]
+            if "media" in harvest_options:
+                self.fields['media_option'].initial = harvest_options["media"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(SeedSetTwitterSampleForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_SAMPLE
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"]
+            "media": self.cleaned_data["media_option"],
+            "web_resources": self.cleaned_data["web_resources_option"],
         }
         m.harvest_options = json.dumps(harvest_options)
         m.schedule_minutes = None
@@ -196,25 +229,35 @@ class SeedSetTwitterSampleForm(BaseSeedSetForm):
 
 
 class SeedSetTwitterFilterForm(BaseSeedSetForm):
-    incremental = forms.BooleanField(initial=True, required=False)
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
+                                      label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
+                                              label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseSeedSetForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
+        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
+            if "media" in harvest_options:
+                self.fields['media_option'].initial = harvest_options["media"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(SeedSetTwitterFilterForm, self).save(commit=False)
         m.harvest_type = SeedSet.TWITTER_FILTER
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"]
+            "incremental": self.cleaned_data["incremental"],
+            "media": self.cleaned_data["media_option"],
+            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.schedule_minutes = None
@@ -232,7 +275,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
         ("Original", "Original")
     )
     sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"))
-    incremental = forms.BooleanField(initial=True, required=False)
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
@@ -258,7 +301,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
 
 
 class SeedSetWeiboTimelineForm(BaseSeedSetForm):
-    incremental = forms.BooleanField(initial=True, required=False)
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
@@ -333,6 +376,9 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
     def __init__(self, *args, **kwargs):
         super(SeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('token', 'uid'))
+
+    def clean_token(self):
+        return clean_token(self.cleaned_data.get("token"))
 
 
 class SeedTwitterSearchForm(BaseSeedForm):

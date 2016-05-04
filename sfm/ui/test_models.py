@@ -14,7 +14,7 @@ class SeedsetTest(TestCase):
     def test_required_seed_count(self):
         seedset = SeedSet.objects.create(collection=self.collection,
                                          name="test_seedset",
-                                         harvest_type=SeedSet.TWITTER_SEARCH,
+                                         harvest_type=SeedSet.TWITTER_USER_TIMELINE,
                                          credential=self.credential)
         self.assertIsNone(seedset.required_seed_count())
 

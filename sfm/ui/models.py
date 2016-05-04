@@ -128,6 +128,7 @@ class SeedSet(models.Model):
     ]
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
+        TWITTER_SEARCH: 1,
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }

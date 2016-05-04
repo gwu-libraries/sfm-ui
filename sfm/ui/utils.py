@@ -57,3 +57,13 @@ def diff_field_changed(obj):
     :return: True if a diff field was changed
     """
     return obj.date_updated == obj.history.first().date_updated
+
+
+def clean_token(token):
+    """
+    Cleans a token such as a Twitter screen name.
+    """
+    if token is None:
+        return None
+    stripped_token = token.strip()
+    return stripped_token[1:] if stripped_token.startswith('@') else stripped_token
