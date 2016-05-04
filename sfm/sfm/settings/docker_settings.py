@@ -16,6 +16,15 @@ SITE_SUPERUSER_EMAIL = env.get('SFM_SITE_ADMIN_EMAIL', 'nowhere@example.com')
 # in superuser's `password` field.
 SITE_SUPERUSER_PASSWORD = env.get('SFM_SITE_ADMIN_PASSWORD', 'password')
 
+# Configure sites
+SITE_OBJECTS_INFO_DICT = {
+    '1': {
+        'name': 'SFM',
+        'domain': env.get('SFM_HOST', 'localhost')
+    }
+}
+SITE_ID = 1
+
 STATIC_ROOT = "/opt/sfm-static"
 
 LOGGING = {

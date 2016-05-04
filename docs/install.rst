@@ -54,11 +54,13 @@ Configuration
 
 * Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
 * Debug mode for sfm-ui is controlled by the ``DEBUG`` environment variable in ``docker-compose.yml``.
-  If setting ``DEBUG`` to false, the ``ALLOWED_HOSTS`` environment variable must be provided with a
-  comma-separated list of hosts.  See the `Django documentation <https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts>`_
+  If setting ``DEBUG`` to false, the ``SFM_HOST`` environment variable must be provided with the host.
+  See the `Django documentation <https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts>`_
   for ``ALLOWED_HOSTS``.
 * The default timezone is Eastern Standard Time (EST). To select a different timezone, change ``TZ=EST`` in
   ``docker-compose.yml``.
+* Email is configured by providing the ``SFM_HOST``, ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``
+  environment variables.  ``SFM_HOST`` is used to determine the host name when constructing links contained in the emails.
 * The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
   is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used; to use
   a host volume instead, add the host directory to the ``volumes`` field.  This will allow you to access the
