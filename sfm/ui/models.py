@@ -223,11 +223,11 @@ class Harvest(models.Model):
     RUNNING = "running"
     STOP_REQUESTED = "stop requested"
     STATUS_CHOICES = (
-        (REQUESTED, REQUESTED),
-        (SUCCESS, SUCCESS),
-        (FAILURE, FAILURE),
-        (RUNNING, RUNNING),
-        (STOP_REQUESTED, STOP_REQUESTED)
+        (REQUESTED, "Requested"),
+        (SUCCESS, "Success"),
+        (FAILURE, "Failure"),
+        (RUNNING, "Running"),
+        (STOP_REQUESTED, "Stop requested")
     )
     harvest_type = models.CharField(max_length=255)
     historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests', null=True)
@@ -236,7 +236,7 @@ class Harvest(models.Model):
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     harvest_type = models.CharField(max_length=255)
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
-    parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True)
+    parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
     date_started = models.DateTimeField(blank=True, null=True)
@@ -253,6 +253,14 @@ class Harvest(models.Model):
 
     def __str__(self):
         return '<Harvest %s "%s">' % (self.id, self.harvest_id)
+
+    def get_harvest_type_display(self):
+        return self.harvest_type.replace("_", " ").capitalize()
+
+    def message_count(self):
+        return len(self.infos) if self.infos else 0 \
+               + len(self.warnings) if self.warnings else 0 \
+               + len(self.errors) if self.errors else 0
 
 
 class Warc(models.Model):
@@ -273,10 +281,10 @@ class Export(models.Model):
     SUCCESS = "completed success"
     FAILURE = "completed failure"
     STATUS_CHOICES = (
-        (NOT_REQUESTED, NOT_REQUESTED),
-        (REQUESTED, REQUESTED),
-        (SUCCESS, SUCCESS),
-        (FAILURE, FAILURE)
+        (NOT_REQUESTED, "Not requested"),
+        (REQUESTED, "Requested"),
+        (SUCCESS, "Success"),
+        (FAILURE, "Failure")
     )
     FORMAT_CHOICES = (
         ("csv", "Comma separated values (CSV)"),

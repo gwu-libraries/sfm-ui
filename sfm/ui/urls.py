@@ -45,6 +45,10 @@ urlpatterns = patterns('',
                            views.SeedSetDetailView.as_view(),
                            name="seedset_detail"),
 
+                       url(r'^seedsets/(?P<pk>\d+)/harvests/$',
+                           views.HarvestListView.as_view(),
+                           name="seedset_harvests"),
+
                        url(r'^seeds/create/(?P<seed_set_pk>\d+)$',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
@@ -99,5 +103,11 @@ urlpatterns = patterns('',
 
                        url(r'^exports/(?P<pk>\d+)/file/(?P<file_name>.*)$',
                            views.export_file,
-                           name='export_file')
+                           name='export_file'),
+
+                       url(r'^harvests/(?P<pk>\d+)/$',
+                           views.HarvestDetailView.as_view(),
+                           name="harvest_detail")
+
                        )
+

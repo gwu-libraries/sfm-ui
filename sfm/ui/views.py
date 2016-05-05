@@ -18,6 +18,8 @@ from .utils import diff_object_history, clean_token
 
 import os
 import logging
+import json
+import operator
 
 log = logging.getLogger(__name__)
 
@@ -101,7 +103,10 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
         context["next_run_time"] = next_run_time(self.object.id)
-        context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
+        # Last 5 harvests
+        context["harvests"] = self.object.harvests.all()[:2]
+        context["harvest_count"] = self.object.harvests.all().count()
+        # context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
@@ -442,6 +447,34 @@ class ExportDetailView(LoginRequiredMixin, DetailView):
         context["collection"] = seedset.collection
         context["seedset"] = seedset
         context["fileinfos"] = _get_fileinfos(self.object.path) if self.object.status == Export.SUCCESS else ()
+        return context
+
+
+class HarvestListView(LoginRequiredMixin, ListView):
+    context_object_name = "harvest_list"
+    template_name = "ui/harvest_list.html"
+    paginate_by = 15
+
+    def get_queryset(self):
+        self.seedset = get_object_or_404(SeedSet, pk=self.kwargs["pk"])
+        return self.seedset.harvests.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(HarvestListView, self).get_context_data(**kwargs)
+        context["collection"] = self.seedset.collection
+        context['seedset'] = self.seedset
+        return context
+
+
+class HarvestDetailView(LoginRequiredMixin, DetailView):
+    model = Harvest
+    template_name = 'ui/harvest_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HarvestDetailView, self).get_context_data(**kwargs)
+        context["collection"] = self.object.seed_set.collection
+        context["seedset"] = self.object.seed_set
+        context["stats"] = sorted((self.object.stats or {}).items(), key=operator.itemgetter(1), reverse=True)
         return context
 
 

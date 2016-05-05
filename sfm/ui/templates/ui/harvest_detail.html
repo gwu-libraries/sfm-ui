@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ collection.name }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
+      <li><a href={% url "seedset_detail" seedset.pk %} >{{ seedset.name }}</a></li>
+      <li class="active">Harvest</li>
+    </ol>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    <p><strong>Requested:</strong> {{ harvest.date_requested }}</p>
+    {% if harvest.date_started %}
+        <p><strong>Started:</strong> {{ harvest.date_started }}</p>
+    {% endif %}
+    {% if harvest.date_ended %}
+        <p><strong>Ended:</strong> {{ harvest.date_ended }}</p>
+    {% endif %}
+    <p><strong>Status:</strong> {{ harvest.get_status_display }}</p>
+    <p><strong>Harvest type:</strong> {{ harvest.harvest_type }}</p>
+    {% if stats %}
+        <p><strong>Stats:</strong><ul>
+            {% for item, count in stats %}
+                <li>{{item}}: {{count}}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if harvest.infos %}
+        <p><strong>Informational messages:</strong><ul>
+            {% for msg in harvest.infos %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if harvest.warnings %}
+        <p><strong>Warning messages:</strong><ul>
+            {% for msg in harvest.warnings %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if harvest.errors %}
+        <p><strong>Error messages:</strong><ul>
+            {% for msg in harvest.errors %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if harvest.warcs_count %}
+        <p><strong>WARCs:</strong> {{ harvest.warcs_count }} file{{ harvest.warcs_count|pluralize }} ({{ harvest.warcs_bytes|filesizeformat }})</p>
+    {% endif %}
+    </div>
+    {% if harvest.parent_harvest %}
+        <p><strong>This harvest requested by:</strong> <a href="{% url "harvest_detail" harvest.parent_harvest.pk %}">{{ harvest.parent_harvest.get_harvest_type_display }} harvest</a> ({{ harvest.parent_harvest.date_requested }})</p>
+    {% endif %}
+    {% if harvest.child_harvests.count %}
+        <p><strong>This harvest requested:</strong>
+            <ul>
+            {% for child_harvest in harvest.child_harvests.all %}
+                <li><a href="{% url "harvest_detail" child_harvest.pk %}">{{ child_harvest.get_harvest_type_display }} harvest</a> ({{ child_harvest.date_requested }})</li>
+            {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+
+</div>
+{% endblock %}
