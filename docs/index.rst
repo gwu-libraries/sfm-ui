@@ -20,6 +20,7 @@ Contents:
    install
    authentication
    credentials
+   processing
    development
    harvester
    messaging

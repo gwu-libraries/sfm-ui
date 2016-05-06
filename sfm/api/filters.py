@@ -1,5 +1,5 @@
-from django_filters import FilterSet, CharFilter, IsoDateTimeFilter
-from ui.models import Warc, Seed, Harvest
+from django_filters import FilterSet, CharFilter, IsoDateTimeFilter, MethodFilter
+from ui.models import Warc, Seed, Harvest, SeedSet
 from django_filters import Filter
 from django_filters.fields import Lookup
 
@@ -15,7 +15,22 @@ class WarcFilter(FilterSet):
     seed = ListFilter(name="harvest__historical_seeds__seed_id", distinct=True)
     harvest_date_start = IsoDateTimeFilter(name="harvest__date_started", lookup_type='gte')
     harvest_date_end = IsoDateTimeFilter(name="harvest__date_started", lookup_type='lte')
+    exclude_web = MethodFilter(action="web_filter")
 
     class Meta:
         model = Warc
         fields = ['seedset']
+
+    @staticmethod
+    def web_filter(queryset, value):
+        if value.lower() in ("true", "yes"):
+            return queryset.exclude(harvest__harvest_type='web')
+        else:
+            return queryset
+
+
+class SeedSetFilter(FilterSet):
+    seedset_startswith = CharFilter(name="seedset_id", lookup_type="istartswith")
+
+    class Meta:
+        model = SeedSet
