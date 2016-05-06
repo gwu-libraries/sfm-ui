@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'message_consumer',             # Message Consumer
     'simple_history',
     'rest_framework',               # For REST API
-    'api'
+    'api',
+    'datetimewidget'
 ]
 
 MIDDLEWARE_CLASSES = (

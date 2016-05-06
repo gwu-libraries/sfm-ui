@@ -6,6 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
 from .models import Collection, SeedSet, Seed, Credential, Export
+from datetimewidget.widgets import DateTimeWidget
 
 import json
 import logging
@@ -73,6 +74,16 @@ class SeedSetForm(forms.ModelForm):
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
                    'is_active': forms.HiddenInput,
+                   'start_date': DateTimeWidget(
+                       usel10n=True,
+                       bootstrap_version=3,
+                       attrs={'data-readonly': 'false'}
+                   ),
+                   'end_date': DateTimeWidget(
+                       usel10n=True,
+                       bootstrap_version=3,
+                       attrs={'data-readonly': 'false'}
+                   ),
                    'history_note': HISTORY_NOTE_WIDGET}
         localized_fields = None
         labels = {
