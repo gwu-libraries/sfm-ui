@@ -29,10 +29,14 @@ class CollectionListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CollectionListView, self).get_context_data(**kwargs)
+        if self.request.user.is_superuser:
+            context['collection_list_n'] = Collection.objects.exclude(
+                group__in=self.request.user.groups.all()).annotate(
+                num_seedsets=Count('seed_sets')).order_by('date_updated')
+
         context['collection_list'] = Collection.objects.filter(
             group__in=self.request.user.groups.all()).annotate(
-            num_seedsets=Count('seed_sets')).order_by(
-            'date_updated')
+            num_seedsets=Count('seed_sets')).order_by('date_updated')
         return context
 
 
