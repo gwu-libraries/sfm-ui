@@ -138,7 +138,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
         context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
-        context["seeds_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         return context
 
     def get_form_kwargs(self):
@@ -277,6 +277,7 @@ class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
+
 
 class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
