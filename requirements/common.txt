@@ -30,3 +30,4 @@ urllib3==1.14
 warc==0.2.1
 djangorestframework==3.3.2
 django-filter==0.12.0
+django-datetime-widget==0.9.3
