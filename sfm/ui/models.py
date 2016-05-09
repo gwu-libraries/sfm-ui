@@ -82,7 +82,7 @@ class Collection(models.Model):
                             verbose_name='Collection name')
     description = models.TextField(blank=True)
     is_visible = models.BooleanField(default=True)
-    stats = models.TextField(blank=True)
+    stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
@@ -125,7 +125,7 @@ class SeedSet(models.Model):
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule")
     harvest_options = models.TextField(blank=True)
-    stats = models.TextField(blank=True)
+    stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     start_date = models.DateTimeField(blank=True,
@@ -158,7 +158,6 @@ class Seed(models.Model):
     uid = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     is_valid = models.BooleanField(default=True)
-    stats = models.TextField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()

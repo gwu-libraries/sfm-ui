@@ -1,6 +1,6 @@
 from django.test import TestCase
-from .models import Collection, Credential, Group, User
-from .utils import diff_historical_object, diff_object_history
+from .models import Collection, Credential, Group, User, SeedSet
+from .utils import diff_historical_object, diff_object_history, diff_field_changed
 
 
 class DiffTests(TestCase):
@@ -51,3 +51,15 @@ class DiffTests(TestCase):
             {"name": (None, "Credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
              "is_active": (None, True)},
             diffs[1].fields)
+
+    def test_diff_field_changed(self):
+        seedset = SeedSet.objects.create(collection=self.collection, credential=self.credential,
+                                         harvest_type="test_type", name="test_seedset", is_active=True,
+                                         schedule_minutes=60)
+        self.assertTrue(diff_field_changed(seedset))
+        seedset.harvest_type = "foo"
+        seedset.save()
+        self.assertTrue(diff_field_changed(seedset))
+        seedset.stats = {"foo": 5}
+        seedset.save()
+        self.assertFalse(diff_field_changed(seedset))

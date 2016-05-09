@@ -16,7 +16,11 @@ class ConsumerTest(TestCase):
                                                token=json.dumps({}))
         seed_set = SeedSet.objects.create(collection=collection, credential=credential,
                                           harvest_type="test_type", name="test_seedset",
-                                          harvest_options=json.dumps({}))
+                                          harvest_options=json.dumps({}),
+                                          stats={
+                                              "user": 5,
+                                              "tweets": 120
+                                          })
         Seed.objects.create(seed_set=seed_set, uid="131866249@N02", seed_id='1')
         Seed.objects.create(seed_set=seed_set, token="library_of_congress", seed_id='2')
         historical_seed_set = seed_set.history.all()[0]
@@ -74,6 +78,17 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
+
+        # Check stats
+        self.assertEqual(harvest.seed_set.stats, {
+            "user": 6,
+            "tweets": 120,
+            "photo": 12
+        })
+        self.assertEqual(harvest.seed_set.collection.stats, {
+            "user": 1,
+            "photo": 12
+        })
 
         # Check updated seeds
         seed1 = Seed.objects.get(seed_id="1")

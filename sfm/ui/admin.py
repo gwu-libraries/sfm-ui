@@ -113,24 +113,24 @@ class HistoricalSeedSet(a.ModelAdmin):
 
 class Seed(a.ModelAdmin):
     fields = ('seed_id', 'seed_set', 'token', 'uid', 'is_active',
-              'is_valid', 'stats', 'date_added', 'history_note')
+              'is_valid', 'date_added', 'history_note')
     list_display = ['seed_set', 'token', 'uid', 'is_active',
-                    'is_valid', 'stats', 'date_added', 'date_updated']
+                    'is_valid', 'date_added', 'date_updated']
     list_filter = ['seed_set', 'token', 'uid', 'is_active',
-                   'is_valid', 'stats', 'date_added', 'date_updated']
+                   'is_valid', 'date_added', 'date_updated']
     search_fields = ['seed_set', 'token', 'uid', 'is_active',
-                     'is_valid', 'stats', 'date_added', 'date_updated']
+                     'is_valid', 'date_added', 'date_updated']
 
 
 class HistoricalSeed(a.ModelAdmin):
     fields = ('history_user', 'history_date', 'history_note', 'seed_id', 'seed_set', 'token', 'uid', 'is_active',
-              'is_valid', 'stats', 'date_added')
+              'is_valid', 'date_added')
     list_display = ['seed_set', 'token', 'uid', 'is_active',
-                    'is_valid', 'stats', 'date_added', 'date_updated']
+                    'is_valid', 'date_added', 'date_updated']
     list_filter = ['seed_set', 'token', 'uid', 'is_active',
-                   'is_valid', 'stats', 'date_added', 'date_updated']
+                   'is_valid', 'date_added', 'date_updated']
     search_fields = ['seed_set', 'token', 'uid', 'is_active',
-                     'is_valid', 'stats', 'date_added', 'date_updated']
+                     'is_valid', 'date_added', 'date_updated']
 
 
 class Harvest(a.ModelAdmin):
@@ -138,7 +138,8 @@ class Harvest(a.ModelAdmin):
        'harvest_type', 'harvest_id', 'historical_seed_set', 'historical_seeds', 'historical_credential',
        'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended', 'stats',
        'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
-    list_display = ['harvest_type', 'id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested', 'date_updated']
+    list_display = ['harvest_type', 'id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested',
+                    'date_updated']
     list_filter = ['harvest_type', 'status', 'date_requested', 'date_updated']
     search_fields = ['id', 'harvest_id']
 
