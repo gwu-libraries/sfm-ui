@@ -17,6 +17,15 @@ HISTORY_NOTE_LABEL = "Change Note"
 HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
 HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
 
+DATETIME_WIDGET = DateTimeWidget(
+    usel10n=True,
+    bootstrap_version=3,
+    attrs={'data-readonly': 'false'},
+    options={
+        'showMeridian': True
+    }
+)
+
 
 class CollectionForm(forms.ModelForm):
     group = forms.ModelChoiceField(queryset=None)
@@ -74,16 +83,8 @@ class SeedSetForm(forms.ModelForm):
         widgets = {'collection': forms.HiddenInput,
                    'date_added': forms.HiddenInput,
                    'is_active': forms.HiddenInput,
-                   'start_date': DateTimeWidget(
-                       usel10n=True,
-                       bootstrap_version=3,
-                       attrs={'data-readonly': 'false'}
-                   ),
-                   'end_date': DateTimeWidget(
-                       usel10n=True,
-                       bootstrap_version=3,
-                       attrs={'data-readonly': 'false'}
-                   ),
+                   'start_date': DATETIME_WIDGET,
+                   'end_date': DATETIME_WIDGET,
                    'history_note': HISTORY_NOTE_WIDGET}
         localized_fields = None
         labels = {
@@ -427,6 +428,12 @@ class ExportForm(forms.ModelForm):
         error_messages = {}
         help_texts = {
             'seeds': "If no seeds are selected, all seeds will be exported."
+        }
+        widgets = {
+            'item_date_start': DATETIME_WIDGET,
+            'item_date_end': DATETIME_WIDGET,
+            'harvest_date_start': DATETIME_WIDGET,
+            'harvest_date_end': DATETIME_WIDGET,
         }
 
     def __init__(self, *args, **kwargs):
