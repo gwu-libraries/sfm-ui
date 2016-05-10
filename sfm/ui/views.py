@@ -155,6 +155,7 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetCreateView, self).get_form_kwargs()
         kwargs["coll"] = self.kwargs["collection_pk"]
+        kwargs['request'] = self.request
         return kwargs
 
     def get_form_class(self):
@@ -356,6 +357,11 @@ class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
     allow_empty = True
+
+    def get_context_data(self, **kwargs):
+        context = super(CredentialListView, self).get_context_data(**kwargs)
+        context['credential_list'] = Credential.objects.filter(user=self.request.user)
+        return context
 
 
 class CredentialUpdateView(LoginRequiredMixin, UpdateView):

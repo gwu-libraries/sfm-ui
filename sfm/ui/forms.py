@@ -5,7 +5,7 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
-from .models import Collection, SeedSet, Seed, Credential, Export
+from .models import Collection, SeedSet, Seed, Credential, Export, User
 from datetimewidget.widgets import DateTimeWidget
 from .utils import clean_token
 
@@ -138,7 +138,11 @@ class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
                                               label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='twitter', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -171,7 +175,11 @@ class SeedSetTwitterSearchForm(BaseSeedSetForm):
                                               label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='twitter', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -206,7 +214,11 @@ class SeedSetTwitterSampleForm(BaseSeedSetForm):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='twitter', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -239,7 +251,11 @@ class SeedSetTwitterFilterForm(BaseSeedSetForm):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='twitter', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -278,7 +294,11 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='flickr', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('sizes', 'incremental'))
 
         if self.instance and self.instance.harvest_options:
@@ -304,7 +324,11 @@ class SeedSetWeiboTimelineForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
         super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = Credential.objects.filter(
+            platform='weibo', user=User.objects.filter(
+                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
