@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.http import StreamingHttpResponse, Http404
 from django.core.exceptions import PermissionDenied
 from braces.views import LoginRequiredMixin
+from django.views.generic.base import RedirectView
+from django.shortcuts import get_object_or_404
 
 from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
 from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm, ExportForm
@@ -101,6 +103,19 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        context["has_seeds_list"] = self.object.required_seed_count() != 0
+        seed_count_message = None
+        # No active seeds.
+        if self.object.required_seed_count() == 0 and self.object.active_seed_count() != 0:
+            seed_count_message = "To enable harvesting, deactivate all seeds."
+        # Specific number of active seeds.
+        elif self.object.required_seed_count() > 0 and self.object.active_seed_count() != self.object.required_seed_count():
+            seed_count_message = "To enable harvesting, make sure there are {} active seeds.".format(
+                self.object.required_seed_count())
+        # At least one active seeds
+        elif self.object.required_seed_count() is None and self.object.active_seed_count() == 0:
+            seed_count_message = "To enable harvesting, make sure there is at least 1 active seed."
+        context["seed_count_message"] = seed_count_message
         return context
 
 
@@ -143,6 +158,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
         context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
 
     def get_form_kwargs(self):
@@ -152,6 +168,18 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
+
+
+class SeedSetToggleActiveView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "seedset_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        seedset = get_object_or_404(SeedSet, pk=kwargs['pk'])
+        seedset.is_active = not seedset.is_active
+        seedset.save()
+        return super(SeedSetToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 
 class SeedSetDeleteView(LoginRequiredMixin, DeleteView):
@@ -176,7 +204,7 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.pk)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.pk)
         return context
 
 
@@ -218,7 +246,7 @@ class SeedUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.pk)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.pk)
         return context
 
     def get_success_url(self):

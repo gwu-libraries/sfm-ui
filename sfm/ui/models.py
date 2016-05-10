@@ -100,6 +100,12 @@ class Collection(models.Model):
 
 @python_2_unicode_compatible
 class SeedSet(models.Model):
+    TWITTER_SEARCH = 'twitter_search'
+    TWITTER_FILTER = "twitter_filter"
+    TWITTER_USER_TIMELINE = 'twitter_user_timeline'
+    TWITTER_SAMPLE = 'twitter_sample'
+    FLICKR_USER = 'flickr_user'
+    WEIBO_TIMELINE = 'weibo_timeline'
     SCHEDULE_CHOICES = [
         (60, 'Every hour'),
         (60 * 24, 'Every day'),
@@ -107,30 +113,32 @@ class SeedSet(models.Model):
         (60 * 24 * 7 * 4, 'Every 4 weeks')
     ]
     HARVEST_CHOICES = [
-        ('twitter_search', 'Twitter search'),
-        # ('twitter_filter', 'Twitter filter'),
-        ('twitter_user_timeline', 'Twitter user timeline'),
-        # ('twitter_sample', 'Twitter sample'),
-        ('flickr_user', 'Flickr user'),
-        ('weibo_timeline', 'Weibo timeline')
+        (TWITTER_SEARCH, 'Twitter search'),
+        (TWITTER_FILTER, 'Twitter filter'),
+        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
+        (TWITTER_SAMPLE, 'Twitter sample'),
+        (FLICKR_USER, 'Flickr user'),
+        (WEIBO_TIMELINE, 'Weibo timeline')
     ]
-
+    REQUIRED_SEED_COUNTS = {
+        TWITTER_FILTER: 1,
+        TWITTER_SAMPLE: 0,
+        WEIBO_TIMELINE: 0
+    }
+    STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
     seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection = models.ForeignKey(Collection, related_name='seed_sets')
     credential = models.ForeignKey(Credential, related_name='seed_sets')
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule")
     harvest_options = models.TextField(blank=True)
     stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-    start_date = models.DateTimeField(blank=True,
-                                      null=True,
-                                      help_text="If blank, will start now.")
     end_date = models.DateTimeField(blank=True,
                                     null=True,
                                     help_text="If blank, will continue until stopped.")
@@ -140,10 +148,38 @@ class SeedSet(models.Model):
     class Meta:
         diff_fields = (
             "collection", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
-            "harvest_options", "start_date", "end_date")
+            "harvest_options", "end_date")
 
     def __str__(self):
         return '<SeedSet %s "%s">' % (self.id, self.name)
+
+    def required_seed_count(self):
+        """
+        Returns the number of seeds that are required for this harvest type.
+
+        If None, then 1 or more is required.
+        """
+        return self.REQUIRED_SEED_COUNTS.get(str(self.harvest_type))
+
+    def active_seed_count(self):
+        """
+        Returns the number of active seeds.
+        """
+        return self.seeds.filter(is_active=True).count()
+
+    def last_harvest(self):
+        """
+        Returns the most recent harvest or None if no harvests.
+
+        Web harvests are excluded.
+        """
+        return self.harvests.exclude(harvest_type = "web").order_by("-date_requested").first()
+
+    def is_streaming(self):
+        """
+        Returns True if a streaming harvest type.
+        """
+        return self.harvest_type in SeedSet.STREAMING_HARVEST_TYPES
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
@@ -178,17 +214,20 @@ class Harvest(models.Model):
     SUCCESS = "completed success"
     FAILURE = "completed failure"
     RUNNING = "running"
+    STOP_REQUESTED = "stop requested"
     STATUS_CHOICES = (
         (REQUESTED, REQUESTED),
         (SUCCESS, SUCCESS),
         (FAILURE, FAILURE),
-        (RUNNING, RUNNING)
+        (RUNNING, RUNNING),
+        (STOP_REQUESTED, STOP_REQUESTED)
     )
     harvest_type = models.CharField(max_length=255)
     historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests', null=True)
     historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
+    harvest_type = models.CharField(max_length=255)
     seed_set = models.ForeignKey(SeedSet, related_name='harvests')
     parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)

@@ -14,7 +14,6 @@ def seedset_harvest(seedset_pk):
 
     message = {
         "collection": {},
-        "seeds": []
     }
 
     # Retrieve seedset
@@ -35,10 +34,13 @@ def seedset_harvest(seedset_pk):
         if seed.is_active:
             historical_seeds.append(seed.history.all()[0])
         else:
-            log.debug("Seed %s is ignored from the harvest as it is inactive",
-                      seed)
-    if not historical_seeds:
-        log.warning("Seedset %s has no seeds", seedset_pk)
+            log.debug("Seed %s is ignored from the harvest as it is inactive", seed)
+
+    # Make sure that have the correct number of seeds.
+    required_seed_count = seed_set.required_seed_count()
+    if (required_seed_count is None and len(historical_seeds) == 0) or (
+            required_seed_count is not None and required_seed_count != len(historical_seeds)):
+        log.warning("Seedset %s has wrong number of active seeds.", seedset_pk)
         return
 
     # Id
@@ -61,15 +63,17 @@ def seedset_harvest(seedset_pk):
     message["options"] = json.loads(historical_seed_set.harvest_options or "{}")
 
     # Seeds
-    for historical_seed in historical_seeds:
-        if historical_seed.is_active:
-            seed_map = dict()
-            seed_map["id"] = historical_seed.seed_id
-            if historical_seed.token:
-                seed_map["token"] = historical_seed.token
-            if historical_seed.uid:
-                seed_map["uid"] = historical_seed.uid
-            message["seeds"].append(seed_map)
+    if historical_seeds:
+        message["seeds"] = []
+        for historical_seed in historical_seeds:
+            if historical_seed.is_active:
+                seed_map = dict()
+                seed_map["id"] = historical_seed.seed_id
+                if historical_seed.token:
+                    seed_map["token"] = historical_seed.token
+                if historical_seed.uid:
+                    seed_map["uid"] = historical_seed.uid
+                message["seeds"].append(seed_map)
 
     routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
                                                harvest_type)
@@ -87,3 +91,34 @@ def seedset_harvest(seedset_pk):
                                      historical_seed_set=historical_seed_set,
                                      historical_credential=historical_credential)
     harvest.historical_seeds.add(*historical_seeds)
+
+
+@transaction.atomic
+def seedset_stop(seedset_id):
+
+    # Retrieve seedset
+    try:
+        seed_set = SeedSet.objects.get(id=seedset_id)
+    except ObjectDoesNotExist:
+        log.error("Stopping harvest of %s failed because seedset does not exist", seedset_id)
+        return
+    harvest = seed_set.last_harvest()
+    assert seed_set.is_streaming()
+    if harvest is None or harvest.status not in (Harvest.REQUESTED, Harvest.RUNNING):
+        log.debug("Ignoring stop harvest of seedset since %s does not have a running harvest.")
+        return
+
+    message = {
+        "id": harvest.harvest_id
+    }
+
+    routing_key = "harvest.stop.{}.{}".format(harvest.historical_credential.platform, harvest.harvest_type)
+
+    log.debug("Sending %s stop message to %s with id %s", harvest.harvest_type, routing_key, harvest.harvest_id)
+
+    # Publish message to queue via rabbit worker
+    RabbitWorker().send_message(message, routing_key)
+
+    # Update harvest model instance
+    harvest.status = Harvest.STOP_REQUESTED
+    harvest.save()

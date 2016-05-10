@@ -78,37 +78,31 @@ class HistoricalCollection(a.ModelAdmin):
 class SeedSet(a.ModelAdmin):
     fields = ('seedset_id', 'collection', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
-              'stats', 'date_added', 'start_date', 'end_date', 'history_note')
+              'stats', 'date_added', 'end_date', 'history_note')
     list_display = ['collection', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'harvest_options',
-                    'stats', 'date_added', 'start_date',
-                    'end_date']
+                    'stats', 'date_added', 'end_date']
     list_filter = ['collection', 'credential', 'harvest_type', 'name',
                    'description', 'is_active', 'harvest_options',
-                   'stats', 'date_added', 'start_date',
-                   'end_date']
+                   'stats', 'date_added', 'end_date']
     search_fields = ['collection', 'credential', 'harvest_type', 'name',
                      'description', 'is_active',
-                     'harvest_options', 'stats', 'date_added',
-                     'start_date', 'end_date']
+                     'harvest_options', 'stats', 'date_added', 'end_date']
 
 
 class HistoricalSeedSet(a.ModelAdmin):
     fields = ('history_user', 'history_date', 'history_note', 'collection', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
-              'stats', 'date_added', 'start_date', 'end_date')
+              'stats', 'date_added', 'end_date')
     list_display = ['collection', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'harvest_options',
-                    'stats', 'date_added', 'start_date',
-                    'end_date']
+                    'stats', 'date_added', 'end_date']
     list_filter = ['collection', 'credential', 'harvest_type', 'name',
                    'description', 'is_active', 'harvest_options',
-                   'stats', 'date_added', 'start_date',
-                   'end_date']
+                   'stats', 'date_added', 'end_date']
     search_fields = ['collection', 'credential', 'harvest_type', 'name',
                      'description', 'is_active',
-                     'harvest_options', 'stats', 'date_added',
-                     'start_date', 'end_date']
+                     'harvest_options', 'stats', 'date_added', 'end_date']
 
 
 class Seed(a.ModelAdmin):

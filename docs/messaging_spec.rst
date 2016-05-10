@@ -164,7 +164,8 @@ Another example::
 * `id`: A globally unique identifier for the harvest, assigned by the requester.
 * `type`: Identifies the type of harvest, including the social media platform. The
   harvester can use this to map to the appropriate api calls.
-* `seeds`: A list of seeds to harvest. Each seed is represented by a map containing `id`, `token` and (optionally) `uid`.
+* `seeds`: A list of seeds to harvest. Each seed is represented by a map containing `id`, `token` and (optionally) `uid`. Note
+  that some harvest types may not have seeds.
 * `options`: A name/value map containing additional options for the harvest.  The contents of the map
   are specific to the type of harvest. (That is, the seeds for a flickr photo are going to be
   different than the seeds for a twitter user timeline.)
