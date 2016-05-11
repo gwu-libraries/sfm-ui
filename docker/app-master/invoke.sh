@@ -20,6 +20,10 @@ echo "Collecting static files"
 echo "Loading fixtures"
 /opt/sfm-ui/sfm/manage.py loaddata /opt/sfm-setup/fixtures.json
 
+echo "Creating social apps"
+/opt/sfm-ui/sfm/manage.py addsocialapp twitter ${TWITTER_CONSUMER_KEY} ${TWITTER_CONSUMER_SECRET}
+/opt/sfm-ui/sfm/manage.py addsocialapp weibo ${WEIBO_API_KEY} ${WEIBO_API_SECRET}
+
 echo "Starting message consumer"
 /opt/sfm-ui/sfm/manage.py startconsumer &
 

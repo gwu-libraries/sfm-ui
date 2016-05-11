@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block content %}
+<h1>Log In</h1>
+
+<p>If you have not created an account yet, then please <a href="{{ signup_url }}">sign up</a> first.</p>
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_login">Username</label>
+        <input type="text" class="form-control" id="id_login" name="login" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <label for="id_password">Password</label>
+        <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
+    </div>
+    <div class="checkbox">
+    <label>
+      <input type="checkbox" id="id_remember" name="remember"> Remember me
+    </label>
+  </div>
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button class="btn btn-primary" type="submit">Log In</button>
+</form>
+
+{% endblock %}

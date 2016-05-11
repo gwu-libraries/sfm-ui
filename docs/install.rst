@@ -61,6 +61,8 @@ Configuration
   ``docker-compose.yml``.
 * Email is configured by providing the ``SFM_HOST``, ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``
   environment variables.  ``SFM_HOST`` is used to determine the host name when constructing links contained in the emails.
+* Application credentials for social media APIs are configured by providing the ``TWITTER_CONSUMER_KEY``,
+  ``TWITTER_CONSUMER_SECRET``, ``WEIBO_API_KEY``, and/or ``WEIBO_API_SECRET``. For more information, see :doc:`credentials`.
 * The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
   is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used; to use
   a host volume instead, add the host directory to the ``volumes`` field.  This will allow you to access the

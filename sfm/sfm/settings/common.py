@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'allauth',                      # registration
     'allauth.account',              # registration
     'allauth.socialaccount',        # registration
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.weibo',
     'crispy_forms',                 # for django crispy forms
     'apscheduler',                  # Scheduler
     'message_consumer',             # Message Consumer
@@ -142,6 +144,7 @@ SOCIALACCOUNT_STORE_TOKENS = False
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = None
 ACCOUNT_ADAPTER = "ui.auth.AccountAdapter"
+SOCIALACCOUNT_ADAPTER = "ui.auth.SocialAccountAdapter"
 
 RABBITMQ_HOST = env.get('SFM_RABBITMQ_HOST')
 RABBITMQ_USER = env.get('SFM_RABBITMQ_USER')
