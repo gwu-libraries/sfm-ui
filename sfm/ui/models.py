@@ -132,6 +132,14 @@ class SeedSet(models.Model):
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }
+    HARVEST_TYPES_TO_PLATFORM = {
+        TWITTER_SEARCH: Credential.TWITTER,
+        TWITTER_FILTER: Credential.TWITTER,
+        TWITTER_USER_TIMELINE: Credential.TWITTER,
+        TWITTER_SAMPLE: Credential.TWITTER,
+        FLICKR_USER: Credential.FLICKR,
+        WEIBO_TIMELINE: Credential.WEIBO
+    }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
     seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection = models.ForeignKey(Collection, related_name='seed_sets')

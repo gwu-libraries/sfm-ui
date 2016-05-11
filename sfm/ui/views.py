@@ -9,16 +9,14 @@ from braces.views import LoginRequiredMixin
 from django.views.generic.base import RedirectView, View
 from django.shortcuts import get_object_or_404, render
 
-
 from .forms import CollectionForm, ExportForm
 import forms
-from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
+from .models import Collection, SeedSet, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
 from .utils import diff_object_history, clean_token
 
 import os
 import logging
-import json
 import operator
 
 log = logging.getLogger(__name__)
@@ -137,6 +135,13 @@ def _get_harvest_type_name(harvest_type):
             return harvest_type_name
 
 
+def _get_credential_list(collection_pk, harvest_type):
+    collection = Collection.objects.get(pk=collection_pk)
+    platform = SeedSet.HARVEST_TYPES_TO_PLATFORM[harvest_type]
+    return Credential.objects.filter(platform=platform, user=User.objects.filter(
+        groups=collection.group)).order_by('name')
+
+
 class SeedSetCreateView(LoginRequiredMixin, CreateView):
     model = SeedSet
     template_name = 'ui/seedset_create.html'
@@ -155,7 +160,7 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetCreateView, self).get_form_kwargs()
         kwargs["coll"] = self.kwargs["collection_pk"]
-        kwargs['request'] = self.request
+        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_pk"], self.kwargs["harvest_type"])
         return kwargs
 
     def get_form_class(self):
@@ -172,7 +177,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["collection"] = Collection.objects.get(pk=self.object.collection.pk)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
@@ -180,6 +185,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
         kwargs["coll"] = self.object.collection.pk
+        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_pk"], self.kwargs["harvest_type"])
         return kwargs
 
     def get_form_class(self):
@@ -334,10 +340,7 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
-        if self.request.user.is_superuser or Credential.objects.get(pk=self.object.pk).user==self.request.user:
-            context["can_edit"] = True
-        else:
-            context["can_edit"] = False
+        context["can_edit"] = self.request.user.is_superuser or self.object.user == self.request.user
         return context
 
 

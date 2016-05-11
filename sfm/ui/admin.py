@@ -39,10 +39,10 @@ class UserAdmin(AuthUserAdmin):
 
 
 class Credential(a.ModelAdmin):
-    fields = ('user', 'platform', 'token', 'is_active', 'date_added', 'history_note')
-    list_display = ['user', 'platform', 'token', 'is_active', 'date_added']
-    list_filter = ['user', 'platform', 'token', 'is_active', 'date_added']
-    search_fields = ['user', 'platform', 'token', 'is_active', 'date_added']
+    fields = ('user', 'platform', 'name', 'token', 'is_active', 'date_added', 'history_note')
+    list_display = ['user', 'platform', 'name', 'is_active', 'date_added']
+    list_filter = ['user', 'platform', 'is_active', 'date_added']
+    search_fields = ['user', 'platform', 'name', 'is_active', 'date_added']
 
 
 class HistoricalCredential(a.ModelAdmin):

@@ -79,7 +79,13 @@ class CollectionForm(forms.ModelForm):
         )
 
 
+class NameModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
 class BaseSeedSetForm(forms.ModelForm):
+    credential = NameModelChoiceField(None)
 
     class Meta:
         model = SeedSet
@@ -99,7 +105,9 @@ class BaseSeedSetForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.coll = kwargs.pop("coll", None)
+        self.credential_list = kwargs.pop('credential_list', None)
         super(BaseSeedSetForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = self.credential_list
         cancel_url = reverse('collection_detail', args=[self.coll])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -138,11 +146,7 @@ class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
                                               label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='twitter', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -175,11 +179,7 @@ class SeedSetTwitterSearchForm(BaseSeedSetForm):
                                               label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='twitter', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -214,11 +214,7 @@ class SeedSetTwitterSampleForm(BaseSeedSetForm):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='twitter', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -251,11 +247,7 @@ class SeedSetTwitterFilterForm(BaseSeedSetForm):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='twitter', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
@@ -294,11 +286,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='flickr', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].extend(('sizes', 'incremental'))
 
         if self.instance and self.instance.harvest_options:
@@ -324,11 +312,7 @@ class SeedSetWeiboTimelineForm(BaseSeedSetForm):
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
         super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.fields['credential'].queryset = Credential.objects.filter(
-            platform='weibo', user=User.objects.filter(
-                groups=Group.objects.filter(pk__in=request.user.groups.all())))
         self.helper.layout[0][2].append('incremental')
 
         if self.instance and self.instance.harvest_options:
