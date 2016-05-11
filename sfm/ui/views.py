@@ -334,6 +334,10 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
+        if self.request.user.is_superuser or Credential.objects.get(pk=self.object.pk).user==self.request.user:
+            context["can_edit"] = True
+        else:
+            context["can_edit"] = False
         return context
 
 
