@@ -3,7 +3,7 @@ anyjson==0.3.3
 appdeps==1.0.0
 APScheduler==3.0.2
 Django==1.8.8
-django-allauth==0.24.1
+django-allauth==0.25.2
 django-braces==1.8.1
 django-crispy-forms==1.5.2
 django-jsonfield==0.9.15

@@ -138,6 +138,11 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/1.8/topics/auth/customizing/
 AUTH_USER_MODEL = 'ui.User'
 
+SOCIALACCOUNT_STORE_TOKENS = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = None
+ACCOUNT_ADAPTER = "ui.auth.AccountAdapter"
+
 RABBITMQ_HOST = env.get('SFM_RABBITMQ_HOST')
 RABBITMQ_USER = env.get('SFM_RABBITMQ_USER')
 RABBITMQ_PASSWORD = env.get('SFM_RABBITMQ_PASSWORD')
