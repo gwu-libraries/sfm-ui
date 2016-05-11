@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load ui_extras %}
 {% block title %}
     {{ seedset }}
 {% endblock %}
@@ -17,18 +18,20 @@
 <div class="row">
    <div class="col-md-12">
      <div class="page-header">
-        <h1>{{ seedset.name }} <a class="btn btn-default" href={% url "seedset_update" seedset.pk seedset.collection.pk %} {% if seedset.is_active %}disabled="disabled"{% endif %} >Edit</a></h1>
+        <h1>{{ seedset.name }} <a class="btn btn-default" href={% url "seedset_update" seedset.pk %} {% if seedset.is_active %}disabled="disabled"{% endif %} >Edit</a></h1>
         {% if seedset.is_active %}<span class="label label-warning">Pause harvesting to enable editing and adding seeds.</span>{% endif %}
      </div>
    </div>
 </div>
 <div class="row">
    <div class="col-md-12">
-        <p><strong>Harvest type:</strong> {{ seedset.harvest_type }}</p>
+        <p><strong>Harvest type:</strong> {{ seedset.get_harvest_type_display }}</p>
         <p><strong>Credential: </strong> {{ seedset.credential.token }}</p>
-	<p><strong>Harvest options: </strong> {{ seedset.harvest_options }}</p>
-	<p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
-        <p><strong>Next harvest</strong> {{ next_run_time }}</p>
+	    {{ seedset.harvest_options|json }}
+	    {% if seedset.schedule_minutes %}
+            <p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
+            <p><strong>Next harvest</strong> {{ next_run_time }}</p>
+        {% endif %}
         <p><strong>End date: </strong> {{ seedset.end_date }}</p>
         <p><strong>Created:</strong> {{ seedset.date_added }}</p>
         <p><strong>Description:</strong> {{seedset.description }}</p>
@@ -54,23 +57,57 @@
                 <thead>
                 <tr>
                     <th>Token</th>
-                    <th>uid</th>
+                    <th>Uid</th>
                     <th>Active</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td>{{ seed.uid }}</td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
                 </tr>
                 {% endfor %}
             </table>
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
+            {% if can_add_bulk_seeds %}
+                <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+            {% endif %}
         </div>
     </div>
 </div>
 {% endif %}
+{% if harvests %}
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Harvests</h4> ({{ harvests|length }} of {{ harvest_count }})</div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Date requested</th>
+                    <th>Status</th>
+                    <th>Messages</th>
+                </tr>
+                </thead>
+                {% for harvest in harvests %}
+                <tr>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
+                    <td>{{ harvest.date_requested }}</td>
+                    <td>{{ harvest.get_status_display }}</td>
+                    <td>{{ harvest.message_count }} message{{harvest.message_count|pluralize}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% if harvest_count > harvests|length %}
+            <div class="panel-footer"><a href="{% url "seedset_harvests" seedset.pk %}">More harvests ...</a></div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <div class="row">
   <div class="col-md-12">
         <form method="post" action="{% url "seedset_toggle_active" seedset.id %}">

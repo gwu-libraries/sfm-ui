@@ -3,21 +3,23 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.shortcuts import get_object_or_404
-from django.http import StreamingHttpResponse, Http404
+from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from braces.views import LoginRequiredMixin
-from django.views.generic.base import RedirectView
-from django.shortcuts import get_object_or_404
+from django.views.generic.base import RedirectView, View
+from django.shortcuts import get_object_or_404, render
 
-from .forms import CollectionForm, SeedSetForm, SeedForm, CredentialForm
-from .forms import CredentialFlickrForm, CredentialTwitterForm, CredentialWeiboForm, ExportForm
+
+from .forms import CollectionForm, ExportForm
+import forms
 from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
 from .sched import next_run_time
-from .utils import diff_object_history
+from .utils import diff_object_history, clean_token
 
 import os
 import logging
+import json
+import operator
 
 log = logging.getLogger(__name__)
 
@@ -51,6 +53,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context['seedset_list'] = SeedSet.objects.filter(
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
         context["diffs"] = diff_object_history(self.object)
+        context["harvest_types"] = SeedSet.HARVEST_CHOICES
         return context
 
 
@@ -100,7 +103,10 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
         context["next_run_time"] = next_run_time(self.object.id)
-        context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
+        # Last 5 harvests
+        context["harvests"] = self.object.harvests.all()[:2]
+        context["harvest_count"] = self.object.harvests.all().count()
+        # context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
@@ -116,12 +122,23 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         elif self.object.required_seed_count() is None and self.object.active_seed_count() == 0:
             seed_count_message = "To enable harvesting, make sure there is at least 1 active seed."
         context["seed_count_message"] = seed_count_message
+        # Harvest types that are not limited support bulk add
+        context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         return context
+
+
+def _get_seedset_form_class(harvest_type):
+    return "SeedSet{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
+
+
+def _get_harvest_type_name(harvest_type):
+    for harvest_type_choice, harvest_type_name in SeedSet.HARVEST_CHOICES:
+        if harvest_type_choice == harvest_type:
+            return harvest_type_name
 
 
 class SeedSetCreateView(LoginRequiredMixin, CreateView):
     model = SeedSet
-    form_class = SeedSetForm
     template_name = 'ui/seedset_create.html'
 
     def get_initial(self):
@@ -132,6 +149,7 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(SeedSetCreateView, self).get_context_data(**kwargs)
         context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["harvest_type_name"] = _get_harvest_type_name(self.kwargs["harvest_type"])
         return context
 
     def get_form_kwargs(self):
@@ -139,20 +157,17 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
         kwargs["coll"] = self.kwargs["collection_pk"]
         return kwargs
 
+    def get_form_class(self):
+        return getattr(forms, _get_seedset_form_class(self.kwargs["harvest_type"]))
+
     def get_success_url(self):
         return reverse('seedset_detail', args=(self.object.pk,))
 
 
 class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     model = SeedSet
-    form_class = SeedSetForm
     template_name = 'ui/seedset_update.html'
     initial = {'history_note': ''}
-
-    def get_initial(self):
-        initial = super(SeedSetUpdateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
-        return initial
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
@@ -163,8 +178,11 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
-        kwargs["coll"] = self.kwargs["collection_pk"]
+        kwargs["coll"] = self.object.collection.pk
         return kwargs
+
+    def get_form_class(self):
+        return getattr(forms, _get_seedset_form_class(self.object.harvest_type))
 
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.object.pk,))
@@ -208,9 +226,12 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+def _get_seed_form_class(harvest_type):
+    return "Seed{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
+
+
 class SeedCreateView(LoginRequiredMixin, CreateView):
     model = Seed
-    form_class = SeedForm
     template_name = 'ui/seed_create.html'
 
     def get_initial(self):
@@ -220,8 +241,10 @@ class SeedCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedCreateView, self).get_context_data(**kwargs)
-        context["seed_set"] = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
+        seed_set = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
+        context["seed_set"] = seed_set
         context["collection"] = context["seed_set"].collection
+        context["harvest_type_name"] = _get_harvest_type_name(seed_set.harvest_type)
         return context
 
     def get_form_kwargs(self):
@@ -229,13 +252,15 @@ class SeedCreateView(LoginRequiredMixin, CreateView):
         kwargs["seedset"] = self.kwargs["seed_set_pk"]
         return kwargs
 
+    def get_form_class(self):
+        return getattr(forms, _get_seed_form_class(SeedSet.objects.get(pk=self.kwargs["seed_set_pk"]).harvest_type))
+
     def get_success_url(self):
         return reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],))
 
 
 class SeedUpdateView(LoginRequiredMixin, UpdateView):
     model = Seed
-    form_class = SeedForm
     template_name = 'ui/seed_update.html'
     initial = {'history_note': ''}
 
@@ -249,6 +274,9 @@ class SeedUpdateView(LoginRequiredMixin, UpdateView):
         context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.pk)
         return context
 
+    def get_form_class(self):
+        return getattr(forms, _get_seed_form_class(self.object.seed_set.harvest_type))
+
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
 
@@ -257,6 +285,44 @@ class SeedDeleteView(LoginRequiredMixin, DeleteView):
     model = Seed
     template_name = 'ui/seed_delete.html'
     success_url = reverse_lazy('seed_list')
+
+
+class BulkSeedCreateView(LoginRequiredMixin, View):
+    template_name = 'ui/bulk_seed_create.html'
+
+    def get(self, request, *args, **kwargs):
+        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
+        form = self._form_class(seed_set)(initial={}, seedset=kwargs["seed_set_pk"])
+        return self._render(request, form, seed_set)
+
+    def post(self, request, *args, **kwargs):
+        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
+        form = self._form_class(seed_set)(request.POST, seedset=kwargs["seed_set_pk"])
+        if form.is_valid():
+            log.info(form.cleaned_data['history_note'] is None)
+            tokens = form.cleaned_data['tokens'].splitlines()
+            for token in (clean_token(t) for t in tokens):
+                if token:
+                    if not Seed.objects.filter(seed_set=seed_set, token=token).exists():
+                        log.debug("Creating seed %s for seedset %s", token, seed_set.pk)
+                        Seed.objects.create(token=token,
+                                            seed_set=seed_set,
+                                            history_note=form.cleaned_data['history_note'])
+                    else:
+                        log.debug("Skipping creating seed %s for seedset %s since it exists", token, seed_set.pk)
+            # <process form cleaned data>
+            return HttpResponseRedirect(reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],)))
+
+        return self._render(request, form, seed_set)
+
+    @staticmethod
+    def _form_class(seed_set):
+        return getattr(forms, "BulkSeed{}Form".format(seed_set.harvest_type.replace("_", " ").title().replace(" ", "")))
+
+    def _render(self, request, form, seed_set):
+        return render(request, self.template_name,
+                      {'form': form, 'seed_set': seed_set, 'collection': seed_set.collection,
+                       'harvest_type_name': _get_harvest_type_name(seed_set.harvest_type)})
 
 
 class CredentialDetailView(LoginRequiredMixin, DetailView):
@@ -270,41 +336,17 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CredentialTwitterCreateView(LoginRequiredMixin, CreateView):
+class CredentialCreateView(LoginRequiredMixin, CreateView):
     model = Credential
-    form_class = CredentialTwitterForm
     template_name = 'ui/credential_create.html'
+
+    def get_form_class(self):
+        class_name = "Credential{}Form".format(self.kwargs["platform"].title())
+        return getattr(forms, class_name)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(CredentialTwitterCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse("credential_detail", args=(self.object.pk,))
-
-
-class CredentialWeiboCreateView(LoginRequiredMixin, CreateView):
-    model = Credential
-    form_class = CredentialWeiboForm
-    template_name = 'ui/credential_create.html'
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super(CredentialWeiboCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse("credential_detail", args=(self.object.pk,))
-
-
-class CredentialFlickrCreateView(LoginRequiredMixin, CreateView):
-    model = Credential
-    form_class = CredentialFlickrForm
-    template_name = 'ui/credential_create.html'
-
-    def form_valid(self, form):
-        # This will set user
-        form.instance.user = self.request.user
-        return super(CredentialFlickrCreateView, self).form_valid(form)
+        return super(CredentialCreateView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
@@ -316,12 +358,17 @@ class CredentialListView(LoginRequiredMixin, ListView):
     allow_empty = True
 
 
-class CredentialUpdateView(UpdateView):
+class CredentialUpdateView(LoginRequiredMixin, UpdateView):
     model = Credential
-    form_class = CredentialForm
     template_name = 'ui/credential_update.html'
+    initial = {'history_note': ''}
+
+    def get_form_class(self):
+        class_name = "Credential{}Form".format(self.object.platform.title())
+        return getattr(forms, class_name)
 
     def get_success_url(self):
+        log.info("Foo")
         return reverse("credential_detail", args=(self.object.pk,))
 
 
@@ -400,6 +447,34 @@ class ExportDetailView(LoginRequiredMixin, DetailView):
         context["collection"] = seedset.collection
         context["seedset"] = seedset
         context["fileinfos"] = _get_fileinfos(self.object.path) if self.object.status == Export.SUCCESS else ()
+        return context
+
+
+class HarvestListView(LoginRequiredMixin, ListView):
+    context_object_name = "harvest_list"
+    template_name = "ui/harvest_list.html"
+    paginate_by = 15
+
+    def get_queryset(self):
+        self.seedset = get_object_or_404(SeedSet, pk=self.kwargs["pk"])
+        return self.seedset.harvests.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(HarvestListView, self).get_context_data(**kwargs)
+        context["collection"] = self.seedset.collection
+        context['seedset'] = self.seedset
+        return context
+
+
+class HarvestDetailView(LoginRequiredMixin, DetailView):
+    model = Harvest
+    template_name = 'ui/harvest_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HarvestDetailView, self).get_context_data(**kwargs)
+        context["collection"] = self.object.seed_set.collection
+        context["seedset"] = self.object.seed_set
+        context["stats"] = sorted((self.object.stats or {}).items(), key=operator.itemgetter(1), reverse=True)
         return context
 
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    Add Seed
+    Add Seeds
 {% endblock %}
 {% block content %}
   <div class="row">
@@ -10,13 +10,13 @@
               <li><a href={% url "collection_list" %}>My Collections</a></li>
               <li><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></li>
               <li><a href={% url "seedset_detail" seed_set.pk %}>{{seed_set.name}}</a></li>
-              <li>Add {{ harvest_type_name }} seed</li>
+              <li>Add {{ harvest_type_name }} seeds</li>
           </ol>
        </div>
   </div>
   <div class="row">
       <div class="col-md-12">
-          <h2>Add {{ harvest_type_name }} seed</h2>
+          <h2>Add {{ harvest_type_name }} seeds</h2>
       </div>
   </div>
   <div class="row">

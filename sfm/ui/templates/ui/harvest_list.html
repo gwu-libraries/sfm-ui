@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}
+    Harvests
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_list" %}>My Collections</a></li>
+      <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
+      <li><a href={% url "seedset_detail" seedset.pk %} >{{ seedset.name }}</a></li>
+      <li class="active">Harvests</li>
+    </ol>
+  </div>
+</div>
+<nav>
+  <ul class="pager">
+		{% if page_obj.has_previous %}
+			<li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+		{% endif %}
+		Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+		{% if page_obj.has_next %}
+			<li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+		{% endif %}
+  </ul>
+</nav>
+<div class="row">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>Date requested</th>
+				<th>Status</th>
+				<th>Messages</th>
+			</tr>
+		</thead>
+			{% for harvest in harvest_list %}
+                <tr>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
+                    <td>{{ harvest.date_requested }}</td>
+                    <td>{{ harvest.get_status_display }}</td>
+                    <td>{{ harvest.message_count }} message{{harvest.message_count|pluralize}}</td>
+                </tr>
+			{% endfor %}
+	</table>
+        </div>
+{% endblock %}

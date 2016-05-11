@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, Client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
@@ -114,10 +114,10 @@ class SeedSetCreateViewTests(TestCase):
         self.collection = Collection.objects.create(name='Test Collection One',
                                                     group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform=Credential.TWITTER)
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_FILTER,
                                               name='Test seedset one',
                                               )
         self.factory = RequestFactory()
@@ -127,9 +127,10 @@ class SeedSetCreateViewTests(TestCase):
         simple test that seedset form loads with collection
         """
         request = self.factory.get(reverse('seedset_create',
-                                   args=[self.collection.pk]))
+                                   args=[self.collection.pk, SeedSet.TWITTER_FILTER]))
         request.user = self.user
-        response = SeedSetCreateView.as_view()(request, collection_pk=self.collection.pk)
+        response = SeedSetCreateView.as_view()(request, collection_pk=self.collection.pk,
+                                               harvest_type=SeedSet.TWITTER_FILTER)
         self.assertEqual(self.collection, response.context_data["form"].initial["collection"])
         self.assertEqual(self.collection, response.context_data["collection"])
 
@@ -176,7 +177,7 @@ class SeedCreateViewTests(TestCase):
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_USER_TIMELINE,
                                               name='Test seedset one',
                                               )
         self.seed = Seed.objects.create(seed_set=self.seedset,
@@ -211,7 +212,7 @@ class SeedTestsMixin:
                                                     platform='test platform')
         self.seedset = SeedSet.objects.create(collection=self.collection,
                                               credential=self.credential,
-                                              harvest_type='test harvest type',
+                                              harvest_type=SeedSet.TWITTER_USER_TIMELINE,
                                               name='Test seedset one',
                                               )
         self.seed = Seed.objects.create(seed_set=self.seedset,
@@ -243,6 +244,32 @@ class SeedDetailViewTests(SeedTestsMixin, TestCase):
         request.user = self.user
         response = SeedDetailView.as_view()(request, pk=self.seed.pk)
         self.assertEqual(self.collection, response.context_data["collection"])
+
+
+class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
+    def setUp(self):
+        SeedTestsMixin.setUp(self)
+        self.client = Client()
+        self.assertTrue(self.client.login(username=self.user.username, password='password'))
+
+    def test_get(self):
+        response = self.client.get(reverse("bulk_seed_create", args=[self.seedset.pk]))
+        self.assertTrue(response.context["form"])
+        self.assertEqual(self.seedset, response.context["seed_set"])
+        self.assertEqual(self.collection, response.context["collection"])
+        self.assertEqual("Twitter user timeline", response.context["harvest_type_name"])
+
+    def test_post(self):
+
+        response = self.client.post(reverse("bulk_seed_create", args=[self.seedset.pk]), {'tokens':"""
+        test token
+
+        test token2
+          @test token3
+        """})
+        self.assertEqual(3, Seed.objects.filter(seed_set=self.seedset).count())
+        self.assertTrue(Seed.objects.filter(seed_set=self.seedset, token='test token3').exists())
+        self.assertTrue(response.url.endswith('/ui/seedsets/1/'))
 
 
 class ExportDetailViewTests(TestCase):
