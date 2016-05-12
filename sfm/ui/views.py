@@ -122,6 +122,12 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context["seed_count_message"] = seed_count_message
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
+        harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
+                                              historical_seed_set__id=self.object.id)
+        if not harvest_list or "completed success" not in [str(item.status) for item in harvest_list]:
+            context["can_export"] = False
+        else:
+            context["can_export"] = True
         return context
 
 
@@ -177,7 +183,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(pk=self.object.collection.pk)
+        context["collection"] = self.object.collection
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
@@ -185,7 +191,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
         kwargs["coll"] = self.object.collection.pk
-        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_pk"], self.kwargs["harvest_type"])
+        kwargs['credential_list'] = _get_credential_list(self.object.collection.pk, self.object.harvest_type)
         return kwargs
 
     def get_form_class(self):
