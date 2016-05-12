@@ -35,7 +35,6 @@
         <p><strong>End date: </strong> {{ seedset.end_date }}</p>
         <p><strong>Created:</strong> {{ seedset.date_added }}</p>
         <p><strong>Description:</strong> {{seedset.description }}</p>
-        <p><strong>Harvests: </strong> {{ harvests }}</p>
         {% if seedset.stats %}
             <p><strong>Stats:</strong><ul>
                 {% for item, count in seedset.stats.items %}
@@ -43,9 +42,6 @@
                 {% endfor %}
             </ul></p>
         {% endif %}
-        <p><strong>Diffs:</strong>
-                {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
-                 </p>         
    </div>
 </div>
 {% if has_seeds_list %}
@@ -82,7 +78,7 @@
 {% if harvests %}
 <div class="row">
     <div class="panel panel-default">
-        <div class="panel-heading"><h4>Harvests</h4> ({{ harvests|length }} of {{ harvest_count }})</div>
+        <div class="panel-heading"><h4>Harvests</h4> (1-{{ harvests|length }} of {{ harvest_count }})</div>
         <div class="panel-body">
             <table class="table">
                 <thead>
@@ -104,32 +100,38 @@
             </table>
         </div>
         {% if harvest_count > harvests|length %}
-            <div class="panel-footer"><a href="{% url "seedset_harvests" seedset.pk %}">More harvests ...</a></div>
+        <div class="panel-footer"><a href="{% url "seedset_harvests" seedset.pk %}">View all {{ harvest_count }} harvests</a></div>
         {% endif %}
     </div>
 </div>
 {% endif %}
 
 <div class="row">
-  <div class="col-md-12">
-        <form method="post" action="{% url "seedset_toggle_active" seedset.id %}">
-            {% csrf_token %}
+  <div class="col-md-2">
+        <form method="post" action={% url "seedset_toggle_active" seedset.pk %}>
+            {% csrf_token %}<p>
             {% if seedset.is_active %}
-                <input type="submit" value="Pause harvesting" class="btn btn-primary">
+                <input type="submit" value="Pause Harvesting" class="btn btn-primary">
             {% else %}
                 {% if not seed_count_message %}
-                    <input type="submit" value="Start/resume harvesting" class="btn btn-primary">
+                    <input type="submit" value="Start/resume Harvesting" class="btn btn-primary">
                 {% else %}
-                    <input type="submit" value="Start/resume harvesting" class="btn btn-primary" disabled="disabled">
+                    <input type="submit" value="Start/resume Harvesting" class="btn btn-primary" disabled="disabled">
                     <span class="label label-warning">{{ seed_count_message }}</span>
                 {% endif %}
-            {% endif %}
+            {% endif %}</p>
         </form>
     </div>
 </div>
 <div class="row">
-	<div class="col-md-12">
+    <div class="col-md-12">
 		<p><a class="btn btn-primary" value="Request Export"{% if not can_export %} disabled {% endif %} href="{% url "export_create" seedset.id %}">Request Export</a></p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h4>Change log</h4>
+        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
     </div>
 </div>
 {% endblock %}

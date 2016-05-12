@@ -32,9 +32,6 @@
             {% endfor %}
         </ul></p>
     {% endif %}
-    <p>Changes:
-        {% include "ui/diff_snippet.html" with log_entries=seedset.log_entries %}
-    </p>
     </div>
 </div>
 <div class="row">
@@ -65,6 +62,12 @@
                 <a class="btn btn-primary" value="Add {{ harvest_label }}" href="{% url "seedset_create" collection.id harvest_type %}">Add {{ harvest_label }}</a>
             {% endfor %}
         </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h4>Change log</h4>
+        {% include "ui/diff_snippet.html" with log_entries=collection.log_entries %}
     </div>
 </div>
 {% endblock %}

@@ -188,7 +188,7 @@ class SeedSet(models.Model):
 
         Web harvests are excluded.
         """
-        return self.harvests.exclude(harvest_type = "web").order_by("-date_requested").first()
+        return self.harvests.exclude(harvest_type="web").order_by("-date_requested").first()
 
     def is_streaming(self):
         """
@@ -267,8 +267,8 @@ class Harvest(models.Model):
 
     def message_count(self):
         return len(self.infos) if self.infos else 0 \
-               + len(self.warnings) if self.warnings else 0 \
-               + len(self.errors) if self.errors else 0
+            + len(self.warnings) if self.warnings else 0 \
+            + len(self.errors) if self.errors else 0
 
 
 class Warc(models.Model):

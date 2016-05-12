@@ -107,7 +107,9 @@ urlpatterns = patterns('',
 
                        url(r'^harvests/(?P<pk>\d+)/$',
                            views.HarvestDetailView.as_view(),
-                           name="harvest_detail")
+                           name="harvest_detail"),
 
+                       url(r'^(?P<model>\w+)/(?P<item_id>\d+)/changes/$',
+                           views.ChangeLogView.as_view(),
+                           name="change_log"),
                        )
-

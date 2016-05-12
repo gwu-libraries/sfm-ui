@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}
+    Change Log 
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            {% if model_name == "credential" %}
+                <li><a href="{% url 'credential_list' %}">My Credentials</a></li>
+                <li><a href="{% url 'credential_detail' item.id %}">{{ name }}</a></li>
+            {% elif model_name == "collection" %}
+                <li><a href="{% url 'collection_list' %}">My Collections</a></li>
+                <li><a href="{% url 'collection_detail' item.id %}">{{ name }}</a></li>
+            {% elif model_name == "seedset" %}
+                <li><a href="{% url 'collection_list' %}">My Collections</a></li>
+                <li><a href="{% url 'collection_detail' item.collection.id %}">{{ item.collection.name }}</a></li>
+                <li><a href="{% url 'seedset_detail' item.id %}">{{ name }}</a></li>
+            {% elif model_name == "seed" %}
+                <li><a href="{% url 'collection_list' %}">My Collections</a></li> 
+                <li><a href="{% url 'collection_detail' item.seed_set.collection.id %}">{{ item.seed_set.collection.name }}</a></li>
+                <li><a href="{% url 'seedset_detail' item.seed_set.id %}">{{ item.seed_set.name }}</a></li>
+                <li><a href="{% url 'seed_detail' item.id %}">{{ name }}</a></li>
+            {% endif %}
+            <li class="active">Change Log</li>
+         </ol>
+     </div>
+</div>
+
+<div class="row">
+   <div class="col-md-12">
+       <h2>Change log for {{model_name }} {{ name }}</h2>
+   </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <nav>
+    <ul class="pager">
+        {% if diffs_page.has_previous %}
+            <li><a href="?page={{ diffs_page.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        Page {{ diffs_page.number }} of {{ paginator.num_pages }}
+        {% if diffs_page.has_next %}
+            <li><a href="?page={{ diffs_page.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+    </nav>
+  </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <tr>
+               <th>Date</th>
+               <th>User</th>
+               <th>Fields</th>
+            </tr>
+          {% for diff in diffs_page %}
+            <tr>
+               <td>{{ diff.date }}</td>
+               <td>{{ diff.user|default_if_none:"system" }}</td>
+               <td>
+                  {% for key, values in diff.fields.iteritems %}
+                  {{ key }}: "{{ values.0|default_if_none:"blank" }}" changed to "{{ values.1 }}" <br/>
+                  {% endfor %}
+                  {% if diff.note %}<strong>Note:</strong> {{ diff.note}}{% endif %}</td>
+            </tr>
+          {% endfor %}
+         </table>
+     </div>
+ </div>
+{% endblock %}
