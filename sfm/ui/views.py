@@ -9,16 +9,14 @@ from braces.views import LoginRequiredMixin
 from django.views.generic.base import RedirectView, View
 from django.shortcuts import get_object_or_404, render
 
-
 from .forms import CollectionForm, ExportForm
 import forms
-from .models import Collection, SeedSet, Seed, Credential, Harvest, Export
+from .models import Collection, SeedSet, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
 from .utils import diff_object_history, clean_token
 
 import os
 import logging
-import json
 import operator
 
 log = logging.getLogger(__name__)
@@ -124,6 +122,12 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context["seed_count_message"] = seed_count_message
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
+        harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
+                                              historical_seed_set__id=self.object.id)
+        if not harvest_list or "completed success" not in [str(item.status) for item in harvest_list]:
+            context["can_export"] = False
+        else:
+            context["can_export"] = True
         return context
 
 
@@ -135,6 +139,13 @@ def _get_harvest_type_name(harvest_type):
     for harvest_type_choice, harvest_type_name in SeedSet.HARVEST_CHOICES:
         if harvest_type_choice == harvest_type:
             return harvest_type_name
+
+
+def _get_credential_list(collection_pk, harvest_type):
+    collection = Collection.objects.get(pk=collection_pk)
+    platform = SeedSet.HARVEST_TYPES_TO_PLATFORM[harvest_type]
+    return Credential.objects.filter(platform=platform, user=User.objects.filter(
+        groups=collection.group)).order_by('name')
 
 
 class SeedSetCreateView(LoginRequiredMixin, CreateView):
@@ -155,6 +166,7 @@ class SeedSetCreateView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetCreateView, self).get_form_kwargs()
         kwargs["coll"] = self.kwargs["collection_pk"]
+        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_pk"], self.kwargs["harvest_type"])
         return kwargs
 
     def get_form_class(self):
@@ -171,7 +183,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["collection"] = self.object.collection
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
@@ -179,6 +191,7 @@ class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
         kwargs["coll"] = self.object.collection.pk
+        kwargs['credential_list'] = _get_credential_list(self.object.collection.pk, self.object.harvest_type)
         return kwargs
 
     def get_form_class(self):
@@ -333,6 +346,7 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
+        context["can_edit"] = self.request.user.is_superuser or self.object.user == self.request.user
         return context
 
 
@@ -356,6 +370,11 @@ class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
     allow_empty = True
+
+    def get_context_data(self, **kwargs):
+        context = super(CredentialListView, self).get_context_data(**kwargs)
+        context['credential_list'] = Credential.objects.filter(user=self.request.user)
+        return context
 
 
 class CredentialUpdateView(LoginRequiredMixin, UpdateView):

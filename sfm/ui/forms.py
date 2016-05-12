@@ -5,7 +5,7 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
-from .models import Collection, SeedSet, Seed, Credential, Export
+from .models import Collection, SeedSet, Seed, Credential, Export, User
 from datetimewidget.widgets import DateTimeWidget
 from .utils import clean_token
 
@@ -79,7 +79,13 @@ class CollectionForm(forms.ModelForm):
         )
 
 
+class NameModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
 class BaseSeedSetForm(forms.ModelForm):
+    credential = NameModelChoiceField(None)
 
     class Meta:
         model = SeedSet
@@ -99,7 +105,9 @@ class BaseSeedSetForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.coll = kwargs.pop("coll", None)
+        self.credential_list = kwargs.pop('credential_list', None)
         super(BaseSeedSetForm, self).__init__(*args, **kwargs)
+        self.fields['credential'].queryset = self.credential_list
         cancel_url = reverse('collection_detail', args=[self.coll])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(

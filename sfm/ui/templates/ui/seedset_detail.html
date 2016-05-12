@@ -59,6 +59,8 @@
                     <th>Token</th>
                     <th>Uid</th>
                     <th>Active</th>
+                    <th>uid</th>
+					<th>Active</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
@@ -66,8 +68,8 @@
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td>{{ seed.uid }}</td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
-                </tr>
-                {% endfor %}
+				</tr>
+				{% endfor %}
             </table>
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" seedset.id %}" {% if seedset.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
@@ -126,8 +128,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-        <p><a class="btn btn-primary" value="Request Export" href="{% url "export_create" seedset.id %}">Request Export</a></p>
+	<div class="col-md-12">
+		<p><a class="btn btn-primary" value="Request Export"{% if not can_export %} disabled {% endif %} href="{% url "export_create" seedset.id %}">Request Export</a></p>
     </div>
 </div>
 {% endblock %}

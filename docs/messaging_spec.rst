@@ -280,7 +280,8 @@ created during a harvest. Example::
             "id": "test_collection"
         }
         "harvest": {
-            "id": "sfmui:45"
+            "id": "sfmui:45",
+            "type": "flickr_user"
         }
     }
 

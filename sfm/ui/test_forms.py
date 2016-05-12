@@ -115,12 +115,12 @@ class SeedSetFormTest(TestCase):
         }
 
     def test_valid_form(self):
-        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk)
+        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk, credential_list=Credential.objects.all())
         self.assertTrue(form.is_valid())
 
     def test_end_date_after_now(self):
         self.data['end_date'] = "01/01/2000"
-        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk)
+        form = SeedSetTwitterSearchForm(self.data, coll=self.collection.pk, credential_list=Credential.objects.all())
         self.assertFalse(form.is_valid())
 
 
