@@ -6,7 +6,8 @@ from django.core.exceptions import PermissionDenied
 
 from .models import Collection, User, Credential, Seed, SeedSet, Export
 from .views import CollectionListView, CollectionDetailView, CollectionUpdateView, SeedSetCreateView, \
-    SeedSetDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file
+    SeedSetDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
+    ChangeLogView
 
 import os
 import shutil
@@ -62,6 +63,11 @@ class CollectionTestsMixin:
                                               name='Test seedset one',
                                               )
         Seed.objects.create(seed_set=self.seedset)
+        self.changed_collection1_name = "changed collection name"
+        self.collection1.name = self.changed_collection1_name
+        self.collection1.save()
+        self.historical_collection = self.collection1.history.all()
+        self.assertEqual(2, len(self.historical_collection))
         user2 = User.objects.create_user('testuser2', 'testuser2@example.com',
                                          'password')
         credential2 = Credential.objects.create(user=user2,
@@ -88,6 +94,19 @@ class CollectionDetailViewTests(CollectionTestsMixin, TestCase):
         self.assertEqual(1, len(seedset_list))
         self.assertEqual(self.seedset, seedset_list[0])
         self.assertEqual(1, seedset_list[0].num_seeds)
+
+    def test_change_log_model_name_id(self):
+        """
+        change log 'view all' should contain correct model name and id
+        """
+        request = self.factory.get('/ui/collections/{}/'.format(self.collection1.pk))
+        request.user = self.user1
+        response = CollectionDetailView.as_view()(request, pk=self.collection1.pk)
+        model_name = response.context_data["model_name"]
+        item_id = response.context_data["item_id"]
+        diffs = response.context_data["diffs"]
+        self.assertEqual("collection", model_name)
+        self.assertEqual(self.collection1.pk, item_id)
 
 
 class CollectionUpdateViewTests(CollectionTestsMixin, TestCase):
@@ -261,7 +280,7 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
 
     def test_post(self):
 
-        response = self.client.post(reverse("bulk_seed_create", args=[self.seedset.pk]), {'tokens':"""
+        response = self.client.post(reverse("bulk_seed_create", args=[self.seedset.pk]), {'tokens': """
         test token
 
         test token2
@@ -397,3 +416,32 @@ class ExportFileTest(TestCase):
         request.user = self.user2
         with self.assertRaises(PermissionDenied):
             export_file(request, self.export.pk, "test.csv")
+
+
+class ChangeLogTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.collection = Collection.objects.create(name='Test Collection One',
+                                                    group=self.group)
+        self.changed_collection_name = "changed collection name"
+        self.collection.name = self.changed_collection_name
+        self.collection.save()
+        self.historical_collection = self.collection.history.all()
+        self.assertEqual(2, len(self.historical_collection))
+
+    def test_context_data(self):
+        """
+        test that model name correctly pulled from url
+        """
+        request = self.factory.get(reverse("change_log", args=("collection", self.collection.id)))
+        request.user = self.user
+        response = ChangeLogView.as_view()(request, model="collection", item_id=self.collection.id)
+        self.assertEqual(self.collection.id, response.context_data["item_id"])
+        self.assertEqual(2, response.context_data["paginator"].count)
+        self.assertEqual("collection", response.context_data["model_name"])
+        self.assertEqual("changed collection name", response.context_data["name"])

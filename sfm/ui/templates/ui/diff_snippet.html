@@ -1,12 +1,26 @@
-<ul>
-    {% for diff in diffs %}
-        <li>Updated on {{ diff.date }} by {{ diff.user }}.{% if diff.note %} Note is "{{ diff.note }}".{% endif %}</li>
-        <ul>
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>User</th>
+        <th>Fields</th>
+    </tr>
+    {% for diff in diffs|slice:"3" %}
+    <tr>
+        <td>{{ diff.date }}</td>
+        <td>{{ diff.user|default_if_none:"system" }}</td>
+        <td>
             {% for key, values in diff.fields.iteritems %}
-                <li>{{ key }}: "{{ values.0|default_if_none:"" }}" changed to "{{ values.1 }}"</li>
+                {{ key }}: "{{ values.0|default_if_none:"blank" }}" changed to "{{ values.1 }}" <br/>
             {% endfor %}
-        </ul>
+            {% if diff.note %}<strong>Note:</strong> {{ diff.note}}{% endif %}
+        </td>
+    </tr>
     {% empty %}
-    <li>No changes yet.</li>
+    <tr><td colspan="4">No changes yet.</td></tr>
     {% endfor %}
-</ul>
+    {% if diffs|length > 3 %}
+    <tr><td colspan="4">
+            <a href="{% url 'change_log' model_name item_id %}">View all {{ diffs|length }} changes</a>
+    </td></tr>
+    {% endif %}
+</table>

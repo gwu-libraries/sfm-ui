@@ -4,10 +4,14 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect
+from django.views.generic import TemplateView
 from django.core.exceptions import PermissionDenied
-from braces.views import LoginRequiredMixin
 from django.views.generic.base import RedirectView, View
 from django.shortcuts import get_object_or_404, render
+from django.apps import apps
+from django.core.paginator import Paginator
+
+from braces.views import LoginRequiredMixin
 
 from .forms import CollectionForm, ExportForm
 import forms
@@ -52,6 +56,8 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
             collection=self.object.pk).annotate(num_seeds=Count('seeds'))
         context["diffs"] = diff_object_history(self.object)
         context["harvest_types"] = SeedSet.HARVEST_CHOICES
+        context["item_id"] = self.object.id
+        context["model_name"] = "collection"
         return context
 
 
@@ -128,6 +134,8 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
             context["can_export"] = False
         else:
             context["can_export"] = True
+        context["item_id"] = self.object.id
+        context["model_name"] = "seedset"
         return context
 
 
@@ -235,7 +243,9 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.pk)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.id)
+        context["item_id"] = self.object.id
+        context["model_name"] = "seed"
         return context
 
 
@@ -284,7 +294,7 @@ class SeedUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeedUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.pk)
+        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.id)
         return context
 
     def get_form_class(self):
@@ -347,6 +357,8 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
         context["can_edit"] = self.request.user.is_superuser or self.object.user == self.request.user
+        context["item_id"] = self.object.id
+        context["model_name"] = "credential"
         return context
 
 
@@ -528,3 +540,29 @@ def export_file(request, pk, file_name):
             raise Http404
     else:
         raise PermissionDenied
+
+
+class ChangeLogView(LoginRequiredMixin, TemplateView):
+
+    template_name = "ui/change_log.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ChangeLogView, self).get_context_data(**kwargs)
+        item_id = self.kwargs["item_id"]
+        model_name = self.kwargs["model"]
+        ModelName = apps.get_model(app_label="ui", model_name=model_name)
+        item = ModelName.objects.get(pk=item_id)
+        context["item"] = item
+        diffs = diff_object_history(item)
+        paginator = Paginator(diffs, 15)
+        # if no page in URL, show first
+        page = self.request.GET.get("page", 1)
+        diffs_page = paginator.page(page)
+        context["paginator"] = paginator
+        context["diffs_page"] = diffs_page
+        context["model_name"] = model_name
+        try:
+            context["name"] = item.name
+        except:
+            context["name"] = item.token
+        return context
