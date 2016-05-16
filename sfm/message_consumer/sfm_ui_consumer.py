@@ -147,11 +147,11 @@ class SfmUiConsumer(BaseConsumer):
                     mail_message = None
                     mail_subject = None
                     if export.status == 'completed success':
-                        mail_message = "Your export of {} is ready. You can retrieve it from {}.".format(seed_set.name,
+                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(seed_set.name,
                                                                                                          export_url)
                         mail_subject = "SFM Export is ready"
                     elif export.status == 'completed failure':
-                        mail_message = "Your export of {} failed. You can get more information from {}".format(
+                        mail_message = u"Your export of {} failed. You can get more information from {}".format(
                             seed_set.name, export_url)
                         mail_subject = "SFM Export failed"
                     else:
