@@ -673,7 +673,7 @@ class ExportForm(forms.ModelForm):
         self.seedset = SeedSet.objects.get(pk=kwargs.pop("seedset"))
         super(ExportForm, self).__init__(*args, **kwargs)
         self.fields["seeds"].queryset = self.seedset.seeds.all()
-        cancel_url = reverse('export_detail', args=[self.seedset.id])
+        cancel_url = reverse('seedset_detail', args=[self.seedset.pk])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
