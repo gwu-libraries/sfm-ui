@@ -113,7 +113,10 @@ class SeedSet(models.Model):
     FLICKR_USER = 'flickr_user'
     WEIBO_TIMELINE = 'weibo_timeline'
     SCHEDULE_CHOICES = [
+        (30, 'Every 30 minutes'),
         (60, 'Every hour'),
+        (60 * 4, 'Every 4 hours'),
+        (60 * 12, 'Every 12 hours'),
         (60 * 24, 'Every day'),
         (60 * 24 * 7, 'Every week'),
         (60 * 24 * 7 * 4, 'Every 4 weeks')
