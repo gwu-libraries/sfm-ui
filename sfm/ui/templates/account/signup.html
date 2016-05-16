@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}
+    Sign Up
+{% endblock %}
+
+{% block content %}
+<h1>Sign Up</h1>
+
+<p>Already have an account? Then please <a href="{{ login_url }}">sign in</a>.</p>
+<form method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_username">Username</label>
+        <input type="text" class="form-control" id="id_username" name="username" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <label for="id_email">Email address</label>
+        <input type="email" class="form-control" id="id_email" name="email" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <label for="id_password1">Password</label>
+        <input type="password" class="form-control" id="id_password1" name="password1" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <label for="id_password2">Password (again)</label>
+        <input type="password" class="form-control" id="id_password2" name="password2" placeholder="Password">
+    </div>
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <button class="btn btn-primary" type="submit">Sign Up</button>
+</form>
+
+{% endblock %}

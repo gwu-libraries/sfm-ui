@@ -38,3 +38,9 @@ sfmdevapp:
         #- SFM_HOST=myserver.mydomain.edu
         #Add 5 minute harvest interval
         #- SFM_FIVE_MINUTE_SCHEDULE=True
+        #Provide credentials for the app. This will allow users to connect their accounts.
+        #- TWITTER_CONSUMER_KEY=EHdoeW7ksBgflP5nUalEfhao
+        #- TWITTER_CONSUMER_SECRET=ZtUemftBkf2cEmaqiyW2Ddihu9FPAiLebuMOmqN0jeQtXeAlen
+        #- WEIBO_API_KEY=
+        #- WEIBO_API_SECRET=
+

@@ -13,6 +13,8 @@ Contents:
 
    project
    install
+   authentication
+   credentials
    development
    harvester
    messaging
