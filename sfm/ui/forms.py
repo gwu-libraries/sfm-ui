@@ -94,7 +94,8 @@ class BaseSeedSetForm(forms.ModelForm):
                   'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
-                   'history_note': HISTORY_NOTE_WIDGET}
+                   'history_note': HISTORY_NOTE_WIDGET,
+                   'end_date': DATETIME_WIDGET}
         labels = {
             'history_note': HISTORY_NOTE_LABEL
         }
@@ -114,11 +115,11 @@ class BaseSeedSetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'name',
+                'description',
                 'credential',
                 Div(),
                 'schedule_minutes',
                 'end_date',
-                'description',
                 'collection',
                 'history_note'
             ),
@@ -147,7 +148,7 @@ class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -180,7 +181,7 @@ class SeedSetTwitterSearchForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -215,7 +216,7 @@ class SeedSetTwitterSampleForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "media" in harvest_options:
@@ -248,7 +249,7 @@ class SeedSetTwitterFilterForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -287,7 +288,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('sizes', 'incremental'))
+        self.helper.layout[0][3].extend(('sizes', 'incremental'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -313,7 +314,7 @@ class SeedSetWeiboTimelineForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
+        self.helper.layout[0][3].append('incremental')
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
