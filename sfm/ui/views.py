@@ -109,9 +109,8 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         context = super(SeedSetDetailView, self).get_context_data(**kwargs)
         context["next_run_time"] = next_run_time(self.object.id)
         # Last 5 harvests
-        context["harvests"] = self.object.harvests.all()[:2]
+        context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
-        # context["harvests"] = Harvest.objects.filter(historical_seed_set__id=self.object.id)
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0

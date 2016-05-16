@@ -70,7 +70,11 @@ def seedset_harvest(seedset_pk):
                 seed_map = dict()
                 seed_map["id"] = historical_seed.seed_id
                 if historical_seed.token:
-                    seed_map["token"] = historical_seed.token
+                    # This may be json
+                    try:
+                        seed_map["token"] = json.loads(historical_seed.token)
+                    except ValueError:
+                        seed_map["token"] = historical_seed.token
                 if historical_seed.uid:
                     seed_map["uid"] = historical_seed.uid
                 message["seeds"].append(seed_map)
