@@ -650,7 +650,7 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None)
+    seeds = SeedChoiceField(None, required=False)
 
     class Meta:
         model = Export
@@ -700,6 +700,7 @@ class ExportForm(forms.ModelForm):
         m = super(ExportForm, self).save(commit=False)
         # This may need to change.
         m.export_type = self.seedset.harvest_type
+        # If seeds is none
         if not self.cleaned_data.get("seeds"):
             m.seed_set = self.seedset
         m.save()
