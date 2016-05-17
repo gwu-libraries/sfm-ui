@@ -5,8 +5,14 @@ from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
 import django.db.models.options as options
-import uuid
 from django.conf import settings
+
+import uuid
+import datetime
+import pytz
+import logging
+
+log = logging.getLogger(__name__)
 
 # This adds an additional meta field
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + (u'diff_fields',)
@@ -17,7 +23,6 @@ def default_uuid():
 
 
 class User(AbstractUser):
-
     local_id = models.CharField(max_length=255, blank=True, default='',
                                 help_text='Local identifier')
 
@@ -81,14 +86,12 @@ class Credential(models.Model):
 
 @python_2_unicode_compatible
 class Collection(models.Model):
-
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     group = models.ForeignKey(Group, related_name='collections')
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection name')
     description = models.TextField(blank=True)
     is_visible = models.BooleanField(default=True)
-    stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
@@ -103,6 +106,58 @@ class Collection(models.Model):
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
 
+    def stats(self):
+        """
+        Returns a dict of items to count.
+        """
+        return _item_counts_to_dict(
+            HarvestStat.objects.filter(harvest__seed_set__collection=self).values("item").annotate(
+                count=models.Sum("count")))
+
+    def stats_items(self):
+        """
+        Returns a list of items type that have been harvested for this collection.
+        """
+        return list(
+            HarvestStat.objects.filter(harvest__seed_set__collection=self).values_list("item", flat=True).distinct())
+
+    def item_stats(self, item, days=7, end_date=None):
+        """
+        Gets count of items harvested by date.
+
+        If there are no items for a day, a date, count (of 0) pair is still returned.
+
+        :param item: name of the item to get count for, e.g., tweet.
+        :param days: backwards from end_datetime, the number of days to retrieve.
+        :param end_date: the date to start backfrom from. Default is today.
+        :return: List of date, count pairs.
+        """
+        if end_date is None:
+            end_date = datetime.date.today()
+
+        if days:
+            start_date = end_date - datetime.timedelta(days=days-1)
+            date_counts = HarvestStat.objects.filter(harvest__seed_set__collection=self, item=item,
+                                                     harvest_date__gte=start_date).order_by(
+                "harvest_date").values("harvest_date").annotate(count=models.Sum("count"))
+        else:
+            date_counts = HarvestStat.objects.filter(harvest__seed_set__collection=self, item=item).order_by(
+                "harvest_date").values("harvest_date").annotate(count=models.Sum("count"))
+            if len(date_counts) > 0:
+                days = (end_date - date_counts[0]["harvest_date"]).days + 1
+            else:
+                days = 1
+            start_date = end_date - datetime.timedelta(days=days - 1)
+
+        date_counts_dict = {}
+        for date_count in date_counts:
+            date_counts_dict[date_count["harvest_date"]] = date_count["count"]
+
+        stats = []
+        for i in range(days):
+            date = start_date + datetime.timedelta(days=i)
+            stats.append((date, date_counts_dict.get(date, 0)))
+        return stats
 
 @python_2_unicode_compatible
 class SeedSet(models.Model):
@@ -154,7 +209,6 @@ class SeedSet(models.Model):
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule", null=True)
     harvest_options = models.TextField(blank=True)
-    stats = JSONField(blank=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     end_date = models.DateTimeField(blank=True,
@@ -199,13 +253,26 @@ class SeedSet(models.Model):
         """
         return self.harvest_type in SeedSet.STREAMING_HARVEST_TYPES
 
+    def stats(self):
+        """
+        Returns a dict of items to count.
+        """
+        return _item_counts_to_dict(
+            HarvestStat.objects.filter(harvest__seed_set=self).values("item").annotate(count=models.Sum("count")))
+
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
 
 
+def _item_counts_to_dict(item_counts):
+    stats = {}
+    for item_count in item_counts:
+        stats[item_count["item"]] = item_count["count"]
+    return stats
+
+
 @python_2_unicode_compatible
 class Seed(models.Model):
-
     seed_set = models.ForeignKey(SeedSet, related_name='seeds')
     seed_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     token = models.TextField(blank=True)
@@ -250,10 +317,9 @@ class Harvest(models.Model):
     parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
-    date_started = models.DateTimeField(blank=True, null=True)
+    date_started = models.DateTimeField(blank=True, null=True, db_index=True)
     date_ended = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(auto_now=True)
-    stats = JSONField(blank=True)
     infos = JSONField(blank=True)
     warnings = JSONField(blank=True)
     errors = JSONField(blank=True)
@@ -270,12 +336,32 @@ class Harvest(models.Model):
 
     def message_count(self):
         return len(self.infos) if self.infos else 0 \
-            + len(self.warnings) if self.warnings else 0 \
-            + len(self.errors) if self.errors else 0
+                                                  + len(self.warnings) if self.warnings else 0 \
+                                                                                             + len(
+            self.errors) if self.errors else 0
+
+    def stats(self):
+        """
+        Returns a dict of items to count.
+        """
+        return _item_counts_to_dict(
+            HarvestStat.objects.filter(harvest=self).values("item").annotate(count=models.Sum("count")))
+
+
+class HarvestStat(models.Model):
+    harvest = models.ForeignKey(Harvest, related_name="harvest_stats")
+    harvest_date = models.DateField()
+    item = models.CharField(max_length=255)
+    count = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ("harvest", "harvest_date", "item")
+
+    def __str__(self):
+        return '<HarvestStat %s "%s from %s">' % (self.id, self.item, self.harvest_date)
 
 
 class Warc(models.Model):
-
     harvest = models.ForeignKey(Harvest, related_name='warcs')
     warc_id = models.CharField(max_length=32, unique=True)
     path = models.TextField()

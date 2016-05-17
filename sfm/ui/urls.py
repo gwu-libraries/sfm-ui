@@ -4,6 +4,7 @@ from . import views
 
 
 urlpatterns = patterns('',
+                       url(r'^$', views.HomeView.as_view(), name="home"),
 
                        url(r'^collections/create/$',
                            views.CollectionCreateView.as_view(),
@@ -16,6 +17,10 @@ urlpatterns = patterns('',
                        url(r'^collections/(?P<pk>\d+)/delete/$',
                            views.CollectionDeleteView.as_view(),
                            name="collection_delete"),
+
+                       url(r'^collections/(?P<pk>\d+)/stats/(?P<item>.+?)/(?P<period>.*)/$',
+                           views.collection_stats,
+                           name='collection_stats'),
 
                        url(r'^collections/(?P<pk>\d+)/$',
                            views.CollectionDetailView.as_view(),

@@ -1,9 +1,10 @@
 from django.test import TestCase
-from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed, Warc, Export
+from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed, Warc, Export, HarvestStat
 import json
 from sfm_ui_consumer import SfmUiConsumer
 import iso8601
 
+from datetime import date
 
 class ConsumerTest(TestCase):
     def setUp(self):
@@ -16,11 +17,7 @@ class ConsumerTest(TestCase):
                                                token=json.dumps({}))
         seed_set = SeedSet.objects.create(collection=collection, credential=credential,
                                           harvest_type="test_type", name="test_seedset",
-                                          harvest_options=json.dumps({}),
-                                          stats={
-                                              "user": 5,
-                                              "tweets": 120
-                                          })
+                                          harvest_options=json.dumps({}))
         Seed.objects.create(seed_set=seed_set, uid="131866249@N02", seed_id='1')
         Seed.objects.create(seed_set=seed_set, token="library_of_congress", seed_id='2')
         historical_seed_set = seed_set.history.all()[0]
@@ -30,6 +27,12 @@ class ConsumerTest(TestCase):
                                               seed_set=seed_set,
                                               historical_seed_set=historical_seed_set,
                                               historical_credential=historical_credential)
+        # Creating a second harvest to make sure that harvest stats don't conflict
+        harvest2 = Harvest.objects.create(harvest_id="test:2",
+                                          seed_set=seed_set,
+                                          historical_seed_set=historical_seed_set,
+                                          historical_credential=historical_credential)
+        HarvestStat.objects.create(harvest=harvest2, item="photos", count=3, harvest_date=date(2016, 5, 20))
         Export.objects.create(export_id="test:2", user=user, export_type="test_type")
         self.consumer = SfmUiConsumer()
 
@@ -37,15 +40,18 @@ class ConsumerTest(TestCase):
         self.consumer.routing_key = "harvest.status.test.test_search"
         self.consumer.message = {
             "id": "test:1",
-            "status": "completed success",
+            "status": Harvest.RUNNING,
             "date_started": "2015-07-28T11:17:36.640044",
-            "date_ended": "2015-07-28T11:17:42.539470",
             "infos": [{"code": "test_code_1", "message": "congratulations"}],
             "warnings": [{"code": "test_code_2", "message": "be careful"}],
             "errors": [{"code": "test_code_3", "message": "oops"}],
-            "summary": {
-                "photo": 12,
-                "user": 1
+            "stats": {
+                "2016-05-20": {
+                    "photos": 12,
+                },
+                "2016-05-21": {
+                    "photos": 19,
+                },
             },
             "token_updates": {
                 "1": "j.littman"
@@ -63,8 +69,8 @@ class ConsumerTest(TestCase):
 
         # Check updated harvest model object
         harvest = Harvest.objects.get(harvest_id="test:1")
-        self.assertEqual("completed success", harvest.status)
-        self.assertEqual(12, harvest.stats["photo"])
+        self.assertEqual(Harvest.RUNNING, harvest.status)
+        self.assertEqual(12, harvest.harvest_stats.get(item="photos", harvest_date=date(2016, 5, 20)).count)
         self.assertDictEqual({
             "1": "j.littman"
         }, harvest.token_updates)
@@ -74,21 +80,9 @@ class ConsumerTest(TestCase):
         self.assertEqual(3, harvest.warcs_count)
         self.assertEqual(345234242, harvest.warcs_bytes)
         self.assertEqual(iso8601.parse_date("2015-07-28T11:17:36.640044"), harvest.date_started)
-        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:42.539470"), harvest.date_ended)
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
-
-        # Check stats
-        self.assertEqual(harvest.seed_set.stats, {
-            "user": 6,
-            "tweets": 120,
-            "photo": 12
-        })
-        self.assertEqual(harvest.seed_set.collection.stats, {
-            "user": 1,
-            "photo": 12
-        })
 
         # Check updated seeds
         seed1 = Seed.objects.get(seed_id="1")
@@ -97,6 +91,45 @@ class ConsumerTest(TestCase):
         seed2 = Seed.objects.get(seed_id="2")
         self.assertEqual("671366249@N03", seed2.uid)
         self.assertTrue(seed2.history_note.startswith("Changed uid"))
+
+        # Now update
+        self.consumer.message = {
+            "id": "test:1",
+            "status": Harvest.SUCCESS,
+            "date_started": "2015-07-28T11:17:36.640044",
+            "date_ended": "2015-07-28T11:17:42.539470",
+            "infos": [{"code": "test_code_1", "message": "congratulations"}],
+            "warnings": [{"code": "test_code_2", "message": "be careful"}],
+            "errors": [{"code": "test_code_3", "message": "oops"}],
+            "stats": {
+                "2016-05-20": {
+                    "photos": 12,
+                },
+                "2016-05-21": {
+                    "photos": 24,
+                    "users": 1
+                },
+            },
+            "warcs": {
+                "count": 5,
+                "bytes": 645234242
+            }
+        }
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check updated harvest model object
+        harvest = Harvest.objects.get(harvest_id="test:1")
+        self.assertEqual(Harvest.SUCCESS, harvest.status)
+        self.assertEqual(24, harvest.harvest_stats.get(item="photos", harvest_date=date(2016, 5, 21)).count)
+        self.assertEqual(1, harvest.harvest_stats.get(item="users", harvest_date=date(2016, 5, 21)).count)
+        self.assertEqual(5, harvest.warcs_count)
+        self.assertEqual(645234242, harvest.warcs_bytes)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:36.640044"), harvest.date_started)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:42.539470"), harvest.date_ended)
+        self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
+        self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
+        self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
 
     def test_on_message_ignores_bad_routing_key(self):
         self.consumer.routing_key = "xharvest.status.test.test_search"

@@ -1,6 +1,6 @@
 import logging
 from sfmutils.consumer import BaseConsumer
-from ui.models import Harvest, SeedSet, Seed, Warc, Export
+from ui.models import Harvest, SeedSet, Seed, Warc, Export, HarvestStat
 import json
 from django.core.mail import send_mail
 from django.conf import settings
@@ -41,66 +41,62 @@ class SfmUiConsumer(BaseConsumer):
             # Retrieve harvest model object
             harvest = Harvest.objects.get(harvest_id=self.message["id"])
 
-            # And update harvest model object
-            harvest.status = self.message["status"]
-            harvest.stats = self.message.get("summary", {})
-            harvest.infos = self.message.get("infos", [])
-            harvest.warnings = self.message.get("warnings", [])
-            harvest.errors = self.message.get("errors", [])
-            harvest.token_updates = self.message.get("token_updates")
-            harvest.uids = self.message.get("uids")
-            harvest.warcs_count = self.message.get("warcs", {}).get("count", 0)
-            harvest.warcs_bytes = self.message.get("warcs", {}).get("bytes", 0)
-            harvest.date_started = iso8601.parse_date(self.message["date_started"])
-            if "date_ended" in self.message:
-                harvest.date_ended = iso8601.parse_date(self.message["date_ended"])
-            harvest.save()
-
-            # Update seeds based on tokens that have changed
-            for id, token in self.message.get("token_updates", {}).items():
-                # Try to find seed based on seedset and uid.
-                try:
-                    seed = Seed.objects.get(seed_id=id)
-                    seed.token = token
-                    seed.history_note = "Changed token based on information from harvester from harvest {}".format(
-                            self.message["id"])
-                    seed.save()
-                except ObjectDoesNotExist:
-                    log.error("Seed model object with seed_id %s not found to update token to %s", id, token)
-
-            # Update seeds based on uids that have been returned
-            for id, uid in self.message.get("uids", {}).items():
-                # Try to find seed based on seedset and token.
-                try:
-                    seed = Seed.objects.get(seed_id=id)
-                    seed.uid = uid
-                    seed.history_note = "Changed uid based on information from harvester from harvest {}".format(
-                            self.message["id"])
-                    seed.save()
-                except ObjectDoesNotExist:
-                    log.error("Seed model object with seed_id %s not found to update uid to %s", id, uid)
-
-            # Update stats on seed set and collection
-            if self.message["status"] == Harvest.SUCCESS:
-                self._update_stats(harvest.seed_set)
-                self._update_stats(harvest.seed_set.collection)
-
         except ObjectDoesNotExist:
             log.error("Harvest model object not found for harvest status message: %s",
                       json.dumps(self.message, indent=4))
+            return
 
-    def _update_stats(self, stats_obj):
-        stats = stats_obj.stats or {}
+        # And update harvest model object
+        harvest.status = self.message["status"]
+        harvest.infos = self.message.get("infos", [])
+        harvest.warnings = self.message.get("warnings", [])
+        harvest.errors = self.message.get("errors", [])
+        harvest.token_updates = self.message.get("token_updates")
+        harvest.uids = self.message.get("uids")
+        harvest.warcs_count = self.message.get("warcs", {}).get("count", 0)
+        harvest.warcs_bytes = self.message.get("warcs", {}).get("bytes", 0)
+        harvest.date_started = iso8601.parse_date(self.message["date_started"])
+        if "date_ended" in self.message:
+            harvest.date_ended = iso8601.parse_date(self.message["date_ended"])
+        harvest.save()
 
-        summary = self.message.get("summary", {})
-        for item, count in summary.items():
-            if item in stats:
-                stats[item] += count
-            else:
-                stats[item] = count
+        # Update seeds based on tokens that have changed
+        for id, token in self.message.get("token_updates", {}).items():
+            # Try to find seed based on seedset and uid.
+            try:
+                seed = Seed.objects.get(seed_id=id)
+                seed.token = token
+                seed.history_note = "Changed token based on information from harvester from harvest {}".format(
+                        self.message["id"])
+                seed.save()
+            except ObjectDoesNotExist:
+                log.error("Seed model object with seed_id %s not found to update token to %s", id, token)
 
-        stats_obj.stats = stats
-        stats_obj.save()
+        # Update seeds based on uids that have been returned
+        for id, uid in self.message.get("uids", {}).items():
+            # Try to find seed based on seedset and token.
+            try:
+                seed = Seed.objects.get(seed_id=id)
+                seed.uid = uid
+                seed.history_note = "Changed uid based on information from harvester from harvest {}".format(
+                        self.message["id"])
+                seed.save()
+            except ObjectDoesNotExist:
+                log.error("Seed model object with seed_id %s not found to update uid to %s", id, uid)
+
+        # Update stats
+        if self.message["status"] != Harvest.FAILURE:
+            day_stats = self.message.get("stats", {})
+
+            for day_str, stat in day_stats.items():
+                day = iso8601.parse_date(day_str).date()
+                for item, count in stat.items():
+                    try:
+                        stat = harvest.harvest_stats.get(item=item, harvest_date=day)
+                        stat.count = count
+                        stat.save()
+                    except ObjectDoesNotExist:
+                        HarvestStat.objects.create(item=item, harvest=harvest, count=count, harvest_date=day)
 
     def _on_warc_created_message(self):
         try:

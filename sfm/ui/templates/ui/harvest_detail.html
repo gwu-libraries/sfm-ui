@@ -26,10 +26,10 @@
     {% endif %}
     <p><strong>Status:</strong> {{ harvest.get_status_display }}</p>
     <p><strong>Harvest type:</strong> {{ harvest.harvest_type }}</p>
-    {% if stats %}
+    {% if harvest.stats %}
         <p><strong>Stats:</strong><ul>
-            {% for item, count in stats %}
-                <li>{{item}}: {{count}}</li>
+            {% for item, count in harvest.stats.items %}
+                <li>{{ item }}: {{ count }}</li>
             {% endfor %}
         </ul></p>
     {% endif %}
