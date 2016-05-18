@@ -668,6 +668,9 @@ class ExportForm(forms.ModelForm):
             'harvest_date_start': DATETIME_WIDGET,
             'harvest_date_end': DATETIME_WIDGET,
         }
+        labels = {
+            'dedupe': "Deduplicate"
+        }
 
     def __init__(self, *args, **kwargs):
         self.seedset = SeedSet.objects.get(pk=kwargs.pop("seedset"))
