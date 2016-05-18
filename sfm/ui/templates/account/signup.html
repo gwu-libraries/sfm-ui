@@ -6,7 +6,7 @@
 {% block content %}
 <h1>Sign Up</h1>
 
-<p>Already have an account? Then please <a href="{{ login_url }}">sign in</a>.</p>
+<p>Already have an account? Then please <a href="{{ login_url }}">log in</a>.</p>
 <form method="post" action="{% url 'account_signup' %}">
     {% csrf_token %}
     <div class="form-group">
@@ -28,7 +28,7 @@
     {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
-    <button class="btn btn-primary" type="submit">Sign Up</button>
+    <button class="btn btn-primary" type="submit">Sign up</button>
 </form>
 
 {% endblock %}

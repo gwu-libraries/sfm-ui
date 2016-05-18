@@ -1,0 +1,22 @@
+body {
+    font-family: "Open Sans", Verdana, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #333;
+    padding: 3px;
+    height: 100%;
+}
+
+.navbar-default .navbar-nav>li>a,p {
+    color: #333;
+}
+
+.footer {
+    position: absolute; 
+    bottom: 0; 
+    width:100%;
+    height: 60px;
+}
+
+.sfm-container {
+    min-height: 600px;
+}
