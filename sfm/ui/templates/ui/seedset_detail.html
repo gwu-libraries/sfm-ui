@@ -25,16 +25,16 @@
 </div>
 <div class="row">
    <div class="col-md-12">
+        <p>{{ seedset.description }}</p>
+        <p><strong>Created:</strong> {{ seedset.date_added }}</p>
         <p><strong>Harvest type:</strong> {{ seedset.get_harvest_type_display }}</p>
-        <p><strong>Credential: </strong> {{ seedset.credential.token }}</p>
+        <p><strong>Credential: </strong> <a href={% url "credential_detail" seedset.credential.pk %}>{{ seedset.credential.name }}</a></p>
 	    {{ seedset.harvest_options|json }}
 	    {% if seedset.schedule_minutes %}
             <p><strong>Schedule:</strong> {{ seedset.get_schedule_minutes_display }}</p>
             <p><strong>Next harvest</strong> {{ next_run_time }}</p>
         {% endif %}
         <p><strong>End date: </strong> {{ seedset.end_date }}</p>
-        <p><strong>Created:</strong> {{ seedset.date_added }}</p>
-        <p><strong>Description:</strong> {{seedset.description }}</p>
         {% if seedset.stats %}
             <p><strong>Stats:</strong><ul>
                 {% for item, count in seedset.stats.items %}
@@ -55,8 +55,6 @@
                     <th>Token</th>
                     <th>Uid</th>
                     <th>Active</th>
-                    <th>uid</th>
-					<th>Active</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}

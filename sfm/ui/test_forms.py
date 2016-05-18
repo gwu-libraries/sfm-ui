@@ -251,8 +251,11 @@ class TestExportForm(TestCase):
                                               credential=self.credential)
         self.seed = Seed.objects.create(token="test",
                                         seed_set=self.seedset)
+        Seed.objects.create(token="test2",
+                            seed_set=self.seedset)
         self.data = {
-            "export_format": "csv"
+            "export_format": "csv",
+            "seeds": ()
         }
 
     def test_valid_seedset_form(self):

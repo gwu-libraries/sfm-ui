@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
@@ -11,6 +12,7 @@ from .utils import clean_token
 
 import json
 import logging
+import re
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +96,8 @@ class BaseSeedSetForm(forms.ModelForm):
                   'history_note']
         exclude = []
         widgets = {'collection': forms.HiddenInput,
-                   'history_note': HISTORY_NOTE_WIDGET}
+                   'history_note': HISTORY_NOTE_WIDGET,
+                   'end_date': DATETIME_WIDGET}
         labels = {
             'history_note': HISTORY_NOTE_LABEL
         }
@@ -114,11 +117,11 @@ class BaseSeedSetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'name',
+                'description',
                 'credential',
                 Div(),
                 'schedule_minutes',
                 'end_date',
-                'description',
                 'collection',
                 'history_note'
             ),
@@ -147,7 +150,7 @@ class SeedSetTwitterUserTimelineForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -180,7 +183,7 @@ class SeedSetTwitterSearchForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -215,7 +218,7 @@ class SeedSetTwitterSampleForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "media" in harvest_options:
@@ -248,7 +251,7 @@ class SeedSetTwitterFilterForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -287,7 +290,7 @@ class SeedSetFlickrUserForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].extend(('sizes', 'incremental'))
+        self.helper.layout[0][3].extend(('sizes', 'incremental'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -313,7 +316,7 @@ class SeedSetWeiboTimelineForm(BaseSeedSetForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedSetWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][2].append('incremental')
+        self.helper.layout[0][3].append('incremental')
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -413,8 +416,8 @@ class SeedTwitterFilterForm(BaseSeedForm):
                                       'href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
                                       'track</a> for more information.')
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                             help_text='A comma separated list of user IDs, indicating the users to return statuses '
-                                       'for in the stream. See <a '
+                             help_text='A comma separated list of <i>user IDs</i> (not screen names), indicating the '
+                                       'users to return statuses for in the stream. See <a '
                                        'href="https://dev.twitter.com/streaming/overview/request-parameters#follow">'
                                        'follow</a> for more information.')
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
@@ -434,6 +437,12 @@ class SeedTwitterFilterForm(BaseSeedForm):
                 self.fields['follow'].initial = token['follow']
             if 'locations' in token:
                 self.fields['locations'].initial = token['locations']
+
+    def clean_follow(self):
+        follow = self.cleaned_data["follow"]
+        if re.compile(r'[^0-9, ]').search(follow):
+            raise ValidationError('Follow must be user ids', code='invalid_follow')
+        return follow
 
     def save(self, commit=True):
         m = super(SeedTwitterFilterForm, self).save(commit=False)
@@ -625,7 +634,23 @@ class CredentialWeiboForm(BaseCredentialForm):
         return m
 
 
+class SeedChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        labels = []
+        if obj.token:
+            try:
+                j = json.loads(obj.token)
+                for key, value in j.items():
+                    labels.append("{}: {}".format(key.title(), value))
+            except ValueError:
+                labels.append("Token: {}".format(obj.token))
+        if obj.uid:
+            labels.append("Uid: {}".format(obj.uid))
+        return "; ".join(labels)
+
+
 class ExportForm(forms.ModelForm):
+    seeds = SeedChoiceField(None, required=False)
 
     class Meta:
         model = Export
@@ -648,7 +673,7 @@ class ExportForm(forms.ModelForm):
         self.seedset = SeedSet.objects.get(pk=kwargs.pop("seedset"))
         super(ExportForm, self).__init__(*args, **kwargs)
         self.fields["seeds"].queryset = self.seedset.seeds.all()
-        cancel_url = reverse('export_detail', args=[self.seedset.id])
+        cancel_url = reverse('seedset_detail', args=[self.seedset.pk])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
@@ -667,11 +692,15 @@ class ExportForm(forms.ModelForm):
                        onclick="window.location.href='{0}'".format(cancel_url))
             )
         )
+        if len(self.fields["seeds"].queryset) < 2:
+            del self.fields["seeds"]
+            self.helper.layout[0].pop(0)
 
     def save(self, commit=True):
         m = super(ExportForm, self).save(commit=False)
         # This may need to change.
         m.export_type = self.seedset.harvest_type
+        # If seeds is none
         if not self.cleaned_data.get("seeds"):
             m.seed_set = self.seedset
         m.save()
