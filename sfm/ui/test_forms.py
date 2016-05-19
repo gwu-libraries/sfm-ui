@@ -217,9 +217,6 @@ class CredentialWeiboFormTest(TestCase):
             "name": "test_weibo_credential",
             "user": self.user.pk,
             "platform": "weibo",
-            "api_key": "dummy_api_key",
-            "api_secret": "dummy_api_secret",
-            "redirect_uri": "dummy_redirect_uri",
             "access_token": "dummy_access_token",
             "date_added": "04/14/2016",
         }
@@ -229,11 +226,7 @@ class CredentialWeiboFormTest(TestCase):
         form.instance.user = self.user
         self.assertTrue(form.is_valid())
         credential = form.save()
-        self.assertJSONEqual(credential.token,
-                             '{"api_key": "dummy_api_key",'
-                             '"api_secret": "dummy_api_secret",'
-                             '"redirect_uri": "dummy_redirect_uri",'
-                             '"access_token": "dummy_access_token"}')
+        self.assertJSONEqual(credential.token, '{"access_token": "dummy_access_token"}')
 
 
 class TestExportForm(TestCase):
