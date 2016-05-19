@@ -38,7 +38,7 @@ Behind the scenes, SFM uses a set of carefully managed processes to harvest and 
 
 * Documentation:  [http://sfm.readthedocs.org](http://sfm.readthedocs.org/en/latest/)
 * Full project information: [http://gwu-libraries.github.com/sfm-ui](http://gwu-libraries.github.com/sfm-ui)
-* Project updates: Follow [@SocialFeedMgr on Twitter](https://twitter.com/SocialFeedMgr)
+* Project updates: Follow [@SocialFeedMgr](https://twitter.com/SocialFeedMgr) on Twitter
 * Discussion:  [sfm-dev](https://groups.google.com/forum/#!forum/sfm-dev)
 * Tickets:  sfm-ui is used for [all ticketing](https://github.com/gwu-libraries/sfm-ui/issues).
 
