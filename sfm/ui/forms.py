@@ -604,29 +604,20 @@ class CredentialTwitterForm(BaseCredentialForm):
 
 
 class CredentialWeiboForm(BaseCredentialForm):
-    api_key = forms.CharField(required=True)
-    api_secret = forms.CharField(required=True)
-    redirect_uri = forms.CharField(required=True)
     access_token = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(CredentialWeiboForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][1].extend(['api_key', 'api_secret', 'redirect_uri', 'access_token'])
+        self.helper.layout[0][1].extend([ 'access_token'])
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
-            self.fields['api_key'].initial = token.get('api_key')
-            self.fields['api_secret'].initial = token.get('api_secret')
-            self.fields['redirect_uri'].initial = token.get('redirect_uri')
             self.fields['access_token'].initial = token.get('access_token')
 
     def save(self, commit=True):
         m = super(CredentialWeiboForm, self).save(commit=False)
         m.platform = Credential.WEIBO
         token = {
-            "api_key": self.cleaned_data["api_key"],
-            "api_secret": self.cleaned_data["api_secret"],
-            "redirect_uri": self.cleaned_data["redirect_uri"],
             "access_token": self.cleaned_data["access_token"],
         }
         m.token = json.dumps(token)

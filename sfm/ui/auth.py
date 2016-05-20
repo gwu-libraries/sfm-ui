@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from .forms import CredentialTwitterForm
+from .forms import CredentialTwitterForm,CredentialWeiboForm
 from .models import Credential
 
 
@@ -31,6 +31,12 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
                 'consumer_secret': sociallogin.token.app.secret,
                 'access_token': sociallogin.token.token,
                 'access_token_secret': sociallogin.token.token_secret,
+            })
+        elif sociallogin.token.app.provider == 'weibo':
+            form = CredentialWeiboForm({
+                'name': credential_name,
+                'platform': Credential.WEIBO,
+                'access_token': sociallogin.token.token,
             })
         else:
             assert False, "Unrecognized social login provider"
