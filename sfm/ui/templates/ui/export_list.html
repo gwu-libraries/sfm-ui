@@ -5,15 +5,30 @@
 
 {% block content %}
 <div class="row">
-    <h1>Exports</h1>
+    <div class="col-md-12">
+        <h1>Exports</h1>
+    </div>
 </div>
 <div class="row">
-    {% for collection, seedset, export in export_list %}
-    <div class="col-md-7"><p><a href={% url "export_detail" export.pk %}>Export from {{ collection.name }} > {{ seedset.name }}</a></p></div>
-    <div class="col-md-1"><p>{{ export.status }} </p></div>
-    <div class="col-md-4"><p>Requested {{ export.date_requested }}</p></div>
-    {% empty %}
-    <div class="col-md-12"><p>No exports yet.</p></div>
-    {% endfor %}
+  <div class="col-md-12">
+  {% if export_list %}
+    <table class="table">
+      <thead>
+        <th>Export from</th>
+        <th>Status</th>
+        <th>Date Requested</th>
+      </thead>
+     {% for collection, seedset, export in export_list %}
+       <tr>
+        <td><a href={% url "export_detail" export.pk %}>{{ collection.name }} > {{ seedset.name }}</a></td>
+        <td>{{ export.status }} </td>
+        <td>{{ export.date_requested }}</td>
+       </tr>
+       {% endfor %}
+     </table>
+  {% else %} 
+     <p>No exports yet.</p>
+     {% endif %}
+ </div>
 </div>
 {% endblock %}
