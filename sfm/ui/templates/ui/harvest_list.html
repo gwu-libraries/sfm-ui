@@ -16,13 +16,19 @@
 </div>
 <nav>
   <ul class="pager">
-		{% if page_obj.has_previous %}
-			<li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-		{% endif %}
-		Page {{ page_obj.number }} of {{ paginator.num_pages }}
-		{% if page_obj.has_next %}
-			<li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
-		{% endif %}
+      {% if page_obj.has_previous %}
+          <li><a href="?page=1">&laquo;</a></li>
+          <li><a href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
+      {% endif %}
+
+      <li class="active">
+          {{ page_obj.number }} of {{ paginator.num_pages }}
+      </li>
+
+      {% if page_obj.has_next %}
+          <li><a href="?page={{ page_obj.next_page_number }}">Next </a></li>
+          <li><a href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
+      {% endif %}
   </ul>
 </nav>
 <div class="row">
