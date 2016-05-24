@@ -176,3 +176,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env.get('SFM_EMAIL_USER')
 EMAIL_HOST_PASSWORD = env.get('SFM_EMAIL_PASSWORD')
 EMAIL_USE_TLS = True
+
+# Whether to run apscheduler
+RUN_SCHEDULER = env.get('SFM_RUN_SCHEDULER', 'False') == 'True'

@@ -35,23 +35,6 @@ echo "Starting message consumer"
 /opt/sfm-ui/sfm/manage.py startconsumer &
 
 echo "Running server"
-#Not entirely sure why this is necessary, but it works.
-/etc/init.d/apache2 start
-#Make sure apache has started
-/etc/init.d/apache2 status
-while [ "$?" != "0" ];  do
-    echo "Waiting for start"
-    sleep 1
-    /etc/init.d/apache2 status
-done
-echo "Stopping server"
-/etc/init.d/apache2 graceful-stop
-#Make sure apache has stopped
-/etc/init.d/apache2 status
-while [ "$?" = "0" ];  do
-    echo "Waiting for stop"
-    sleep 1
-    /etc/init.d/apache2 status
-done
-echo "Starting server again"
+export SFM_RUN_SCHEDULER=True
+source /etc/apache2/envvars
 apachectl -DFOREGROUND

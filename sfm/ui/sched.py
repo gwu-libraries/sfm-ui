@@ -10,7 +10,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 log = logging.getLogger(__name__)
 
-log.debug("Instantiating scheduler")
 sched = BackgroundScheduler()
 
 
