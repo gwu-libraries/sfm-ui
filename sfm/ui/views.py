@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect
+from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView
 from django.core.exceptions import PermissionDenied
 from django.views.generic.base import RedirectView, View
@@ -322,7 +322,6 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
         form = self._form_class(seed_set)(request.POST, seedset=kwargs["seed_set_pk"])
         if form.is_valid():
-            log.info(form.cleaned_data['history_note'] is None)
             tokens = form.cleaned_data['tokens'].splitlines()
             for token in (clean_token(t) for t in tokens):
                 if token:
@@ -417,7 +416,6 @@ class CredentialUpdateView(LoginRequiredMixin, UpdateView):
         return getattr(forms, class_name)
 
     def get_success_url(self):
-        log.info("Foo")
         return reverse("credential_detail", args=(self.object.pk,))
 
 
@@ -523,7 +521,6 @@ class HarvestDetailView(LoginRequiredMixin, DetailView):
         context = super(HarvestDetailView, self).get_context_data(**kwargs)
         context["collection"] = self.object.seed_set.collection
         context["seedset"] = self.object.seed_set
-        context["stats"] = sorted((self.object.stats or {}).items(), key=operator.itemgetter(1), reverse=True)
         return context
 
 
@@ -583,4 +580,24 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
             context["name"] = item.name
         except:
             context["name"] = item.token
+        return context
+
+
+def collection_stats(_, pk, item, period):
+    collection = get_object_or_404(Collection, pk=pk)
+    return JsonResponse(collection.item_stats(item,
+                                              days={
+                                                  "week": 7,
+                                                  "month": 30,
+                                                  "year": 365
+                                              }.get(period, 0)), safe=False)
+
+class HomeView(TemplateView):
+
+    template_name = "ui/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['collection_list'] = Collection.objects.filter(
+            group__in=self.request.user.groups.all())
         return context

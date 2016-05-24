@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block css %}
+
+
+
+{% endblock css %}
+
+{% block javascript %}
+    <script src="https://cdn.plot.ly/plotly-1.8.0.min.js"></script>
+    <script>
+        function compose_url(collection_id, item, period) {
+            return "/ui/collections/" + collection_id + "/stats/" + encodeURIComponent(item) + "/" + period + "/";
+        }
+
+        function update_viz(viz, title, this_btn, collection_id, item, period) {
+            // Update buttons
+            $("#" + viz.id + "-btns > button").each(function(index) {
+              $(this).removeClass("disabled");
+            });
+            $(this).addClass("disabled");
+
+            // Update chart
+            $.getJSON(compose_url(collection_id, item, period), function(data) {
+                async_update_viz(viz, title, data);
+            });
+
+        }
+
+        function async_update_viz(viz, title, data) {
+            viz_chart = $("#" + viz.id + "-chart")[0];
+            viz_chart.layout.title = title;
+            viz_chart.data[0].x = [];
+            viz_chart.data[0].y = [];
+
+            $.each( data, function(i, item) {
+                viz_chart.data[0].x.push(item[0]);
+                viz_chart.data[0].y.push(item[1]);
+            });
+            Plotly.redraw(viz_chart);
+        }
+        </script>
+{% endblock javascript %}
+
+{% block content %}
+{% if collection_list %}
+    <div class="panel panel-default">
+        {% for collection in collection_list %}
+            <div class="panel-heading">
+                <h3 class="panel-title"><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></h3>
+            </div>
+            <div class="panel-body">
+                {% for item in collection.stats_items %}
+                    <div class="col-md-4">
+                    <div id="viz-{{ collection.pk }}-{{ item|slugify }}" class="thumbnail">
+                        <div id="viz-{{ collection.pk }}-{{ item|slugify }}-chart" style="width: 300px; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+                        <div id="viz-{{ collection.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-xs" role="group">
+                          <button type="button" class="btn btn-default viz_all">All</button>
+                          <button type="button" class="btn btn-default viz_year">Last year</button>
+                          <button type="button" class="btn btn-default disabled viz_month">Last month</button>
+                          <button type="button" class="btn btn-default viz_week">Last week</button>
+                        </div>
+                    </div>
+                    </div>
+                    <script>
+                        // Create viz
+                        $.getJSON(compose_url({{ collection.pk }}, '{{ item }}', "month"), function(data) {
+                            var chart_layout = {
+                                title: '{{ item|capfirst }} in last month',
+                                titlefont: {
+                                    size: 14
+                                },
+                                yaxis: {
+                                    rangemode: 'tozero'
+                                },
+                                xaxis: {
+                                    tickformat: '%b %-d'
+                                },
+                                margin: {
+                                    b: 25,
+                                    l: 45,
+                                    r: 45,
+                                    t: 20
+                                }
+
+                            };
+                            var chart_data = [{
+                                x: [],
+                                y: [],
+                                type: 'bar'
+                            }];
+                            $.each( data, function(i, item) {
+                                chart_data[0].x.push(item[0]);
+                                chart_data[0].y.push(item[1]);
+
+                            });
+                            Plotly.newPlot('viz-{{ collection.pk }}-{{ item|slugify }}-chart', chart_data, chart_layout);
+                        });
+                        // All button
+                        $("#viz-{{ collection.pk }}-{{ item|slugify }}-btns > button.viz_all").click([{{ collection.pk }}, '{{ item }}'], function(e) {
+                            update_viz($('#viz-{{ collection.pk }}-{{ item|slugify }}')[0], "All {{ item }}", this, e.data[0], e.data[1], "all");
+                            return false;
+                        });
+                        // Year button
+                        $("#viz-{{ collection.pk }}-{{ item|slugify }}-btns > button.viz_year").click([{{ collection.pk }}, '{{ item }}'], function(e) {
+                            update_viz($('#viz-{{ collection.pk }}-{{ item|slugify }}')[0], "{{ item }} in last year", this, e.data[0], e.data[1], "year");
+                            return false;
+                        });
+                        // Month button
+                        $("#viz-{{ collection.pk }}-{{ item|slugify }}-btns > button.viz_month").click([{{ collection.pk }}, '{{ item }}'], function(e) {
+                            update_viz($('#viz-{{ collection.pk }}-{{ item|slugify }}')[0], "{{ item }} in last month", this, e.data[0], e.data[1], "month");
+                            return false;
+                        });
+                        // Week button
+                        $("#viz-{{ collection.pk }}-{{ item|slugify }}-btns > button.viz_week").click([{{ collection.pk }}, '{{ item }}'], function(e) {
+                            update_viz($('#viz-{{ collection.pk }}-{{ item|slugify }}')[0], "{{ item }} in last week", this, e.data[0], e.data[1], "week");
+                            return false;
+                        });
+
+                    </script>
+
+                {% empty %}
+                    <p>Nothing harvested yet.</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    {% if user.is_authenticated %}
+         <p>To get started, create some <a href={% url "credential_list" %}>credentials</a> and <a href={% url "collection_list" %}>collections</a>.</p>
+    {% else %}
+        <p>To use Social Feed Manager, <a href={% url "account_signup" %}>sign up</a> or <a href={% url "account_login" %}>log in</a>.</p>
+    {% endif %}
+{% endif %}
+{% endblock content %}

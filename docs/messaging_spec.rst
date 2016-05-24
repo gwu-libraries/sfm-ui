@@ -229,9 +229,13 @@ it performs. Example::
         "infos": []
         "warnings": [],
         "errors": [],
-        "summary": {
-            "photo": 12,
-            "user": 1
+        "stats": {
+            "2016-05-20": {
+                "photos": 12,
+            },
+            "2016-05-21": {
+                "photos": 19,
+            },
         },
         "token_updates": {
             "seed_id_1": "j.littman"
@@ -251,8 +255,8 @@ it performs. Example::
 * `infos`, `warnings`, and `errors`:  Lists of messages.  A message should be an object
   (i.e., dictionary) containing a `code` and `message` entry.  Codes should be consistent
   to allow message consumers to identify types of messages.
-* `summary`:  A count of items that are harvested.  These should use human-understandable
-  labels.  Summary is optional for in progress statuses, but required for final statuses.
+* `stats`:  A count of items that are harvested by date.  Items should be a human-understandable
+  labels (plural and lower-cased).  Stats is optional for in progress statuses, but required for final statuses.
 * `token_updates`: A map of uids to tokens for which a token change was detected while harvesting.
   For example, for Twitter a token update would be provided whenever a user's screen name
   changes.
