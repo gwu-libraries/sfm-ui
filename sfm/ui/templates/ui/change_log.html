@@ -38,11 +38,17 @@
     <nav>
     <ul class="pager">
         {% if diffs_page.has_previous %}
-            <li><a href="?page={{ diffs_page.previous_page_number }}">Previous</a></li>
+          <li><a href="?page=1">&laquo;</a></li>
+          <li><a href="?page={{ diffs_page.previous_page_number }}"> Previous</a></li>
         {% endif %}
-        Page {{ diffs_page.number }} of {{ paginator.num_pages }}
+
+        <li class="active">
+          {{ diffs_page.number }} of {{ paginator.num_pages }}
+        </li>
+
         {% if diffs_page.has_next %}
-            <li><a href="?page={{ diffs_page.next_page_number }}">Next</a></li>
+          <li><a href="?page={{ diffs_page.next_page_number }}">Next </a></li>
+          <li><a href="?page={{ paginator.num_pages }}">  &raquo;</a></li>
         {% endif %}
     </ul>
     </nav>
