@@ -36,7 +36,7 @@ consider one of the following configurations:
 Step 2: Install Docker and Docker Compose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See :ref:`install-dependencies`.
+See See :ref:`docker-installing`.
 
 Step 3: Clone the component's repo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -139,57 +139,6 @@ To assist with testing and development, a 5 minute interval can be added by sett
 -------------
  Docker tips
 -------------
-
-Helpful Docker commands
-^^^^^^^^^^^^^^^^^^^^^^^
-
-``docker-compose up -d``
-    Bring up all of the containers specified in the docker-compose.yml file. If a container has not yet been pulled,
-    it will be pulled. If a container has not yet been built it will be built. If a container has been stopped ("killed")
-    it will be re-started. Otherwise, a new container will be created and started ("run").
-
-``docker-compose pull``
-    Pull the latest images for all of the containers specified in the docker-compose.yml file with the `image` field.
-
-``docker-compose build``
-    Build images for all of the containers specified in the docker-compose.yml file with the `build` field. Add ``--no-cache``
-    to re-build the entire image (which you might want to do if the image isn't building as expected).
-
-``docker ps``
-    List running containers. Add ``-a`` to also list stopped containers.
-
-``docker-compose kill``
-    Stop all containers.
-
-``docker kill <container name>``
-    Stop a single container.
-
-``docker-compose rm -v --force``
-    Delete the containers and volumes.
-
-``docker rm -v <container name>``
-    Delete a single container and volume.
-
-``docker rm $(docker ps -a -q) -v``
-    Delete all containers.
-
-``docker-compose logs``
-    List the logs from all containers.
-
-``docker logs <container name>``
-    List the log from a single container.
-
-``docker-compose -f <docker-compose.yml filename> <command>``
-    Use a different docker-compose.yml file instead of the default.
-
-``docker exec -it <container name> /bin/bash``
-    Shell into a container.
-
-``docker rmi <image name>``
-    Delete an image.
-
-``docker rmi $(docker images -q)``
-    Delete all images
 
 Building vs. pulling
 ^^^^^^^^^^^^^^^^^^^^

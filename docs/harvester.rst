@@ -6,14 +6,13 @@
  Requirements
 --------------
 
-* Implement the Messaging Specification (TODO: link once Messaging Spec added to docs)
-  for harvesting social media content.
+* Implement the :doc:`messaging_spec` for harvesting social media content.
   This describes the messages that must be consumed and produced by a harvester.
 * Write harvested social media to a `WARC <http://iipc.github.io/warc-specifications/>`_,
   following all relevant guidelines and best practices. The message for announcing the
   creation of a WARC is described in the Messaging Specification. The WARC file must be
-  written to `<collection path>/<harvest year>/<harvest month>/<harvest day>/<harvest hour>/`,
-  e.g., `/data/test_collection/2015/09/12/19/`. (Collection path is provided in the harvest start
+  written to `<base path>/<harvest year>/<harvest month>/<harvest day>/<harvest hour>/`,
+  e.g., `/data/test_collection/2015/09/12/19/`. (Base path is provided in the harvest start
   message.) Any filename may be used but it must end in `.warc` or `.warc.gz`. It is recommended
   that the filename include the harvest id (with file system unfriendly characters removed) and
   a timestamp of the harvest.
@@ -27,7 +26,7 @@
   must be able to prove that a harvester is up and running. At the very least, the
   smoke tests should check that the queues required by a harvester have been created. (See
   `test_queues() <https://github.com/gwu-libraries/sfm-docker/blob/master/smoke_tests/test_mq.py>`_.)
-* Be responsible for it's own state, e.g., keeping track of the last tweet harvested from a user timeline.
+* Be responsible for its own state, e.g., keeping track of the last tweet harvested from a user timeline.
   See `sfmutils.state_store <https://github.com/gwu-libraries/sfm-utils/blob/sfm_t46-twitter_harvester/sfmutils/state_store.py>`_
   for re-usable approaches to storing state.
 * Create all necessary exchanges, queues, and bindings for producing and consuming messages
@@ -35,14 +34,13 @@
 * Provide master and production Docker images for the harvester on `Docker Hub <https://hub.docker.com/>`_.
   The master image should have the `master` tag and contain the latest code from the master branch.
   (Setup an `automated build <https://docs.docker.com/docker-hub/builds/>`_ to simplify updating the master image.)
-  The production image should have the `latest` tag and contain the latest release code. It is recommended
-  to also create version specific production images, e.g., `1.3.0`. For example, see the Flickr
+  There must be a version specific production images, e.g., `1.3.0` for each release. For example, see the Flickr
   Harvester's `dockerfiles <https://github.com/gwu-libraries/sfm-flickr-harvester/tree/master/docker>`_
   and `Docker Hub repo <https://hub.docker.com/r/gwul/sfm-flickr-harvester/>`_.
 
---------------
+-------------
  Suggestions
---------------
+-------------
 
 * See `sfm-utils <https://github.com/gwu-libraries/sfm-utils>`_ for re-usable harvester
   code. In particular, consider subclassing BaseHarvester.
@@ -59,9 +57,9 @@
 * See the `Twitter harvester unit tests <https://github.com/gwu-libraries/sfm-twitter-harvester/blob/master/tests/__init__.py>`_
   for a pattern on configuring API keys in unit and integration tests.
 
---------------
+-------
  Notes
---------------
+-------
 
 * Harvesters can be written in any programming language.
 * Changes to gwu-libraries/* repos require pull requests. Pull requests are welcome

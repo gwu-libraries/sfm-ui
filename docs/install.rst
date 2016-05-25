@@ -1,12 +1,14 @@
-Installation and configuration
-==============================
+================================
+ Installation and configuration
+================================
 
-Overview
---------
+----------
+ Overview
+----------
 The supported approach for deploying SFM is Docker containers.
 
 Each SFM service will provide images for the containers needed to run the service
-(in the form of ``Dockerfile``s). These images will be published to `Docker Hub <https://hub.docker.com/>`_.
+(in the form of ``Dockerfile`` s). These images will be published to `Docker Hub <https://hub.docker.com/>`_.
 GWU created images will be part of the `GWUL organization <https://hub.docker.com/u/gwul>`_
 and be prefixed with *sfm-*.
 
@@ -24,33 +26,20 @@ there may be the following:
 * *release*:  The container contains a release of the code. There will be a
   separate image for each release.
 
+For more information, see :doc:`docker`.
+
 SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
 reasonable guidance on how to accomplish this.
 
-.. _install-dependencies:
+--------------
+ Dependencies
+--------------
+See :ref:`docker-installing`.
 
-Dependencies
-------------
 
-`Docker Engine <https://www.docker.com/>`_ and `Docker Compose <https://docs.docker.com/compose/>`_
-
-On OS X:
-
-* Install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
-* Be aware that Docker is not running natively on OS X, but rather in a
-  VirtualBox VM.
-
-On Ubuntu:
-
-* If you have difficulties with the ``apt`` install, try the ``pip`` install.
-* The docker group is automatically created. `Adding your user to the docker
-  group <https://docs.docker.com/v1.8/installation/ubuntulinux/#create-a-docker-group>`_
-  avoids having to use sudo to run docker commands. Note that depending on how
-  users/groups are set up, you may need to manually need to add your user to the
-  group in ``/etc/group``.
-
-Configuration
--------------
+---------------
+ Configuration
+---------------
 
 * Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
 * Debug mode for sfm-ui is controlled by the ``DEBUG`` environment variable in ``docker-compose.yml``.
@@ -75,8 +64,9 @@ Configuration
              - /myhost/data:/sfm-data
 
 
-Installation
-------------
+--------------
+ Installation
+--------------
 
 1. Either clone this repository::
 

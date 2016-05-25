@@ -21,6 +21,7 @@ Contents:
    authentication
    credentials
    development
+   docker
    harvester
    messaging
    messaging_spec
