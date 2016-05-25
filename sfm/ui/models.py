@@ -371,6 +371,9 @@ class Warc(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
 
+    @property
+    def harvest_type(self):
+        return self.harvest.harvest_type
 
 class Export(models.Model):
     NOT_REQUESTED = "not requested"
