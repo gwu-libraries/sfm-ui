@@ -31,12 +31,6 @@ For more information, see :doc:`docker`.
 SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
 reasonable guidance on how to accomplish this.
 
---------------
- Dependencies
---------------
-See :ref:`docker-installing`.
-
-
 ---------------
  Configuration
 ---------------
@@ -64,9 +58,11 @@ See :ref:`docker-installing`.
              - /myhost/data:/sfm-data
 
 
---------------
- Installation
---------------
+--------------------
+ Local installation
+--------------------
+
+Installing locally required Docker and Docker-Compose. See :ref:`docker-installing`.
 
 1. Either clone this repository::
 
@@ -82,3 +78,83 @@ or just download ``docker-compose.yml`` and ``example.secrets.env``::
 3. Bring up the containers::
 
     docker-compose up -d
+
+
+-------------------------
+ Amazon EC2 installation
+-------------------------
+To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
+In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
+user details and modify as appropriate::
+
+    #cloud-config
+    repo_update: true
+    repo_upgrade: all
+
+    packages:
+     - python-pip
+
+    runcmd:
+     - curl -sSL https://get.docker.com/ | sh
+     - usermod -aG docker ubuntu
+     - pip install -U docker-compose
+     - mkdir /sfm-data
+    # This brings up master. To bring up a specific version, replace master with the
+    # version number, e.g., 0.6.0.
+     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/master.docker-compose.yml > docker-compose.yml
+     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.secrets.env > secrets.env
+    # Set secrets below. Secrets that are not commented out are required.
+    # Secrets that are commented out are not required. To include, remove the #.
+    # Don't forget to escape $ as \$.
+    # The password used for logging into the Rabbit Admin. Username is sfm_user.
+     - echo RABBITMQ_DEFAULT_PASS=password >> secrets.env
+    # Postgres password.
+     - echo POSTGRES_PASSWORD=password >> secrets.env
+    # The password for the admin account for SFM UI. Username is sfmadmin.
+     - echo SFM_SITE_ADMIN_PASSWORD=password >> secrets.env
+    # The account used to send email via SMTP from SFM UI.
+    # - echo SFM_EMAIL_USER=justinlittman@email.gwu.edu >> secrets.env
+    # - echo SFM_EMAIL_PASSWORD=password >> secrets.env
+    # The password used to log into the Heritrix UI. Username is sfm_user.
+     - echo HERITRIX_PASSWORD=password >> secrets.env
+    # API keys for allowing users to connect to social media platform APIs.
+    # If not provided, credentials can still be provided in SFM UI.
+    # - echo TWITTER_CONSUMER_KEY=EHdoeW7ksBgflP5nUalEfhao >> secrets.env
+    # - echo TWITTER_CONSUMER_SECRET=ZtUemftBkf2cEmaqiyW2Ddihu9FPAiLebuMOmqN0jeQtXeAlen >> secrets.env
+    # - echo WEIBO_API_KEY=1313340598 >> secrets.env
+    # - echo WEIBO_API_SECRET=68ae6a497f2f6eac07ec14bf7c0e0fa52 >> secrets.env
+    # Values must be provided for all of the following.
+    # HERITRIX_CONTACT_URL is included in the HTTP request when harvesting web
+    # resources with Heritrix.
+     - export HERITRIX_CONTACT_URL=http://library.gwu.edu
+    # The following are optional.
+    # The SMTP server used to send email.
+     - export SMTP_HOST=smtp.gmail.com
+    # The email address of the admin account for SFM UI.
+     - export SITE_ADMIN_EMAIL=nowhere@example.com
+    # The time zone.
+     - export TZ=EST
+    # The host name of the server.
+     - export HOST=`curl http://169.254.169.254/latest/meta-data/public-hostname`
+     - sed -i 's/\/sfm-data/"\/sfm-data:\/sfm-data"/' docker-compose.yml
+     - sed -i "s/HERITRIX_CONTACT_URL=http:\/\/library.gwu.edu/HERITRIX_CONTACT_URL=${HERITRIX_CONTACT_URL}/" docker-compose.yml
+     - sed -i "s/SFM_SMTP_HOST=smtp.gmail.com/SFM_SMTP_HOST=${SMTP_HOST}/" docker-compose.yml
+     - sed -i "s/SFM_SITE_ADMIN_EMAIL=nowhere@example.com/SFM_SITE_ADMIN_EMAIL=${SITE_ADMIN_EMAIL}/" docker-compose.yml
+     - sed -i "s/TZ=EST/TZ=${TZ}/g" docker-compose.yml
+     - sed -i "s/SFM_HOST=sfm.gwu.edu:8080/SFM_HOST=${HOST}/" docker-compose.yml
+     - docker-compose up -d
+
+When the instance is launched, SFM will be installed and started.
+
+Note the following:
+
+* Starting up the EC2 instance will take several minutes.
+* This has been tested with *Ubuntu Server 14.04 LTS*, but may work with other AMI types.
+* We don't have recommendations for sizing, but providing multiple processors even for
+  testing/experimentation.
+* If you need to make additional changes to your ``docker-compose.yml``, you can ssh into the EC2 instance
+  and make changes.  ``docker-compose.yml`` and ``secrets.env`` will be in the default user's
+  home directory.
+* Make sure to configure a security group that exposes the proper ports. To see which
+  ports are used by which services, see `master.docker-compose.yml <https://github.com/gwu-libraries/sfm-docker/blob/master/master.docker-compose.yml>`_.
+* To learn more about configuring EC2 instances with user data, see the `AWS user guide <http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html>`_.
