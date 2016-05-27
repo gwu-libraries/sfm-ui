@@ -1,7 +1,7 @@
 amqp==1.4.9
 anyjson==0.3.3
 appdeps==1.0.0
-APScheduler==3.0.2
+APScheduler==3.0.6
 Django==1.8.8
 django-allauth==0.25.2
 django-braces==1.8.1

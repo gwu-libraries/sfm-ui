@@ -32,4 +32,9 @@ class UIConfig(AppConfig):
         if settings.FIVE_MINUTE_SCHEDULE:
             log.debug("Adding 5 minute timer")
             SeedSet.SCHEDULE_CHOICES.append((5, "Every 5 minutes"))
-        start_sched()
+
+        if settings.RUN_SCHEDULER:
+            log.debug("Running scheduler")
+            start_sched()
+        else:
+            log.debug("Not running scheduler")
