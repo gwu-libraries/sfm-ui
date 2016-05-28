@@ -30,7 +30,7 @@ DEBUG = env.get('SFM_DEBUG', 'True') == 'True'
 # Used when DEBUG = False
 # See https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts
 # This will remove ports if provided.
-ALLOWED_HOSTS = (env.get('SFM_HOST', 'localhost').split(":")[0],)
+ALLOWED_HOSTS = (env.get('SFM_HOST', 'localhost').split(":")[0], 'api')
 
 # Application definition
 
