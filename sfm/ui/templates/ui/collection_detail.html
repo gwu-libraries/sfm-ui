@@ -1,68 +1,130 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load ui_extras %}
 {% block title %}
-    {{ collection.name }}
+    {{ collection }}
 {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <ol class="breadcrumb">
-      <li><a href={% url "collection_list" %}>Collections</a></li>
-      <li class="active">{{ collection.name }}</li>
-    </ol>
+      <ol class="breadcrumb">
+          <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+	  <li><a href={% url "collection_set_detail" collection.collection_set.pk %}>{{ collection.collection_set.name }}</a></li>
+	  <li class="active">{{ collection.name }}</a></li>
+      </ol>
   </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-        <div class="page-header">
-            <h1>{{ collection.name }} <a class="btn btn-default" href={% url "collection_update" collection.pk %}>Edit</a></h1>
-        </div>
-    </div>
+   <div class="col-md-12">
+     <div class="page-header">
+        <h1>{{ collection.name }} <a class="btn btn-default" href={% url "collection_update" collection.pk %} {% if collection.is_active %}disabled="disabled"{% endif %} >Edit</a></h1>
+        {% if collection.is_active %}<span class="label label-warning">Pause harvesting to enable editing and adding seeds.</span>{% endif %}
+     </div>
+   </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-    <p>{{ collection.description }}</p>
-    <p><strong>Id:</strong> {{collection.collection_id }}</p>
-    <p><strong>Created:</strong> {{collection.date_added }}</p>
-    <!--  add later <p>Last harvested</p> -->
-    <p><strong>Group:</strong> {{collection.group }}</p>
-    {% if collection.stats %}
-        <p><strong>Stats:</strong><ul>
-            {% for item, count in collection.stats.items %}
-                <li>{{ item }}: {{ count }}</li>
-            {% endfor %}
-        </ul></p>
-    {% endif %}
-    </div>
+   <div class="col-md-12">
+        <p>{{ collection.description }}</p>
+        <p><strong>Id:</strong> {{ collection.collection_id }}</p>
+        <p><strong>Created:</strong> {{ collection.date_added }}</p>
+        <p><strong>Harvest type:</strong> {{ collection.get_harvest_type_display }}</p>
+        <p><strong>Credential: </strong> <a href={% url "credential_detail" collection.credential.pk %}>{{ collection.credential.name }}</a></p>
+	    {{ collection.harvest_options|json }}
+	    {% if collection.schedule_minutes %}
+            <p><strong>Schedule:</strong> {{ collection.get_schedule_minutes_display }}</p>
+            <p><strong>Next harvest</strong> {{ next_run_time }}</p>
+        {% endif %}
+        <p><strong>End date: </strong> {{ collection.end_date }}</p>
+        {% if collection.stats %}
+            <p><strong>Stats:</strong><ul>
+                {% for item, count in collection.stats.items %}
+                    <li>{{item}}: {{count}}</li>
+                {% endfor %}
+            </ul></p>
+        {% endif %}
+   </div>
 </div>
+{% if has_seeds_list %}
 <div class="row">
     <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seedsets</h4></div>
+        <div class="panel-heading"><h4>Seeds</h4></div>
         <div class="panel-body">
             <table class="table">
-              <thead>
+                <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Harvest type</th>
-                  <th>Seeds</th>
-                  <!-- <th>Last harvest</th> -->  
-                  <th>Active</th>
+                    <th>Token</th>
+                    <th>Uid</th>
+                    <th>Active</th>
                 </tr>
-              </thead>    
-            {% for seedset in seedset_list %}
+                </thead>
+                {% for seed in seed_list %}
                 <tr>
-                    <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>
-                    <td>{{ seedset.get_harvest_type_display }}</td>
-                    <!-- last harvest -->
-                    <td>{{ seedset.num_seeds }} seed{{ seedset.num_seeds|pluralize }}</td>
-                    <td>{{ seedset.is_active|yesno:"Yes,No" }}</td>
-                </tr>
-            {% endfor %}
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                    <td>{{ seed.uid }}</td>
+                    <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+				</tr>
+				{% endfor %}
             </table>
-            {% for harvest_type, harvest_label in harvest_types %}
-                <a class="btn btn-primary" value="Add {{ harvest_label }}" href="{% url "seedset_create" collection.id harvest_type %}">Add {{ harvest_label }}</a>
-            {% endfor %}
+            <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active %}disabled="disabled"{% endif %} >Add Seed</a>
+            {% if can_add_bulk_seeds %}
+                <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_active %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+            {% endif %}
         </div>
+    </div>
+</div>
+{% endif %}
+{% if harvests %}
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Harvests</h4> (1-{{ harvests|length }} of {{ harvest_count }})</div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Date requested</th>
+                    <th>Status</th>
+                    <th>Messages</th>
+                </tr>
+                </thead>
+                {% for harvest in harvests %}
+                <tr>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
+                    <td>{{ harvest.date_requested }}</td>
+                    <td>{{ harvest.get_status_display }}</td>
+                    <td>{{ harvest.message_count }} message{{harvest.message_count|pluralize}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% if harvest_count > harvests|length %}
+        <div class="panel-footer"><a href="{% url "collection_harvests" collection.pk %}">View all {{ harvest_count }} harvests</a></div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-md-2">
+        <form method="post" action={% url "collection_toggle_active" collection.pk %}>
+            {% csrf_token %}<p>
+            {% if collection.is_active %}
+                <input type="submit" value="Pause Harvesting" class="btn btn-primary">
+            {% else %}
+                {% if not seed_count_message %}
+                    <input type="submit" value="Start/resume Harvesting" class="btn btn-primary">
+                {% else %}
+                    <input type="submit" value="Start/resume Harvesting" class="btn btn-primary" disabled="disabled">
+                    <span class="label label-warning">{{ seed_count_message }}</span>
+                {% endif %}
+            {% endif %}</p>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+		<p><a class="btn btn-primary" value="Request Export"{% if not can_export %} disabled {% endif %} href="{% url "export_create" collection.id %}">Request Export</a></p>
     </div>
 </div>
 <div class="row">

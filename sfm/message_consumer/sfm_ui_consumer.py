@@ -1,6 +1,6 @@
 import logging
 from sfmutils.consumer import BaseConsumer
-from ui.models import Harvest, SeedSet, Seed, Warc, Export, HarvestStat
+from ui.models import Harvest, Collection, Seed, Warc, Export, HarvestStat
 import json
 from django.core.mail import send_mail
 from django.conf import settings
@@ -62,7 +62,7 @@ class SfmUiConsumer(BaseConsumer):
 
         # Update seeds based on tokens that have changed
         for id, token in self.message.get("token_updates", {}).items():
-            # Try to find seed based on seedset and uid.
+            # Try to find seed based on collection and uid.
             try:
                 seed = Seed.objects.get(seed_id=id)
                 seed.token = token
@@ -74,7 +74,7 @@ class SfmUiConsumer(BaseConsumer):
 
         # Update seeds based on uids that have been returned
         for id, uid in self.message.get("uids", {}).items():
-            # Try to find seed based on seedset and token.
+            # Try to find seed based on collection and token.
             try:
                 seed = Seed.objects.get(seed_id=id)
                 seed.uid = uid
@@ -139,16 +139,16 @@ class SfmUiConsumer(BaseConsumer):
 
                 # Send Status mail
                 if settings.PERFORM_EMAILS:
-                    seed_set = export.seed_set if export.seed_set else export.seeds.first().seed_set
+                    collection = export.collection if export.collection else export.seeds.first().collection
                     mail_message = None
                     mail_subject = None
                     if export.status == 'completed success':
-                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(seed_set.name,
-                                                                                                         export_url)
+                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(collection.name,
+                                                                                                          export_url)
                         mail_subject = "SFM Export is ready"
                     elif export.status == 'completed failure':
                         mail_message = u"Your export of {} failed. You can get more information from {}".format(
-                            seed_set.name, export_url)
+                            collection.name, export_url)
                         mail_subject = "SFM Export failed"
                     else:
                         log.debug("Unhandled export status: %s", export.status)
@@ -173,7 +173,7 @@ class SfmUiConsumer(BaseConsumer):
             harvest = Harvest.objects.create(harvest_type=self.message["type"],
                                              harvest_id=self.message["id"],
                                              parent_harvest=parent_harvest,
-                                             seed_set=parent_harvest.seed_set)
+                                             collection=parent_harvest.collection)
             harvest.save()
         except ObjectDoesNotExist:
             log.error("Harvest model object not found for web harvest status message: %s",

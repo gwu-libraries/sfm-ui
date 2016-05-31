@@ -12,7 +12,7 @@
   following all relevant guidelines and best practices. The message for announcing the
   creation of a WARC is described in the Messaging Specification. The WARC file must be
   written to `<base path>/<harvest year>/<harvest month>/<harvest day>/<harvest hour>/`,
-  e.g., `/data/test_collection/2015/09/12/19/`. (Base path is provided in the harvest start
+  e.g., `/data/test_collection_set/2015/09/12/19/`. (Base path is provided in the harvest start
   message.) Any filename may be used but it must end in `.warc` or `.warc.gz`. It is recommended
   that the filename include the harvest id (with file system unfriendly characters removed) and
   a timestamp of the harvest.

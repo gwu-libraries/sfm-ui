@@ -52,8 +52,8 @@ class HistoricalCredential(a.ModelAdmin):
     search_fields = ['user', 'platform', 'token', 'is_active', 'date_added']
 
 
-class Collection(a.ModelAdmin):
-    fields = ('collection_id', 'group', 'name', 'description', 'is_visible',
+class CollectionSet(a.ModelAdmin):
+    fields = ('collection_set_id', 'group', 'name', 'description', 'is_visible',
               'date_added', 'history_note')
     list_display = ['group', 'name', 'description', 'is_visible',
                     'date_added', 'date_updated']
@@ -63,8 +63,8 @@ class Collection(a.ModelAdmin):
                      'is_visible', 'date_added', 'date_updated']
 
 
-class HistoricalCollection(a.ModelAdmin):
-    fields = ('history_user', 'history_date', 'history_note', 'collection_id', 'group', 'name',
+class HistoricalCollectionSet(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note', 'collection_set_id', 'group', 'name',
               'description', 'is_visible', 'date_added')
     list_display = ['group', 'name', 'description', 'is_visible',
                     'date_added', 'date_updated']
@@ -74,64 +74,64 @@ class HistoricalCollection(a.ModelAdmin):
                      'is_visible', 'date_added', 'date_updated']
 
 
-class SeedSet(a.ModelAdmin):
-    fields = ('seedset_id', 'collection', 'credential', 'harvest_type', 'name',
+class Collection(a.ModelAdmin):
+    fields = ('collection_id', 'collection_set', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
               'date_added', 'end_date', 'history_note')
-    list_display = ['collection', 'credential', 'harvest_type', 'name',
+    list_display = ['collection_set', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'harvest_options',
                     'date_added', 'end_date']
-    list_filter = ['collection', 'credential', 'harvest_type', 'name',
+    list_filter = ['collection_set', 'credential', 'harvest_type', 'name',
                    'description', 'is_active', 'harvest_options',
                    'date_added', 'end_date']
-    search_fields = ['collection', 'credential', 'harvest_type', 'name',
+    search_fields = ['collection_set', 'credential', 'harvest_type', 'name',
                      'description', 'is_active',
                      'harvest_options', 'date_added', 'end_date']
 
 
-class HistoricalSeedSet(a.ModelAdmin):
-    fields = ('history_user', 'history_date', 'history_note', 'collection', 'credential', 'harvest_type', 'name',
+class HistoricalCollection(a.ModelAdmin):
+    fields = ('history_user', 'history_date', 'history_note', 'collection_set', 'credential', 'harvest_type', 'name',
               'description', 'is_active', 'schedule_minutes', 'harvest_options',
               'date_added', 'end_date')
-    list_display = ['collection', 'credential', 'harvest_type', 'name',
+    list_display = ['collection_set', 'credential', 'harvest_type', 'name',
                     'description', 'is_active', 'harvest_options',
                     'date_added', 'end_date']
-    list_filter = ['collection', 'credential', 'harvest_type', 'name',
+    list_filter = ['collection_set', 'credential', 'harvest_type', 'name',
                    'description', 'is_active', 'harvest_options',
                    'date_added', 'end_date']
-    search_fields = ['collection', 'credential', 'harvest_type', 'name',
+    search_fields = ['collection_set', 'credential', 'harvest_type', 'name',
                      'description', 'is_active',
                      'harvest_options', 'date_added', 'end_date']
 
 
 class Seed(a.ModelAdmin):
-    fields = ('seed_id', 'seed_set', 'token', 'uid', 'is_active',
+    fields = ('seed_id', 'collection', 'token', 'uid', 'is_active',
               'is_valid', 'date_added', 'history_note')
-    list_display = ['seed_set', 'token', 'uid', 'is_active',
+    list_display = ['collection', 'token', 'uid', 'is_active',
                     'is_valid', 'date_added', 'date_updated']
-    list_filter = ['seed_set', 'token', 'uid', 'is_active',
+    list_filter = ['collection', 'token', 'uid', 'is_active',
                    'is_valid', 'date_added', 'date_updated']
-    search_fields = ['seed_set', 'token', 'uid', 'is_active',
+    search_fields = ['collection', 'token', 'uid', 'is_active',
                      'is_valid', 'date_added', 'date_updated']
 
 
 class HistoricalSeed(a.ModelAdmin):
-    fields = ('history_user', 'history_date', 'history_note', 'seed_id', 'seed_set', 'token', 'uid', 'is_active',
+    fields = ('history_user', 'history_date', 'history_note', 'seed_id', 'collection', 'token', 'uid', 'is_active',
               'is_valid', 'date_added')
-    list_display = ['seed_set', 'token', 'uid', 'is_active',
+    list_display = ['collection', 'token', 'uid', 'is_active',
                     'is_valid', 'date_added', 'date_updated']
-    list_filter = ['seed_set', 'token', 'uid', 'is_active',
+    list_filter = ['collection', 'token', 'uid', 'is_active',
                    'is_valid', 'date_added', 'date_updated']
-    search_fields = ['seed_set', 'token', 'uid', 'is_active',
+    search_fields = ['collection', 'token', 'uid', 'is_active',
                      'is_valid', 'date_added', 'date_updated']
 
 
 class Harvest(a.ModelAdmin):
     fields = (
-       'harvest_type', 'harvest_id', 'historical_seed_set', 'historical_seeds', 'historical_credential',
+       'harvest_type', 'harvest_id', 'historical_collection', 'historical_seeds', 'historical_credential',
        'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended',
        'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
-    list_display = ['harvest_type', 'id', 'harvest_id', 'historical_seed_set', 'status', 'date_requested',
+    list_display = ['harvest_type', 'id', 'harvest_id', 'historical_collection', 'status', 'date_requested',
                     'date_updated']
     list_filter = ['harvest_type', 'status', 'date_requested', 'date_updated']
     search_fields = ['id', 'harvest_id']
@@ -158,7 +158,7 @@ class Warc(a.ModelAdmin):
 
 class Export(a.ModelAdmin):
     fields = (
-       'user', 'seed_set', 'seeds', 'export_id', 'export_type', 'export_format',
+       'user', 'collection', 'seeds', 'export_id', 'export_type', 'export_format',
        'status', 'path', 'date_requested', 'date_started', 'date_ended', 'dedupe',
        'item_date_start', 'item_date_end', 'harvest_date_start', 'harvest_date_end',
        'infos', 'warnings', 'errors')
@@ -168,10 +168,10 @@ class Export(a.ModelAdmin):
 
 a.site.register(m.Credential, Credential)
 a.site.register(m.HistoricalCredential, HistoricalCredential)
+a.site.register(m.CollectionSet, CollectionSet)
+a.site.register(m.HistoricalCollectionSet, HistoricalCollectionSet)
 a.site.register(m.Collection, Collection)
 a.site.register(m.HistoricalCollection, HistoricalCollection)
-a.site.register(m.SeedSet, SeedSet)
-a.site.register(m.HistoricalSeedSet, HistoricalSeedSet)
 a.site.register(m.Seed, Seed)
 a.site.register(m.HistoricalSeed, HistoricalSeed)
 a.site.register(m.Harvest, Harvest)

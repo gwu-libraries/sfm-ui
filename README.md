@@ -26,9 +26,9 @@ The full Social Feed Manager is made up of several component repositories:
 
 ## sfm-ui is a Django app which: 
 
-- Provides a user interface to set up Collections, Seed Sets, and Seeds
+- Provides a user interface to set up Collection Sets, Collections, and Seeds
 - Provides Django admin views to administer Credentials, Groups, and other model entities.
-- Publishes harvest.start messages for flickr SeedSets.  The app schedules harvest.start messages for publication when the user updates an existing, active SeedSet.
+- Publishes harvest.start messages for flickr collections.  The app schedules harvest.start messages for publication when the user updates an existing, active Collection.
 - Includes a scheduler which uses [apscheduler](http://apscheduler.readthedocs.org) to schedule publication of harvest.start messages.
 - Binds to `harvest.status.*(.*)` messages and creates a Harvest object (visible in the admin views) for each harvest status message received.  The message consumer is started via the `startconsumer` management command.
 

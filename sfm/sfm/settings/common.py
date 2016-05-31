@@ -159,7 +159,7 @@ REST_FRAMEWORK = {
 # Directory where SFM data (e.g., harvested WARCs) is stored.
 SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
 
-# Whether to register receivers on SeedSet for scheduling harvests.
+# Whether to register receivers on Collection for scheduling harvests.
 SCHEDULE_HARVESTS = True
 
 # Whether to register receivers on Export for performing exports.

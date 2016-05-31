@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+     Edit {{ collection_set }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <ol class="breadcrumb">
+      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+      <li>{{ collection_set.name }}</li>
+      <li class="active">Edit</a>
+    </ol>
+  </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+            <h1>{{ collection_set.name }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+    {% crispy form %} 
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Collections</h4></div>
+        <div class="panel-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Harvest type</th>
+                  <th>Seeds</th>
+                  <!-- <th>Last harvested</th> -->
+                  <th>Active</th>
+                </tr>
+              </thead>
+            {% for collection in collection_list %}
+                <tr>
+                    <td><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></td>
+                    <td>{{ collection.harvest_type }}</td>
+                    <td>{{ collection.num_seeds }} seed{{ collection.num_seeds|pluralize }}</td>
+                    <!-- <td>date of most recent harvest among collections</td> -->
+                    <td>{{ collection.is_active|yesno:"Yes,No" }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+            <button class="btn btn-primary disabled">Add Collection</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

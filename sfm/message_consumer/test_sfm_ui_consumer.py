@@ -1,10 +1,11 @@
 from django.test import TestCase
-from ui.models import Harvest, SeedSet, Group, Collection, Credential, User, Seed, Warc, Export, HarvestStat
+from ui.models import Harvest, Collection, Group, CollectionSet, Credential, User, Seed, Warc, Export, HarvestStat
 import json
 from sfm_ui_consumer import SfmUiConsumer
 import iso8601
 
 from datetime import date
+
 
 class ConsumerTest(TestCase):
     def setUp(self):
@@ -12,25 +13,25 @@ class ConsumerTest(TestCase):
         user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
                                              password="test_password")
         group = Group.objects.create(name="test_group")
-        collection = Collection.objects.create(group=group, name="test_collection")
+        collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
         credential = Credential.objects.create(user=user, platform="test_platform",
                                                token=json.dumps({}))
-        seed_set = SeedSet.objects.create(collection=collection, credential=credential,
-                                          harvest_type="test_type", name="test_seedset",
-                                          harvest_options=json.dumps({}))
-        Seed.objects.create(seed_set=seed_set, uid="131866249@N02", seed_id='1')
-        Seed.objects.create(seed_set=seed_set, token="library_of_congress", seed_id='2')
-        historical_seed_set = seed_set.history.all()[0]
-        historical_credential = historical_seed_set.credential.history.all()[0]
+        collection = Collection.objects.create(collection_set=collection_set, credential=credential,
+                                               harvest_type="test_type", name="test_collection",
+                                               harvest_options=json.dumps({}))
+        Seed.objects.create(collection=collection, uid="131866249@N02", seed_id='1')
+        Seed.objects.create(collection=collection, token="library_of_congress", seed_id='2')
+        historical_collection = collection.history.all()[0]
+        historical_credential = historical_collection.credential.history.all()[0]
 
         self.harvest = Harvest.objects.create(harvest_id="test:1",
-                                              seed_set=seed_set,
-                                              historical_seed_set=historical_seed_set,
+                                              collection=collection,
+                                              historical_collection=historical_collection,
                                               historical_credential=historical_credential)
         # Creating a second harvest to make sure that harvest stats don't conflict
         harvest2 = Harvest.objects.create(harvest_id="test:2",
-                                          seed_set=seed_set,
-                                          historical_seed_set=historical_seed_set,
+                                          collection=collection,
+                                          historical_collection=historical_collection,
                                           historical_credential=historical_credential)
         HarvestStat.objects.create(harvest=harvest2, item="photos", count=3, harvest_date=date(2016, 5, 20))
         Export.objects.create(export_id="test:2", user=user, export_type="test_type")
@@ -149,16 +150,16 @@ class ConsumerTest(TestCase):
         self.consumer.routing_key = "warc_created"
         self.consumer.message = {
             "warc": {
-                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection/2015/07/28/11/" +
-                        "test_collection-flickr-2015-07-28T11:17:36Z.warc.gz",
+                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection_set/2015/07/28/11/" +
+                        "test_collection_set-flickr-2015-07-28T11:17:36Z.warc.gz",
                 "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
                 "bytes": 26146,
                 "id": "test_collection-flickr-2015-07-28T11:17:36Z",
                 "date_created": "2015-07-28T11:17:36.640178"
             },
-            "collection": {
-                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection",
-                "id": "test_collection"
+            "collection_set": {
+                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection_set",
+                "id": "test_collection_set"
             },
             "harvest": {
                 "id": "test:1",
@@ -210,9 +211,8 @@ class ConsumerTest(TestCase):
                     "token": "http://www.gwu.edu/"
                 }
             ],
-            "collection": {
-                "id": "test_collection",
-                "path": "/tmp/test_collection"
+            "collection_set": {
+                "id": "test_collection_set",
             }
         }
 

@@ -10,17 +10,17 @@
             {% if model_name == "credential" %}
                 <li><a href="{% url 'credential_list' %}">Credentials</a></li>
                 <li><a href="{% url 'credential_detail' item.id %}">{{ name }}</a></li>
+            {% elif model_name == "collection_set" %}
+                <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+                <li><a href="{% url 'collection_set_detail' item.id %}">{{ name }}</a></li>
             {% elif model_name == "collection" %}
-                <li><a href="{% url 'collection_list' %}">Collections</a></li>
+                <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+                <li><a href="{% url 'collection_set_detail' item.collection_set.id %}">{{ item.collection_set.name }}</a></li>
                 <li><a href="{% url 'collection_detail' item.id %}">{{ name }}</a></li>
-            {% elif model_name == "seedset" %}
-                <li><a href="{% url 'collection_list' %}">Collections</a></li>
-                <li><a href="{% url 'collection_detail' item.collection.id %}">{{ item.collection.name }}</a></li>
-                <li><a href="{% url 'seedset_detail' item.id %}">{{ name }}</a></li>
             {% elif model_name == "seed" %}
-                <li><a href="{% url 'collection_list' %}">Collections</a></li> 
-                <li><a href="{% url 'collection_detail' item.seed_set.collection.id %}">{{ item.seed_set.collection.name }}</a></li>
-                <li><a href="{% url 'seedset_detail' item.seed_set.id %}">{{ item.seed_set.name }}</a></li>
+                <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+                <li><a href="{% url 'collection_set_detail' item.collection.collection_set.id %}">{{ item.collection.collection_set.name }}</a></li>
+                <li><a href="{% url 'collection_detail' item.collection.id %}">{{ item.collection.name }}</a></li>
                 <li><a href="{% url 'seed_detail' item.id %}">{{ name }}</a></li>
             {% endif %}
             <li class="active">Change Log</li>

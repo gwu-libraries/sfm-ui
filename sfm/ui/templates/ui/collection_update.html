@@ -1,55 +1,56 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-     Edit {{ collection }}
+    Update {{ collection }}
 {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-      <li><a href={% url "collection_list" %}>Collections</a></li>
-      <li>{{ collection.name }}</li>
-      <li class="active">Edit</a>
+      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+      <li><a href={% url "collection_set_detail" collection.collection_set.pk %}>{{ collection.collection_set.name }}</a></li>
+      <li class="active">{{ collection.name }}</a></li>
     </ol>
   </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-            <h1>{{ collection.name }}</h1>
+  <div class="col-md-12">
+    <div class="page-header">
+      <h1>{{ collection.name }}</h1>
     </div>
+  </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-    {% crispy form %} 
-    </div>
+  <div class="col-md-12">
+    {% crispy form %}
+  </div>
 </div>
+{% if has_seeds_list %}
 <div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seedsets</h4></div>
-        <div class="panel-body">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Harvest type</th>
-                  <th>Seeds</th>
-                  <!-- <th>Last harvested</th> -->
-                  <th>Active</th>
-                </tr>
-              </thead>
-            {% for seedset in seedset_list %}
-                <tr>
-                    <td><a href={% url "seedset_detail" seedset.pk %}>{{ seedset.name }}</a></td>
-                    <td>{{ seedset.harvest_type }}</td>
-                    <td>{{ seedset.num_seeds }} seed{{ seedset.num_seeds|pluralize }}</td>
-                    <!-- <td>date of most recent harvest among seedsets</td> -->
-                    <td>{{ seedset.is_active|yesno:"Yes,No" }}</td>
-                </tr>
-            {% endfor %}
-            </table>
-            <button class="btn btn-primary disabled">Add Seedset</button>
-        </div>
+  <div class="panel panel-default">
+    <div class="panel-heading"><h4>Seeds</h4></div>
+       <div class="panel-body">
+         <table class="table">
+           <thead>
+             <tr>
+	       <th>Token</th>
+	       <th>uid</th>
+	       <th>Next harvest</th>
+	       <th>Active</th>
+             </tr>
+            </thead>
+          {% for seed in seed_list %}
+	     <tr>
+	       <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token }}</a></td>
+	       <td>{{ seed.uid }}</td>
+	       <td></td>
+	       <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+             </tr>
+          {% endfor %}
+           </table>
+       </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
