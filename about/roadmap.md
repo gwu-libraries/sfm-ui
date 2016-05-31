@@ -11,8 +11,9 @@ ads: false
 (as of May 2016)
 
 ## Pre-release 1.0
+(see [milestone release notes](https://github.com/gwu-libraries/sfm-ui/releases))
 
-### Completed development, up through milestone 0.6.0 (see [release notes](https://github.com/gwu-libraries/sfm-ui/releases)), includes:
+### Completed development, up through milestone 0.6.0, includes:
 * Models for collections, seedsets, seeds, credentials, harvests, users, and groups
 * Support for harvesting to WARCs
 * Harvester: Twitter filter
@@ -48,7 +49,7 @@ ads: false
 
 ### Milestone 0.6.1
 * Changing naming of Collection and SeedSet to Collection Set and Collection. This terminology better describes harvesters that do not require seeds, such as 
- the Twitter sample stream and filter stream
+ the Twitter sample stream and filter stream.
 
 ### Milestone 0.6.2
 * UI: General improvements to screens and workflow
