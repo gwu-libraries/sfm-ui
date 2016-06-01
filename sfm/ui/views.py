@@ -560,7 +560,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ChangeLogView, self).get_context_data(**kwargs)
         item_id = self.kwargs["item_id"]
-        model_name = self.kwargs["model"]
+        model_name = self.kwargs["model"].replace("_","")
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
         context["item"] = item
