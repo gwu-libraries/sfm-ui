@@ -571,7 +571,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
         diffs_page = paginator.page(page)
         context["paginator"] = paginator
         context["diffs_page"] = diffs_page
-        context["model_name"] = model_name
+        context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name
         except:
