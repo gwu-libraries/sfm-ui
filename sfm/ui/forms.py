@@ -321,22 +321,40 @@ class CollectionFlickrUserForm(BaseCollectionForm):
 
 
 class CollectionWeiboTimelineForm(BaseCollectionForm):
+    SIZE_OPTIONS = (
+        ("Thumbnail", "Thumbnail"),
+        ("Medium", "Medium"),
+        ("Large", "Large")
+    )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
+                                      help_text="For harvesting images, select the image sizes.",
+                                      widget=forms.CheckboxSelectMultiple, label="Image sizes")
+    web_resources_option = forms.BooleanField(initial=False, required=False,
+                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
+                                                        "weibo texts.",
+                                              label="Web resources")
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].append('incremental')
+        self.helper.layout[0][3].extend(('incremental', 'web_resources_option', 'sizes'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
+            if "sizes" in harvest_options:
+                self.fields['sizes'].initial = harvest_options["sizes"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionWeiboTimelineForm, self).save(commit=False)
         m.harvest_type = Collection.WEIBO_TIMELINE
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"]
+            "incremental": self.cleaned_data["incremental"],
+            "sizes": self.cleaned_data["sizes"],
+            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
