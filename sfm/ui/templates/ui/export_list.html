@@ -18,9 +18,9 @@
         <th>Status</th>
         <th>Date Requested</th>
       </thead>
-     {% for collection, seedset, export in export_list %}
+     {% for collection_set, collection, export in export_list %}
        <tr>
-        <td><a href={% url "export_detail" export.pk %}>{{ collection.name }} > {{ seedset.name }}</a></td>
+        <td><a href={% url "export_detail" export.pk %}>{{ collection_set.name }} > {{ collection.name }}</a></td>
         <td>{{ export.status }} </td>
         <td>{{ export.date_requested }}</td>
        </tr>

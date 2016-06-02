@@ -6,7 +6,27 @@ from . import views
 urlpatterns = patterns('',
                        url(r'^$', views.HomeView.as_view(), name="home"),
 
-                       url(r'^collections/create/$',
+                       url(r'^collection_sets/create/$',
+                           views.CollectionSetCreateView.as_view(),
+                           name="collection_set_create"),
+
+                       url(r'^collection_sets/(?P<pk>\d+)/update/$',
+                           views.CollectionSetUpdateView.as_view(),
+                           name="collection_set_update"),
+
+                       url(r'^collection_sets/(?P<pk>\d+)/stats/(?P<item>.+?)/(?P<period>.*)/$',
+                           views.collection_set_stats,
+                           name='collection_set_stats'),
+
+                       url(r'^collection_sets/(?P<pk>\d+)/$',
+                           views.CollectionSetDetailView.as_view(),
+                           name="collection_set_detail"),
+
+                       url(r'^collection_sets/$',
+                           views.CollectionSetListView.as_view(),
+                           name="collection_set_list"),
+
+                       url(r'^collections/(?P<collection_set_pk>\d+)/(?P<harvest_type>.+)/create/$',
                            views.CollectionCreateView.as_view(),
                            name="collection_create"),
 
@@ -14,51 +34,27 @@ urlpatterns = patterns('',
                            views.CollectionUpdateView.as_view(),
                            name="collection_update"),
 
+                       url(r'^collections/(?P<pk>\d+)/toggle/$',
+                           views.CollectionToggleActiveView.as_view(),
+                           name="collection_toggle_active"),
+
                        url(r'^collections/(?P<pk>\d+)/delete/$',
                            views.CollectionDeleteView.as_view(),
                            name="collection_delete"),
-
-                       url(r'^collections/(?P<pk>\d+)/stats/(?P<item>.+?)/(?P<period>.*)/$',
-                           views.collection_stats,
-                           name='collection_stats'),
 
                        url(r'^collections/(?P<pk>\d+)/$',
                            views.CollectionDetailView.as_view(),
                            name="collection_detail"),
 
-                       url(r'^collections/$',
-                           views.CollectionListView.as_view(),
-                           name="collection_list"),
-
-                       url(r'^seedsets/(?P<collection_pk>\d+)/(?P<harvest_type>.+)/create/$',
-                           views.SeedSetCreateView.as_view(),
-                           name="seedset_create"),
-
-                       url(r'^seedsets/(?P<pk>\d+)/update/$',
-                           views.SeedSetUpdateView.as_view(),
-                           name="seedset_update"),
-
-                       url(r'^seedsets/(?P<pk>\d+)/toggle/$',
-                           views.SeedSetToggleActiveView.as_view(),
-                           name="seedset_toggle_active"),
-
-                       url(r'^seedsets/(?P<pk>\d+)/delete/$',
-                           views.SeedSetDeleteView.as_view(),
-                           name="seedset_delete"),
-
-                       url(r'^seedsets/(?P<pk>\d+)/$',
-                           views.SeedSetDetailView.as_view(),
-                           name="seedset_detail"),
-
-                       url(r'^seedsets/(?P<pk>\d+)/harvests/$',
+                       url(r'^collections/(?P<pk>\d+)/harvests/$',
                            views.HarvestListView.as_view(),
-                           name="seedset_harvests"),
+                           name="collection_harvests"),
 
-                       url(r'^seeds/create/(?P<seed_set_pk>\d+)$',
+                       url(r'^seeds/create/(?P<collection_pk>\d+)$',
                            views.SeedCreateView.as_view(),
                            name="seed_create"),
 
-                       url(r'^seeds/bulk/(?P<seed_set_pk>\d+)$',
+                       url(r'^seeds/bulk/(?P<collection_pk>\d+)$',
                            views.BulkSeedCreateView.as_view(),
                            name="bulk_seed_create"),
 
@@ -98,7 +94,7 @@ urlpatterns = patterns('',
                            views.ExportListView.as_view(),
                            name="export_list"),
 
-                       url(r'^exports/create/(?P<seedset_pk>\d+)$',
+                       url(r'^exports/create/(?P<collection_pk>\d+)$',
                            views.ExportCreateView.as_view(),
                            name="export_create"),
 

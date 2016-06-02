@@ -32,10 +32,10 @@ def request_export(export):
         log.debug("Export %s already requested", export.export_id)
         return
 
-    # Return if no seeds or seed sets. Many-to-many like seeds are added after save.
+    # Return if no seeds or collections. Many-to-many like seeds are added after save.
     # Will wait for m2m_changed to request export.
-    if not export.seed_set and not export.seeds.all():
-        log.debug("No seeds or seed sets yet")
+    if not export.collection and not export.seeds.all():
+        log.debug("No seeds or collections yet")
         return
 
     message = {
@@ -47,14 +47,14 @@ def request_export(export):
     }
 
     platform = None
-    if export.seed_set:
-        message["seedset"] = {"id": export.seed_set.seedset_id}
-        platform = export.seed_set.credential.platform
+    if export.collection:
+        message["collection"] = {"id": export.collection.collection_id}
+        platform = export.collection.credential.platform
 
     seeds = []
     for seed in export.seeds.all():
         seeds.append({"id": seed.seed_id, "uid": seed.uid})
-        platform = seed.seed_set.credential.platform
+        platform = seed.collection.credential.platform
     if seeds:
         message["seeds"] = seeds
 

@@ -9,7 +9,6 @@ from django.conf import settings
 
 import uuid
 import datetime
-import pytz
 import logging
 
 log = logging.getLogger(__name__)
@@ -85,11 +84,11 @@ class Credential(models.Model):
 
 
 @python_2_unicode_compatible
-class Collection(models.Model):
-    collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    group = models.ForeignKey(Group, related_name='collections')
+class CollectionSet(models.Model):
+    collection_set_id = models.CharField(max_length=32, unique=True, default=default_uuid)
+    group = models.ForeignKey(Group, related_name='collection_sets')
     name = models.CharField(max_length=255, blank=False,
-                            verbose_name='Collection name')
+                            verbose_name='Collection set name')
     description = models.TextField(blank=True)
     is_visible = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
@@ -101,7 +100,7 @@ class Collection(models.Model):
         diff_fields = ("group", "name", "description")
 
     def __str__(self):
-        return '<Collection %s "%s">' % (self.id, self.name)
+        return '<Collection Set %s "%s">' % (self.id, self.name)
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
@@ -111,15 +110,15 @@ class Collection(models.Model):
         Returns a dict of items to count.
         """
         return _item_counts_to_dict(
-            HarvestStat.objects.filter(harvest__seed_set__collection=self).values("item").annotate(
+            HarvestStat.objects.filter(harvest__collection__collection_set=self).values("item").annotate(
                 count=models.Sum("count")))
 
     def stats_items(self):
         """
-        Returns a list of items type that have been harvested for this collection.
+        Returns a list of items type that have been harvested for this collection set.
         """
         return list(
-            HarvestStat.objects.filter(harvest__seed_set__collection=self).values_list("item", flat=True).distinct())
+            HarvestStat.objects.filter(harvest__collection__collection_set=self).values_list("item", flat=True).distinct())
 
     def item_stats(self, item, days=7, end_date=None):
         """
@@ -137,11 +136,11 @@ class Collection(models.Model):
 
         if days:
             start_date = end_date - datetime.timedelta(days=days-1)
-            date_counts = HarvestStat.objects.filter(harvest__seed_set__collection=self, item=item,
+            date_counts = HarvestStat.objects.filter(harvest__collection__collection_set=self, item=item,
                                                      harvest_date__gte=start_date).order_by(
                 "harvest_date").values("harvest_date").annotate(count=models.Sum("count"))
         else:
-            date_counts = HarvestStat.objects.filter(harvest__seed_set__collection=self, item=item).order_by(
+            date_counts = HarvestStat.objects.filter(harvest__collection__collection_set=self, item=item).order_by(
                 "harvest_date").values("harvest_date").annotate(count=models.Sum("count"))
             if len(date_counts) > 0:
                 days = (end_date - date_counts[0]["harvest_date"]).days + 1
@@ -160,7 +159,7 @@ class Collection(models.Model):
         return stats
 
 @python_2_unicode_compatible
-class SeedSet(models.Model):
+class Collection(models.Model):
     TWITTER_SEARCH = 'twitter_search'
     TWITTER_FILTER = "twitter_filter"
     TWITTER_USER_TIMELINE = 'twitter_user_timeline'
@@ -199,9 +198,9 @@ class SeedSet(models.Model):
         WEIBO_TIMELINE: Credential.WEIBO
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
-    seedset_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    collection = models.ForeignKey(Collection, related_name='seed_sets')
-    credential = models.ForeignKey(Credential, related_name='seed_sets')
+    collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
+    collection_set = models.ForeignKey(CollectionSet, related_name='collections')
+    credential = models.ForeignKey(Credential, related_name='collections')
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -219,11 +218,11 @@ class SeedSet(models.Model):
 
     class Meta:
         diff_fields = (
-            "collection", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
+            "collection_set", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
             "harvest_options", "end_date")
 
     def __str__(self):
-        return '<SeedSet %s "%s">' % (self.id, self.name)
+        return '<Collection %s "%s">' % (self.id, self.name)
 
     def required_seed_count(self):
         """
@@ -251,14 +250,14 @@ class SeedSet(models.Model):
         """
         Returns True if a streaming harvest type.
         """
-        return self.harvest_type in SeedSet.STREAMING_HARVEST_TYPES
+        return self.harvest_type in Collection.STREAMING_HARVEST_TYPES
 
     def stats(self):
         """
         Returns a dict of items to count.
         """
         return _item_counts_to_dict(
-            HarvestStat.objects.filter(harvest__seed_set=self).values("item").annotate(count=models.Sum("count")))
+            HarvestStat.objects.filter(harvest__collection=self).values("item").annotate(count=models.Sum("count")))
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
@@ -273,7 +272,7 @@ def _item_counts_to_dict(item_counts):
 
 @python_2_unicode_compatible
 class Seed(models.Model):
-    seed_set = models.ForeignKey(SeedSet, related_name='seeds')
+    collection = models.ForeignKey(Collection, related_name='seeds')
     seed_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     token = models.TextField(blank=True)
     uid = models.TextField(blank=True)
@@ -308,12 +307,12 @@ class Harvest(models.Model):
         (STOP_REQUESTED, "Stop requested")
     )
     harvest_type = models.CharField(max_length=255)
-    historical_seed_set = models.ForeignKey(HistoricalSeedSet, related_name='historical_harvests', null=True)
+    historical_collection = models.ForeignKey(HistoricalCollection, related_name='historical_harvests', null=True)
     historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     harvest_type = models.CharField(max_length=255)
-    seed_set = models.ForeignKey(SeedSet, related_name='harvests')
+    collection = models.ForeignKey(Collection, related_name='harvests')
     parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
@@ -375,6 +374,7 @@ class Warc(models.Model):
     def harvest_type(self):
         return self.harvest.harvest_type
 
+
 class Export(models.Model):
     NOT_REQUESTED = "not requested"
     REQUESTED = "requested"
@@ -396,7 +396,7 @@ class Export(models.Model):
         ("dehydrate", "Text file of identifiers (dehydrate)")
     )
     user = models.ForeignKey(User, related_name='exports')
-    seed_set = models.ForeignKey(SeedSet, blank=True, null=True)
+    collection = models.ForeignKey(Collection, blank=True, null=True)
     seeds = models.ManyToManyField(Seed, blank=True)
     export_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     export_type = models.CharField(max_length=255)

@@ -108,15 +108,15 @@ Harvest start messages specify for a harvester the details of a harvest. Example
     {
         "id": "sfmui:45",
         "type": "flickr_user",
-        "path": "/tmp/test_collection/collection_id/seedset_id",
+        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
         "seeds": [
             {
-                "id": "seed_id_1",
+                "id": "a36fe186fbfa47a89dbb0551e1f0f181",
                 "token": "justin.littman",
                 "uid": "131866249@N02"
             },
             {
-                "id": "seed_id_2",
+                "id": "ab0a4d9369324901a890ec85f00194ac",
                 "token": "library_of_congress"
             }
         ],
@@ -127,8 +127,8 @@ Harvest start messages specify for a harvester the details of a harvest. Example
             "key": "abddfe6fb8bba36e8ef0278ec65dbbc8",
             "secret": "1642649c54cc3ebe"
         },
-        "collection": {
-            "id": "test_collection"
+        "collection_set": {
+            "id": "3989a5f99e41487aaef698680537c3f5"
         }
     }
 
@@ -137,14 +137,14 @@ Another example::
     {
         "id": "test:1",
         "type": "twitter_search",
-        "path": "/tmp/test_collection/collection_id/seedset_id",
+        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
         "seeds": [
             {
-                "id": "seed_id_3",
+                "id": "32786222ef374eb38f1c5d56321c99e8",
                 "token": "gwu"
             },
             {
-                "id": "seed_id_4",
+                "id": "0e789cddd0fb41b5950f569676702182",
                 "token": "gelman"
             }
         ],
@@ -154,8 +154,8 @@ Another example::
             "access_token": "481186914-c2yZjgbk13np0Z5MWEFQKSQNFBXd8T9r4k90YkJl",
             "access_token_secret": "jK9QOmn5Vbbmfg2ANT6KgfmKRqV8ThXVQ1G6qQg8BCejvp"
         },
-        "collection": {
-            "id": "test_collection"
+        "collection_set": {
+            "id": "3989a5f99e41487aaef698680537c3f5"
         }
     }
 
@@ -171,7 +171,7 @@ Another example::
   different than the seeds for a twitter user timeline.)
 * `credentials`: All credentials that are necessary to access the social media platform.
   Credentials is a name/value map; the contents are specific to a social media platform.
-* `path`: The base path for the seed set.
+* `path`: The base path for the collection.
 
 Web resource harvest start message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -184,19 +184,19 @@ other harvest start messages, with the differences noted below. Example::
         "id": "flickr:45",
         "parent_id": "sfmui:45",
         "type": "web",
-        "path": "/tmp/test_collection/collection_id/seedset_id",
+        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
         "seeds": [
             {
-                "id": "seed_id_5",
+                "id": "3724fd97e85345ee84f5175eee09748d",
                 "token": "http://www.gwu.edu/"
             },
             {
-                "id": "seed_id_6",
+                "id": "aba6033aafce4fbabd846026ca47f13e",
                 "token": "http://library.gwu.edu/"
             }
         ],
-        "collection": {
-            "id": "test_collection"
+        "collection_set": {
+            "id": "3989a5f99e41487aaef698680537c3f5"
         }
     }
 
@@ -238,10 +238,10 @@ it performs. Example::
             },
         },
         "token_updates": {
-            "seed_id_1": "j.littman"
+            "a36fe186fbfa47a89dbb0551e1f0f181": "j.littman"
         },
         "uids": {
-            "seed_id_2": "671366249@N03"
+            "ab0a4d9369324901a890ec85f00194ac": "671366249@N03"
         },
         "warcs": {
             "count": 3
@@ -274,17 +274,17 @@ created during a harvest. Example::
 
     {
         "warc": {
-            "path": "tmp/collection/test_collection/seedset_id/2015/07/28/11/harvest_id-2015-07-28T11:17:36Z.warc.gz",,
+            "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5/2015/07/28/11/harvest_id-2015-07-28T11:17:36Z.warc.gz",,
             "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
             "bytes": 26146,
-            "id": "test_collection-flickr-2015-07-28T11:17:36Z",
+            "id": "aba6033aafce4fbabd846026ca47f13e",
             "date_created": "2015-07-28T11:17:36.640178"
         },
-        "collection": {
-            "id": "test_collection"
-        }
+        "collection_set": {
+            "id": "3989a5f99e41487aaef698680537c3f5"
+        },
         "harvest": {
-            "id": "sfmui:45",
+            "id": "98ddaa6e8c1f4b44aaca95bc46d3d6ac",
             "type": "flickr_user"
         }
     }
@@ -327,9 +327,9 @@ Export start message
 Export start messages specify the requests for an export. Example::
 
     {
-        "id": "sfmui:45",
+        "id": "f3ddcbfc5d6b43139d04d680d278852e",
         "type": "flickr_user",
-        "seedset": {
+        "collection": {
             "id": "005b131f5f854402afa2b08a4b7ba960"
         },
         "path": "/sfm-data/exports/45",
@@ -344,7 +344,7 @@ Export start messages specify the requests for an export. Example::
 Another example::
 
     {
-        "id": "sfmui:45",
+        "id": "f3ddcbfc5d6b43139d04d680d278852e",
         "type": "flickr_user",
         "seeds": [
             {
@@ -366,8 +366,8 @@ Another example::
 * `type`: Identifies the type of export, including the social media platform. The
   export can use this to map to the appropriate export procedure.
 * `seeds`: A list of seeds to export. Each seed is represented by a map containing `id` and `uid`.
-* `seedset`: A map containing the `id` of the seedset to export.
-* Each export start message must have a `seeds` or `seedset` but not both.
+* `collection`: A map containing the `id` of the collection to export.
+* Each export start message must have a `seeds` or `collection` but not both.
 * `path`: A directory into which the export files should be placed. The directory may not exist.
 * `format`: A code for the format of the export. (Available formats may change.)
 * `dedupe`: If true, duplicate social media content should be removed.
@@ -381,7 +381,7 @@ Export status messages allow an exporter to provide information on the exports
 it performs. Example::
 
     {
-        "id": "sfmui:45"
+        "id": "f3ddcbfc5d6b43139d04d680d278852e"
         "status": "completed success",
         "date_started": "2015-07-28T11:17:36.640044",
         "date_ended": "2015-07-28T11:17:42.539470",

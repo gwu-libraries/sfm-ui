@@ -13,14 +13,14 @@ class UIConfig(AppConfig):
 
     def ready(self):
         RabbitWorker().declare_exchange()
-        from models import SeedSet, Export
+        from models import Collection, Export
         from sched import start_sched, schedule_harvest_receiver, unschedule_harvest_receiver
         from export import export_receiver, export_m2m_receiver
 
         if settings.SCHEDULE_HARVESTS:
-            log.debug("Setting receivers for seedsets.")
-            post_save.connect(schedule_harvest_receiver, sender=SeedSet)
-            pre_delete.connect(unschedule_harvest_receiver, sender=SeedSet)
+            log.debug("Setting receivers for collections.")
+            post_save.connect(schedule_harvest_receiver, sender=Collection)
+            pre_delete.connect(unschedule_harvest_receiver, sender=Collection)
 
         # Export
         if settings.PERFORM_EXPORTS:
@@ -31,7 +31,7 @@ class UIConfig(AppConfig):
         # Add 5 minute interval
         if settings.FIVE_MINUTE_SCHEDULE:
             log.debug("Adding 5 minute timer")
-            SeedSet.SCHEDULE_CHOICES.append((5, "Every 5 minutes"))
+            Collection.SCHEDULE_CHOICES.append((5, "Every 5 minutes"))
 
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")

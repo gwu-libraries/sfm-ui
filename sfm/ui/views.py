@@ -14,37 +14,86 @@ from django.core.paginator import Paginator
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 
-from .forms import CollectionForm, ExportForm
+from .forms import CollectionSetForm, ExportForm
 import forms
-from .models import Collection, SeedSet, Seed, Credential, Harvest, Export, User
+from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
 from .utils import diff_object_history, clean_token
 
 import os
 import logging
-import operator
 
 log = logging.getLogger(__name__)
 
 
-class CollectionListView(LoginRequiredMixin, ListView):
-    model = Collection
-    template_name = 'ui/collection_list.html'
+class CollectionSetListView(LoginRequiredMixin, ListView):
+    model = CollectionSet
+    template_name = 'ui/collection_set_list.html'
     paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
 
     def get_context_data(self, **kwargs):
-        context = super(CollectionListView, self).get_context_data(**kwargs)
+        context = super(CollectionSetListView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser:
-            context['collection_list_n'] = Collection.objects.exclude(
+            context['collection_set_list_n'] = CollectionSet.objects.exclude(
                 group__in=self.request.user.groups.all()).annotate(
-                num_seedsets=Count('seed_sets')).order_by('date_updated')
+                num_collections=Count('collections')).order_by('date_updated')
 
-        context['collection_list'] = Collection.objects.filter(
+        context['collection_set_list'] = CollectionSet.objects.filter(
             group__in=self.request.user.groups.all()).annotate(
-            num_seedsets=Count('seed_sets')).order_by('date_updated')
+            num_collections=Count('collections')).order_by('date_updated')
         return context
+
+
+class CollectionSetDetailView(LoginRequiredMixin, DetailView):
+    model = CollectionSet
+    template_name = 'ui/collection_set_detail.html'
+    context_object_name = 'collection_set'
+
+    def get_context_data(self, **kwargs):
+        context = super(CollectionSetDetailView, self).get_context_data(**kwargs)
+        context['collection_list'] = Collection.objects.filter(
+            collection_set=self.object.pk).annotate(num_seeds=Count('seeds'))
+        context["diffs"] = diff_object_history(self.object)
+        context["harvest_types"] = Collection.HARVEST_CHOICES
+        context["item_id"] = self.object.id
+        context["model_name"] = "collection_set"
+        return context
+
+
+class CollectionSetCreateView(LoginRequiredMixin, CreateView):
+    model = CollectionSet
+    form_class = CollectionSetForm
+    template_name = 'ui/collection_set_create.html'
+    success_url = reverse_lazy('collection_set_list')
+
+    def get_form_kwargs(self):
+        kwargs = super(CollectionSetCreateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+class CollectionSetUpdateView(LoginRequiredMixin, UpdateView):
+    model = CollectionSet
+    form_class = CollectionSetForm
+    template_name = 'ui/collection_set_update.html'
+    initial = {'history_note': ''}
+    context_object_name = 'collection_set'
+
+    def get_context_data(self, **kwargs):
+        context = super(CollectionSetUpdateView, self).get_context_data(**kwargs)
+        context['collection_list'] = Collection.objects.filter(
+            collection_set=self.object.pk).annotate(num_seeds=Count('seeds'))
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(CollectionSetUpdateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("collection_set_detail", args=(self.object.pk,))
 
 
 class CollectionDetailView(LoginRequiredMixin, DetailView):
@@ -53,66 +102,12 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
-        context['seedset_list'] = SeedSet.objects.filter(
-            collection=self.object.pk).annotate(num_seeds=Count('seeds'))
-        context["diffs"] = diff_object_history(self.object)
-        context["harvest_types"] = SeedSet.HARVEST_CHOICES
-        context["item_id"] = self.object.id
-        context["model_name"] = "collection"
-        return context
-
-
-class CollectionCreateView(LoginRequiredMixin, CreateView):
-    model = Collection
-    form_class = CollectionForm
-    template_name = 'ui/collection_create.html'
-    success_url = reverse_lazy('collection_list')
-
-    def get_form_kwargs(self):
-        kwargs = super(CollectionCreateView, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
-
-class CollectionUpdateView(LoginRequiredMixin, UpdateView):
-    model = Collection
-    form_class = CollectionForm
-    template_name = 'ui/collection_update.html'
-    initial = {'history_note': ''}
-
-    def get_context_data(self, **kwargs):
-        context = super(CollectionUpdateView, self).get_context_data(**kwargs)
-        context['seedset_list'] = SeedSet.objects.filter(
-            collection=self.object.pk).annotate(num_seeds=Count('seeds'))
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super(CollectionUpdateView, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
-    def get_success_url(self):
-        return reverse("collection_detail", args=(self.object.pk,))
-
-
-class CollectionDeleteView(DeleteView):
-    model = Collection
-    template_name = 'ui/collection_delete.html'
-    success_url = reverse_lazy('collection_list')
-
-
-class SeedSetDetailView(LoginRequiredMixin, DetailView):
-    model = SeedSet
-    template_name = 'ui/seedset_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(SeedSetDetailView, self).get_context_data(**kwargs)
         context["next_run_time"] = next_run_time(self.object.id)
         # Last 5 harvests
         context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
         context["diffs"] = diff_object_history(self.object)
-        context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         seed_count_message = None
         # No active seeds.
@@ -129,102 +124,102 @@ class SeedSetDetailView(LoginRequiredMixin, DetailView):
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
-                                              historical_seed_set__id=self.object.id)
+                                              historical_collection__id=self.object.id)
         if not harvest_list or "completed success" not in [str(item.status) for item in harvest_list]:
             context["can_export"] = False
         else:
             context["can_export"] = True
         context["item_id"] = self.object.id
-        context["model_name"] = "seedset"
+        context["model_name"] = "collection"
         return context
 
 
-def _get_seedset_form_class(harvest_type):
-    return "SeedSet{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
+def _get_collection_form_class(harvest_type):
+    return "Collection{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
 
 
 def _get_harvest_type_name(harvest_type):
-    for harvest_type_choice, harvest_type_name in SeedSet.HARVEST_CHOICES:
+    for harvest_type_choice, harvest_type_name in Collection.HARVEST_CHOICES:
         if harvest_type_choice == harvest_type:
             return harvest_type_name
 
 
-def _get_credential_list(collection_pk, harvest_type):
-    collection = Collection.objects.get(pk=collection_pk)
-    platform = SeedSet.HARVEST_TYPES_TO_PLATFORM[harvest_type]
+def _get_credential_list(collection_set_pk, harvest_type):
+    collection_set = CollectionSet.objects.get(pk=collection_set_pk)
+    platform = Collection.HARVEST_TYPES_TO_PLATFORM[harvest_type]
     return Credential.objects.filter(platform=platform, user=User.objects.filter(
-        groups=collection.group)).order_by('name')
+        groups=collection_set.group)).order_by('name')
 
 
-class SeedSetCreateView(LoginRequiredMixin, CreateView):
-    model = SeedSet
-    template_name = 'ui/seedset_create.html'
+class CollectionCreateView(LoginRequiredMixin, CreateView):
+    model = Collection
+    template_name = 'ui/collection_create.html'
 
     def get_initial(self):
-        initial = super(SeedSetCreateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        initial = super(CollectionCreateView, self).get_initial()
+        initial["collection_set"] = CollectionSet.objects.get(pk=self.kwargs["collection_set_pk"])
         return initial
 
     def get_context_data(self, **kwargs):
-        context = super(SeedSetCreateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context = super(CollectionCreateView, self).get_context_data(**kwargs)
+        context["collection_set"] = CollectionSet.objects.get(pk=self.kwargs["collection_set_pk"])
         context["harvest_type_name"] = _get_harvest_type_name(self.kwargs["harvest_type"])
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(SeedSetCreateView, self).get_form_kwargs()
-        kwargs["coll"] = self.kwargs["collection_pk"]
-        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_pk"], self.kwargs["harvest_type"])
+        kwargs = super(CollectionCreateView, self).get_form_kwargs()
+        kwargs["coll"] = self.kwargs["collection_set_pk"]
+        kwargs['credential_list'] = _get_credential_list(self.kwargs["collection_set_pk"], self.kwargs["harvest_type"])
         return kwargs
 
     def get_form_class(self):
-        return getattr(forms, _get_seedset_form_class(self.kwargs["harvest_type"]))
+        return getattr(forms, _get_collection_form_class(self.kwargs["harvest_type"]))
 
     def get_success_url(self):
-        return reverse('seedset_detail', args=(self.object.pk,))
+        return reverse('collection_detail', args=(self.object.pk,))
 
 
-class SeedSetUpdateView(LoginRequiredMixin, UpdateView):
-    model = SeedSet
-    template_name = 'ui/seedset_update.html'
+class CollectionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Collection
+    template_name = 'ui/collection_update.html'
     initial = {'history_note': ''}
 
     def get_context_data(self, **kwargs):
-        context = super(SeedSetUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = self.object.collection
-        context["seed_list"] = Seed.objects.filter(seed_set=self.object.pk)
+        context = super(CollectionUpdateView, self).get_context_data(**kwargs)
+        context["collection_set"] = self.object.collection_set
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
 
     def get_form_kwargs(self):
-        kwargs = super(SeedSetUpdateView, self).get_form_kwargs()
-        kwargs["coll"] = self.object.collection.pk
-        kwargs['credential_list'] = _get_credential_list(self.object.collection.pk, self.object.harvest_type)
+        kwargs = super(CollectionUpdateView, self).get_form_kwargs()
+        kwargs["coll"] = self.object.collection_set.pk
+        kwargs['credential_list'] = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
         return kwargs
 
     def get_form_class(self):
-        return getattr(forms, _get_seedset_form_class(self.object.harvest_type))
+        return getattr(forms, _get_collection_form_class(self.object.harvest_type))
 
     def get_success_url(self):
-        return reverse("seedset_detail", args=(self.object.pk,))
+        return reverse("collection_detail", args=(self.object.pk,))
 
 
-class SeedSetToggleActiveView(LoginRequiredMixin, RedirectView):
+class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
     permanent = False
-    pattern_name = "seedset_detail"
+    pattern_name = "collection_detail"
     http_method_names = ['post', 'put']
 
     def get_redirect_url(self, *args, **kwargs):
-        seedset = get_object_or_404(SeedSet, pk=kwargs['pk'])
-        seedset.is_active = not seedset.is_active
-        seedset.save()
-        return super(SeedSetToggleActiveView, self).get_redirect_url(*args, **kwargs)
+        collection = get_object_or_404(Collection, pk=kwargs['pk'])
+        collection.is_active = not collection.is_active
+        collection.save()
+        return super(CollectionToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 
-class SeedSetDeleteView(LoginRequiredMixin, DeleteView):
-    model = SeedSet
-    template_name = 'ui/seedset_delete.html'
-    success_url = reverse_lazy('seedset_list')
+class CollectionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Collection
+    template_name = 'ui/collection_delete.html'
+    success_url = reverse_lazy('collection_list')
 
 
 class SeedListView(LoginRequiredMixin, ListView):
@@ -243,7 +238,7 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
         context["diffs"] = diff_object_history(self.object)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.id)
+        context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
         return context
@@ -259,27 +254,28 @@ class SeedCreateView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super(SeedCreateView, self).get_initial()
-        initial["seed_set"] = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
+        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(SeedCreateView, self).get_context_data(**kwargs)
-        seed_set = SeedSet.objects.get(pk=self.kwargs["seed_set_pk"])
-        context["seed_set"] = seed_set
-        context["collection"] = context["seed_set"].collection
-        context["harvest_type_name"] = _get_harvest_type_name(seed_set.harvest_type)
+        collection = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        context["collection"] = collection
+        context["collection_set"] = context["collection"].collection_set
+        context["harvest_type_name"] = _get_harvest_type_name(collection.harvest_type)
         return context
 
     def get_form_kwargs(self):
         kwargs = super(SeedCreateView, self).get_form_kwargs()
-        kwargs["seedset"] = self.kwargs["seed_set_pk"]
+        kwargs["collection"] = self.kwargs["collection_pk"]
         return kwargs
 
     def get_form_class(self):
-        return getattr(forms, _get_seed_form_class(SeedSet.objects.get(pk=self.kwargs["seed_set_pk"]).harvest_type))
+        return getattr(forms,
+                       _get_seed_form_class(Collection.objects.get(pk=self.kwargs["collection_pk"]).harvest_type))
 
     def get_success_url(self):
-        return reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],))
+        return reverse("collection_detail", args=(self.kwargs["collection_pk"],))
 
 
 class SeedUpdateView(LoginRequiredMixin, UpdateView):
@@ -289,16 +285,16 @@ class SeedUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(SeedUpdateView, self).get_form_kwargs()
-        kwargs["seedset"] = self.object.seed_set.pk
+        kwargs["collection"] = self.object.collection.pk
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(SeedUpdateView, self).get_context_data(**kwargs)
-        context["collection"] = Collection.objects.get(id=self.object.seed_set.collection.id)
+        context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         return context
 
     def get_form_class(self):
-        return getattr(forms, _get_seed_form_class(self.object.seed_set.harvest_type))
+        return getattr(forms, _get_seed_form_class(self.object.collection.harvest_type))
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
@@ -314,37 +310,37 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
     template_name = 'ui/bulk_seed_create.html'
 
     def get(self, request, *args, **kwargs):
-        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
-        form = self._form_class(seed_set)(initial={}, seedset=kwargs["seed_set_pk"])
-        return self._render(request, form, seed_set)
+        collection = Collection.objects.get(pk=kwargs["collection_pk"])
+        form = self._form_class(collection)(initial={}, collection=kwargs["collection_pk"])
+        return self._render(request, form, collection)
 
     def post(self, request, *args, **kwargs):
-        seed_set = SeedSet.objects.get(pk=kwargs["seed_set_pk"])
-        form = self._form_class(seed_set)(request.POST, seedset=kwargs["seed_set_pk"])
+        collection = Collection.objects.get(pk=kwargs["collection_pk"])
+        form = self._form_class(collection)(request.POST, collection=kwargs["collection_pk"])
         if form.is_valid():
             tokens = form.cleaned_data['tokens'].splitlines()
             for token in (clean_token(t) for t in tokens):
                 if token:
-                    if not Seed.objects.filter(seed_set=seed_set, token=token).exists():
-                        log.debug("Creating seed %s for seedset %s", token, seed_set.pk)
+                    if not Seed.objects.filter(collection=collection, token=token).exists():
+                        log.debug("Creating seed %s for collection %s", token, collection.pk)
                         Seed.objects.create(token=token,
-                                            seed_set=seed_set,
+                                            collection=collection,
                                             history_note=form.cleaned_data['history_note'])
                     else:
-                        log.debug("Skipping creating seed %s for seedset %s since it exists", token, seed_set.pk)
+                        log.debug("Skipping creating seed %s for collection %s since it exists", token, collection.pk)
             # <process form cleaned data>
-            return HttpResponseRedirect(reverse("seedset_detail", args=(self.kwargs["seed_set_pk"],)))
+            return HttpResponseRedirect(reverse("collection_detail", args=(self.kwargs["collection_pk"],)))
 
-        return self._render(request, form, seed_set)
+        return self._render(request, form, collection)
 
     @staticmethod
-    def _form_class(seed_set):
-        return getattr(forms, "BulkSeed{}Form".format(seed_set.harvest_type.replace("_", " ").title().replace(" ", "")))
+    def _form_class(collection):
+        return getattr(forms, "BulkSeed{}Form".format(collection.harvest_type.replace("_", " ").title().replace(" ", "")))
 
-    def _render(self, request, form, seed_set):
+    def _render(self, request, form, collection):
         return render(request, self.template_name,
-                      {'form': form, 'seed_set': seed_set, 'collection': seed_set.collection,
-                       'harvest_type_name': _get_harvest_type_name(seed_set.harvest_type)})
+                      {'form': form, 'collection': collection, 'collection_set': collection.collection_set,
+                       'harvest_type_name': _get_harvest_type_name(collection.harvest_type)})
 
 
 class CredentialDetailView(LoginRequiredMixin, DetailView):
@@ -434,8 +430,8 @@ class ExportListView(LoginRequiredMixin, ListView):
         export_list = []
         for export in exports:
             seeds = list(export.seeds.all())
-            seedset = seeds[0].seed_set if seeds else export.seed_set
-            export_list.append((seedset.collection, seedset, export))
+            collection = seeds[0].collection if seeds else export.collection
+            export_list.append((collection.collection_set, collection, export))
         context['export_list'] = export_list
         return context
 
@@ -447,17 +443,17 @@ class ExportCreateView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super(ExportCreateView, self).get_initial()
-        initial["seedset"] = SeedSet.objects.get(pk=self.kwargs["seedset_pk"])
+        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(ExportCreateView, self).get_context_data(**kwargs)
-        context["seedset"] = SeedSet.objects.get(pk=self.kwargs["seedset_pk"])
+        context["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
         return context
 
     def get_form_kwargs(self):
         kwargs = super(ExportCreateView, self).get_form_kwargs()
-        kwargs["seedset"] = self.kwargs["seedset_pk"]
+        kwargs["collection"] = self.kwargs["collection_pk"]
         return kwargs
 
     def form_valid(self, form):
@@ -490,9 +486,9 @@ class ExportDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ExportDetailView, self).get_context_data(**kwargs)
         seeds = list(self.object.seeds.all())
-        seedset = seeds[0].seed_set if seeds else self.object.seed_set
-        context["collection"] = seedset.collection
-        context["seedset"] = seedset
+        collection = seeds[0].collection if seeds else self.object.collection
+        context["collection_set"] = collection.collection_set
+        context["collection"] = collection
         context["fileinfos"] = _get_fileinfos(self.object.path) if self.object.status == Export.SUCCESS else ()
         return context
 
@@ -503,13 +499,13 @@ class HarvestListView(LoginRequiredMixin, ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        self.seedset = get_object_or_404(SeedSet, pk=self.kwargs["pk"])
-        return self.seedset.harvests.all()
+        self.collection = get_object_or_404(Collection, pk=self.kwargs["pk"])
+        return self.collection.harvests.all()
 
     def get_context_data(self, **kwargs):
         context = super(HarvestListView, self).get_context_data(**kwargs)
-        context["collection"] = self.seedset.collection
-        context['seedset'] = self.seedset
+        context["collection_set"] = self.collection.collection_set
+        context['collection'] = self.collection
         return context
 
 
@@ -519,8 +515,8 @@ class HarvestDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(HarvestDetailView, self).get_context_data(**kwargs)
-        context["collection"] = self.object.seed_set.collection
-        context["seedset"] = self.object.seed_set
+        context["collection_set"] = self.object.collection.collection_set
+        context["collection"] = self.object.collection
         return context
 
 
@@ -564,7 +560,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ChangeLogView, self).get_context_data(**kwargs)
         item_id = self.kwargs["item_id"]
-        model_name = self.kwargs["model"]
+        model_name = self.kwargs["model"].replace("_","")
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
         context["item"] = item
@@ -575,7 +571,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
         diffs_page = paginator.page(page)
         context["paginator"] = paginator
         context["diffs_page"] = diffs_page
-        context["model_name"] = model_name
+        context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name
         except:
@@ -583,14 +579,15 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
         return context
 
 
-def collection_stats(_, pk, item, period):
-    collection = get_object_or_404(Collection, pk=pk)
-    return JsonResponse(collection.item_stats(item,
-                                              days={
-                                                  "week": 7,
-                                                  "month": 30,
-                                                  "year": 365
-                                              }.get(period, 0)), safe=False)
+def collection_set_stats(_, pk, item, period):
+    collection_set = get_object_or_404(CollectionSet, pk=pk)
+    return JsonResponse(collection_set.item_stats(item,
+                                                  days={
+                                                      "week": 7,
+                                                      "month": 30,
+                                                      "year": 365
+                                                  }.get(period, 0)), safe=False)
+
 
 class HomeView(TemplateView):
 
@@ -598,6 +595,6 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['collection_list'] = Collection.objects.filter(
+        context['collection_set_list'] = CollectionSet.objects.filter(
             group__in=self.request.user.groups.all())
         return context

@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}
-    {{ collection.name }}
+    {{ collection_set.name }}
 {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-      <li><a href={% url "collection_list" %}>Collections</a></li>
+      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+      <li><a href={% url "collection_set_detail" collection_set.pk %} >{{ collection_set.name }}</a></li>
       <li><a href={% url "collection_detail" collection.pk %} >{{ collection.name }}</a></li>
-      <li><a href={% url "seedset_detail" seedset.pk %} >{{ seedset.name }}</a></li>
       <li class="active">Export</li>
     </ol>
   </div>
@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-md-12">
     <p>
-        {% if not export.seed_set %}
+        {% if not export.collection %}
             <p><strong>Selected seeds:</strong>
             <ul>
             {% for seed in export.seeds.all %}

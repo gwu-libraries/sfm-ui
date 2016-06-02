@@ -1,26 +1,27 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    Add New Collection
+    Add Collection Set
 {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-      <li><a href={% url "collection_list" %}>Collections</a></li>
-      <li class="active">Add New Collection</li>
+      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+      <li><a href={% url "collection_set_detail" collection_set.pk %} >{{ collection_set.name }}</a></li>
+      <li class="active">Add {{ harvest_type_name }}</li>
     </ol>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    	<h2>Add New Collection</h2>
+        <h2>Add {{ harvest_type_name }}</h2>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
       {% crispy form %}
-  </div>  
+  </div>
 </div>
 {% endblock %}

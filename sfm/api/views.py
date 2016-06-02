@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from ui.models import Warc, SeedSet
-from .serializers import WarcSerializer, SeedSetSerializer
-from .filters import WarcFilter, SeedSetFilter
+from ui.models import Warc, Collection
+from .serializers import WarcSerializer, CollectionSerializer
+from .filters import WarcFilter, CollectionFilter
 
 
 class WarcViewSet(ReadOnlyModelViewSet):
@@ -13,10 +13,11 @@ class WarcViewSet(ReadOnlyModelViewSet):
     def get_queryset(self):
         return Warc.objects.all()
 
-class SeedSetViewSet(ReadOnlyModelViewSet):
-    serializer_class = SeedSetSerializer
+
+class CollectionViewSet(ReadOnlyModelViewSet):
+    serializer_class = CollectionSerializer
     lookup_field = "warc_id"
-    filter_class = SeedSetFilter
+    filter_class = CollectionFilter
 
     def get_queryset(self):
-        return SeedSet.objects.all()
+        return Collection.objects.all()
