@@ -3,7 +3,7 @@
     Harvests
 {% endblock %}
 
-{% block content %}
+{% block content_header %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
@@ -14,6 +14,8 @@
     </ol>
   </div>
 </div>
+{% endblock %}
+{% block content %}
 <nav>
   <ul class="pager">
       {% if page_obj.has_previous %}

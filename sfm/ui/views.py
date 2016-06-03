@@ -10,6 +10,8 @@ from django.views.generic.base import RedirectView, View
 from django.shortcuts import get_object_or_404, render
 from django.apps import apps
 from django.core.paginator import Paginator
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
@@ -62,16 +64,20 @@ class CollectionSetDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CollectionSetCreateView(LoginRequiredMixin, CreateView):
+class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = CollectionSet
     form_class = CollectionSetForm
     template_name = 'ui/collection_set_create.html'
-    success_url = reverse_lazy('collection_set_list')
+    success_message = "New collection set added. You can now add collections."
 
     def get_form_kwargs(self):
         kwargs = super(CollectionSetCreateView, self).get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
+
+
+    def get_success_url(self):
+        return reverse('collection_set_detail', args=(self.object.pk,))
 
 
 class CollectionSetUpdateView(LoginRequiredMixin, UpdateView):
@@ -109,18 +115,33 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
-        seed_count_message = None
+        # For not enough seeds
+        seed_warning_message = None
+        # For too many seeds
+        seed_error_message = None
         # No active seeds.
+        log.info(self.object.required_seed_count())
+        log.info(self.object.active_seed_count())
         if self.object.required_seed_count() == 0 and self.object.active_seed_count() != 0:
-            seed_count_message = "To enable harvesting, deactivate all seeds."
+            seed_error_message = "All seeds must be deactivated before harvesting can be turned on."
         # Specific number of active seeds.
-        elif self.object.required_seed_count() > 0 and self.object.active_seed_count() != self.object.required_seed_count():
-            seed_count_message = "To enable harvesting, make sure there are {} active seeds.".format(
-                self.object.required_seed_count())
+        elif self.object.required_seed_count() == 1:
+            if self.object.active_seed_count() == 0:
+                seed_warning_message = "1 active seed must be added before harvesting can be turned on."
+            elif self.object.active_seed_count() > 1:
+                seed_error_message = "Deactivate all seeds except 1 before harvesting can be turned on."
+        elif self.object.required_seed_count() > 1:
+            if self.object.active_seed_count() < self.object.required_seed_count():
+                seed_warning_message = "{} active seeds must be added before harvesting can be turned on.".format(
+                    self.object.required_seed_count())
+            elif self.object.active_seed_count > self.object.required_seed_count():
+                seed_error_message = "Deactivate all seeds except {} before harvesting can be turned on.".format(
+                    self.object.required_seed_count())
         # At least one active seeds
         elif self.object.required_seed_count() is None and self.object.active_seed_count() == 0:
-            seed_count_message = "To enable harvesting, make sure there is at least 1 active seed."
-        context["seed_count_message"] = seed_count_message
+            seed_warning_message = "At least 1 active seed must be added before harvesting can be turned on."
+        context["seed_error_message"] = seed_error_message
+        context["seed_warning_message"] = seed_warning_message
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
@@ -151,7 +172,7 @@ def _get_credential_list(collection_set_pk, harvest_type):
         groups=collection_set.group)).order_by('name')
 
 
-class CollectionCreateView(LoginRequiredMixin, CreateView):
+class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Collection
     template_name = 'ui/collection_create.html'
 
@@ -177,6 +198,11 @@ class CollectionCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('collection_detail', args=(self.object.pk,))
+
+    def get_success_message(self, cleaned_data):
+        if self.object.required_seed_count() != 0:
+            return "New collection added. You can now add seeds."
+        return "New collection added. Turn on to start harvesting."
 
 
 class CollectionUpdateView(LoginRequiredMixin, UpdateView):
@@ -212,14 +238,12 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         collection = get_object_or_404(Collection, pk=kwargs['pk'])
         collection.is_active = not collection.is_active
+        if collection.is_active:
+            messages.info(self.request, "Harvesting is turned on.")
+        else:
+            messages.info(self.request, "Harvesting is turned off.")
         collection.save()
         return super(CollectionToggleActiveView, self).get_redirect_url(*args, **kwargs)
-
-
-class CollectionDeleteView(LoginRequiredMixin, DeleteView):
-    model = Collection
-    template_name = 'ui/collection_delete.html'
-    success_url = reverse_lazy('collection_list')
 
 
 class SeedListView(LoginRequiredMixin, ListView):
@@ -248,7 +272,7 @@ def _get_seed_form_class(harvest_type):
     return "Seed{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
 
 
-class SeedCreateView(LoginRequiredMixin, CreateView):
+class SeedCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Seed
     template_name = 'ui/seed_create.html'
 
@@ -277,6 +301,11 @@ class SeedCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("collection_detail", args=(self.kwargs["collection_pk"],))
 
+    def get_success_message(self, cleaned_data):
+        if self.object.collection.required_seed_count() == 1:
+            return "New seed added."
+        return "New seed added."
+
 
 class SeedUpdateView(LoginRequiredMixin, UpdateView):
     model = Seed
@@ -300,12 +329,6 @@ class SeedUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("seed_detail", args=(self.object.pk,))
 
 
-class SeedDeleteView(LoginRequiredMixin, DeleteView):
-    model = Seed
-    template_name = 'ui/seed_delete.html'
-    success_url = reverse_lazy('seed_list')
-
-
 class BulkSeedCreateView(LoginRequiredMixin, View):
     template_name = 'ui/bulk_seed_create.html'
 
@@ -319,6 +342,7 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         form = self._form_class(collection)(request.POST, collection=kwargs["collection_pk"])
         if form.is_valid():
             tokens = form.cleaned_data['tokens'].splitlines()
+            seed_count = 0
             for token in (clean_token(t) for t in tokens):
                 if token:
                     if not Seed.objects.filter(collection=collection, token=token).exists():
@@ -326,9 +350,11 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
                         Seed.objects.create(token=token,
                                             collection=collection,
                                             history_note=form.cleaned_data['history_note'])
+                        seed_count += 1
                     else:
                         log.debug("Skipping creating seed %s for collection %s since it exists", token, collection.pk)
             # <process form cleaned data>
+            messages.info(request, "{} seeds added.".format(seed_count))
             return HttpResponseRedirect(reverse("collection_detail", args=(self.kwargs["collection_pk"],)))
 
         return self._render(request, form, collection)
@@ -357,9 +383,10 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CredentialCreateView(LoginRequiredMixin, CreateView):
+class CredentialCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Credential
     template_name = 'ui/credential_create.html'
+    success_message = "New credential added."
 
     def get_form_class(self):
         class_name = "Credential{}Form".format(self.kwargs["platform"].title())
@@ -371,6 +398,11 @@ class CredentialCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
+
+    def get_initial(self):
+        initial = super(CredentialCreateView, self).get_initial()
+        initial['name'] = "{}'s {} credential".format(self.request.user.username, self.kwargs["platform"])
+        return initial
 
 
 class CredentialListView(LoginRequiredMixin, ListView):
@@ -436,10 +468,11 @@ class ExportListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ExportCreateView(LoginRequiredMixin, CreateView):
+class ExportCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Export
     form_class = ExportForm
     template_name = 'ui/export_create.html'
+    success_message = "Export requested. Check back for the status or wait for an email."
 
     def get_initial(self):
         initial = super(ExportCreateView, self).get_initial()

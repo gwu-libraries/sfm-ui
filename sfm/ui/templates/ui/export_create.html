@@ -4,7 +4,7 @@
     Add Export
 {% endblock %}
 
-{% block content %}
+{% block content_header %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
@@ -20,6 +20,8 @@
         <h2>Request Export</h2>
   </div>
 </div>
+{% endblock %}
+{% block content %}
 <div class="row">
   <div class="col-md-12">
       {% crispy form %}

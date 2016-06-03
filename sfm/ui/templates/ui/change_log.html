@@ -3,7 +3,7 @@
     Change Log 
 {% endblock %}
 
-{% block content %}
+{% block content_header %}
 <div class="row">
     <div class="col-md-12">
         <ol class="breadcrumb">
@@ -27,12 +27,13 @@
          </ol>
      </div>
 </div>
-
 <div class="row">
    <div class="col-md-12">
        <h2>Change log for {{model_name }} {{ name }}</h2>
    </div>
 </div>
+{% endblock %}
+{% block content %}
 <div class="row">
   <div class="col-md-12">
     <nav>

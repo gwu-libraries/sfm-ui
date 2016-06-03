@@ -38,10 +38,6 @@ urlpatterns = patterns('',
                            views.CollectionToggleActiveView.as_view(),
                            name="collection_toggle_active"),
 
-                       url(r'^collections/(?P<pk>\d+)/delete/$',
-                           views.CollectionDeleteView.as_view(),
-                           name="collection_delete"),
-
                        url(r'^collections/(?P<pk>\d+)/$',
                            views.CollectionDetailView.as_view(),
                            name="collection_detail"),
@@ -61,10 +57,6 @@ urlpatterns = patterns('',
                        url(r'^seeds/(?P<pk>\d+)/update/$',
                            views.SeedUpdateView.as_view(),
                            name="seed_update"),
-
-                       url(r'^seeds/(?P<pk>\d+)/delete/$',
-                           views.SeedDeleteView.as_view(),
-                           name="seed_delete"),
 
                        url(r'^seeds/(?P<pk>\d+)/$',
                            views.SeedDetailView.as_view(),

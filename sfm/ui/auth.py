@@ -4,6 +4,7 @@ from allauth.exceptions import ImmediateHttpResponse
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from .forms import CredentialTwitterForm,CredentialWeiboForm
 from .models import Credential
@@ -42,5 +43,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             assert False, "Unrecognized social login provider"
         form.instance.user = request.user
         credential = form.save()
+
+        messages.info(request, "New credential created.")
 
         raise ImmediateHttpResponse(HttpResponseRedirect(reverse('credential_detail', args=(credential.pk,))))

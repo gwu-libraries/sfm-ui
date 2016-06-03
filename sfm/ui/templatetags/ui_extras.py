@@ -63,6 +63,10 @@ def render_value(value):
         return render_dict(value)
     elif isinstance(value, list):
         return render_list(value)
+    elif value is True:
+        return "Yes"
+    elif value is False:
+        return "No"
     else:
         return value
 

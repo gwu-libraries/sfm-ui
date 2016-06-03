@@ -4,7 +4,7 @@
    {{ seed.token }}
 {% endblock %}
 
-{% block content %}
+{% block content_header %}
 <div class="row">
    <div class="col-md-12">
        <ol class="breadcrumb">
@@ -22,6 +22,8 @@
        </div> 
    </div>         
 </div>
+{% endblock %}
+{% block content %}
 <div class="row">
   <div class="col-md-12">
           {% crispy form %}

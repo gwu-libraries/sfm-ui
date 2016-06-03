@@ -3,39 +3,50 @@
     {{ collection_set.name }}
 {% endblock %}
 
-{% block content %}
+{% block content_header %}
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-      <li class="active">{{ collection_set.name }}</li>
+        <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+        <li class="active">{{ collection_set.name }}</li>
     </ol>
   </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <div class="page-header">
-            <h1>{{ collection_set.name }} <a class="btn btn-default" href={% url "collection_set_update" collection_set.pk %}>Edit</a></h1>
+        <h1>{{ collection_set.name }} 
+            <a class="btn btn-primary btn-aligned" href="{% url "collection_set_update" collection_set.pk %}" >
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit
+        </a>
+        </h1>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row subsection">
+    <div class="col-md-8">
+        {% if collection_set.description %}
+            <p>{{ collection_set.description }}</p>
+        {% endif %}
+        <p><strong>Group:</strong> {{collection_set.group }}</p>
+        {% if collection_set.stats %}
+            <p><strong>Stats:</strong><ul>
+                {% for item, count in collection_set.stats.items %}
+                    <li>{{ item }}: {{ count }}</li>
+                {% endfor %}
+            </ul></p>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p><strong>Id:</strong> {{ collection_set.collection_set_id }}</p>
+                <p><strong>Created:</strong> {{ collection_set.date_added }}</p>
+            </div>
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-12">
-    <p>{{ collection_set.description }}</p>
-    <p><strong>Id:</strong> {{collection_set.collection_set_id }}</p>
-    <p><strong>Created:</strong> {{collection_set.date_added }}</p>
-    <!--  add later <p>Last harvested</p> -->
-    <p><strong>Group:</strong> {{collection_set.group }}</p>
-    {% if collection_set.stats %}
-        <p><strong>Stats:</strong><ul>
-            {% for item, count in collection_set.stats.items %}
-                <li>{{ item }}: {{ count }}</li>
-            {% endfor %}
-        </ul></p>
-    {% endif %}
-    </div>
-</div>
-<div class="row">
+<div class="row subsection">
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Collections</h4></div>
         <div class="panel-body">
@@ -45,23 +56,35 @@
                   <th>Name</th>
                   <th>Harvest type</th>
                   <th>Seeds</th>
-                  <!-- <th>Last harvest</th> -->  
-                  <th>Active</th>
+                  <th>On/off</th>
                 </tr>
               </thead>    
             {% for collection in collection_list %}
                 <tr>
                     <td><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></td>
                     <td>{{ collection.get_harvest_type_display }}</td>
-                    <!-- last harvest -->
                     <td>{{ collection.num_seeds }} seed{{ collection.num_seeds|pluralize }}</td>
-                    <td>{{ collection.is_active|yesno:"Yes,No" }}</td>
+                    <td>
+                        {% if collection.is_active %}
+                            <span class="text-success">On</span>
+                        {% else %}
+                            Off
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </table>
-            {% for harvest_type, harvest_label in harvest_types %}
-                <a class="btn btn-primary" value="Add {{ harvest_label }}" href="{% url "collection_create" collection_set.id harvest_type %}">Add {{ harvest_label }}</a>
-            {% endfor %}
+            <!-- Single button -->
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Add Collection <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    {% for harvest_type, harvest_label in harvest_types %}
+                        <li><a href="{% url "collection_create" collection_set.id harvest_type %}">Add {{ harvest_label }}</a></li>
+                    {% endfor %}          
+                </ul>
+            </div>
         </div>
     </div>
 </div>

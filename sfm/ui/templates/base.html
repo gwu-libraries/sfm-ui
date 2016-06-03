@@ -84,13 +84,13 @@
     </div>
 
     <div class="container sfm-container">
-
+      {% block content_header %}
+      {% endblock content_header %}
       {% if messages %}
           {% for message in messages %}
-		  <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
           {% endfor %}
       {% endif %}
-
       {% block content %}
         <p></p>
       {% endblock content %}

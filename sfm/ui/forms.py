@@ -3,11 +3,12 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
-from .models import CollectionSet, Collection, Seed, Credential, Export, User
 from datetimewidget.widgets import DateTimeWidget
+from .models import CollectionSet, Collection, Seed, Credential, Export, User
 from .utils import clean_token
 
 import json
@@ -60,9 +61,11 @@ class CollectionSetForm(forms.ModelForm):
         request = kwargs.pop('request')
 
         super(CollectionSetForm, self).__init__(*args, **kwargs)
-        # limiting groups in dropdown to user's
-        self.fields['group'].queryset = Group.objects.filter(
-            pk__in=request.user.groups.all())
+        # limiting groups in dropdown to user's and setting default if only 1 value.
+        group_queryset = Group.objects.filter(pk__in=request.user.groups.all())
+        if len(group_queryset) == 1:
+            self.initial['group'] = group_queryset[0]
+        self.fields['group'].queryset = group_queryset
 
         # set up crispy forms helper
         self.helper = FormHelper(self)
@@ -110,7 +113,12 @@ class BaseCollectionForm(forms.ModelForm):
         self.coll = kwargs.pop("coll", None)
         self.credential_list = kwargs.pop('credential_list', None)
         super(BaseCollectionForm, self).__init__(*args, **kwargs)
+
+        # Set default if only 1 value.
+        if len(self.credential_list) == 1:
+            self.initial['credential'] = self.credential_list[0]
         self.fields['credential'].queryset = self.credential_list
+
         cancel_url = reverse('collection_set_detail', args=[self.coll])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -285,12 +293,13 @@ class CollectionFlickrUserForm(BaseCollectionForm):
         ("Large", "Large"),
         ("Original", "Original")
     )
-    sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"))
+    sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
+                                      widget=forms.CheckboxSelectMultiple, label="Image sizes", )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('sizes', 'incremental'))
+        self.helper.layout[0][3].extend(('incremental', 'sizes'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)

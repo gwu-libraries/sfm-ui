@@ -63,7 +63,7 @@ class Credential(models.Model):
         (FLICKR, 'Flickr'),
         (WEIBO, 'Weibo')
     ]
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name='Credential name')
     user = models.ForeignKey(User, related_name='credentials')
     platform = models.CharField(max_length=255, help_text='Platform name', choices=PLATFORM_CHOICES)
     token = models.TextField(blank=True)
@@ -202,7 +202,7 @@ class Collection(models.Model):
     collection_set = models.ForeignKey(CollectionSet, related_name='collections')
     credential = models.ForeignKey(Credential, related_name='collections')
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name='Collection name')
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=False)
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,

@@ -10,6 +10,48 @@ body {
     color: #333;
 }
 
+.breadcrumb {
+    background-color: #ffffff;
+}
+
+.panel-on {
+    background-color: #eeeeee;
+    color: #333;
+}
+
+.panel-on>.panel-heading {
+    color: #fff;
+    background-color: #337ab7;
+    background-image: none;
+    border-bottom: solid 1px #ffffff;
+}
+
+.panel-off {
+    background-color: #dddddd;
+}
+
+.panel-off>.panel-heading {
+    background-color: #dddddd;
+    background-image: none;
+    border-bottom: solid 1px #ffffff;
+}
+
+.panel-title {
+    font-size: 36px;
+}
+
+.btn-stacked {
+    margin-top: 8px;
+}
+
+.btn .glyphicon {
+    margin-right: 8px;
+}
+
+.btn-aligned {
+    margin-left: 15px;
+}
+
 .footer {
     position: absolute; 
     bottom: 0; 
@@ -19,4 +61,7 @@ body {
 
 .sfm-container {
     min-height: 600px;
+}
+.subsection {
+    padding-top: 30px;
 }
