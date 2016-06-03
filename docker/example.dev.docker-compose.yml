@@ -5,13 +5,13 @@ sfmdevrabbit:
         - "15672:15672"
     restart: always
     environment:
-        - TZ=EST
+        - TZ=America/New_York
         - RABBITMQ_DEFAULT_USER=sfm_user
         - RABBITMQ_DEFAULT_PASS=password
 sfmdevdb:
     image: gwul/sfm-ui-db:master
     environment:
-        - TZ=EST
+        - TZ=America/New_York
         - POSTGRES_PASSWORD=gherD42#dl5
 sfmdevapp:
     image: gwul/sfm-ui:dev
@@ -24,7 +24,7 @@ sfmdevapp:
     volumes:
         - ~/sfm-ui:/opt/sfm-ui
     environment:
-        - TZ=EST
+        - TZ=America/New_York
         - SFM_DEBUG=True
         - SFM_SMTP_HOST=smtp.gmail.com
         - SFM_EMAIL_USER=justinlittman@email.gwu.edu
