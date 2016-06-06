@@ -25,6 +25,13 @@ extracts tweets recorded from the Twitter REST API. For example::
                                      [--print-item-type]
                                      filepaths [filepaths ...]
 
+Here is a list of the warc iterators:
+
+* ``twitter_rest_warc_iter.py``: Tweets recorded from Twitter REST API.
+* ``twitter_stream_warc_iter.py``: Tweets recorded from Twitter Streaming API.
+* ``flickr_photo_warc_iter.py``: Flickr photos
+* ``weibo_warc_iter.py``: Weibos
+
 Warc iterator tools can also be used as a library.
 
 Find Warcs
@@ -61,14 +68,22 @@ to supply ``--api-base-url``.
 Processing in container
 =======================
 To bootstrap processing, a processing image is provided. A container instantiated from this
-image is Ubuntu 14.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, jq, Twarc
-(for access to the Twarc utilities). It will also have access to the data from ``/sfm-data/collections``.
+image is Ubuntu 14.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, and some other
+use tools. It will also have access to the data from ``/sfm-data/collections``.
+
+The other tools are:
+
+* `jq <https://stedolan.github.io/jq/>`_ for JSON processing.
+* `twarc <https://github.com/edsu/twarc>`_ for access to the `Twarc utils <https://github.com/edsu/twarc/tree/master/utils>`_.
+* `JWAT Tools <https://sbforge.org/display/JWAT/JWAT-Tools>`_ for processing WARCs.
+* `warctools <https://github.com/internetarchive/warctools>`_ for processing WARCs.
 
 To instantiate::
 
-    docker run -it --rm --link=docker_sfmapp_1:api --volumes-from=docker_sfmdata_1 gwul/sfm-processing:0.3.0
+    docker run -it --rm --link=docker_sfuimapp_1:api --volumes-from=docker_sfmdata_1 gwul/sfm-processing:0.3.0
 
-The arguments will need to be adjusted depending on your Docker environment.
+The arguments will need to be adjusted depending on your Docker environment. Also, set the version for sfm-processing
+correctly.
 
 You will then be provided with a bash shell inside the container from which you can execute commands::
 
