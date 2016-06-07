@@ -24,6 +24,7 @@
     {% if harvest.date_ended %}
         <p><strong>Ended:</strong> {{ harvest.date_ended }}</p>
     {% endif %}
+    <p><strong>Updated:</strong> {{ harvest.date_updated }}</p>
     <p><strong>Status:</strong> {{ harvest.get_status_display }}</p>
     <p><strong>Harvest type:</strong> {{ harvest.harvest_type }}</p>
     {% if harvest.stats %}
