@@ -11,8 +11,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("routing_key", help="The name of the routing key. May not be warc_created.")
-        parser.add_argument("--collection", help="Limit to collection with this collection id.")
-        parser.add_argument("--harvest_type", help="Limit to this harvest_type.")
+        parser.add_argument("--collection-set", help="Limit to collection set with this collection set id.")
+        parser.add_argument("--harvest-type", help="Limit to this harvest_type.")
         parser.add_argument("--test", action="store_true", help="Print out the messages instead of sending")
 
     def handle(self, *args, **options):
@@ -20,8 +20,8 @@ class Command(BaseCommand):
             raise CommandError("Cannot send messages to warc_created since they may have unintended consequeunces.")
 
         warcs = Warc.objects.all()
-        if options["collection"]:
-            warcs = warcs.filter(harvest__seed_set__collection__collection_id=options["collection"])
+        if options["collection_set"]:
+            warcs = warcs.filter(harvest__collection__collection_set__collection_set_id=options["collection_set"])
         if options["harvest_type"]:
             warcs = warcs.filter(harvest__harvest_type=options["harvest_type"])
 
@@ -43,8 +43,8 @@ class Command(BaseCommand):
                     "id": warc.warc_id,
                     "date_created": warc.date_created.isoformat()
                 },
-                "collection": {
-                    "id": warc.harvest.seed_set.collection.collection_id
+                "collection_set": {
+                    "id": warc.harvest.collection.collection_set.collection_set_id
                 },
                 "harvest": {
                     "id": warc.harvest.harvest_id,
