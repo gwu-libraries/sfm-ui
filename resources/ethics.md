@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Resources on ethics and legal aspects"
+title: "Brief List of Resources"
 permalink: /resources/ethics
 date: 2016-06-09
 modified: 2016-06-09

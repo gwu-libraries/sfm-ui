@@ -12,7 +12,7 @@ ads: false
 
 Using Social Media Data
 ----------------------
-[Brief list of resources](/resources/ethics)
+[Brief list of resources]({{ site.github.url }}/resources/ethics)
 
 Upcoming Presentations
 ----------------------
