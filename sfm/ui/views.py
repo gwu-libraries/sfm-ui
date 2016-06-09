@@ -75,7 +75,6 @@ class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
         kwargs['request'] = self.request
         return kwargs
 
-
     def get_success_url(self):
         return reverse('collection_set_detail', args=(self.object.pk,))
 
@@ -142,6 +141,16 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
             seed_warning_message = "At least 1 active seed must be added before harvesting can be turned on."
         context["seed_error_message"] = seed_error_message
         context["seed_warning_message"] = seed_warning_message
+
+        # Adding credential active message, only one filter can occupy the credential
+        credential_used_col = None
+        if self.object.harvest_type in Collection.STREAMING_HARVEST_TYPES:
+            credential_used_col_object = Collection.objects.filter(credential=self.object.credential.pk,
+                                                                   harvest_type__in=Collection.STREAMING_HARVEST_TYPES,
+                                                                   is_active=True)
+            if len(credential_used_col_object) != 0:
+                credential_used_col = credential_used_col_object[0]
+        context["credential_used_col"] = credential_used_col
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
@@ -361,7 +370,8 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
 
     @staticmethod
     def _form_class(collection):
-        return getattr(forms, "BulkSeed{}Form".format(collection.harvest_type.replace("_", " ").title().replace(" ", "")))
+        return getattr(forms,
+                       "BulkSeed{}Form".format(collection.harvest_type.replace("_", " ").title().replace(" ", "")))
 
     def _render(self, request, form, collection):
         return render(request, self.template_name,
@@ -587,13 +597,12 @@ def export_file(request, pk, file_name):
 
 
 class ChangeLogView(LoginRequiredMixin, TemplateView):
-
     template_name = "ui/change_log.html"
 
     def get_context_data(self, **kwargs):
         context = super(ChangeLogView, self).get_context_data(**kwargs)
         item_id = self.kwargs["item_id"]
-        model_name = self.kwargs["model"].replace("_","")
+        model_name = self.kwargs["model"].replace("_", "")
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
         context["item"] = item
@@ -623,7 +632,6 @@ def collection_set_stats(_, pk, item, period):
 
 
 class HomeView(TemplateView):
-
     template_name = "ui/home.html"
 
     def get_context_data(self, **kwargs):
