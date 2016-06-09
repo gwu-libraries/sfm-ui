@@ -39,6 +39,27 @@
     <p><strong>Item end date:</strong> {{ export.item_date_end }}</p>
     <p><strong>Harvest start date:</strong> {{ export.harvest_date_start }}</p>
     <p><strong>Harvest end date:</strong> {{ export.harvest_date_end }}</p>
+    {% if export.infos %}
+        <p><strong>Informational messages:</strong><ul>
+            {% for msg in export.infos %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if export.warnings %}
+        <p><strong>Warning messages:</strong><ul>
+            {% for msg in export.warnings %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
+    {% if export.errors %}
+        <p><strong>Error messages:</strong><ul>
+            {% for msg in export.errors %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul></p>
+    {% endif %}
 
     </div>
 </div>

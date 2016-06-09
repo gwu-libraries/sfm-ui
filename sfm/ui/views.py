@@ -202,7 +202,7 @@ class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_success_message(self, cleaned_data):
         if self.object.required_seed_count() != 0:
             return "New collection added. You can now add seeds."
-        return "New collection added. Turn on to start harvesting."
+        return "New collection added."
 
 
 class CollectionUpdateView(LoginRequiredMixin, UpdateView):
