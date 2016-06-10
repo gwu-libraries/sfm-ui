@@ -14,11 +14,12 @@ including Twitter, Flickr, and Sina Weibo. It is open source software and connec
 In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from the social media.
 
 Researchers, librarians, archivists, and students can use SFM to:
-* Gather datasets tailored to specific research questions
-* Build collections for future research. This might include:
-** collecting "at risk" social media data around a particular event or topic
-** filling gaps in special collections
-** archiving the social media activity of their institution
+
+*  Gather datasets tailored to specific research questions
+*  Build collections for future research. This might include:
+**  collecting "at risk" social media data around a particular event or topic
+**  filling gaps in special collections
+**  archiving the social media activity of their institution
 
 For both of these cases, SFM documents the steps in collecting in order to support valid, reproducible research and the needs of archives.
 
@@ -33,24 +34,33 @@ SFM is intended to be run by an institution such as a library, although nothing 
 How might I use SFM?
 --------------------
 You can use SFM to collect social media data:
+
 1. Define and organize collections.
-![collection set page with list of collections](/images/overview/collection_set_multi.png)
-![list of collection harvest types](/images/overview/collection_types.png)
+
+![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
+
+![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
 
 2. Add seeds and monitor harvests
-![list of seeds](/images/overview/seeds.png)
-![list of harvests](/images/overview/harvests.png)
+
+![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
+
+![list of harvests]({{ site.github.url }}/images/overview/harvests.png)
 
 3. Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
-![collection turned on](/images/overview/collection.png)
+
+![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
 To make use of social media data:
-* Export a collection to a spreadsheet.
-![export create screen](export_page.png)
-![spreadsheet screenshot](excel.png)
+*  Export a collection to a spreadsheet.
+
+![export create screen]({{ site.github.url }}/images/overview/export_page.png)
+![spreadsheet screenshot]({{ site.github.url }}/images/overview/excel.png)
+
 * Feed data into your own processing pipeline.
-* Explore data with ElasticSearch/Logstache/Kibana (ELK).
-![Kibana](kibana.png)
+* Explore data with Elasticsearch/Logstash/Kibana (ELK).
+
+![Kibana]({{ site.github.url }}/images/overview/kibana.png)
 
 What sort of expertise is needed to use SFM?
 --------------------------------------------
