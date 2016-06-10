@@ -10,9 +10,8 @@ ads: false
 ---
 
 Social Feed Manager is a web application which allows users to create collections of data from social media platforms, 
-including Twitter, Flickr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data.  
-In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from the social media.
-
+including Twitter, Flickr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data. In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from the social media.
+ 
 Researchers, librarians, archivists, and students can use SFM to:
 
 <ul>
@@ -43,11 +42,11 @@ Define and organize collections.
 
 ![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
 
-Add collections with various harvest types
+Add collections with various harvest types.
 
 ![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
 
-Add seeds and monitor harvests
+Add seeds and monitor harvests.
 
 ![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
 
@@ -57,7 +56,7 @@ Turn it on.  SFM will harvest the data on an on-going basis or according to the 
 
 ![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
-To make use of social media data:
+**To make use of social media data:**
 
 Export a collection to a spreadsheet.
 
@@ -73,11 +72,11 @@ Explore data with Elasticsearch/Logstash/Kibana (ELK).
 
 What sort of expertise is needed to use SFM?
 --------------------------------------------
-No specific expertise is needed to use SFM, but it is helpful to read the SFM documentation and be familiar with social media APIs.
+No specific expertise is needed to use SFM, but it is helpful to read the [SFM documentation](https://sfm.readthedocs.org) and be familiar with social media APIs.
 
 What sort of technical expertise is needed to get SFM running?
 --------------------------------------------------------------
-SFM requires some level of expertise to run.  Instructions are providing for running in any environment that supports Docker.  Instructions are also provided for Amazon Web Services (AWS).
+SFM requires some level of expertise to run.  [Instructions](https://sfm.readthedocs.io/en/latest/install.html) are provided for running in any environment that supports Docker.  [Instructions](https://sfm.readthedocs.io/en/latest/install.html#amazon-ec2-installation) are also provided for Amazon Web Services (AWS).
 
 What is the state of the software?
 ----------------------------------
