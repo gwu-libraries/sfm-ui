@@ -21,6 +21,7 @@ Contents:
    authentication
    credentials
    processing
+   exploring
    development
    docker
    harvester

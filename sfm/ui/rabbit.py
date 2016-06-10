@@ -32,3 +32,9 @@ class RabbitWorker:
         with self.get_connection() as connection:
             log.debug("Sending message to %s: %s", routing_key, json.dumps(message, indent=4))
             connection.Producer(exchange=self.exchange).publish(message, routing_key=routing_key)
+
+    def send_messages(self, messages, routing_key):
+        with self.get_connection() as connection:
+            for message in messages:
+                log.debug("Sending message to %s: %s", routing_key, json.dumps(message, indent=4))
+                connection.Producer(exchange=self.exchange).publish(message, routing_key=routing_key)
