@@ -3,19 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Social Feed Manager (SFM) documentation
-=======================================
+Social Feed Manager (SFM)
+=========================
 
 Social Feed Manager is open source software for libraries, archives, cultural heritage institutions and research organizations. It empowers those communities' researchers, faculty, students, and archivists to define and create collections of data from social media platforms. Social Feed Manager will harvest from Twitter, Tumblr, Flickr, and Sina Weibo and is extensible for other platforms. In addition to collecting data from those platforms' APIs, it will collect linked web pages and media.
 
 This site provides documentation for installation and usage of SFM. See the `Social Feed Manager project site <http://gwu-libraries.github.io/sfm-ui/>`_ for full information about the project's objectives, roadmap, and updates. 
 
----------
-Contents:
----------
+.. _user-docs:
 
 .. toctree::
    :maxdepth: 2
+   :caption: User Documentation
+
+   quickstart
+
+.. _technical-documentation:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Installation and Technical Documentation
 
    install
    authentication
