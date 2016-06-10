@@ -41,7 +41,7 @@
                     <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn off
                 </button><br />
             {% else %}
-            <button type="submit" class={% if seed_error_message or seed_warning_message %}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
+            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col %}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn on
             </button><br />
         {% endif %}
@@ -62,10 +62,15 @@
 {% if seed_warning_message %}
     <div class="alert alert-warning" role="alert">{{ seed_warning_message }}</div>
 {% endif %}
+{% if  credential_used_col and not collection.is_active %}
+    <div class="alert alert-warning" role="alert">
+        The credential <a href={% url "credential_detail" collection.credential.pk %}>{{ collection.credential.name }} </a> is already in use by <a href={% url "collection_detail" credential_used_col.id %}>{{ credential_used_col.name }}</a>. You can't turn on this collection.
+    </div>
+{% endif %}
 {% if seed_error_message %}
     <div class="alert alert-danger" role="alert">{{ seed_error_message }}</div>
 {% endif %}
-{% if not seed_error_message and not seed_warning_message and not collection.is_active %}
+{% if not seed_error_message and not seed_warning_message and not collection.is_active and not credential_used_col %}
     <div class="alert alert-warning" role="alert">Turn on collection to start harvesting.</div>
 {% endif %}
 <div class="row subsection">
