@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "Overview of Social Feed Manager"
-permalink: /about/project-team
+permalink: /about/overview
 date: 2016-06-10
 modified: 2016-06-10
 excerpt: ""
