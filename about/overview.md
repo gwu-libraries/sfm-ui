@@ -15,12 +15,15 @@ In addition to harvesting social media data, it can also harvest web resources s
 
 Researchers, librarians, archivists, and students can use SFM to:
 
-
-*  Gather datasets tailored to specific research questions
-*  Build collections for future research. This might include:
-  *  collecting "at risk" social media data around a particular event or topic
-  *  filling gaps in special collections
-  *  archiving the social media activity of their institution
+<ul>
+<li>Gather datasets tailored to specific research questions</li>
+<li> Build collections for future research. This might include:</li>
+  <ul>
+  <li>collecting "at risk" social media data around a particular event or topic</li>
+  <li>filling gaps in special collections</li>
+  <li> archiving the social media activity of their institution</li>
+  </ul>
+</ul>
 
 For both of these cases, SFM documents the steps in collecting in order to support valid, reproducible research and the needs of archives.
 
@@ -34,27 +37,27 @@ SFM is intended to be run by an institution such as a library, although nothing 
 
 How might I use SFM?
 --------------------
-You can use SFM to collect social media data:
+**You can use SFM to collect social media data:**
 
-### Define and organize collections.
+Define and organize collections.
 
 ![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
 
-### Add collections with various harvest types
+Add collections with various harvest types
 
 ![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
 
-### Add seeds and monitor harvests
+Add seeds and monitor harvests
 
 ![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
 
 ![list of harvests]({{ site.github.url }}/images/overview/harvests.png)
 
-### Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
+Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
 
 ![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
-### To make use of social media data:
+To make use of social media data:
 
 Export a collection to a spreadsheet.
 
@@ -62,8 +65,9 @@ Export a collection to a spreadsheet.
 
 ![spreadsheet screenshot]({{ site.github.url }}/images/overview/excel.png)
 
-*  Feed data into your own processing pipeline.
-*  Explore data with Elasticsearch/Logstash/Kibana (ELK).
+Feed data into your own processing pipeline.
+
+Explore data with Elasticsearch/Logstash/Kibana (ELK).
 
 ![Kibana]({{ site.github.url }}/images/overview/kibana.png)
 
