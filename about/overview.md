@@ -17,9 +17,9 @@ Researchers, librarians, archivists, and students can use SFM to:
 
 *  Gather datasets tailored to specific research questions
 *  Build collections for future research. This might include:
-**  collecting "at risk" social media data around a particular event or topic
-**  filling gaps in special collections
-**  archiving the social media activity of their institution
+  *  collecting "at risk" social media data around a particular event or topic
+  *  filling gaps in special collections
+  *  archiving the social media activity of their institution
 
 For both of these cases, SFM documents the steps in collecting in order to support valid, reproducible research and the needs of archives.
 
@@ -35,30 +35,34 @@ How might I use SFM?
 --------------------
 You can use SFM to collect social media data:
 
-1. Define and organize collections.
+###Define and organize collections.
 
 ![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
 
+###Add collections with various harvest types
+
 ![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
 
-2. Add seeds and monitor harvests
+###Add seeds and monitor harvests
 
 ![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
 
 ![list of harvests]({{ site.github.url }}/images/overview/harvests.png)
 
-3. Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
+###Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
 
 ![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
-To make use of social media data:
-*  Export a collection to a spreadsheet.
+###To make use of social media data:
+
+Export a collection to a spreadsheet.
 
 ![export create screen]({{ site.github.url }}/images/overview/export_page.png)
+
 ![spreadsheet screenshot]({{ site.github.url }}/images/overview/excel.png)
 
-* Feed data into your own processing pipeline.
-* Explore data with Elasticsearch/Logstash/Kibana (ELK).
+*  Feed data into your own processing pipeline.
+*  Explore data with Elasticsearch/Logstash/Kibana (ELK).
 
 ![Kibana]({{ site.github.url }}/images/overview/kibana.png)
 
