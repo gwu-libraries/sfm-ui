@@ -38,23 +38,19 @@ How might I use SFM?
 --------------------
 You can use SFM to collect social media data:
 
-1. Define and organize collections.
+<ol>
+  <li>Define and organize collections.</li>
+  <img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="collection set page with list of collections">
+  <li> Add collections with various harvest types.</li>
+  <img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="list of collection harvest types">
+  <li>Add seeds and monitor harvests.</li>
+  <img src="{{ site.github.url }}/images/overview/seeds.png" alt="list of seeds">
+  <br>
+  <img src="{{ site.github.url }}/images/overview/harvests.png" alt="list of harvests">
+  <li>Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.</li>
+  <img src="{{ site.github.url }}/images/overview/collection.png" alt="collection turned on">
+</ol>
 
-![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
-
-2. Add collections with various harvest types.
-
-![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
-
-3. Add seeds and monitor harvests.
-
-![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
-
-![list of harvests]({{ site.github.url }}/images/overview/harvests.png)
-
-4. Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
-
-![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
 How do I make use of social media data collected by SFM?
 --------------------------------------------------------

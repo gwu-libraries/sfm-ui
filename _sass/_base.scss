@@ -123,6 +123,7 @@ figure {
   }
   @include clearfix;
   img,
+  border: 1px solid #333; 
   .fluid-width-video-wrapper,
   .palette {
     margin-bottom: (0px + $doc-line-height) / 2;
