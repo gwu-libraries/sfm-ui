@@ -10,7 +10,7 @@ ads: false
 ---
 
 Social Feed Manager is a web application which allows users to create collections of data from social media platforms, 
-including Twitter, Flickr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data. In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from the social media.
+including Twitter, Flickr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data. In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from or embedded in the social media.
  
 Researchers, librarians, archivists, and students can use SFM to:
 
@@ -30,43 +30,40 @@ Using SFM, an institution can provide social media collecting as a service to me
 
 Who is Social Feed Manager for?
 -------------------------------
-SFM is intended for use by researchers, students, librarians, archivists.  It documents the various steps in collecting in order to support valid, reproducible research.
+SFM is intended for use by researchers, students, librarians, and archivists who need to collect social media. 
 
 SFM is intended to be run by an institution such as a library, although nothing prevents it from being run by an individual. SFM can manage collections created by many users, across multiple social media platforms.
 
 How might I use SFM?
 --------------------
-**You can use SFM to collect social media data:**
+You can use SFM to collect social media data:
 
-Define and organize collections.
+1. Define and organize collections.
 
 ![collection set page with list of collections]({{ site.github.url }}/images/overview/collection_set_multi.png)
 
-Add collections with various harvest types.
+2. Add collections with various harvest types.
 
 ![list of collection harvest types]({{ site.github.url }}/images/overview/collection_types.png)
 
-Add seeds and monitor harvests.
+3. Add seeds and monitor harvests.
 
 ![list of seeds]({{ site.github.url }}/images/overview/seeds.png)
 
 ![list of harvests]({{ site.github.url }}/images/overview/harvests.png)
 
-Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
+4. Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
 
 ![collection turned on]({{ site.github.url }}/images/overview/collection.png)
 
-**To make use of social media data:**
-
+How do I make use of social media data collected by SFM?
+--------------------------------------------------------
 Export a collection to a spreadsheet.
-
-![export create screen]({{ site.github.url }}/images/overview/export_page.png)
 
 ![spreadsheet screenshot]({{ site.github.url }}/images/overview/excel.png)
 
-Feed data into your own processing pipeline.
+You can also feed data into your own processing pipeline from the command line or explore data with Elasticsearch/Logstash/Kibana (ELK).
 
-Explore data with Elasticsearch/Logstash/Kibana (ELK).
 
 ![Kibana]({{ site.github.url }}/images/overview/kibana.png)
 
@@ -80,7 +77,7 @@ SFM requires some level of expertise to run.  [Instructions](https://sfm.readthe
 
 What is the state of the software?
 ----------------------------------
-The first version of SFM was released in June 2016.  While it is suitable for production, it should be considered immature.  Development is active and ongoing.
+The first version of SFM was released in June 2016.  While it is suitable for production, it should be considered a work in progress.  Development is active and ongoing.
 
 
 Social Feed Manager is supported by a grant from the National Historical Publications & Records Commission. 
