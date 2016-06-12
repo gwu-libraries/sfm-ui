@@ -84,7 +84,8 @@ img {
 	height: auto; // Part 2: Scale the height according to the width, otherwise you get stretching
 
 	vertical-align: middle;
-	border: 0;
+	border: 2px solid #333;
+        margin-top: 10px;
 	-ms-interpolation-mode: bicubic;
 }
 
