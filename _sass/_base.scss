@@ -125,10 +125,13 @@ figure {
   img,
   .fluid-width-video-wrapper,
   .palette {
-    border: 1px solid #333;
     margin-bottom: (0px + $doc-line-height) / 2;
     // margin-bottom: (0rem + ($doc-line-height / $doc-font-size)) / 2;
   }
+  img {
+    border: 3px solid #333;
+    margin-top: 10px;
+  } 
   a {
     img {
       /* Image hover animation */

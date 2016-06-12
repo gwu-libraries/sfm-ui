@@ -40,12 +40,12 @@ You can use SFM to collect social media data:
 
 <ol>
 <li>Define and organize collections.
-<img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="collection set page with list of collections"></li>
+</br><img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="collection set page with list of collections"></li>
 <li> Add collections with various harvest types.
-<img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="list of collection harvest types"></li>
+</br><img src="{{ site.github.url }}/images/overview/collection_set_multi.png" alt="list of collection harvest types"></li>
 <li>Add seeds and monitor harvests.
-<img src="{{ site.github.url }}/images/overview/seeds.png" alt="list of seeds"></br>
-<img src="{{ site.github.url }}/images/overview/harvests.png" alt="list of harvests"></li>
+</br><img src="{{ site.github.url }}/images/overview/seeds.png" alt="list of seeds"></br>
+</br><img src="{{ site.github.url }}/images/overview/harvests.png" alt="list of harvests"></li>
 <li>Turn it on.  SFM will harvest the data on an on-going basis or according to the schedule you specify.
 <img src="{{ site.github.url }}/images/overview/collection.png" alt="collection turned on"></li>
 </ol>
