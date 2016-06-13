@@ -34,7 +34,7 @@ SFM is intended for use by researchers, students, librarians, and archivists who
 
 SFM is intended to be run by an institution such as a library, although nothing prevents it from being run by an individual. SFM can manage collections created by many users, across multiple social media platforms.
 
-How might I use SFM?
+How do I use SFM to collect data?
 --------------------
 You can use SFM to collect social media data:
 
