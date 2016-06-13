@@ -3,16 +3,21 @@ Quick Start Guide
 ===================
 
 This quick start guide describes how you can start using Social Feed Manager to select, harvest,
-explore, export, process and analyze social media data.  This covers just the basics;
-more detail can be found in the :ref:`technical-documentation`.
+explore, export, process and analyze social media data.  This covers just the basics of using the software;
+technical information about installing and administering SFM can be found in the :ref:`technical-documentation`.
 
 ------------------------------
 Prerequisites
 ------------------------------
 
+SFM in operation
+^^^^^^^^^^^^^^^^
+This quick start guide assumes SFM is already set up and running. For details about installing and administering 
+SFM, see :ref:'technical-documentation'.
+
 An SFM account
 ^^^^^^^^^^^^^^
-You can sign up for an account by clicking the *Sign Up* link.
+You can sign up for an account by clicking the *Sign Up* link from within SFM.
 
 If you'd like to set up shared collecting at your institution, you'll need to have your
 systems administrator set up groups in SFM.
