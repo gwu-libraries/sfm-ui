@@ -35,6 +35,8 @@
 	@extend .btn;
 	background-color: $white;
 	color: $text-color;
+        margin-right: 8px;
+        margin-left: 8px;
 	&:visited,
 	&:active {
 		color: $text-color;
