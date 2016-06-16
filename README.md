@@ -4,8 +4,6 @@
 
 Social Feed Manager (SFM) harvests social media data from multiple platforms' public APIs to help archivists, librarians, and researchers to build social media collections. [More information about the project itself.](http://gwu-libraries.github.io/sfm-ui) This is a re-architected version of an [earlier Social Feed Manager](https://github.com/gwu-libraries/social-feed-manager) which has been in use at GWU Libraries since 2012. 
 
-###__This is pre-1.0 software and is undergoing rapid change. It should be considered for testing and experimentation only, not production use. Version 1.0 is planned for early summer 2016.__
-
 ## Overview
 When complete, Social Feed Manager will allow users to:
 * define collections comprising sets of targeted accounts, keywords, and other search strategies appropriate to different platforms.
