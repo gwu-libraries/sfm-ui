@@ -34,6 +34,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    harvester
    messaging
    messaging_spec
+   limitations
 
 
 Indices and tables
