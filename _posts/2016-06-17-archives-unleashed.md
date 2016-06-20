@@ -3,7 +3,7 @@ layout: article
 permalink: /posts/2016-06-17-archives-unleashed
 title: "SFM at Archives Unleashed 2.0 and the Saving The Web symposium"
 author: dan_kerchner 
-excerpt: "This week, GW Libraries' software development librarians working on Social Feed Manager participated in the [Archives Unleashed 2.0 hackathon](http://archivesunleashed.com/) hosted at the Library of Congress."
+excerpt: "This week, GW Libraries' software development librarians working on Social Feed Manager participated in the Archives Unleashed 2.0 hackathon hosted at the Library of Congress."
 ---
 
 This week, GW Libraries' software development librarians working on Social Feed Manager, Laura Wrubel, Justin Littman and Dan Kerchner,
@@ -11,7 +11,7 @@ participated in the [Archives Unleashed 2.0 hackathon](http://archivesunleashed.
 Hackathon organizers selected the participants from among a pool of applicants from around the world.
 The hackathon brought together leading coding-savvy researchers in a variety of disciplines to dig into web archive data.
 Participants formed nine project teams and spent the next two days working intensively to try to derive interesting results
-from data sets such as web archives collected around the .gov domain, Twitter tweets related to the upcoming election,
+from data sets such as web archives collected around the .gov domain, tweets related to the upcoming election,
 Cuban web archives, and more.
 
 Of the nine teams, three used data collected by SFM.
