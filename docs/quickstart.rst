@@ -13,7 +13,7 @@ Prerequisites
 SFM in operation
 ^^^^^^^^^^^^^^^^
 This quick start guide assumes SFM is already set up and running. For details about installing and administering 
-SFM, see :ref:'technical-documentation'.
+SFM, see :ref:`technical-documentation`.
 
 An SFM account
 ^^^^^^^^^^^^^^
