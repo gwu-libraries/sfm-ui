@@ -8,7 +8,7 @@ Accessing the APIs of social media platforms requires credentials for authentica
 Most API credentials have two parts: an application credential and a user credential.
 (Flickr is the exception -- only an application credential is necessary.)
 
-It is important to understand how credentials/authentication effect what API methods can be
+It is important to understand how credentials/authentication affect what API methods can be
 invoked and rate limits. For more information, consult the documentation for each
 social media platform's API.
 
