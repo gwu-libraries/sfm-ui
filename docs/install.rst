@@ -70,15 +70,25 @@ Installing locally required Docker and Docker-Compose. See :ref:`docker-installi
 
 or just download ``docker-compose.yml`` and ``example.secrets.env``::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/master.docker-compose.yml > docker-compose.yml
+    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/prod.docker-compose.yml > docker-compose.yml
     curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.secrets.env > secrets.env
 
 2. Put real secrets in ``secrets.env``.
 
-3. Bring up the containers::
+3. Update ``docker-compose.yml``. It is annotated with the various configuration options. At the least,
+   set the ``SFM_HOST` environment variable with the host/IP and the port.
+
+4. Bring up the containers::
 
     docker-compose up -d
 
+
+Notes:
+
+* There is an example ``docker-compose.yml`` file for running the latest master code called ``master.docker-compose.yml``
+  that can be used instead of ``prod.docker-compose.yml``.
+* The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_.
+  This will take several minutes.
 
 -------------------------
  Amazon EC2 installation
@@ -99,9 +109,8 @@ user details and modify as appropriate::
      - usermod -aG docker ubuntu
      - pip install -U docker-compose
      - mkdir /sfm-data
-    # This brings up master. To bring up a specific version, replace master with the
-    # version number, e.g., 0.6.0.
-     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/master.docker-compose.yml > docker-compose.yml
+    # This brings up the latest production release. To bring up master, replace prod with master.
+     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/prod.docker-compose.yml > docker-compose.yml
      - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.secrets.env > secrets.env
     # Set secrets below. Secrets that are not commented out are required.
     # Secrets that are commented out are not required. To include, remove the #.
@@ -133,7 +142,7 @@ user details and modify as appropriate::
     # The email address of the admin account for SFM UI.
      - export SITE_ADMIN_EMAIL=nowhere@example.com
     # The time zone.
-     - export TZ=EST
+     - export TZ=America/New_York
     # The host name of the server.
      - export HOST=`curl http://169.254.169.254/latest/meta-data/public-hostname`
      - sed -i 's/\/sfm-data/"\/sfm-data:\/sfm-data"/' docker-compose.yml

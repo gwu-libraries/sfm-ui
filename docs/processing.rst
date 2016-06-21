@@ -80,7 +80,7 @@ The other tools are:
 
 To instantiate::
 
-    docker run -it --rm --link=docker_sfuimapp_1:api --volumes-from=docker_sfmdata_1 gwul/sfm-processing:0.3.0
+    docker run -it --rm --link=docker_sfmuiapp_1:api --volumes-from=docker_sfmdata_1 gwul/sfm-processing:1.0.0
 
 The arguments will need to be adjusted depending on your Docker environment. Also, set the version for sfm-processing
 correctly.

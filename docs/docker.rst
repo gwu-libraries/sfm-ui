@@ -65,10 +65,10 @@ On Ubuntu:
     Delete all containers.
 
 ``docker-compose logs``
-    List the logs from all containers.
+    List the logs from all containers. Add ``-f`` to follow the logs.
 
 ``docker logs <container name>``
-    List the log from a single container.
+    List the log from a single container. Add ``-f`` to follow the logs.
 
 ``docker-compose -f <docker-compose.yml filename> <command>``
     Use a different docker-compose.yml file instead of the default.
