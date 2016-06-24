@@ -28,7 +28,7 @@ there may be the following:
 
 For more information, see :doc:`docker`.
 
-SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
+SFM *can* be deployed without Docker. The various ``Dockerfile`` s should provide
 reasonable guidance on how to accomplish this.
 
 .. _install-configuration:
@@ -38,7 +38,7 @@ Configuration
 -------------
 
 * Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
-* Application credentials for social media APIs are configured by providing the ``TWITTER_CONSUMER_KEY``,
+* Application credentials for social media APIs are configured in ``secrets.env`` by providing the ``TWITTER_CONSUMER_KEY``,
   ``TWITTER_CONSUMER_SECRET``, ``WEIBO_API_KEY``, and/or ``WEIBO_API_SECRET``. For more information and alternative approaches see :doc:`credentials`.
 * Debug mode for sfm-ui is controlled by the ``DEBUG`` environment variable in ``docker-compose.yml``.
   If setting ``DEBUG`` to false, the ``SFM_HOST`` environment variable must be provided with the host.
