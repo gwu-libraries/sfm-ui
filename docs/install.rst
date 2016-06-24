@@ -32,9 +32,10 @@ SFM *can* be deployed without Docker. The various ``Dockerfile``s should provide
 reasonable guidance on how to accomplish this.
 
 .. _install-configuration:
----------------
- Configuration
----------------
+
+-------------
+Configuration
+-------------
 
 * Passwords are kept in ``secrets.env``.  A template for this file (``example.secrets.env``) is provided.
 * Application credentials for social media APIs are configured by providing the ``TWITTER_CONSUMER_KEY``,
