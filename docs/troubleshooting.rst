@@ -29,6 +29,19 @@ Bad Request (400)
 If you receive a Bad Request (400) when trying to access SFM, your ``SFM_HOST`` environment variable is not
 configured correctly. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
 
+Docker problems
+^^^^^^^^^^^^^^^
+If you are having problems bringing up the Docker containers (e.g., ``driver failed programming external connectivity on endpoint``),
+restart the Docker service.  On Ubuntu, this can be done with::
+
+    # service docker stop
+    docker stop/waiting
+    # service docker status
+    docker stop/waiting
+    # service docker start
+    docker start/running, process 15039
+
+
 --------------
  Still stuck?
 --------------
