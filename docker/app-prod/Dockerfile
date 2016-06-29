@@ -6,7 +6,7 @@ ENV sfm_ui_version 1.0.0
 #This pre-fetches the most recent requirements.apt.
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/${sfm_ui_version}/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
-    zip=3.0-8
+    zip
 RUN cat /tmp/requirements.apt | tr "\n" " " | xargs apt-get install -y
 #Upgrade pip
 RUN pip install pip==7.1.2
