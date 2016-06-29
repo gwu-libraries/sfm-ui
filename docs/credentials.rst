@@ -43,7 +43,8 @@ interface.
 
 Twitter
 ^^^^^^^
-Twitter credentials can be obtained from `https://apps.twitter.com/ <https://apps.twitter.com/>`_.
+Twitter credentials can be obtained from `https://apps.twitter.com/ <https://apps.twitter.com/>`_. It is recommended to change
+the application permissions to read-only.
 
 Weibo
 ^^^^^
