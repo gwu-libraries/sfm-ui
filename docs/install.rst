@@ -48,6 +48,8 @@ Configuration
   ``docker-compose.yml``.
 * Email is configured by providing the ``SFM_HOST``, ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``
   environment variables.  ``SFM_HOST`` is used to determine the host name when constructing links contained in the emails.
+  (If the configured email account is hosted by Google, you will need to configure the account to "Allow less secure apps."
+  Currently this setting is accessed, while logged in to the google account, via https://myaccount.google.com/security#connectedapps).
 
 * The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
   is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used; to use
