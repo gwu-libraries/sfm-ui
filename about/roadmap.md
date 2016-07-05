@@ -22,6 +22,8 @@ The current version of Social Feed Manager is 1.0. [Release description]({{ site
 * Bug fixes for 1.0
 * Documentation improvements
 * Improvements to export speed
+* Harvester: Tumblr
+* Exporter: Tumblr
 
 ### Future work, medium immediate
 * UI: Further branding options
@@ -36,15 +38,13 @@ The current version of Social Feed Manager is 1.0. [Release description]({{ site
 * Documentation: Complete documentation on writing a harvester, writing an exporter, and adding platform-specific components to UI.
 
 ### Less immediate
-* Harvester: Tumblr
-* Exporter: Tumblr
 * Harvester: Flickr additional API methods
 * Collection review support
 * Fulltext search (in scope?)
 * Improvements to ELK
 * Public page showing collection information
 
-Completed development, up through 1.0 includes:
+### Completed development, up through 1.0 includes:
 * Models for collections, seedsets, seeds, credentials, harvests, users, and groups
 * Support for harvesting to WARCs
 * Harvester: Twitter filter
