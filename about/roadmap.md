@@ -3,17 +3,48 @@ layout: article
 title: "Development Roadmap"
 permalink: /about/roadmap
 date: 2016-03-29
-modified: 2016-03-29
+modified: 2016-07-05
 share: false
 ads: false
 ---
 
-(as of May 2016)
+The current version of Social Feed Manager is 1.0. [Release description]({{ site.github.url }}/about/1-0-release)
 
-## Pre-release 1.0
-(see [milestone release notes](https://github.com/gwu-libraries/sfm-ui/releases))
+(ordering is very rough and will likely change)
 
-### Completed development, up through milestone 0.6.0, includes:
+### Milestone 1.1 [(full list of tickets on GitHub)](https://github.com/gwu-libraries/sfm-ui/milestones/1.next)
+* Improve monitoring of components, including harvests [(Ticket #303)](https://github.com/gwu-libraries/sfm-ui/issues/303)
+* UI: general usability improvements and contextual help
+* UI: Improve warnings / notifications about seeds, harvests, and exports problems [(Ticket #357](https://github.com/gwu-libraries/sfm-ui/issues/357), [#303)](https://github.com/gwu-libraries/sfm-ui/issues/303)
+* UI: Basic branding [(Ticket #257)](https://github.com/gwu-libraries/sfm-ui/issues/257)
+* UI: Allow multiple credentials per platform [(Ticket #317)](https://github.com/gwu-libraries/sfm-ui/issues/317)
+* UI: Clearer harvest statistics
+* Bug fixes for 1.0
+* Documentation improvements
+* Improvements to export speed
+
+### Future work, medium immediate
+* UI: Further branding options
+* UI: Refine terms of service / copyright / fair use notifications
+* UI: Collection discovery (for future researcher)
+* UI: Further improve error handling / display / notification
+* Export: Cleanup of export files
+* Email updates on harvesting
+* UI: Shibboleth integration/auth [(Ticket #31)](https://github.com/gwu-libraries/sfm-ui/issues/31)
+* Harvest: Documenting harvest in WarcInfo records 
+* Export: Export manifest [(Ticket #123)](https://github.com/gwu-libraries/sfm-ui/issues/123)
+* Documentation: Complete documentation on writing a harvester, writing an exporter, and adding platform-specific components to UI.
+
+### Less immediate
+* Harvester: Tumblr
+* Exporter: Tumblr
+* Harvester: Flickr additional API methods
+* Collection review support
+* Fulltext search (in scope?)
+* Improvements to ELK
+* Public page showing collection information
+
+Completed development, up through 1.0 includes:
 * Models for collections, seedsets, seeds, credentials, harvests, users, and groups
 * Support for harvesting to WARCs
 * Harvester: Twitter filter
@@ -46,44 +77,8 @@ ads: false
 * Documentation on installation/configuration and development
 * Documentation: Messaging specification for export
 * Initial documentation on writing a harvester
-
-### Milestone 0.6.1
-* Changing naming of Collection and SeedSet to Collection Set and Collection. This terminology better describes harvesters that do not require seeds, such as 
- the Twitter sample stream and filter stream.
-
-### Milestone 0.6.2
 * UI: General improvements to screens and workflow
 * UI: Preliminary terms of service / copyright / fair use notification
-* UI: Contextual help
 * Documentation: End-user docs
 * Documentation: Review technical docs for completeness
-
-See [1.0 release description]({{ site.github.url }}/about/1-0-release)
-
-## Post-release 1.0
-(ordering is very rough and will likely change)
-
-### Most immediate
-* UI: Branding
-* UI: Validating seeds
-
-### Medium immediate
-* UI: Complete terms of service / copyright / fair use notification
-* UI: Collection discovery (for future researcher)
-* UI: Error handling / display / notification
-* UI: Refine harvest statistics
-* Export: Cleanup of export files
-* Email updates on harvesting
-* UI: Shibboleth integration/auth
-* Harvest: Documenting harvest in WarcInfo records 
-* Export: Export manifest 
-* Documentation: Complete documentation on writing a harvester, writing an exporter, and adding platform-specific components to UI.
-
-### Less immediate
-* Harvester: Tumblr
-* Exporter: Tumblr
-* Harvester: Flickr additional API methods
-* Collection review support
-* Fulltext search (in scope?)
-
 
