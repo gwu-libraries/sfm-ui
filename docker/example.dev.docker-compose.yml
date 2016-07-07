@@ -1,5 +1,5 @@
 sfmdevrabbit:
-    image: rabbitmq@sha256:397382d2b222f3a298a6c74e93f348fb16f9a7fde2c02ba14122624d852daae3
+    image: rabbitmq@sha256:a5180a37b0baebb938ee9d12dd11eed64a909288d7f344e24771278f8a122367
     #RabbitMQ 3-management
     ports:
         - "15672:15672"
