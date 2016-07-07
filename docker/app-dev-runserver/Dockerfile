@@ -3,7 +3,7 @@ FROM ubuntu@sha256:0844055d30c0cad5ac58097597a94640b0102f47d6fa972c94b7c129d87a4
 MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 #This pre-fetches the most recent requirements.apt.
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/master/requirements/requirements.apt /opt/sfm-setup/
 RUN apt-get update
 RUN cat /opt/sfm-setup/requirements.apt | tr "\n" " " | xargs apt-get install -y
