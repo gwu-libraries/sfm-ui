@@ -77,6 +77,7 @@ The other tools are:
 * `twarc <https://github.com/edsu/twarc>`_ for access to the `Twarc utils <https://github.com/edsu/twarc/tree/master/utils>`_.
 * `JWAT Tools <https://sbforge.org/display/JWAT/JWAT-Tools>`_ for processing WARCs.
 * `warctools <https://github.com/internetarchive/warctools>`_ for processing WARCs.
+* `parallel <https://www.gnu.org/software/parallel/>`_ for parallelizing processing.
 
 To instantiate::
 
