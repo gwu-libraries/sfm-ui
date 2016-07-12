@@ -29,6 +29,11 @@ Bad Request (400)
 If you receive a Bad Request (400) when trying to access SFM, your ``SFM_HOST`` environment variable is not
 configured correctly. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
 
+Social Network Login Failure for Twitter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you receive a Social Network Login Failure when trying to connect a Twitter account, make sure that the Twitter app
+from which you got the Twitter credentials is configured with a callback URL. The URL you provide doesn't matter.
+
 Docker problems
 ^^^^^^^^^^^^^^^
 If you are having problems bringing up the Docker containers (e.g., ``driver failed programming external connectivity on endpoint``),
