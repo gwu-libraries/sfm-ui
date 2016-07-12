@@ -31,7 +31,7 @@ The current version of Social Feed Manager is 1.0. [Release description]({{ site
 * UI: Collection discovery (for future researcher)
 * UI: Further improve error handling / display / notification
 * Export: Cleanup of export files
-* Email updates on harvesting
+* Email updates on harvesting [(Ticket #368)](https://github.com/gwu-libraries/sfm-ui/issues/368)
 * UI: Shibboleth integration/auth [(Ticket #31)](https://github.com/gwu-libraries/sfm-ui/issues/31)
 * Harvest: Documenting harvest in WarcInfo records 
 * Export: Export manifest [(Ticket #123)](https://github.com/gwu-libraries/sfm-ui/issues/123)
