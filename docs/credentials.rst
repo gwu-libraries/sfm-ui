@@ -44,7 +44,7 @@ interface.
 Twitter
 ^^^^^^^
 Twitter credentials can be obtained from `https://apps.twitter.com/ <https://apps.twitter.com/>`_. It is recommended to change
-the application permissions to read-only.
+the application permissions to read-only.  You *must* provide a callback URL, but the URL you provide doesn't matter.
 
 Weibo
 ^^^^^
