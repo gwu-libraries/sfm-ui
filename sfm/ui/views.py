@@ -119,8 +119,6 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         # For too many seeds
         seed_error_message = None
         # No active seeds.
-        log.info(self.object.required_seed_count())
-        log.info(self.object.active_seed_count())
         if self.object.required_seed_count() == 0 and self.object.active_seed_count() != 0:
             seed_error_message = "All seeds must be deactivated before harvesting can be turned on."
         # Specific number of active seeds.

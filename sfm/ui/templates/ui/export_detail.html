@@ -23,7 +23,7 @@
             <p><strong>Selected seeds:</strong>
             <ul>
             {% for seed in export.seeds.all %}
-                <li>{{ seed }}</li>
+                <li>{{ seed.label }}</li>
             {% endfor %}
             </ul>
         {% endif %}

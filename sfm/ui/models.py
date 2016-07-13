@@ -10,6 +10,7 @@ from django.conf import settings
 import uuid
 import datetime
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -291,6 +292,19 @@ class Seed(models.Model):
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+    def label(self):
+        labels = []
+        if self.token:
+            try:
+                j = json.loads(self.token)
+                for key, value in j.items():
+                    labels.append("{}: {}".format(key.title(), value))
+            except ValueError:
+                labels.append("Token: {}".format(self.token))
+        if self.uid:
+            labels.append("Uid: {}".format(self.uid))
+        return "; ".join(labels)
 
 
 class Harvest(models.Model):
