@@ -6,7 +6,7 @@ author: justin_littman
 excerpt: "Last week, Internet Archive put out a call for URL nominations for a Pulse Nightclub web collection. This blog post describes how I extracted 200,094 unique URLs from the 4,153,157 tweets we collected around the Pulse Nightclub tragedy."
 ---
 
-As described in [this blog post](http://gwu-libraries.github.io/sfm-ui/posts/pulse-nightclub/]), we collected 
+As described in [this blog post](http://gwu-libraries.github.io/sfm-ui/posts/pulse-nightclub/), we collected 
 tweets around the Pulse Nightclub tragedy in Orlando.  Altogether, we collected 4,153,157 tweets between 
 June 12 and June 20.
 
@@ -22,7 +22,7 @@ I'm going to get into a fair bit of detail about the process and tools.  This mi
 
 The outline for the steps to be performed are:
 
-1. Find the WARC files that contain #PulseNightclub tweets. (If you're new to SFM, we store social media data in WARC files. This always us to record *exactly* how the data was collected.)
+1. Find the WARC files that contain #PulseNightclub tweets. (If you're new to SFM, we store social media data in WARC files. This allows us to record *exactly* how the data was collected.)
 2. Extract the tweets from each WARC file.
 3. Expand any shortened URLs in each tweet.  (Some Twitter users use [URL shorteners](https://en.wikipedia.org/wiki/URL_shortening) to shorten URLs included in tweets.  To normalize the URLs, I’m unshortening them all.)
 4. Extract URLs from each tweet.
