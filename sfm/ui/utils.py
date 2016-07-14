@@ -67,3 +67,15 @@ def clean_token(token):
         return None
     stripped_token = token.strip()
     return stripped_token[1:] if stripped_token.startswith('@') else stripped_token
+
+
+def clean_blogname(blogname):
+    """
+    Cut of the 'tumblr.com'
+    :param blogname:
+    :return: short blogname
+    """
+    if blogname is None:
+        return None
+    stripped_blogname = blogname.strip().lower()
+    return stripped_blogname[:-11] if stripped_blogname.endswith('.tumblr.com') else stripped_blogname

@@ -229,6 +229,35 @@ class CredentialWeiboFormTest(TestCase):
         self.assertJSONEqual(credential.token, '{"access_token": "dummy_access_token"}')
 
 
+class CredentialTumblrFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.path = "/ui/credentials/tumblr/create/"
+        self.user = User.objects.create_superuser(username="test_user",
+                                                  email="test_user@test.com",
+                                                  password="test_password")
+        self.data = {
+            "name": "test_tumblr_credential",
+            "user": self.user.pk,
+            "platform": "tumblr",
+            "consumer_key": "dummy_consumer_key",
+            "consumer_secret": "dummy_consumer_secret",
+            "access_token": "dummy_access_token",
+            "access_token_secret": "dummy_access_token_secret",
+            "date_added": "07/14/2016",
+        }
+
+    def test_form(self):
+        form = CredentialTwitterForm(self.data)
+        form.instance.user = self.user
+        self.assertTrue(form.is_valid())
+        credential = form.save()
+        self.assertJSONEqual(credential.token, '{"consumer_key": "dummy_consumer_key",'
+                                               '"consumer_secret": "dummy_consumer_secret",'
+                                               '"access_token": "dummy_access_token",'
+                                               '"access_token_secret": "dummy_access_token_secret"}')
+
+
 class TestExportForm(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
