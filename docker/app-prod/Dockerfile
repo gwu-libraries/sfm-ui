@@ -4,7 +4,7 @@ MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 ENV sfm_ui_version 1.0.0
 #This pre-fetches the most recent requirements.apt.
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 ADD https://raw.githubusercontent.com/gwu-libraries/sfm-ui/${sfm_ui_version}/requirements/requirements.apt /tmp/
 RUN apt-get update && apt-get install -y \
     zip
