@@ -411,7 +411,9 @@ class CredentialCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_initial(self):
         initial = super(CredentialCreateView, self).get_initial()
-        initial['name'] = "{}'s {} credential".format(self.request.user.username, self.kwargs["platform"])
+        credential_name = "{}'s {} credential".format(self.request.user.username, self.kwargs["platform"])
+        if not Credential.objects.filter(name=credential_name).exists():
+            initial['name'] = credential_name
         return initial
 
 
@@ -423,19 +425,9 @@ class CredentialListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(CredentialListView, self).get_context_data(**kwargs)
         context['credential_list'] = Credential.objects.filter(user=self.request.user)
-        context["can_create_twitter"] = self._can_create_credential(Credential.TWITTER)
         context["can_connect_twitter"] = self._can_connect_credential(Credential.TWITTER)
-        context["can_create_flickr"] = self._can_create_credential(Credential.FLICKR)
-        context["can_create_weibo"] = self._can_create_credential(Credential.WEIBO)
         context["can_connect_weibo"] = self._can_connect_credential(Credential.WEIBO)
         return context
-
-    def _can_create_credential(self, platform):
-        """
-        Returns True if the User does not already have a Credential for this platform.
-        """
-        # If the user already has credential for the platform
-        return not Credential.objects.filter(platform=platform, user=self.request.user).exists()
 
     def _can_connect_credential(self, platform):
         """

@@ -18,7 +18,7 @@ class CollectionSetListViewTests(TestCase):
         self.factory = RequestFactory()
         self.user = User.objects.create_user('testuser', 'testuser@example.com', 'password')
         credential = Credential.objects.create(user=self.user, platform="test_platform",
-                                               token="{}")
+                                               token="{'key': '1'}")
         group = Group.objects.create(name='testgroup1')
         self.user.groups.add(group)
         self.user.save()
@@ -57,7 +57,8 @@ class CollectionSetTestsMixin:
         self.collection_set1 = CollectionSet.objects.create(name='Test Collection Set One',
                                                             group=self.group1)
         self.credential1 = Credential.objects.create(user=self.user1,
-                                                     platform='test platform')
+                                                     platform='test platform',
+                                                     token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set1,
                                                     credential=self.credential1,
                                                     harvest_type='test harvest type',
@@ -72,7 +73,8 @@ class CollectionSetTestsMixin:
         user2 = User.objects.create_user('testuser2', 'testuser2@example.com',
                                          'password')
         credential2 = Credential.objects.create(user=user2,
-                                                platform='test platform')
+                                                platform='test platform',
+                                                token="{'key': '2'}")
         group2 = Group.objects.create(name='testgroup2')
         collection_set2 = CollectionSet.objects.create(name='Test Collection Set Two',
                                                        group=group2)
@@ -134,7 +136,8 @@ class CollectionCreateViewTests(TestCase):
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
                                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform=Credential.TWITTER)
+                                                    platform=Credential.TWITTER,
+                                                    token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
                                                     harvest_type=Collection.TWITTER_FILTER,
@@ -177,7 +180,8 @@ class CollectionDetailViewTests(TestCase):
         self.collection_set1 = CollectionSet.objects.create(name='Test Collection Set One',
                                                             group=self.group1)
         self.credential1 = Credential.objects.create(user=self.user1,
-                                                     platform='test platform')
+                                                     platform='test platform',
+                                                     token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set1,
                                                     credential=self.credential1,
                                                     harvest_type='test harvest type',
@@ -205,7 +209,8 @@ class SeedCreateViewTests(TestCase):
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
                                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform='test platform',
+                                                    token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
                                                     harvest_type=Collection.TWITTER_USER_TIMELINE,
@@ -240,7 +245,8 @@ class SeedTestsMixin:
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
                                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform='test platform',
+                                                    token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
                                                     harvest_type=Collection.TWITTER_USER_TIMELINE,
@@ -313,7 +319,8 @@ class ExportDetailViewTests(TestCase):
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
                                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform='test platform',
+                                                    token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
                                                     harvest_type='test harvest type',
@@ -389,7 +396,8 @@ class ExportFileTest(TestCase):
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
                                                            group=self.group)
         self.credential = Credential.objects.create(user=self.user,
-                                                    platform='test platform')
+                                                    platform='test platform',
+                                                    token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
                                                     harvest_type='test harvest type',
