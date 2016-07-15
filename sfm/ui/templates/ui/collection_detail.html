@@ -117,7 +117,7 @@
                 {% for seed in seed_list %}
                 <tr>
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
-                    <td>{{ seed.uid }}</td>
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
 				</tr>
 				{% endfor %}
