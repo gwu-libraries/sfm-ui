@@ -119,3 +119,56 @@ The various tools can be installed locally::
                                      [--print-item-type]
                                      filepaths [filepaths ...]
     twitter_rest_warc_iter.py: error: too few arguments
+
+---------
+ Recipes
+---------
+
+Extracting URLs
+===============
+The `"Extracting URLs from #PulseNightclub for seeding web archiving" blog post <http://gwu-libraries.github.io/sfm-ui/posts/2016-07-11-pulse-processing>`_
+provides some useful guidance on extracting URLs from tweets, including unshortening and sorting/counting.
+
+Exporting to line-oriented JSON files
+=====================================
+This recipe is for exporting social media data from WARC files to line-oriented JSON files. There will be one JSON file
+for each WARC. This may be useful for some processing or for loading into some analytic tools.
+
+This recipe uses `parallel <https://www.gnu.org/software/parallel/>`_ for parallelizing the export.
+
+Create a list of WARC files::
+
+    find_warcs.py 7c37157 | tr ' ' '\n' > source.lst
+
+Replace `7c37157` with the first few characters of the collection id that you want to export. The collection id is
+available on the colllection detail page in SFM UI.
+
+Create a list of JSON destination files::
+
+    cat source.lst | xargs basename -a | sed 's/.warc.gz/.json/' > dest.lst
+
+This command puts all of the JSON files in the same directory, using the filename of the WARC file with a .json file extension.
+
+If you want to maintain the directory structure, but use a different root directory::
+
+    cat source.lst | sed 's/sfm-data\/collection_set/sfm-processing\/export/' | sed 's/.warc.gz/.json/'
+
+Replace `sfm-processing\/export` with the root directory that you want to use.
+
+Perform the export::
+
+    parallel -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} > {2}"
+
+Replace `twitter_stream_warc_iter.py` with the name of the warc iterator for the type of social media data that you
+are exporting.
+
+You can also perform a filter on export using jq. For example, this only exports tweets in Spanish::
+
+    parallel -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | jq -c 'select(.lang == \"es\")' > {2}"
+
+And to save space, the JSON files can be gzip compressed::
+
+    parallel -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | gzip > {2}"
+
+You might also want to change the file extension of the destination file to ".json.gz" by adjusting the commmand use
+to create the list of JSON destination files.  To access the tweets in a gzipped JSON file, use `gzip -c <filepath>`.
