@@ -197,7 +197,8 @@ If you get any unexpected errors in above two steps, request new `Authentication
 In this section, I'll help you understand the API with an example.
 
 [Public Timeline](http://open.weibo.com/wiki/2/statuses/public_timeline): Returns the latest public Weibos.
-
+It will return the latest Weibos with limited count based on all the Weibo users' posts. Usually, it returns 50 Weibo posts in one page ordering by timestamp. For example, if `User A` posts 10 Weibos and `User B` posts 5 Weibos, the result would pop 5 latest weibo among the total 15 Weibos.
+ 
 Enter the `Access Token` from the previous section, and click the Submit button.
 
 

@@ -1,6 +1,11 @@
 language: ruby
 rvm:
-  - 2.2
+  - 2.2.2
+
+before_install:
+  # get rid of the installing activesupport (5.0.0)
+  - gem install activesupport -v 4.2.6
+  - gem install cocoapods
 
 install:
   - bundle install --jobs=3 --retry=3
