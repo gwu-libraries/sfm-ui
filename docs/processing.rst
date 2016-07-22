@@ -171,4 +171,13 @@ And to save space, the JSON files can be gzip compressed::
     parallel -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | gzip > {2}"
 
 You might also want to change the file extension of the destination file to ".json.gz" by adjusting the commmand use
-to create the list of JSON destination files.  To access the tweets in a gzipped JSON file, use `gzip -c <filepath>`.
+to create the list of JSON destination files.  To access the tweets in a gzipped JSON file, use::
+    
+    gzip -c <filepath>
+
+Using jq to process JSON
+========================
+For tips on using jq with JSON from Twitter and other sources, see:
+
+* `Getting Started Working with Twitter Data Using jq <http://nbviewer.jupyter.org/github/gwu-libraries/notebooks/blob/master/20160407-twitter-analysis-with-jq/Working-with-twitter-using-jq.ipynb>`_
+* `Reshaping JSON with jq <http://programminghistorian.org/lessons/json-and-jq.html>`_
