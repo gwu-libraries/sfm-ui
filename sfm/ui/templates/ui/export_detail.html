@@ -26,6 +26,10 @@
                 <li>{{ seed.label }}</li>
             {% endfor %}
             </ul>
+        {% else %}
+            {% if export.collection.seeds.all %}
+                <p><strong>Selected seeds:</strong> All seeds</p>
+            {% endif %}
         {% endif %}
 
     </p>
