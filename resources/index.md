@@ -12,12 +12,13 @@ ads: false
 
 Papers and Resources
 --------------------
-* [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager 
+* [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
+* [Poster on Provenance of a Tweet]({{ site.github.url }}/resources/prov-tweet-poster.pdf) 
 * [Using Social Media Data: Brief list of resources]({{ site.github.url }}/resources/ethics)
 
 Upcoming Presentations
 ----------------------
-* Christie Peterson, "Provenance of a Tweet", poster at Society of American Archivists (SAA) Research Forum, August 2, 2016.
+* Christie Peterson, ["Provenance of a Tweet"]({{ site.github.url }}/resources/prov-tweet-poster.pdf), poster at Society of American Archivists (SAA) Research Forum, August 2, 2016.
 * Vakil Smallen, Seemantani Sharma, Rachel Trent, "The Challenges of Collecting and Providing Access to Social Media Content" at [Archives/Records 2016, Joint Council of State Archivists (CoSa) - Society of American Archivists (SAA)](http://www2.archivists.org/am2016) conference, August 5, 2016.
 * Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
 
