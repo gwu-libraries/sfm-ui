@@ -652,23 +652,17 @@ class CredentialWeiboForm(BaseCredentialForm):
         return m
 
 
+# sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
+#                                   widget=forms.CheckboxSelectMultiple, label="Image sizes", )
+
 class SeedChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        labels = []
-        if obj.token:
-            try:
-                j = json.loads(obj.token)
-                for key, value in j.items():
-                    labels.append("{}: {}".format(key.title(), value))
-            except ValueError:
-                labels.append("Token: {}".format(obj.token))
-        if obj.uid:
-            labels.append("Uid: {}".format(obj.uid))
-        return "; ".join(labels)
+        return obj.label()
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None, required=False)
+    seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple,
+                            help_text="If no seeds are checked, all seeds will be exported.")
 
     class Meta:
         model = Export
@@ -677,9 +671,6 @@ class ExportForm(forms.ModelForm):
                   'harvest_date_start', 'harvest_date_end']
         localized_fields = None
         error_messages = {}
-        help_texts = {
-            'seeds': "If no seeds are selected, all seeds will be exported."
-        }
         widgets = {
             'item_date_start': DATETIME_WIDGET,
             'item_date_end': DATETIME_WIDGET,
