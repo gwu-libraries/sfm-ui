@@ -88,8 +88,7 @@ class Credential(models.Model):
 class CollectionSet(models.Model):
     collection_set_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     group = models.ForeignKey(Group,
-                              related_name='collection_sets',
-                              help_text='Group members will be able to view and edit the collection set.')
+                              related_name='collection_sets')
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection set name')
     description = models.TextField(blank=True)
