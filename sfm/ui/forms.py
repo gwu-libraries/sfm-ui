@@ -532,12 +532,16 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.fields['tokens'].label = "Screen names"
+        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
+                                           @ symbol not required. Use screen names, not numeric user IDs."
 
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedFlickrUserForm, self).__init__(*args, **kwargs)
         self.fields['tokens'].label = "Username"
+        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
+                                           Use screen names, not numeric user IDs."
 
 
 class BaseCredentialForm(forms.ModelForm):
