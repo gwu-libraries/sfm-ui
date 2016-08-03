@@ -428,8 +428,9 @@ class SeedTwitterSearchForm(BaseSeedForm):
         labels = dict(BaseSeedForm.Meta.labels)
         labels["token"] = "Query"
         help_texts = dict(BaseSeedForm.Meta.help_texts)
-        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search">these instructions</a> for ' \
-                              'writing a query.'
+        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search" target="_blank">' \
+                              'these instructions</a> for writing a query. ' \
+                              'Example: firefly OR "lightning bug"'
         widgets = dict(BaseSeedForm.Meta.widgets)
         widgets["token"] = forms.Textarea(attrs={'rows': 4})
 
