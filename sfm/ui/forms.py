@@ -36,6 +36,7 @@ TWITTER_WEB_RESOURCES_LABEL = "Web resources"
 TWITTER_WEB_RESOURCES_HELP = "Perform web harvests of resources (e.g., web pages) linked in tweets."
 INCREMENTAL_LABEL = "Incremental"
 INCREMENTAL_HELP = "Only harvest new items."
+GROUP_HELP = "Group members will be able to view and edit this collection set."
 
 
 class CollectionSetForm(forms.ModelForm):
@@ -53,7 +54,7 @@ class CollectionSetForm(forms.ModelForm):
             'history_note': HISTORY_NOTE_LABEL
         }
         help_texts = {
-            'history_note': HISTORY_NOTE_HELP
+            'history_note': HISTORY_NOTE_HELP,
         }
         error_messages = {}
 
@@ -66,6 +67,7 @@ class CollectionSetForm(forms.ModelForm):
         if len(group_queryset) == 1:
             self.initial['group'] = group_queryset[0]
         self.fields['group'].queryset = group_queryset
+        self.fields['group'].help_text = GROUP_HELP
 
         # set up crispy forms helper
         self.helper = FormHelper(self)
@@ -426,8 +428,9 @@ class SeedTwitterSearchForm(BaseSeedForm):
         labels = dict(BaseSeedForm.Meta.labels)
         labels["token"] = "Query"
         help_texts = dict(BaseSeedForm.Meta.help_texts)
-        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search">these instructions</a> for ' \
-                              'writing a query.'
+        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search" target="_blank">' \
+                              'these instructions</a> for writing a query. ' \
+                              'Example: firefly OR "lightning bug"'
         widgets = dict(BaseSeedForm.Meta.widgets)
         widgets["token"] = forms.Textarea(attrs={'rows': 4})
 
@@ -530,12 +533,16 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.fields['tokens'].label = "Screen names"
+        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
+                                           @ symbol not required. Use screen names, not numeric user IDs."
 
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedFlickrUserForm, self).__init__(*args, **kwargs)
         self.fields['tokens'].label = "Username"
+        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
+                                           Use screen names, not numeric user IDs."
 
 
 class BaseCredentialForm(forms.ModelForm):
@@ -635,7 +642,7 @@ class CredentialWeiboForm(BaseCredentialForm):
 
     def __init__(self, *args, **kwargs):
         super(CredentialWeiboForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][1].extend([ 'access_token'])
+        self.helper.layout[0][1].extend(['access_token'])
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)

@@ -87,7 +87,8 @@ class Credential(models.Model):
 @python_2_unicode_compatible
 class CollectionSet(models.Model):
     collection_set_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    group = models.ForeignKey(Group, related_name='collection_sets')
+    group = models.ForeignKey(Group,
+                              related_name='collection_sets')
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection set name')
     description = models.TextField(blank=True)
@@ -158,6 +159,7 @@ class CollectionSet(models.Model):
             date = start_date + datetime.timedelta(days=i)
             stats.append((date, date_counts_dict.get(date, 0)))
         return stats
+
 
 @python_2_unicode_compatible
 class Collection(models.Model):
