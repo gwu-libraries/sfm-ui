@@ -51,8 +51,8 @@
             </div>
             <div class="panel-body">
                 {% for item in collection_set.stats_items %}
-                    <div class="col-md-4">
-                    <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}" class="thumbnail">
+                    <div class="col-md-4 text-center">
+                      <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}" class="thumbnail">
                         <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-chart" style="width: 300px; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
                         <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-xs" role="group">
                           <button type="button" class="btn btn-default viz_all">All</button>
@@ -60,13 +60,13 @@
                           <button type="button" class="btn btn-default disabled viz_month">Last month</button>
                           <button type="button" class="btn btn-default viz_week">Last week</button>
                         </div>
-                    </div>
+                      </div>
                     </div>
                     <script>
                         // Create viz
                         $.getJSON(compose_url({{ collection_set.pk }}, '{{ item }}', "month"), function(data) {
                             var chart_layout = {
-                                title: '{{ item|capfirst }} in last month',
+                                title: '{{ item|capfirst }} collected in last month',
                                 titlefont: {
                                     size: 14
                                 },
@@ -74,12 +74,13 @@
                                     rangemode: 'tozero'
                                 },
                                 xaxis: {
-                                    tickformat: '%b %-d'
+                                    tickformat: '%b %-d',
+                                    title: 'Date collected'
                                 },
                                 margin: {
-                                    b: 25,
+                                    b: 35,
                                     l: 45,
-                                    r: 45,
+                                    r: 15,
                                     t: 20
                                 }
 
@@ -103,17 +104,17 @@
                         });
                         // Year button
                         $("#viz-{{ collection_set.pk }}-{{ item|slugify }}-btns > button.viz_year").click([{{ collection_set.pk }}, '{{ item }}'], function(e) {
-                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item }} in last year", this, e.data[0], e.data[1], "year");
+                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item|capfirst }} collected in last year", this, e.data[0], e.data[1], "year");
                             return false;
                         });
                         // Month button
                         $("#viz-{{ collection_set.pk }}-{{ item|slugify }}-btns > button.viz_month").click([{{ collection_set.pk }}, '{{ item }}'], function(e) {
-                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item }} in last month", this, e.data[0], e.data[1], "month");
+                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item|capfirst }} collected in last month", this, e.data[0], e.data[1], "month");
                             return false;
                         });
                         // Week button
                         $("#viz-{{ collection_set.pk }}-{{ item|slugify }}-btns > button.viz_week").click([{{ collection_set.pk }}, '{{ item }}'], function(e) {
-                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item }} in last week", this, e.data[0], e.data[1], "week");
+                            update_viz($('#viz-{{ collection_set.pk }}-{{ item|slugify }}')[0], "{{ item|capfirst }} collected in last week", this, e.data[0], e.data[1], "week");
                             return false;
                         });
 
