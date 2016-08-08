@@ -51,18 +51,16 @@
             </div>
             <div class="panel-body">
                 {% for item in collection_set.stats_items %}
-                    <div class="col-md-4">
-                    <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}" class="thumbnail">
+                    <div class="col-md-4 text-center">
+                      <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}" class="thumbnail">
                         <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-chart" style="width: 300px; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-                        <div class="text-center">
-                          <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-xs" role="group">
-                            <button type="button" class="btn btn-default viz_all">All</button>
-                            <button type="button" class="btn btn-default viz_year">Last year</button>
-                            <button type="button" class="btn btn-default disabled viz_month">Last month</button>
-                            <button type="button" class="btn btn-default viz_week">Last week</button>
-                          </div>
+                        <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-xs" role="group">
+                          <button type="button" class="btn btn-default viz_all">All</button>
+                          <button type="button" class="btn btn-default viz_year">Last year</button>
+                          <button type="button" class="btn btn-default disabled viz_month">Last month</button>
+                          <button type="button" class="btn btn-default viz_week">Last week</button>
                         </div>
-                    </div>
+                      </div>
                     </div>
                     <script>
                         // Create viz
