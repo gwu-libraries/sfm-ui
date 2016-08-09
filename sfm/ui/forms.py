@@ -250,7 +250,6 @@ class CollectionTwitterSampleForm(BaseCollectionForm):
 
 
 class CollectionTwitterFilterForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
     media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
                                       label=TWITTER_MEDIA_LABEL)
     web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
@@ -265,8 +264,6 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
-            if "incremental" in harvest_options:
-                self.fields['incremental'].initial = harvest_options["incremental"]
             if "media" in harvest_options:
                 self.fields['media_option'].initial = harvest_options["media"]
             if "web_resources" in harvest_options:
@@ -276,7 +273,6 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
         m = super(CollectionTwitterFilterForm, self).save(commit=False)
         m.harvest_type = Collection.TWITTER_FILTER
         harvest_options = {
-            "incremental": self.cleaned_data["incremental"],
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
