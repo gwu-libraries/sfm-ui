@@ -192,6 +192,8 @@ class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context = super(CollectionCreateView, self).get_context_data(**kwargs)
         context["collection_set"] = CollectionSet.objects.get(pk=self.kwargs["collection_set_pk"])
         context["harvest_type_name"] = _get_harvest_type_name(self.kwargs["harvest_type"])
+        context["credentials"] = _get_credential_list(self.kwargs["collection_set_pk"], self.kwargs["harvest_type"])
+        context["platform"] = Collection.HARVEST_TYPES_TO_PLATFORM[self.kwargs["harvest_type"]]
         return context
 
     def get_form_kwargs(self):

@@ -30,7 +30,7 @@ class CollectionSetListViewTests(TestCase):
                                   credential=credential)
         group2 = Group.objects.create(name='testgroup2')
         CollectionSet.objects.create(name='Test Collection Set Two',
-                                  group=group2)
+                                     group=group2)
 
     def test_correct_collection_set_list_for_usergroup(self):
         """
@@ -153,6 +153,17 @@ class CollectionCreateViewTests(TestCase):
                                                   harvest_type=Collection.TWITTER_FILTER)
         self.assertEqual(self.collection_set, response.context_data["form"].initial["collection_set"])
         self.assertEqual(self.collection_set, response.context_data["collection_set"])
+
+    def test_credential_warning(self):
+        """
+        test that credential list for platform is empty
+        """
+        request = self.factory.get(reverse('collection_create',
+                                   args=[self.collection_set.pk, Collection.WEIBO_TIMELINE]))
+        request.user = self.user
+        response = CollectionCreateView.as_view()(request, collection_set_pk=self.collection_set.pk,
+                                                  harvest_type=Collection.WEIBO_TIMELINE)
+        self.assertEqual(0, len(response.context_data["credentials"]))
 
 
 class CollectionDetailViewTests(TestCase):
