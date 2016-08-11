@@ -18,7 +18,8 @@ import re
 log = logging.getLogger(__name__)
 
 HISTORY_NOTE_LABEL = "Change Note"
-HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
+HISTORY_NOTE_HELP = "Explain why you made these changes at this time."
+HISTORY_NOTE_HELP_ADD = "Further information about this addition."
 HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
 
 DATETIME_WIDGET = DateTimeWidget(
@@ -68,6 +69,10 @@ class CollectionSetForm(forms.ModelForm):
             self.initial['group'] = group_queryset[0]
         self.fields['group'].queryset = group_queryset
         self.fields['group'].help_text = GROUP_HELP
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
 
         # set up crispy forms helper
         self.helper = FormHelper(self)
