@@ -20,7 +20,7 @@ Upcoming Presentations
 ----------------------
 * Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
 * Laura Wrubel, Dodging the Memory Hole: Saving Online News conference, October 13-14, 2016. 
-* 
+
 Recent Presentations
 --------------------
 * Vakil Smallen, Seemantani Sharma, Rachel Trent, ["The Challenges of Collecting and Providing Access to Social Media Content"](https://drive.google.com/a/email.gwu.edu/file/d/0BzMejufPhqBaMXBjM21vTUR1QTA/view?usp=sharing) at Archives/Records 2016, Joint Council of State Archivists (CoSa) - Society of American Archivists (SAA) conference, August 5, 2016.
