@@ -5,8 +5,9 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.db import IntegrityError
 
-from .forms import CredentialTwitterForm,CredentialWeiboForm
+from .forms import CredentialTwitterForm, CredentialWeiboForm
 from .models import Credential
 
 
@@ -23,7 +24,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):
-        credential_name = "{}'s {} credential".format(request.user.username, sociallogin.token.app.name)
+        credential_name = u"{}'s {} credential".format(sociallogin.user.username, sociallogin.token.app.name)
         if sociallogin.token.app.provider == 'twitter':
             form = CredentialTwitterForm({
                 'name': credential_name,
@@ -42,7 +43,11 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         else:
             assert False, "Unrecognized social login provider"
         form.instance.user = request.user
-        credential = form.save()
+        try:
+            credential = form.save()
+        except IntegrityError:
+            messages.warning(request, "Credential already exists.")
+            raise ImmediateHttpResponse(HttpResponseRedirect(reverse('credential_list')))
 
         messages.info(request, "New credential created.")
 

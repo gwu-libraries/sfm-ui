@@ -67,7 +67,7 @@ class Credential(models.Model):
     name = models.CharField(max_length=255, verbose_name='Credential name')
     user = models.ForeignKey(User, related_name='credentials')
     platform = models.CharField(max_length=255, help_text='Platform name', choices=PLATFORM_CHOICES)
-    token = models.TextField(blank=True)
+    token = models.TextField(blank=True, unique=True)
     is_active = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
