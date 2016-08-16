@@ -7,7 +7,7 @@ register = template.Library()
 
 @register.filter
 def json(value, name=None):
-    rend = ""
+    rend = u""
     if value:
         try:
             j = json_lib.loads(value)
@@ -24,7 +24,7 @@ def json(value, name=None):
 
 @register.filter
 def json_list(value, name=None):
-    rend = ""
+    rend = u""
     if value:
         try:
             j = json_lib.loads(value)
@@ -40,21 +40,21 @@ def json_list(value, name=None):
 
 
 def render_key(value):
-    return value.capitalize().replace("_", " ")
+    return value.capitalize().replace(u"_", u" ")
 
 
 def render_paragraphs_dict(value):
-    rend = ""
+    rend = u""
     for k, v in value.items():
-        rend += "<p><strong>{}</strong>: {}</p>".format(render_key(k), render_value(v))
+        rend += u"<p><strong>{}</strong>: {}</p>".format(render_key(k), render_value(v))
     return rend
 
 
 def render_dict(value):
-    rend = "<ul>"
+    rend = u"<ul>"
     for k, v in value.items():
-        rend += "<li>{}: {}</li>".format(render_key(k), render_value(v))
-    rend += "</ul>"
+        rend += u"<li>{}: {}</li>".format(render_key(k), render_value(v))
+    rend += u"</ul>"
     return rend
 
 
@@ -72,8 +72,8 @@ def render_value(value):
 
 
 def render_list(value):
-    rend = "<ul>"
+    rend = u"<ul>"
     for v in value:
-        rend += "<li>{}</li>".format(render_value(v))
-    rend += "</ul>"
+        rend += u"<li>{}</li>".format(render_value(v))
+    rend += u"</ul>"
     return rend

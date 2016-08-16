@@ -527,7 +527,7 @@ class SeedTwitterFilterForm(BaseSeedForm):
             token['follow'] = self.cleaned_data['follow']
         if self.cleaned_data['locations']:
             token['locations'] = self.cleaned_data['locations']
-        m.token = json.dumps(token)
+        m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
 
