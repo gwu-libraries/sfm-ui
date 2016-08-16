@@ -575,6 +575,11 @@ class BaseCredentialForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseCredentialForm, self).__init__(*args, **kwargs)
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
+
         # set up crispy forms helper
         self.helper = FormHelper(self)
         # set up crispy forms helper
