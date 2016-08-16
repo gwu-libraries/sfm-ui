@@ -70,7 +70,7 @@ class CollectionSetForm(forms.ModelForm):
         self.fields['group'].queryset = group_queryset
         self.fields['group'].help_text = GROUP_HELP
 
-        # check whether it's a create view and offer different help text
+        # check whether it's a CreateView and offer different help text
         if self.instance.pk is None:
             self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
 
@@ -125,6 +125,10 @@ class BaseCollectionForm(forms.ModelForm):
         if len(self.credential_list) == 1:
             self.initial['credential'] = self.credential_list[0]
         self.fields['credential'].queryset = self.credential_list
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
 
         cancel_url = reverse('collection_set_detail', args=[self.coll])
         self.helper = FormHelper(self)
@@ -386,6 +390,11 @@ class BaseSeedForm(forms.ModelForm):
         self.collection = kwargs.pop("collection", None)
         super(BaseSeedForm, self).__init__(*args, **kwargs)
         cancel_url = reverse('collection_detail', args=[self.collection])
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
+
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
