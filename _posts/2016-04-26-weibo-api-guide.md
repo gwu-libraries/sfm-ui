@@ -194,14 +194,27 @@ Now, you have completed all the necessary steps. For a demo of the API, please s
 If you get any unexpected errors in above two steps, request new `Authentication Code` and try again!
 
 ## 4. API Examples
-In this section, I'll help you understand the API with an example.
+In this section, I'll help you understand the API with examples.
 
 [Public Timeline](http://open.weibo.com/wiki/2/statuses/public_timeline): Returns the latest public Weibos.
-
+It will return the latest Weibos with limited count based on all the Weibo users' posts. Usually, it returns 50 Weibo posts in one page ordering by timestamp. For example, if `User A` posts 10 Weibos and `User B` posts 5 Weibos, the result would pop 5 latest weibo among the total 15 Weibos.
+ 
 Enter the `Access Token` from the previous section, and click the Submit button.
 
 
 <form  action="https://api.weibo.com/2/statuses/public_timeline.json" method="get" target="_blank">
+    <label for="access_token" >Access Token</label>
+    <input type="text" id="access_token" name="access_token" value="">
+    <input type="submit" value="Submit">
+</form>
+
+[Friendship Timeline](http://open.weibo.com/wiki/2/statuses/friends_timeline): Returns the current Weibo user and user's friends Weibos.
+It will return the latest Weibos from all the friends' posts. Usually, it only returns 150 Weibo posts in two pages (the maximum for one page is 100 ) ordering by timestamp. For example, if `Friend A` posts 200 Weibos and `Friend B` posts 150 Weibos, the result would pop 150 latest Weibos among the total 350 Weibos.
+ 
+Enter the `Access Token` from the previous section, and click the Submit button.
+
+
+<form  action="https://api.weibo.com/2/statuses/friends_timeline.json" method="get" target="_blank">
     <label for="access_token" >Access Token</label>
     <input type="text" id="access_token" name="access_token" value="">
     <input type="submit" value="Submit">
