@@ -61,28 +61,28 @@ class SfmUiConsumer(BaseConsumer):
         harvest.save()
 
         # Update seeds based on tokens that have changed
-        for id, token in self.message.get("token_updates", {}).items():
+        for seed_id, token in self.message.get("token_updates", {}).items():
             # Try to find seed based on collection and uid.
             try:
-                seed = Seed.objects.get(seed_id=id)
+                seed = Seed.objects.get(seed_id=seed_id)
                 seed.token = token
                 seed.history_note = "Changed token based on information from harvester from harvest {}".format(
                         self.message["id"])
                 seed.save()
             except ObjectDoesNotExist:
-                log.error("Seed model object with seed_id %s not found to update token to %s", id, token)
+                log.error("Seed model object with seed_id %s not found to update token to %s", seed_id, token)
 
         # Update seeds based on uids that have been returned
-        for id, uid in self.message.get("uids", {}).items():
+        for seed_id, uid in self.message.get("uids", {}).items():
             # Try to find seed based on collection and token.
             try:
-                seed = Seed.objects.get(seed_id=id)
+                seed = Seed.objects.get(seed_id=seed_id)
                 seed.uid = uid
                 seed.history_note = "Changed uid based on information from harvester from harvest {}".format(
                         self.message["id"])
                 seed.save()
             except ObjectDoesNotExist:
-                log.error("Seed model object with seed_id %s not found to update uid to %s", id, uid)
+                log.error("Seed model object with seed_id %s not found to update uid to %s", seed_id, uid)
 
         # Update stats
         if self.message["status"] != Harvest.FAILURE:
@@ -97,6 +97,55 @@ class SfmUiConsumer(BaseConsumer):
                         stat.save()
                     except ObjectDoesNotExist:
                         HarvestStat.objects.create(item=item, harvest=harvest, count=count, harvest_date=day)
+
+        # Send email if completed and failed or has messages
+        if harvest.status == Harvest.FAILURE or (
+                harvest.status == Harvest.SUCCESS and (harvest.infos or harvest.warnings or harvest.errors)):
+
+            # Get emails for group members
+            receiver_emails = []
+            for user in harvest.collection.collection_set.group.user_set.all():
+                if user.email:
+                    receiver_emails.append(user.email)
+
+            if receiver_emails:
+                harvest_url = 'http://{}{}'.format(Site.objects.get_current().domain,
+                                                   reverse('harvest_detail', args=(harvest.id,)))
+
+                # Send Status mail
+                if settings.PERFORM_EMAILS:
+                    if harvest.status == Harvest.SUCCESS:
+                        mail_subject = u"SFM Harvest for {} completed successfully, but has messages".format(
+                            harvest.collection.name)
+                        mail_message = u"The harvest for {} ({}) completed successfully, but has messages.".format(
+                            harvest.collection.name,
+                            harvest_url)
+                    # Failure
+                    else:
+                        mail_subject = u"SFM Harvest for {} failed".format(harvest.collection.name)
+                        mail_message = u"The harvest for {} ({}) failed.".format(harvest.collection.name,
+                                                                                 harvest_url)
+                    mail_message += self.format_messages_for_mail(harvest.infos, "informational")
+                    mail_message += self.format_messages_for_mail(harvest.warnings, "warning")
+                    mail_message += self.format_messages_for_mail(harvest.errors, "error")
+
+                    try:
+                        log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
+                        send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                                  receiver_emails, fail_silently=False)
+                    except SMTPException, ex:
+                        log.error("Error sending email: %s", ex)
+            else:
+                log.warn("No email addresses for %s", harvest.collection.collection_set.group)
+
+    @staticmethod
+    def format_messages_for_mail(messages, message_type):
+        mail_message = ""
+        if messages:
+            mail_message += "\n\n{} messages:\n".format(message_type.title())
+            for msg in messages:
+                mail_message += "- {}\n".format(msg["message"])
+        return mail_message
 
     def _on_warc_created_message(self):
         try:
@@ -143,8 +192,9 @@ class SfmUiConsumer(BaseConsumer):
                     mail_message = None
                     mail_subject = None
                     if export.status == 'completed success':
-                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(collection.name,
-                                                                                                          export_url)
+                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(
+                            collection.name,
+                            export_url)
                         mail_subject = "SFM Export is ready"
                     elif export.status == 'completed failure':
                         mail_message = u"Your export of {} failed. You can get more information from {}".format(
