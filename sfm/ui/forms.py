@@ -18,7 +18,8 @@ import re
 log = logging.getLogger(__name__)
 
 HISTORY_NOTE_LABEL = "Change Note"
-HISTORY_NOTE_HELP = "Optional note describing the reason for this change."
+HISTORY_NOTE_HELP = "Explain why you made these changes at this time."
+HISTORY_NOTE_HELP_ADD = "Further information about this addition."
 HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
 
 DATETIME_WIDGET = DateTimeWidget(
@@ -68,6 +69,10 @@ class CollectionSetForm(forms.ModelForm):
             self.initial['group'] = group_queryset[0]
         self.fields['group'].queryset = group_queryset
         self.fields['group'].help_text = GROUP_HELP
+
+        # check whether it's a CreateView and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
 
         # set up crispy forms helper
         self.helper = FormHelper(self)
@@ -120,6 +125,10 @@ class BaseCollectionForm(forms.ModelForm):
         if len(self.credential_list) == 1:
             self.initial['credential'] = self.credential_list[0]
         self.fields['credential'].queryset = self.credential_list
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
 
         cancel_url = reverse('collection_set_detail', args=[self.coll])
         self.helper = FormHelper(self)
@@ -381,6 +390,11 @@ class BaseSeedForm(forms.ModelForm):
         self.collection = kwargs.pop("collection", None)
         super(BaseSeedForm, self).__init__(*args, **kwargs)
         cancel_url = reverse('collection_detail', args=[self.collection])
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
+
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
@@ -509,6 +523,7 @@ class BaseBulkSeedForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.collection = kwargs.pop("collection", None)
         super(BaseBulkSeedForm, self).__init__(*args, **kwargs)
+        self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
         cancel_url = reverse('collection_detail', args=[self.collection])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -561,6 +576,11 @@ class BaseCredentialForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseCredentialForm, self).__init__(*args, **kwargs)
+
+        # check whether it's a create view and offer different help text
+        if self.instance.pk is None:
+            self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
+
         # set up crispy forms helper
         self.helper = FormHelper(self)
         # set up crispy forms helper
