@@ -523,6 +523,7 @@ class BaseBulkSeedForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.collection = kwargs.pop("collection", None)
         super(BaseBulkSeedForm, self).__init__(*args, **kwargs)
+        self.fields['history_note'].help_text = HISTORY_NOTE_HELP_ADD
         cancel_url = reverse('collection_detail', args=[self.collection])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
