@@ -300,27 +300,27 @@ class CollectionFlickrUserForm(BaseCollectionForm):
         ("Large", "Large"),
         ("Original", "Original")
     )
-    sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
+    image_sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
                                       widget=forms.CheckboxSelectMultiple, label="Image sizes", )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'sizes'))
+        self.helper.layout[0][3].extend(('incremental', 'image_sizes'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "sizes" in harvest_options:
-                self.fields['sizes'].initial = harvest_options["sizes"]
+            if "image_sizes" in harvest_options:
+                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
 
     def save(self, commit=True):
         m = super(CollectionFlickrUserForm, self).save(commit=False)
         m.harvest_type = Collection.FLICKR_USER
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "sizes": self.cleaned_data["sizes"]
+            "image_sizes": self.cleaned_data["image_sizes"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
@@ -334,7 +334,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         ("Large", "Large")
     )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
+    image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
                                       help_text="For harvesting images, select the image sizes.",
                                       widget=forms.CheckboxSelectMultiple, label="Image sizes")
     web_resources_option = forms.BooleanField(initial=False, required=False,
@@ -344,14 +344,14 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'web_resources_option', 'sizes'))
+        self.helper.layout[0][3].extend(('incremental', 'web_resources_option', 'image_sizes'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "sizes" in harvest_options:
-                self.fields['sizes'].initial = harvest_options["sizes"]
+            if "image_sizes" in harvest_options:
+                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
             if "web_resources" in harvest_options:
                 self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
@@ -360,7 +360,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         m.harvest_type = Collection.WEIBO_TIMELINE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "sizes": self.cleaned_data["sizes"],
+            "image_sizes": self.cleaned_data["image_sizes"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
