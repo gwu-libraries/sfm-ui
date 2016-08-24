@@ -111,6 +111,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         # Last 5 harvests
         context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
+        context["last_harvest"] = self.object.last_harvest()
         context["diffs"] = diff_object_history(self.object)
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
         context["has_seeds_list"] = self.object.required_seed_count() != 0

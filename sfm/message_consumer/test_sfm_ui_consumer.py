@@ -10,9 +10,10 @@ from datetime import date
 class ConsumerTest(TestCase):
     def setUp(self):
         # Create harvest model object
+        group = Group.objects.create(name="test_group")
         user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
                                              password="test_password")
-        group = Group.objects.create(name="test_group")
+        user.groups.add(group)
         collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
         credential = Credential.objects.create(user=user, platform="test_platform",
                                                token=json.dumps({}))

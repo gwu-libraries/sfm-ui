@@ -73,6 +73,39 @@
 {% if not seed_error_message and not seed_warning_message and not collection.is_active and not credential_used_col %}
     <div class="alert alert-warning" role="alert">Turn on collection to start harvesting.</div>
 {% endif %}
+{% if last_harvest.status == "completed failure" %}
+    <div class="alert alert-danger" role="alert"><a href={% url "harvest_detail" last_harvest.pk %}>Last harvest</a> failed.</div>
+{% endif %}
+{% if last_harvest.infos %}
+    <div class="alert alert-info" role="alert">
+        Information messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
+        <ul>
+            {% for msg in last_harvest.infos %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% if last_harvest.warnings %}
+    <div class="alert alert-warning" role="alert">
+        Warnings messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
+        <ul>
+            {% for msg in last_harvest.warnings %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% if last_harvest.errors %}
+    <div class="alert alert-danger" role="alert">
+        Error messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
+        <ul>
+            {% for msg in last_harvest.errors %}
+                <li>{{ msg.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 <div class="row subsection">
     <div class="col-md-8">
         {% if collection.description %}
