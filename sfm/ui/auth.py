@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.db import IntegrityError
 
-from .forms import CredentialTwitterForm, CredentialWeiboForm
+from .forms import CredentialTwitterForm, CredentialWeiboForm, CredentialTumblrForm
 from .models import Credential
 
 
@@ -24,7 +24,8 @@ class AccountAdapter(DefaultAccountAdapter):
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):
-        credential_name = u"{}'s {} credential".format(sociallogin.user.username, sociallogin.token.app.name)
+        credential_name = u"{}'s {} credential".format(sociallogin.user.username or request.user.username,
+                                                       sociallogin.token.app.name)
         if sociallogin.token.app.provider == 'twitter':
             form = CredentialTwitterForm({
                 'name': credential_name,
@@ -33,6 +34,12 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
                 'consumer_secret': sociallogin.token.app.secret,
                 'access_token': sociallogin.token.token,
                 'access_token_secret': sociallogin.token.token_secret,
+            })
+        elif sociallogin.token.app.provider == 'tumblr':
+            form = CredentialTumblrForm({
+                'name': credential_name,
+                'platform': Credential.TUMBLR,
+                'api_key': sociallogin.token.app.client_id,
             })
         elif sociallogin.token.app.provider == 'weibo':
             form = CredentialWeiboForm({

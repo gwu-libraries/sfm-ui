@@ -20,7 +20,7 @@ from .forms import CollectionSetForm, ExportForm
 import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
-from .utils import diff_object_history, clean_token
+from .utils import diff_object_history, clean_token, clean_blogname
 
 import os
 import logging
@@ -353,16 +353,24 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         if form.is_valid():
             tokens = form.cleaned_data['tokens'].splitlines()
             seed_count = 0
-            for token in (clean_token(t) for t in tokens):
+            cleaned_data, is_uid = None, False
+            if collection.harvest_type == collection.TUMBLR_BLOG_POSTS:
+                cleaned_data = [clean_blogname(t) for t in tokens]
+                is_uid = True
+            else:
+                cleaned_data = [clean_token(t) for t in tokens]
+
+            for token in cleaned_data:
                 if token:
-                    if not Seed.objects.filter(collection=collection, token=token).exists():
+                    param = {'uid': token} if is_uid else {'token': token}
+                    if not Seed.objects.filter(collection=collection, **param).exists():
                         log.debug("Creating seed %s for collection %s", token, collection.pk)
-                        Seed.objects.create(token=token,
-                                            collection=collection,
-                                            history_note=form.cleaned_data['history_note'])
+                        Seed.objects.create(collection=collection,
+                                            history_note=form.cleaned_data['history_note'], **param)
                         seed_count += 1
                     else:
-                        log.debug("Skipping creating seed %s for collection %s since it exists", token, collection.pk)
+                        log.debug("Skipping creating seed %s for collection %s since it exists", token,
+                                  collection.pk)
             # <process form cleaned data>
             messages.info(request, "{} seeds added.".format(seed_count))
             return HttpResponseRedirect(reverse("collection_detail", args=(self.kwargs["collection_pk"],)))
@@ -428,6 +436,7 @@ class CredentialListView(LoginRequiredMixin, ListView):
         context['credential_list'] = Credential.objects.filter(user=self.request.user)
         context["can_connect_twitter"] = self._can_connect_credential(Credential.TWITTER)
         context["can_connect_weibo"] = self._can_connect_credential(Credential.WEIBO)
+        context["can_connect_tumblr"] = self._can_connect_credential(Credential.TUMBLR)
         return context
 
     def _can_connect_credential(self, platform):

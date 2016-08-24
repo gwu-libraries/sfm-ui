@@ -59,10 +59,12 @@ class Credential(models.Model):
     TWITTER = "twitter"
     FLICKR = "flickr"
     WEIBO = "weibo"
+    TUMBLR = "tumblr"
     PLATFORM_CHOICES = [
         (TWITTER, 'Twitter'),
         (FLICKR, 'Flickr'),
-        (WEIBO, 'Weibo')
+        (WEIBO, 'Weibo'),
+        (TUMBLR, "Tumblr")
     ]
     name = models.CharField(max_length=255, verbose_name='Credential name')
     user = models.ForeignKey(User, related_name='credentials')
@@ -120,7 +122,8 @@ class CollectionSet(models.Model):
         Returns a list of items type that have been harvested for this collection set.
         """
         return list(
-            HarvestStat.objects.filter(harvest__collection__collection_set=self).values_list("item", flat=True).distinct())
+            HarvestStat.objects.filter(harvest__collection__collection_set=self).values_list("item",
+                                                                                             flat=True).distinct())
 
     def item_stats(self, item, days=7, end_date=None):
         """
@@ -137,7 +140,7 @@ class CollectionSet(models.Model):
             end_date = datetime.date.today()
 
         if days:
-            start_date = end_date - datetime.timedelta(days=days-1)
+            start_date = end_date - datetime.timedelta(days=days - 1)
             date_counts = HarvestStat.objects.filter(harvest__collection__collection_set=self, item=item,
                                                      harvest_date__gte=start_date).order_by(
                 "harvest_date").values("harvest_date").annotate(count=models.Sum("count"))
@@ -169,6 +172,7 @@ class Collection(models.Model):
     TWITTER_SAMPLE = 'twitter_sample'
     FLICKR_USER = 'flickr_user'
     WEIBO_TIMELINE = 'weibo_timeline'
+    TUMBLR_BLOG_POSTS = 'tumblr_blog_posts'
     SCHEDULE_CHOICES = [
         (30, 'Every 30 minutes'),
         (60, 'Every hour'),
@@ -184,7 +188,8 @@ class Collection(models.Model):
         (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SAMPLE, 'Twitter sample'),
         (FLICKR_USER, 'Flickr user'),
-        (WEIBO_TIMELINE, 'Weibo timeline')
+        (WEIBO_TIMELINE, 'Weibo timeline'),
+        (TUMBLR_BLOG_POSTS, 'Tumblr blog posts')
     ]
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
@@ -198,7 +203,8 @@ class Collection(models.Model):
         TWITTER_USER_TIMELINE: Credential.TWITTER,
         TWITTER_SAMPLE: Credential.TWITTER,
         FLICKR_USER: Credential.FLICKR,
-        WEIBO_TIMELINE: Credential.WEIBO
+        WEIBO_TIMELINE: Credential.WEIBO,
+        TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)

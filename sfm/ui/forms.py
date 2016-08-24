@@ -9,7 +9,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
 from crispy_forms.bootstrap import FormActions
 from datetimewidget.widgets import DateTimeWidget
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
-from .utils import clean_token
+from .utils import clean_token, clean_blogname
 
 import json
 import logging
@@ -368,8 +368,43 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         return m
 
 
-class BaseSeedForm(forms.ModelForm):
+class CollectionTumblrBlogPostsForm(BaseCollectionForm):
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False,
+                                      help_text="Perform web harvests of images in photo type posts.",
+                                      label="Images option")
+    web_resources_option = forms.BooleanField(initial=False, required=False,
+                                              help_text="Perform web harvests of resources (e.g., web pages) "
+                                                        "linked in Tumblr posts.",
+                                              label="Web resources")
 
+    def __init__(self, *args, **kwargs):
+        super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+            if "media" in harvest_options:
+                self.fields['media_option'].initial = harvest_options["media"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
+
+    def save(self, commit=True):
+        m = super(CollectionTumblrBlogPostsForm, self).save(commit=False)
+        m.harvest_type = Collection.TUMBLR_BLOG_POSTS
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "media": self.cleaned_data["media_option"],
+            "web_resources": self.cleaned_data["web_resources_option"]
+        }
+        m.harvest_options = json.dumps(harvest_options)
+        m.save()
+        return m
+
+
+class BaseSeedForm(forms.ModelForm):
     class Meta:
         model = Seed
         fields = ['collection', 'is_active',
@@ -412,7 +447,6 @@ class BaseSeedForm(forms.ModelForm):
 
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
-
     class Meta(BaseSeedForm.Meta):
         fields = ['token', 'uid']
         fields.extend(BaseSeedForm.Meta.fields)
@@ -514,6 +548,29 @@ class SeedFlickrUserForm(BaseSeedForm):
         self.helper.layout[0][0].extend(('token', 'uid'))
 
 
+class SeedTumblrBlogPostsForm(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['uid']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["uid"] = "Blog hostname"
+        help_texts = dict(BaseSeedForm.Meta.help_texts)
+        help_texts["uid"] = 'Please provide the standard blog hostname, eg. codingjester or codingjester.tumblr.com.' \
+                            'To better understand standard blog hostname, See ' \
+                            '<a target="_blank" href="https://www.tumblr.com/docs/en/api/v2#hostname">' \
+                            'these instructions</a>.'
+
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["uid"] = forms.TextInput(attrs={'size': '40'})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTumblrBlogPostsForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].append('uid')
+
+    def clean_uid(self):
+        return clean_blogname(self.cleaned_data.get("uid"))
+
+
 class BaseBulkSeedForm(forms.Form):
     tokens = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 20}),
                              help_text="Enter each seed on a separate line.")
@@ -556,8 +613,13 @@ class BulkSeedFlickrUserForm(BaseBulkSeedForm):
                                            Use screen names, not numeric user IDs."
 
 
-class BaseCredentialForm(forms.ModelForm):
+class BulkSeedTumblrBlogPostsForm(BaseBulkSeedForm):
+    def __init__(self, *args, **kwargs):
+        super(BulkSeedTumblrBlogPostsForm, self).__init__(*args, **kwargs)
+        self.fields['tokens'].label = "Blog hostnames"
 
+
+class BaseCredentialForm(forms.ModelForm):
     class Meta:
         model = Credential
         fields = ['name', 'history_note']
@@ -647,6 +709,27 @@ class CredentialTwitterForm(BaseCredentialForm):
             "consumer_secret": self.cleaned_data["consumer_secret"],
             "access_token": self.cleaned_data["access_token"],
             "access_token_secret": self.cleaned_data["access_token_secret"],
+        }
+        m.token = json.dumps(token)
+        m.save()
+        return m
+
+
+class CredentialTumblrForm(BaseCredentialForm):
+    api_key = forms.CharField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialTumblrForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][1].extend(['api_key'])
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            self.fields['api_key'].initial = token.get('api_key')
+
+    def save(self, commit=True):
+        m = super(CredentialTumblrForm, self).save(commit=False)
+        m.platform = Credential.TUMBLR
+        token = {
+            "api_key": self.cleaned_data["api_key"],
         }
         m.token = json.dumps(token)
         m.save()
