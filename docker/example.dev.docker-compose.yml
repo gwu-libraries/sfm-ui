@@ -1,48 +1,343 @@
-sfmdevrabbit:
-    image: rabbitmq@sha256:a5180a37b0baebb938ee9d12dd11eed64a909288d7f344e24771278f8a122367
-    #RabbitMQ 3-management
-    ports:
-        - "15672:15672"
-    restart: always
-    environment:
-        - TZ=America/New_York
-        - RABBITMQ_DEFAULT_USER=sfm_user
-        - RABBITMQ_DEFAULT_PASS=password
-sfmdevdb:
-    image: gwul/sfm-ui-db:master
-    environment:
-        - TZ=America/New_York
-        - POSTGRES_PASSWORD=gherD42#dl5
-sfmdevapp:
-    image: gwul/sfm-ui:dev
-#    image: gwul/sfm-ui:dev-runserver
-    ports:
-        - "8080:80"
-    links:
-        - sfmdevdb:db
-        - sfmdevrabbit:mq
-    volumes:
-        - ~/sfm-ui:/opt/sfm-ui
-    environment:
-        - TZ=America/New_York
-        - SFM_DEBUG=True
-        - SFM_SMTP_HOST=smtp.gmail.com
-        - SFM_EMAIL_USER=justinlittman@email.gwu.edu
-        - SFM_EMAIL_PASSWORD=password
-        #Turn on logging
-        #- SFM_DJANGO_LOG=DEBUG
-        #- SFM_DJANGO_REQUEST_LOG=DEBUG
-        #- SFM_APSCHEDULER_LOG=DEBUG
-        #- SFM_UI_LOG=DEBUG
-        #If not running on localhost
-        #- SFM_HOST=myserver.mydomain.edu
-        #Add 5 minute harvest interval
-        #- SFM_FIVE_MINUTE_SCHEDULE=True
-        #Provide credentials for the app. This will allow users to connect their accounts.
-        #- TWITTER_CONSUMER_KEY=EHdoeW7ksBgflP5nUalEfhao
-        #- TWITTER_CONSUMER_SECRET=ZtUemftBkf2cEmaqiyW2Ddihu9FPAiLebuMOmqN0jeQtXeAlen
-        #- WEIBO_API_KEY=
-        #- WEIBO_API_SECRET=
-        #- TUMBLR_CONSUMER_KEY=
-        #- TUMBLR_CONSUMER_SECRET=
-
+version: "2"
+services:
+    sfmdb:
+        image: gwul/sfm-ui-db:master
+        environment:
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - TZ=${TZ}
+        volumes_from:
+            - sfmdata
+    sfmrabbit:
+        image: rabbitmq@sha256:a5180a37b0baebb938ee9d12dd11eed64a909288d7f344e24771278f8a122367
+        #RabbitMQ 3-management
+        ports:
+            - "15672:15672"
+        restart: always
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+            - TZ=${TZ}
+    sfmdata:
+        image: ubuntu:14.04
+        command: /bin/true
+        volumes:
+           - /sfm-data
+        environment:
+            - TZ=${TZ}
+    sfmuiapp:
+        build:
+            context: ..
+            dockerfile: Dockerfile-runserver
+    #    image: gwul/sfm-ui:master
+        ports:
+            - "8080:80"
+        links:
+            - sfmdb:db
+            - sfmrabbit:mq
+        environment:
+            - SFM_DEBUG=True
+            - SFM_APSCHEDULER_LOG=DEBUG
+    #        - SFM_DJANGO_LOG=DEBUG
+            - SFM_UI_LOG=DEBUG
+            - SFM_FIVE_MINUTE_SCHEDULE=True
+            - TZ=${TZ}
+            - SFM_EMAIL_USER=justinlittman@email.gwu.edu
+            - SFM_EMAIL_PASSWORD=Super$$h0wsebadoh
+            - SFM_HOST=localhost:8080
+            - TWITTER_CONSUMER_KEY=mBbq9ruEckIngQztTHUir8Kn0
+            - TWITTER_CONSUMER_SECRET=Pf28yReBUD9Xz0pLVOsb4r5idZnKCKQ6xlOomBAjD5npFEQ6Rm
+    #        - TWITTER_CONSUMER_KEY=EHdoTe7ksBgflP5nUalEfhaeo
+    #        - TWITTER_CONSUMER_SECRET=ZtUpemtBkf2cEmaqiy52Ddihu9FPAiLebuMOmqN0jeQtXeAlen
+    #        - WEIBO_API_KEY=131305798
+    #        - WEIBO_API_SECRET=678aea49f26ea5c07ec14bf7c0e0fa52
+            - TUMBLR_CONSUMER_KEY=Fki0Q9w9QcW95yy66RtFCni14QpM0pjuHbDWMrZ9aPXcsthVQq
+            - TUMBLR_CONSUMER_SECRET=aPTpFRE2O7sVlT86xBziUifne8kBYb7EpnWfUBWxuHcB4bxsvP
+            - RABBITMQ_USER=${RABBITMQ_USER}
+            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - LOAD_FIXTURES=true
+        volumes:
+            - "..:/opt/sfm-ui"
+            - "../../sfm-utils:/opt/sfm-utils"
+        volumes_from:
+            - sfmdata:ro
+#    sfmflickrharvester:
+##        image: gwul/sfm-flickr-harvester:master
+#        build:
+#            context: ../../sfm-flickr-harvester
+#            dockerfile: Dockerfile-harvester
+#        links:
+#            - sfmrabbit:mq
+##        volumes:
+##            - "../../sfm-flickr-harvester:/opt/sfm-flickr-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+##        restart: always
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=true
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmflickrexporter:
+#        image: gwul/sfm-flickr-exporter:master
+#        build:
+#            context: ../../sfm-flickr-harvester
+#            dockerfile: Dockerfile-exporter
+#        links:
+#            - sfmrabbit:mq
+#            - sfmuiapp:api
+##        volumes:
+##            - "../../sfm-flickr-harvester:/opt/sfm-flickr-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+##        restart: always
+#        environment:
+#            - DEBUG=true
+#            - TZ=${TZ}
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmheritrix:
+#    #    build: ../../sfm-web-harvester/docker/heritrix
+#        image:  gwul/sfm-heritrix:master
+#        ports:
+#            - "8443:8443"
+#        environment:
+#            - HERITRIX_USER=${HERITRIX_USER}
+#            - HERITRIX_PASSWORD=${HERITRIX_PASSWORD}
+#            - JAVA_OPTS=-Xmx512M
+#        volumes_from:
+#            - sfmdata
+#    sfmwebharvester:
+#    #    build: dev
+#        image: gwul/sfm-web-harvester:dev
+#        links:
+#            - sfmrabbit:mq
+#            - sfmheritrix:heritrix
+#        volumes:
+#            - "../../sfm-web-harvester:/opt/sfm-web-harvester"
+#            - "../../sfm-utils:/opt/sfm-utils"
+#        environment:
+#            - DEBUG=True
+#            - HERITRIX_CONTACT_URL=http://library.gwu.edu
+#            - MQ_ENV_RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+#            - MQ_ENV_RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+#            - HERITRIX_ENV_HERITRIX_USER=${HERITRIX_USER}
+#            - HERITRIX_ENV_HERITRIX_PASSWORD=${HERITRIX_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    #    restart: always
+#    sfmtwitterrestharvester:
+#        build:
+#            context: ../../sfm-twitter-harvester
+#            dockerfile: Dockerfile-rest-harvester
+##        image: gwul/sfm-twitter-rest-harvester:master
+#        links:
+#            - sfmrabbit:mq
+##        volumes:
+##            - "../../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmtwitterrestexporter:
+#        build:
+#            context: ../../sfm-twitter-harvester
+#            dockerfile: Dockerfile-rest-exporter
+##        image: gwul/sfm-twitter-rest-exporter:master
+#        links:
+#            - sfmrabbit:mq
+#            - sfmuiapp:api
+##        volumes:
+##            - "../../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmtwitterstreamexporter:
+#        build:
+#            context: ../../sfm-twitter-harvester
+#            dockerfile: Dockerfile-stream-exporter
+##        image: gwul/sfm-twitter-stream-exporter:master
+#        links:
+#            - sfmrabbit:mq
+#            - sfmuiapp:api
+##        volumes:
+##            - "../../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmtwitterstreamharvester:
+#        build:
+#            context: ../../sfm-twitter-harvester
+#            dockerfile: Dockerfile-stream-harvester
+##        image: gwul/sfm-twitter-stream-harvester:master
+#        links:
+#            - sfmrabbit:mq
+##        volumes:
+##            - "../../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+##        restart: always
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+    #sfmelk:
+    #    build: ../../sfm-elk/docker/dev
+    ##    image: gwul/sfm-elk:dev
+    #    ports:
+    #      #Kibana web interface
+    #      - "5601:5601"
+    #      #Elasticsearch JSON interface
+    #      - "9200:9200"
+    #      #Logstash server
+    #      - "5000:5000"
+    #    volumes:
+    #        - "../../sfm-elk:/opt/sfm-elk"
+    #        - "../../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+    #        - "../../sfm-weibo-harvester:/opt/sfm-weibo-harvester"
+    #        - "../../sfm-utils:/opt/sfm-utils"
+    #    links:
+    #      - sfmrabbit:mq
+    #    volumes_from:
+    #      - sfmdata
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - MQ_ENV_RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+#            - MQ_ENV_RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    #    #command: --collection=04afb3d938aa468ca2a71de0824da126xxxxxx
+#    sfmweiboharvester:
+##        image: gwul/sfm-weibo-harvester:master
+#        build:
+#            context: ../../sfm-weibo-harvester
+#            dockerfile: Dockerfile-harvester
+#        links:
+#            - sfmrabbit:mq
+##        volumes:
+##            - "../../sfm-weibo-harvester:/opt/sfm-weibo-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmweiboexporter:
+##        image: gwul/sfm-weibo-exporter:master
+#        build:
+#            context: ../../sfm-weibo-harvester
+#            dockerfile: Dockerfile-exporter
+#        links:
+#            - sfmrabbit:mq
+#            - sfmuiapp:api
+##        volumes:
+##            - "../../sfm-weibo-harvester:/opt/sfm-weibo-harvester"
+##            - "../../sfm-utils:/opt/sfm-utils"
+##            - "../../warcprox:/opt/warcprox"
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmwayback:
+#        build:
+#            context: ../../sfm-wayback/docker/wayback
+#    #    image: gwul/sfm-wayback:master
+#        ports:
+#          - "8081:8080"
+#        volumes_from:
+#          - sfmdata
+#        depends_on:
+#          - sfmwaybackindexer
+#    sfmwaybackindexer:
+#        build:
+#            context: ../../sfm-wayback/docker/dev
+#    #    image: gwul/sfm-wayback-indexer:master
+#        links:
+#            - sfmrabbit:mq
+#        volumes_from:
+#          - sfmdata
+#        volumes:
+#            - "../../sfm-wayback:/opt/sfm-wayback"
+#            - "../../sfm-utils:/opt/sfm-utils"
+#        environment:
+#          - TZ=${TZ}
+#          - DEBUG=True
+#          - MQ_ENV_RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+#          - MQ_ENV_RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+#    sfmwaybackviewer:
+#        build:
+#            context: ../../sfm-wayback-viewer/docker/dev
+#        volumes:
+#            - "../../sfm-wayback-viewer:/opt/sfm-wayback-viewer"
+#        ports:
+#          - "8000:8000"
+#    sfmtumblrharvester:
+#        image: gwul/sfm-tumblr-harvester:master
+##        build:
+##            context: ../../sfm-tumblr-harvester/
+##            dockerfile: Dockerfile-harvester
+#        links:
+#            - sfmrabbit:mq
+#        volumes:
+#            - "../../sfm-tumblr-harvester:/opt/sfm-tumblr-harvester"
+#            - "../../sfm-utils:/opt/sfm-utils"
+#            - "../../warcprox:/opt/warcprox"
+#    #    restart: always
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - SFM_REQS=dev
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#        volumes_from:
+#            - sfmdata
+#    sfmtumblrexporter:
+#        image: gwul/sfm-tumblr-exporter:master
+##        build:
+##            context: ../../sfm-tumblr-harvester
+##            dockerfile: Dockerfile-exporter
+#        links:
+#            - sfmrabbit:mq
+#            - sfmuiapp:api
+#        volumes:
+#            - "../../sfm-tumblr-harvester:/opt/sfm-tumblr-harvester"
+#            - "../../sfm-utils:/opt/sfm-utils"
+#            - "../../warcprox:/opt/warcprox"
+#    #    restart: always
+#        environment:
+#            - TZ=${TZ}
+#            - DEBUG=True
+#            - RABBITMQ_USER=${RABBITMQ_USER}
+#            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+#            - SFM_REQS=dev
+#        volumes_from:
+#            - sfmdata

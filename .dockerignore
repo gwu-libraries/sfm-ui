@@ -1,0 +1,11 @@
+test_config.py
+*.log
+tests
+ENV
+.*
+**/*.pyc
+*.pyc
+*.egg-info
+build
+dist
+docs

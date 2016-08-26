@@ -1,2 +1,1 @@
--r common.txt
 git+https://github.com/gwu-libraries/sfm-utils.git@1.0.0#egg=sfmutils

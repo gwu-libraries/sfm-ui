@@ -99,8 +99,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sfmdatabase',
         'USER': 'postgres',
-        'PASSWORD': env.get('DB_ENV_POSTGRES_PASSWORD'),
-        'HOST': env.get('DB_ENV_HOST', 'db'),
+        'PASSWORD': env.get('POSTGRES_PASSWORD'),
+        'HOST': env.get('POSTGRES_HOST', 'db'),
         'PORT': '5432',
     }
 }
