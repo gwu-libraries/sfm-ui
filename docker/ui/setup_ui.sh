@@ -9,7 +9,7 @@ echo "Migrating db"
 echo "Collecting static files"
 /opt/sfm-ui/sfm/manage.py collectstatic --noinput
 
-if [ $LOAD_FIXTURES = "true" ]; then
+if [ $LOAD_FIXTURES = "True" ]; then
     echo "Loading fixtures"
     /opt/sfm-ui/sfm/manage.py loaddata /opt/sfm-setup/fixtures.json
 fi

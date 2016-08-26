@@ -63,3 +63,5 @@ ENV
 .idea/
 
 testdb
+docker-compose.yml
+.env
