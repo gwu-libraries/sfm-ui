@@ -64,4 +64,3 @@ ENV
 
 testdb
 docker-compose.yml
-.env
