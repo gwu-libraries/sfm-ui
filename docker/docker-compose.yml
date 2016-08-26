@@ -54,7 +54,7 @@ services:
             - LOAD_FIXTURES
             - SFM_REQS
         volumes:
-             This links in your local code.
+            # This links in your local code.
             - "..:/opt/sfm-ui"
             # To also link in a local sfm-utils, uncomment this and set SFM_REQS to "dev" in .env
             #- "../../sfm-utils:/opt/sfm-utils"
