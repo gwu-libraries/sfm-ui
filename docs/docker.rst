@@ -15,9 +15,8 @@ administration, and development.
 
 On OS X:
 
-* Install the `Docker Toolbox <https://docs.docker.com/installation/mac/>`_.
-* Be aware that Docker is not running natively on OS X, but rather in a
-  VirtualBox VM.
+* Install the `Docker for Mac <https://www.docker.com/products/docker#/mac>`_.
+* If you are using Docker Toolbox, switch to Docker for Mac.
 
 On Ubuntu:
 

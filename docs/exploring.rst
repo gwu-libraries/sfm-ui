@@ -27,7 +27,7 @@ To enable an ELK Docker container it must be added to your ``docker-compose.yml`
 
     docker-compose up -d
 
-An example container is provided in ``master.docker-compose.yml`` and ``prod.docker-compose.yml``. These examples
+An example container is provided in ``example.docker-compose.yml`` and ``example.prod.docker-compose.yml``. These examples
 also show how to limit to a single collection set by providing the collection set id.
 
 By default, Kibana is available at `http://<your hostname>:5601/app/kibana <http://localhost:5601/app/kibana>`_. (Also,

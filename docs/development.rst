@@ -7,75 +7,157 @@
 --------------------------------------
 
 SFM is composed of a number of components. Development can be performed on each of the
-components separately. The following describes setting up an development environment
-for a component.
-
-Step 1: Pick a development configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+components separately.
 
 For SFM development, it is recommended to run components within a Docker environment
-(instead of directly in your OS, not in Docker). Docker runs natively (and cleanly) on Ubuntu; on OS X
-Docker requires Docker Toolbox.
+(instead of directly in your OS, not in Docker).
 
-Since Docker can't run natively on OS X, Docker Toolbox
-runs it inside a VirtualBox VM, which is largely transparent to the user. Note that GWU's
-configuration of the Cisco AnyConnect VPN client breaks Docker Toolbox. You can work
-around this with `vpn_fix.sh <https://gist.github.com/arrogantrobot/120e9895db1a97038d3a>`_,
-but this is less than optimal.
-
-Depending on your development preferences and the OS you development on, you may want to
-consider one of the following configurations:
-
-* Develop locally and run Docker locally: Optimal if using an IDE and not using OS X/
-  Cisco AnyConnect.
-* Both develop and run Docker in an Ubuntu VM. The VM can be local (e.g., in VMWare Fusion)
-  or remote Ubuntu VM (e.g., a WRLC or AWS VM): Optimal if using a text editor.
-* Develop locally and run Docker in a local VM with the local code shared into the VM:
-  Optimal if using an IDE.
-
-Step 2: Install Docker and Docker Compose
+Step 1: Install Docker and Docker Compose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See See :ref:`docker-installing`.
+See :ref:`docker-installing`.
 
-Step 3: Clone the component's repo
+Step 2: Clone sfm-docker and create copies of docker-compose files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+For example::
+
+    git clone https://github.com/gwu-libraries/sfm-docker.git
+    cd sfm-docker
+    cp example.docker-compose.yml docker-compose.yml
+    cp example.env .env
+
+For the purposes of development, you can make changes to ``docker-compose.yml``
+and ``.env``. This will be described more below.
+
+
+Step 3: Clone the component repos
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 For example::
 
     git clone https://github.com/gwu-libraries/sfm-ui.git
 
-Step 4: Configure `docker-compose.yml`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Repeat for each of the components that you will be working on. Each of these should
+be in a sibling directory of sfm-docker.
 
-Each SFM component should provide a development Docker image and an example `dev.docker-compose.yml`
-file (in the `docker/` directory).
+-----------------------------
+ Running SFM for development
+-----------------------------
 
-The development Docker image will run the component using code that is shared with container.
-That is, the code is made available at container run time, rather than build time (as it is
-for master or production images). This allows you to change code and have it affect the
-running component if the component (e.g., a Django application) is aware of code changes. If
-the component is not aware of code changes, you will need to restart the container to get the
-changes (`docker kill <container name>` followed by `docker-compose up -d`).
+To bring up an instance of SFM for development, change to the sfm-docker directory and execute::
 
-The development `docker-compose.yml` will bring up a container running the component and containers
-for any additional components that the component depends on (e.g., a RabbitMQ instance). Copy
-`dev.docker-compose.yml` to `docker-compose.yml` and update it as necessary. At the very least,
-you will need to change the volumes link to point to your code::
-
-    volumes:
-        - "<path of your code>:/opt/sfm-ui"
-
-You may also need to change the defaults for exposed ports to ports that are available in
-your environment.
-
-Step 5: Run the code
-^^^^^^^^^^^^^^^^^^^^
-::
-
-    cd docker
     docker-compose up -d
 
-For additional Docker and Docker-Compose commands, see below.
+You may not want to run all of the containers. To omit a container, simply comment it out in ``docker-compose.yml``.
+
+By default, the code that has been committed to master for each of the containers will be executed. To execute
+your local code (i.e., the code you are editing), you will want to link in your local code. To link in the local
+code for a container, uncomment the volume definition that points to your local code. For example::
+
+        volumes:
+            - "../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+
+sfm-utils and warcprox are dependencies of many components. By default, the code that has been committed to master
+for sfm-utils or warcprox will be used for a component. To use your local code as a dependency, you will want
+to link in your local code. Assuming that you have cloned sfm-utils and warcprox, to link in the local code
+as a dependency for a container, change ``SFM_REQS`` in ``.env`` to "dev" and comment the volume definition
+that points to your local code. For example::
+
+        volumes:
+            - "../sfm-twitter-harvester:/opt/sfm-twitter-harvester"
+            - "../sfm-utils:/opt/sfm-utils"
+            - "../warcprox:/opt/warcprox"
+
+Note:
+* As a Django application, SFM UI will automically detect code changes and reload. Other components must be killed
+  and brought back up to reflect code changes.
+
+---------------
+ Running tests
+---------------
+
+Unit tests
+^^^^^^^^^^
+Some components require a ``test_config.py`` file that contains credentials. For example, sfm-twitter-harvester
+requires a ``test_config.py`` containing::
+
+    TWITTER_CONSUMER_KEY = "EHdoTksBfgGflP5nUalEfhaeo"
+    TWITTER_CONSUMER_SECRET = "ZtUpemtBkf2cEmaqiy52Dd343ihFu9PAiLebuMOmqN0QtXeAlen"
+    TWITTER_ACCESS_TOKEN = "411876914-c2yZjbk1np0Z5MWEFYYQKSQNFFGBXd8T4k90YkJl"
+    TWITTER_ACCESS_TOKEN_SECRET = "jK9QOmn5VRF5mfgAN6KgfmCKRqThXVQ1G6qQg8BCejvp"
+
+Note that if this file is not present, unit tests that require it will be skipped. Each component's README
+will describe the ``test_config.py`` requirements.
+
+Unit tests for most components can be run with::
+
+    python -m unittest discover
+
+The notable exception is SFM UI, which can be run with::
+
+    cd sfm
+    ./manage.py test --settings=sfm.settings.test_settings
+
+Integration tests
+^^^^^^^^^^^^^^^^^
+Many components have integration tests, which are run inside docker containers. These components
+have a ``ci.docker-compose.yml`` file which can be used to bring up a minimal environment for
+running the tests.
+
+As described above, some components require a ``test_config.py`` file.
+
+To run integration tests, bring up SFM::
+
+    docker-compose -f docker/dev.docker-compose.yml up -d
+
+Run the tests::
+
+    docker exec docker_sfmtwitterstreamharvester_1 python -m unittest discover
+
+You will need to substitute the correct name of the container. (``docker ps`` will list
+the containers.)
+
+And then clean-up::
+
+    docker-compose -f docker/dev.docker-compose.yml kill
+    docker-compose -f docker/dev.docker-compose.yml rm -v --force
+
+For reference, see each component's ``.travis.yml`` file which shows the steps of running
+the integration tests.
+
+Smoke tests
+^^^^^^^^^^^
+sfm-docker contains some smoke tests which will verify that SFM is running correctly.
+
+To run the smoke tests, first bring up SFM::
+
+    docker-compose up -d
+
+and then run the tests::
+
+    docker-compose -f docker-compose.yml -f smoketests.docker-compose.yml run --rm smoketests python -m unittest discover
+
+Note that the smoke tests are not yet complete.
+
+For reference, the `continuous integration deploy instructions <https://github.com/gwu-libraries/sfm-ui/wiki/Continuous-integration-deploy>`_
+shows the steps of running the smoke tests.
+
+--------------------
+ Requirements files
+--------------------
+
+This will vary a depending on whether a project has warcprox and sfm-utils as a dependency, but in general:
+
+* ``requirements/common.txt`` contains dependencies, except warcprox and sfm-utils.
+* ``requirements/release.txt`` references the last released version of warcprox and sfm-utils.
+* ``requirements/master.txt`` references the master version of warcprox and sfm-utils.
+* ``requirements/dev.txt`` references local versions of warcprox and sfm-utils in development mode.
+
+To get a complete set of dependencies, you will need ``common.txt`` and either ``release.txt``, ``master.txt`` or ``dev.txt``.
+For example::
+
+    virtualenv ENV
+    source ENV/bin/activate
+    pip install -r requirements/common.txt -r requirements/dev.txt
 
 ------------------
  Development tips
@@ -83,9 +165,8 @@ For additional Docker and Docker-Compose commands, see below.
 
 Admin user accounts
 ^^^^^^^^^^^^^^^^^^^
-When running a development `docker-compose.yml`, each component should automatically
-create any necessary admin accounts (e.g., a django admin for SFM UI). Check `dev.docker-compose.yml`
-for the username/passwords for those accounts.
+Each component should automatically create any necessary admin accounts (e.g., a django
+admin for SFM UI). Check ``.env`` for the username/passwords for those accounts.
 
 RabbitMQ management console
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -124,10 +205,9 @@ see the `Django docs <https://docs.djangoproject.com/en/1.8/howto/initial-data/>
 
 Runserver
 ^^^^^^^^^
-There are two flavors of the the development docker image for SFM UI.  `gwul/sfm-ui:dev` runs SFM UI with
-Apache, just as it will in production.  `gwul/sfm-ui:dev-runserver` runs SFM UI with `runserver <https://docs.djangoproject.com/en/1.8/ref/django-admin/#runserver-port-or-address-port>`_,
-which dynamically reloads changed Python code. To switch between them, change the `image` field in your
-`docker-compose.yml`.
+There are two flavors of the the development docker image for SFM UI.  `gwul/sfm-ui:master` runs SFM UI with
+Apache, just as it will in production.  `gwul/sfm-ui:master-runserver` runs SFM UI with `runserver <https://docs.djangoproject.com/en/1.8/ref/django-admin/#runserver-port-or-address-port>`_,
+which dynamically reloads changed Python code. To switch between them, change `UI_TAG` in `.env`.
 
 Job schedule intervals
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -146,7 +226,7 @@ Containers are created from images. Images are either built locally or pre-built
 `Docker Hub <https://hub.docker.com/>`_. In both cases, images are created based on the docker build (i.e., the
 Dockerfile and other files in the same directory as the Dockerfile).
 
-In a docker-compose.yml, pulled images will be identified by the `image` field, e.g., `image: gwul/sfm-ui:dev`. Built images
+In a docker-compose.yml, pulled images will be identified by the `image` field, e.g., `image: gwul/sfm-ui:master`. Built images
 will be identified by the `build` field, e.g., `build: app-dev`.
 
 In general, you will want to use pulled images. These are automatically built when changes are made to the Github repos.

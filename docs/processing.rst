@@ -31,6 +31,7 @@ Here is a list of the warc iterators:
 * ``twitter_stream_warc_iter.py``: Tweets recorded from Twitter Streaming API.
 * ``flickr_photo_warc_iter.py``: Flickr photos
 * ``weibo_warc_iter.py``: Weibos
+* ``tumblr_warc_iter.py``: Tumblr posts
 
 Warc iterator tools can also be used as a library.
 
@@ -81,26 +82,21 @@ The other tools are:
 
 To instantiate::
 
-    docker run -it --rm --link=[container name of SFM UI]:api --volumes-from=[container name of data container]:ro --volume=[path on your local filesystem for working files]:/sfm-processing gwul/sfm-processing:[version]
-
-
-For example::
-
-    docker run -it --rm --link=docker_sfmuiapp_1:api --volumes-from=docker_sfmdata_1:ro --volume=/home/ubuntu/sfm-processing:/sfm-processing gwul/sfm-processing:1.0.0
+    docker-compose run --rm processing /bin/bash
 
 
 You will then be provided with a bash shell inside the container from which you can execute commands::
 
     root@0ac9caaf7e72:/sfm-processing# find_warcs.py 4f4d1 | xargs twitter_rest_warc_iter.py | python /opt/twarc/utils/wordcloud.py
 
-``/sfm-processing`` will be linked in from your local filesystem.  You can place scripts in this directory to make them
+Setting ``PROCESSOR_VOLUME`` in ``.env`` to a host volume will link ``/sfm-processing``
+to your local filesystem.  You can place scripts in this directory to make them
 available inside the processing container or write output files to this directory to make them available outside the
 processing container.
 
 Note that once you exit the processing container, the container will be automatically removed.  However, if you have
 saved all of your scripts and output files to ``/sfm-processing``, they will be available when you create a new
 processing container.
-
 
 Processing locally
 ==================
