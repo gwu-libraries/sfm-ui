@@ -18,24 +18,32 @@ This site provides documentation for installation and usage of SFM. See the `Soc
 
    quickstart
 
-.. _technical-documentation:
+.. _admin-documentation:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Installation and Technical Documentation
+   :caption: Admin and Technical Documentation
 
    install
    authentication
    credentials
    processing
    exploring
+   docker
+   limitations
+   troubleshooting
+
+.. _dev-documentation:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Documentation
+
    development
    docker
    harvester
    messaging
    messaging_spec
-   limitations
-   troubleshooting
 
 
 Indices and tables
