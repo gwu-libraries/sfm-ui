@@ -49,8 +49,8 @@ or just download ``example.prod.docker-compose.yml`` and ``example.env``::
 
 
 Notes:
-* The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_.
-  This will take several minutes.
+
+* The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_. This will take several minutes.
 
 -------------------------
  Amazon EC2 installation
