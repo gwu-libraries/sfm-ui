@@ -10,7 +10,7 @@ SFM is composed of a number of components. Development can be performed on each 
 components separately.
 
 For SFM development, it is recommended to run components within a Docker environment
-(instead of directly in your OS, not in Docker).
+(instead of directly in your OS, without Docker).
 
 Step 1: Install Docker and Docker Compose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,8 +68,8 @@ that points to your local code. For example::
             - "../warcprox:/opt/warcprox"
 
 Note:
-* As a Django application, SFM UI will automically detect code changes and reload. Other components must be killed
-  and brought back up to reflect code changes.
+* As a Django application, SFM UI will automically detect code changes and reload. Other components must be killed 
+and brought back up to reflect code changes.
 
 ---------------
  Running tests
@@ -116,7 +116,7 @@ Run the tests::
 You will need to substitute the correct name of the container. (``docker ps`` will list
 the containers.)
 
-And then clean-up::
+And then clean up::
 
     docker-compose -f docker/dev.docker-compose.yml kill
     docker-compose -f docker/dev.docker-compose.yml rm -v --force
