@@ -29,14 +29,14 @@ reasonable guidance on how to accomplish this.
 
 Installing locally requires Docker and Docker-Compose. See :ref:`docker-installing`.
 
-1. Either clone this repository and copy the example configuration files::
+1. Either clone the sfm-docker repository and copy the example configuration files::
 
     git clone https://github.com/gwu-libraries/sfm-docker.git
     cd sfm-docker
     cp example.prod.docker-compose.yml docker-compose.yml
     cp example.env .env
 
-or just download ``docker-compose.yml`` and ``example.secrets.env``::
+or just download ``example.prod.docker-compose.yml`` and ``example.env``::
 
     curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.prod.docker-compose.yml > docker-compose.yml
     curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.env > .env
@@ -57,7 +57,7 @@ Notes:
 -------------------------
 To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
 In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
-user details and modify as appropriate::
+user details and modify as appropriate as described in :ref:`install-configuration`::
 
     #cloud-config
     repo_update: true
@@ -128,7 +128,7 @@ Note the following:
   and make changes.  ``docker-compose.yml`` and ``.env`` will be in the default user's
   home directory.
 * Make sure to configure a security group that exposes the proper ports. To see which
-  ports are used by which services, see `example.docker-compose.yml <https://github.com/gwu-libraries/sfm-docker/blob/master/example.docker-compose.yml>`_.
+  ports are used by which services, see `example.prod.docker-compose.yml <https://github.com/gwu-libraries/sfm-docker/blob/master/example.prod.docker-compose.yml>`_.
 * To learn more about configuring EC2 instances with user data, see the `AWS user guide <http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html>`_.
 
 
