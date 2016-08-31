@@ -59,3 +59,8 @@ Flickr
 Flickr credentials can be obtained from `https://www.flickr.com/services/api/keys/ <https://www.flickr.com/services/api/keys/>`_.
 
 Flickr does not require user credentials.
+
+Tumblr
+^^^^^^
+
+Tumblr credentials can be obtained from `https://www.tumblr.com/oauth/apps <https://www.tumblr.com/oauth/apps>`_.

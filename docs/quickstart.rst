@@ -28,8 +28,11 @@ You will need API credentials for each of the social media platforms from which 
 collect. This is more than the Twitter/Flickr/Weibo account that you may already
 have.  To get API credentials:
 
-* Request credentials from the social media platform and enter them into Credentials section. The :doc:`credentials` page provides instructions for each platform.
-* For Twitter, you have the option to connect your account without leaving SFM. With your permission, SFM will get credentials on your behalf. Click *Credentials* and then *Connect Twitter Account*.
+* Request credentials from the social media platform and enter them into Credentials section. The :doc:`credentials`
+  page provides instructions for each platform.
+* For some social media platforms, your administrator may have enabled an option that will allow you to
+  connect your account without leaving SFM. With your permission, SFM will get credentials on your behalf.
+  Click *Credentials* and then *Connect [Twitter, Tumblr, or Weibo] Account*.
 * If you are part of a group, you'll be able to use the credentials already provided by another member of the group.
 
 ----------------------
