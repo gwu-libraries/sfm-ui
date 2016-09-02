@@ -23,8 +23,19 @@ def default_uuid():
 
 
 class User(AbstractUser):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    NONE = "none"
+    EMAIL_FREQUENCY_CHOICES = [
+        (DAILY, 'Daily'),
+        (WEEKLY, 'Weekly'),
+        (MONTHLY, 'Monthly'),
+        (NONE, "None")
+    ]
     local_id = models.CharField(max_length=255, blank=True, default='',
                                 help_text='Local identifier')
+    email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
 
 
 def history_save(self, *args, **kw):
