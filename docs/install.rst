@@ -51,6 +51,7 @@ or just download ``example.prod.docker-compose.yml`` and ``example.env``::
 Notes:
 
 * The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_. This will take several minutes.
+* For instructions on how to make configuration changes *after* the containers have been brought up, see :ref:`install-configuration`.
 
 -------------------------
  Amazon EC2 installation
@@ -156,3 +157,8 @@ Configuration is documented in ``example.env``. For a production deployment, pay
   For more information and alternative approaches see :doc:`credentials`.
 * Set an admin email address with ``SFM_SITE_ADMIN_EMAIL``.
 * Provide a contact URL (e.g., http://library.gwu.edu) to be used when web harvesting with ``HERITRIX_CONTACT_URL``.
+
+Note that if you make a change to configuration *after* SFM is brought up, you will need to restart containers. If
+the change only applies to a single container, then you can stop the container with ``docker kill <container name>``. If
+the change applies to multiple containers (or you're not sure), you can stop all containers with ``docker-compose stop``.
+Containers can then be brought back up with ``docker-compose up -d`` and the configuration change will take effect.
