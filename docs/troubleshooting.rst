@@ -9,6 +9,9 @@
 * Upgrade to the latest version of Docker and Docker-Compose.
 * Make sure expected containers are running with ``docker ps``.
 * Check the logs with ``docker-compose logs`` and ``docker logs <container name>``.
+* Additional information is available via the admin interface that is not available from the UI.
+  To access the admin interface, log in as an account that has superuser status and under "Welcome, <your name>,"
+  click Admin. By default, a superuser account called `sfmadmin` is created. The password can be found in ``.env``.
 
 
 -------------------
