@@ -352,17 +352,16 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         form = self._form_class(collection)(request.POST, collection=kwargs["collection_pk"])
         if form.is_valid():
             tokens = form.cleaned_data['tokens'].splitlines()
+            seeds_type = form.cleaned_data['seeds_type']
             seed_count = 0
-            cleaned_data, is_uid = None, False
             if collection.harvest_type == collection.TUMBLR_BLOG_POSTS:
                 cleaned_data = [clean_blogname(t) for t in tokens]
-                is_uid = True
             else:
                 cleaned_data = [clean_token(t) for t in tokens]
 
             for token in cleaned_data:
                 if token:
-                    param = {'uid': token} if is_uid else {'token': token}
+                    param = {'uid': token} if seeds_type == 'uid' else {'token': token}
                     if not Seed.objects.filter(collection=collection, **param).exists():
                         log.debug("Creating seed %s for collection %s", token, collection.pk)
                         Seed.objects.create(collection=collection,
