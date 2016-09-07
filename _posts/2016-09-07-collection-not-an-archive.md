@@ -3,7 +3,7 @@ layout: article
 permalink: /posts/2016-09-07-collection-not-an-archive
 title: "When is a Collection not an Archive?"
 author: christie_peterson
-excerpt: ""
+excerpt: "The Twitter API is a powerful tool for archiving, but its use poses particular challenges for archivists." 
 ---
 
 Collecting Twitter content via the API affords archivists significant advantages
@@ -40,19 +40,19 @@ provides rules and guidelines for developers who interact with Twitter's
 ecosystem of applications, services, website, web pages and content ("Twitter
 Services"). What does this policy actually say? In [section F ("Be a Good
 Partner to
-Twitter"](https://dev.twitter.com/overview/terms/policy#6.Update_Be_a_Good_Partner_to_Twitter),
+Twitter")](https://dev.twitter.com/overview/terms/policy#6.Update_Be_a_Good_Partner_to_Twitter),
 item 2 reads:
 
->     2\. If you provide Content to third parties, including downloadable datasets of
+>   2. If you provide Content to third parties, including downloadable datasets of
 > Content or an API that returns Content, you will only distribute or allow
 > download of Tweet IDs and/or User IDs.
->
->        a\. You may, however, provide export via non-automated means (e.g., download of spreadsheets or PDF files, or use of a
-> "save as" button) of up to 50,000 public Tweets and/or User Objects per user of
-> your Service, per day.
->
->        b\. Any Content provided to third parties via non-automated
-file download remains subject to this Policy.
+
+    >    a. You may, however, provide export via non-automated means (e.g., download of spreadsheets or PDF files, or use of a
+    > "save as" button) of up to 50,000 public Tweets and/or User Objects per user of
+    > your Service, per day.
+    >
+    >    b. Any Content provided to third parties via non-automated
+    > file download remains subject to this Policy.
 
 Some have interpreted "third parties" to mean anyone outside one's own
 institution. Under this interpretation, sharing the full content obtained via
@@ -72,20 +72,23 @@ Twitter's
 Products")](https://dev.twitter.com/overview/terms/policy#2.Update_Maintain_the_Integrity_of_Twitter%E2%80%99s),
 item 6 reads:
 
-> 6\. Only surface Twitter activity as it surfaced on Twitter. For example, your
-> Service should execute the unlike and delete actions by removing all relevant
-> Content, not by publicly displaying to other users that the Tweet is no longer
-> liked or has been deleted.
+6\. Only surface Twitter activity as it surfaced on Twitter. For example, your
+Service should execute the unlike and delete actions by removing all relevant
+Content, not by publicly displaying to other users that the Tweet is no longer
+liked or has been deleted.
 
 Along similar lines, item 3 under [Section C ("Respect Users' Control and
 Privacy")](https://dev.twitter.com/overview/terms/policy#3.Update_Respect_Users_Control_and_Privacy)
 reads:
 
-> 3\. Take all reasonable efforts to do the following, provided that when requested
-> by Twitter, you must promptly take such actions:
->    a. Delete Content that Twitter reports as deleted or expired;
->    b. Change treatment of Content that Twitter reports is subject to changed sharing options (e.g., become protected);
->    c. and Modify Content that Twitter reports has been modified.
+3\. Take all reasonable efforts to do the following, provided that when requested
+by Twitter, you must promptly take such actions:
+
+    a. Delete Content that Twitter reports as deleted or expired;
+
+    b. Change treatment of Content that Twitter reports is subject to changed sharing options (e.g., become protected);
+
+    c. and Modify Content that Twitter reports has been modified.
 
 These rules make perfect sense when applied to most applications that use the
 Twitter API, like [TweetDeck](https://tweetdeck.twitter.com/): the tweets that a
