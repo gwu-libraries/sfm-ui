@@ -16,6 +16,7 @@ class UIConfig(AppConfig):
         from models import Collection, Export
         from sched import start_sched, schedule_harvest_receiver, unschedule_harvest_receiver
         from export import export_receiver, export_m2m_receiver
+        from notifications import send_user_harvest_emails
 
         if settings.SCHEDULE_HARVESTS:
             log.debug("Setting receivers for collections.")
@@ -35,6 +36,13 @@ class UIConfig(AppConfig):
 
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
-            start_sched()
+            sched = start_sched()
+            if settings.PERFORM_USER_HARVEST_EMAILS:
+                if sched.get_job('user_harvest_emails') is not None:
+                    sched.remove_job('user_harvest_emails')
+                sched.add_job(send_user_harvest_emails, 'cron', hour=settings.USER_HARVEST_EMAILS_HOUR,
+                              minute=settings.USER_HARVEST_EMAILS_MINUTE, id='user_harvest_emails')
+
         else:
             log.debug("Not running scheduler")
+

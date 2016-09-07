@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'ui',
     'allauth',                      # registration
     'allauth.account',              # registration
@@ -180,3 +181,8 @@ EMAIL_USE_TLS = True
 
 # Whether to run apscheduler
 RUN_SCHEDULER = env.get('SFM_RUN_SCHEDULER', 'False') == 'True'
+
+
+PERFORM_USER_HARVEST_EMAILS = env.get('SFM_PERFORM_USER_HARVEST_EMAILS', 'True') == 'True'
+USER_HARVEST_EMAILS_HOUR = env.get('SFM_USER_HARVEST_EMAILS_HOUR', '1')
+USER_HARVEST_EMAILS_MINUTE = env.get('SFM_USER_HARVEST_EMAILS_MINUTE', '0')

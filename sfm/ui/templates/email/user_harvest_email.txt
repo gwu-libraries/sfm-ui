@@ -1,0 +1,17 @@
+{% load humanize %}Here's an update on your harvests from Social Feed Manager ({{ url }}).
+
+{% for collection_set, collection_set_info in collection_sets.items %}
+{{ collection_set.name|upper }} ({{ collection_set_info.url }})
+{% for collection, collection_info in collection_set_info.collections.items %}
+{{ collection.name }} ({{ collection_info.url }}): {% if collection.is_active %}Turned on{% else %}Turned off{% endif %}
+{% if collection_info.next_run_time %}    Next harvest: {{ collection_info.next_run_time }}{% endif %}
+{% if collection.last_harvest %}    Last harvest: {{ collection.last_harvest.date_requested }}{% endif %}
+{% if collection_info.stats %}{% for item, item_stats in collection_info.stats.items %}
+    Stats for {{ item }}:
+        Yesterday: {{ item_stats.yesterday|intcomma }}
+        Previous day: {{ item_stats.prev_day|intcomma }}
+        Last 7 days: {{ item_stats.last_7|intcomma }}
+        Previous 7 days: {{ item_stats.prev_7|intcomma }}
+        Last 30 days: {{ item_stats.last_30|intcomma }}
+        Previous 30 days: {{ item_stats.prev_30|intcomma }}
+{% endfor %}{% endif %}{% endfor %}{% endfor %}

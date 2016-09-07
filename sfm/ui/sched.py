@@ -19,6 +19,7 @@ def start_sched():
     })
     log.info("Starting scheduler")
     sched.start()
+    return sched
 
 
 def next_run_time(collection_pk):
