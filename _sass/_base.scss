@@ -77,7 +77,7 @@ blockquote {
   border-left: 6px solid $info-color;
   p {
     font-family: $alt-font;
-    @include font-size(24);
+    @include font-size(18,yes,24);
   }
   cite {
     font-family: $base-font;
