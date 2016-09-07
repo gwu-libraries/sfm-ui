@@ -46,6 +46,7 @@ item 2 reads:
 > 2\. If you provide Content to third parties, including downloadable datasets of
 > Content or an API that returns Content, you will only distribute or allow
 > download of Tweet IDs and/or User IDs.
+>
 >   a. You may, however, provide export via non-automated means (e.g., download of spreadsheets or PDF files, or use of a
 > "save as" button) of up to 50,000 public Tweets and/or User Objects per user of
 > your Service, per day.
