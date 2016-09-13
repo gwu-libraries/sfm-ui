@@ -7,7 +7,7 @@ from django.core.exceptions import PermissionDenied
 from .models import CollectionSet, User, Credential, Seed, Collection, Export
 from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, CollectionCreateView, \
     CollectionDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
-    ChangeLogView
+    ChangeLogView, UserProfileDetailView
 
 import os
 import shutil
@@ -479,3 +479,27 @@ class ChangeLogTests(TestCase):
         self.assertEqual(2, response.context_data["paginator"].count)
         self.assertEqual("CollectionSet", response.context_data["model_name"])
         self.assertEqual("changed collection_set name", response.context_data["name"])
+
+
+class UserProfileTestsUnit:
+    def setUp(self):
+        self.group = Group.objects.create(name='testgroup1')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com',
+                                             'password')
+        self.user.groups.add(self.group)
+        self.user.save()
+        self.superuser = User.objects.create_superuser('testsuperuser', 'testsuperuser@example.com',
+                                                       'password')
+        self.factory = RequestFactory()
+
+
+class UserProfileDetailViewTests(UserProfileTestsUnit, TestCase):
+
+    def test_seed_detail_collection_set(self):
+        """
+        test that collection_set loaded into seed detail view
+        """
+        request = self.factory.get(reverse("user_profile_detail"))
+        request.user = self.user
+        response = UserProfileDetailView.as_view()(request)
+        self.assertEqual('mailto:'+self.superuser.email, response.context_data["email_info"])
