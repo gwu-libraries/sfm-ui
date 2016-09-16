@@ -1,6 +1,7 @@
 import logging
 from sfmutils.consumer import BaseConsumer
 from ui.models import Harvest, Collection, Seed, Warc, Export, HarvestStat
+from ui.jobs import collection_stop
 import json
 from django.core.mail import send_mail
 from django.conf import settings
@@ -100,6 +101,16 @@ class SfmUiConsumer(BaseConsumer):
                     except ObjectDoesNotExist:
                         HarvestStat.objects.create(item=item, harvest=harvest, count=count, harvest_date=day)
 
+        # Turn off stream collections if they failed
+        turned_collection_off = False
+        if harvest.status == Harvest.FAILURE and harvest.collection.is_streaming():
+            log.info("Turning collection %s off", harvest.collection.name)
+            harvest.collection.is_active = False
+            harvest.collection.save()
+            # Send stop message
+            collection_stop(harvest.collection.id)
+            turned_collection_off = True
+
         # Send email if completed and failed or has messages
         if harvest.status == Harvest.FAILURE or (
                 harvest.status == Harvest.SUCCESS and (harvest.infos or harvest.warnings or harvest.errors)):
@@ -127,6 +138,8 @@ class SfmUiConsumer(BaseConsumer):
                         mail_subject = u"SFM Harvest for {} failed".format(harvest.collection.name)
                         mail_message = u"The harvest for {} ({}) failed.".format(harvest.collection.name,
                                                                                  harvest_url)
+                    if turned_collection_off:
+                        mail_message += "\n\nThis collection has been turned off."
                     mail_message += self.format_messages_for_mail(harvest.infos, "informational")
                     mail_message += self.format_messages_for_mail(harvest.warnings, "warning")
                     mail_message += self.format_messages_for_mail(harvest.errors, "error")

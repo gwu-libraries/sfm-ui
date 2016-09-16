@@ -109,7 +109,7 @@ def collection_stop(collection_id):
         return
     harvest = collection.last_harvest()
     assert collection.is_streaming()
-    if harvest is None or harvest.status not in (Harvest.REQUESTED, Harvest.RUNNING):
+    if harvest is None or harvest.status not in (Harvest.REQUESTED, Harvest.RUNNING, Harvest.FAILURE):
         log.debug("Ignoring stop harvest of collection since %s does not have a running harvest.")
         return
 
@@ -125,5 +125,6 @@ def collection_stop(collection_id):
     RabbitWorker().send_message(message, routing_key)
 
     # Update harvest model instance
-    harvest.status = Harvest.STOP_REQUESTED
-    harvest.save()
+    if harvest.status in (Harvest.REQUESTED, Harvest.RUNNING):
+        harvest.status = Harvest.STOP_REQUESTED
+        harvest.save()

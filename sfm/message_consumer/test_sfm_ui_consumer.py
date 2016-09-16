@@ -3,6 +3,7 @@ from ui.models import Harvest, Collection, Group, CollectionSet, Credential, Use
 import json
 from sfm_ui_consumer import SfmUiConsumer
 import iso8601
+from mock import MagicMock, patch
 
 from datetime import date
 
@@ -20,11 +21,15 @@ class ConsumerTest(TestCase):
         collection = Collection.objects.create(collection_set=collection_set, credential=credential,
                                                harvest_type="test_type", name="test_collection",
                                                harvest_options=json.dumps({}))
+        stream_collection = Collection.objects.create(collection_set=collection_set, credential=credential,
+                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_stream_collection",
+                                               harvest_options=json.dumps({}), is_active=True)
+        self.assertTrue(stream_collection.is_active)
         Seed.objects.create(collection=collection, uid="131866249@N02", seed_id='1')
         Seed.objects.create(collection=collection, token="library_of_congress", seed_id='2')
+
         historical_collection = collection.history.all()[0]
         historical_credential = historical_collection.credential.history.all()[0]
-
         self.harvest = Harvest.objects.create(harvest_id="test:1",
                                               collection=collection,
                                               historical_collection=historical_collection,
@@ -34,6 +39,12 @@ class ConsumerTest(TestCase):
                                           collection=collection,
                                           historical_collection=historical_collection,
                                           historical_credential=historical_credential)
+        historical_stream_collection = stream_collection.history.all()[0]
+        historical_stream_credential = historical_stream_collection.credential.history.all()[0]
+        self.stream_harvest = Harvest.objects.create(harvest_id="test:3",
+                                                     collection=stream_collection,
+                                                     historical_collection=historical_stream_collection,
+                                                     historical_credential=historical_stream_credential)
         HarvestStat.objects.create(harvest=harvest2, item="photos", count=3, harvest_date=date(2016, 5, 20))
         Export.objects.create(export_id="test:2", user=user, export_type="test_type")
         self.consumer = SfmUiConsumer()
@@ -132,6 +143,25 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
+
+    @patch("message_consumer.sfm_ui_consumer.collection_stop")
+    def test_harvest_status_stream_failed_on_message(self, mock_collection_stop):
+        self.consumer.routing_key = "harvest.status.twitter.twitter_sample"
+        self.consumer.message = {
+            "id": "test:3",
+            "status": Harvest.FAILURE,
+            "date_started": "2015-07-28T11:17:36.640044",
+            "date_ended": "2015-07-28T11:17:42.539470"
+        }
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check updated harvest model object
+        harvest = Harvest.objects.get(harvest_id="test:3")
+        self.assertEqual(Harvest.FAILURE, harvest.status)
+        self.assertFalse(harvest.collection.is_active)
+
+        mock_collection_stop.assert_called_once_with(harvest.collection.id)
 
     def test_on_message_ignores_bad_routing_key(self):
         self.consumer.routing_key = "xharvest.status.test.test_search"
