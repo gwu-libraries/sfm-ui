@@ -209,6 +209,9 @@ There are two flavors of the the development docker image for SFM UI.  `gwul/sfm
 Apache, just as it will in production.  `gwul/sfm-ui:master-runserver` runs SFM UI with `runserver <https://docs.djangoproject.com/en/1.8/ref/django-admin/#runserver-port-or-address-port>`_,
 which dynamically reloads changed Python code. To switch between them, change `UI_TAG` in `.env`.
 
+Note that as an byproduct of how runserver dynamically reloads Python code, there are actually 2 instances of the application
+running. This may produce some odd results, like 2 schedulers running. This will not occur with Apache.
+
 Job schedule intervals
 ^^^^^^^^^^^^^^^^^^^^^^
 To assist with testing and development, a 5 minute interval can be added by setting `SFM_FIVE_MINUTE_SCHEDULE` to
