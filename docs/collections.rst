@@ -8,6 +8,8 @@ Understanding what each collection type provides is important to ensure you
 collect what you need and are aware of any limitations. Reading the social media
 platform's documentation provides further important details.
 
+.. _Twitter search:
+
 ---------------
 Twitter search
 ---------------
@@ -16,6 +18,8 @@ Queries the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_
 to retrieve public tweets from a sampling of tweets from the most recent 7 days.
 This is not a comprehensive search of all tweets. To formulate a search query,
 use the `Twitter Advanced Search query builder <https://twitter.com/search-advanced>`_.
+
+.. _Twitter filter:
 
 ---------------
 Twitter filter
@@ -29,6 +33,8 @@ There are limits on how many tweets Twitter will supply, so filters on high-volu
 hashtags will not return all tweets available. Twitter only allows you to run one
 filter collection type at a time with an SFM credential.
 
+.. _Twitter user timeline:
+
 ---------------------
 Twitter user timeline
 ---------------------
@@ -41,6 +47,8 @@ only collect tweets since the last harvested tweet. SFM queries `Twitter's user_
 API <https://dev.twitter.com/rest/reference/get/statuses/user_timeline>`_ to retrieve
 tweets. 
 
+.. _Twitter sample:
+
 --------------
 Twitter sample
 --------------
@@ -49,12 +57,16 @@ Collects tweets from the `Twitter sample stream <https://dev.twitter.com/streami
 which contains  approximately 0.5-1% of public tweets. This stream produces a lot of data,
 currently a 3GB a day (compressed).
 
+.. _Flickr user:
+
 -----------
 Flickr user
 -----------
 
 Collects metadata about public photos by a specific Flickr user. Will collect the photos themselves if 
-the "Collect web resources" checkbox is selected.
+the "Web resources" checkbox is selected.
+
+.. _Weibo timeline:
 
 --------------
 Weibo timeline
@@ -63,3 +75,12 @@ Weibo timeline
 Collects Weibos by the user and friends of the user whose credentials are provided. 
 Uses the `Weibo friends_timeline API <http://open.weibo.com/wiki/2/statuses/friends_timeline>`_. 
 
+.. _Collecting web resources:
+
+------------------------
+Collecting Web resources
+------------------------
+Each collection type allows you to select an option to collect web resources. When a social media post
+includes a URL, SFM will harvest the web page at that URL. It will harvest only that web page, not any
+pages linked from that page. Note that the web pages require more storage than the social media itself,
+so select this option only if you are prepared to handle that data. 
