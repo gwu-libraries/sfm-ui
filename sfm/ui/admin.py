@@ -181,4 +181,3 @@ a.site.register(m.Harvest, Harvest)
 a.site.register(m.HarvestStat, HarvestStat)
 a.site.register(m.Warc, Warc)
 a.site.register(m.Export, Export)
-print UserAdmin.fields
