@@ -23,8 +23,19 @@ def default_uuid():
 
 
 class User(AbstractUser):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    NONE = "none"
+    EMAIL_FREQUENCY_CHOICES = [
+        (DAILY, 'Daily'),
+        (WEEKLY, 'Weekly'),
+        (MONTHLY, 'Monthly'),
+        (NONE, "None")
+    ]
     local_id = models.CharField(max_length=255, blank=True, default='',
                                 help_text='Local identifier')
+    email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
 
 
 def history_save(self, *args, **kw):
@@ -333,7 +344,6 @@ class Harvest(models.Model):
     historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    harvest_type = models.CharField(max_length=255)
     collection = models.ForeignKey(Collection, related_name='harvests')
     parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
@@ -356,9 +366,7 @@ class Harvest(models.Model):
         return self.harvest_type.replace("_", " ").capitalize()
 
     def message_count(self):
-        return len(self.infos) if self.infos else 0 \
-                                                  + len(self.warnings) if self.warnings else 0 \
-                                                                                             + len(
+        return len(self.infos) if self.infos else 0 + len(self.warnings) if self.warnings else 0 + len(
             self.errors) if self.errors else 0
 
     def stats(self):

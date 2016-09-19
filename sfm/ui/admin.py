@@ -36,6 +36,9 @@ class MyUserCreationForm(UserCreationForm):
 class UserAdmin(AuthUserAdmin):
     form = MyUserChangeForm
     add_form = MyUserCreationForm
+    fieldsets = AuthUserAdmin.fieldsets + (
+        (None, {'fields': ('email_frequency',)}),
+    )
 
 
 class Credential(a.ModelAdmin):
