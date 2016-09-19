@@ -92,7 +92,7 @@ class CollectionTest(TestCase):
                                           historical_collection=historical_collection1,
                                           historical_credential=historical_credential1)
         HarvestStat.objects.create(harvest=harvest2, item="tweets", count=5, harvest_date=day2)
-        harvest3 = Harvest.objects.create(parent_harvest = harvest1,
+        harvest3 = Harvest.objects.create(parent_harvest=harvest1,
                                           collection=collection1)
         HarvestStat.objects.create(harvest=harvest3, item="web resources", count=25, harvest_date=day2)
 
@@ -112,6 +112,24 @@ class CollectionTest(TestCase):
         self.assertEqual(17, stats["tweets"])
         self.assertEqual(6, stats["users"])
         self.assertEqual(25, stats["web resources"])
+
+    def test_warc_totals(self):
+        collection1 = Collection.objects.create(collection_set=self.collection_set,
+                                                name="test_collection",
+                                                harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                credential=self.credential)
+        historical_collection1 = collection1.history.all()[0]
+        historical_credential1 = historical_collection1.credential.history.all()[0]
+        Harvest.objects.create(collection=collection1,
+                               historical_collection=historical_collection1,
+                               historical_credential=historical_credential1,
+                               warcs_count=1, warcs_bytes=10)
+        Harvest.objects.create(collection=collection1,
+                               historical_collection=historical_collection1,
+                               historical_credential=historical_credential1,
+                               warcs_count=2, warcs_bytes=20)
+        self.assertEqual(3, collection1.warcs_count())
+        self.assertEqual(30, collection1.warcs_bytes())
 
 
 class CollectionSetTest(TestCase):
@@ -134,7 +152,8 @@ class CollectionSetTest(TestCase):
         harvest1 = Harvest.objects.create(collection=collection1,
                                           historical_collection=historical_collection1,
                                           historical_credential=historical_credential1,
-                                          date_requested=datetime1)
+                                          date_requested=datetime1,
+                                          warcs_count=1, warcs_bytes=10)
         HarvestStat.objects.create(harvest=harvest1, item="tweets", count=5, harvest_date=day1)
         HarvestStat.objects.create(harvest=harvest1, item="users", count=6, harvest_date=day1)
         HarvestStat.objects.create(harvest=harvest1, item="tweets", count=7, harvest_date=self.day2)
@@ -142,7 +161,8 @@ class CollectionSetTest(TestCase):
         harvest2 = Harvest.objects.create(collection=collection1,
                                           historical_collection=historical_collection1,
                                           historical_credential=historical_credential1,
-                                          date_requested=datetime1)
+                                          date_requested=datetime1,
+                                          warcs_count=2, warcs_bytes=20)
         HarvestStat.objects.create(harvest=harvest2, item="tweets", count=5, harvest_date=day1)
 
         collection2 = Collection.objects.create(collection_set=self.collection_set,
@@ -155,13 +175,18 @@ class CollectionSetTest(TestCase):
         harvest3 = Harvest.objects.create(collection=collection2,
                                           historical_collection=historical_collection2,
                                           historical_credential=historical_credential2,
-                                          date_requested=datetime1)
+                                          date_requested=datetime1,
+                                          warcs_count=3, warcs_bytes=30)
         HarvestStat.objects.create(harvest=harvest3, item="tweets", count=7, harvest_date=self.day2)
 
     def test_stats(self):
         stats = self.collection_set.stats()
         self.assertEqual(24, stats["tweets"])
         self.assertEqual(6, stats["users"])
+
+    def test_warc_totals(self):
+        self.assertEqual(6, self.collection_set.warcs_count())
+        self.assertEqual(60, self.collection_set.warcs_bytes())
 
     def test_stats_item(self):
         self.assertListEqual([(date(2016, 5, 16), 0),
@@ -186,7 +211,7 @@ class HarvestTest(TestCase):
         group = Group.objects.create(name="test_group")
         collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
         credential = Credential.objects.create(user=user, platform="test_platform",
-                                                    token="{}")
+                                               token="{}")
         collection1 = Collection.objects.create(collection_set=collection_set,
                                                 name="test_collection",
                                                 harvest_type=Collection.TWITTER_USER_TIMELINE,

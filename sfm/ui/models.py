@@ -174,6 +174,20 @@ class CollectionSet(models.Model):
             stats.append((date, date_counts_dict.get(date, 0)))
         return stats
 
+    def warcs_count(self):
+        """
+        Returns total number of WARC files harvested for this collection set.
+        """
+        return Harvest.objects.filter(collection__collection_set=self).aggregate(count=models.Sum("warcs_count"))[
+                   "count"] or 0
+
+    def warcs_bytes(self):
+        """
+        Returns total number of WARC bytes harvested for this collection set.
+        """
+        return Harvest.objects.filter(collection__collection_set=self).aggregate(total=models.Sum("warcs_bytes"))[
+            "total"]
+
 
 @python_2_unicode_compatible
 class Collection(models.Model):
@@ -278,6 +292,18 @@ class Collection(models.Model):
         """
         return _item_counts_to_dict(
             HarvestStat.objects.filter(harvest__collection=self).values("item").annotate(count=models.Sum("count")))
+
+    def warcs_count(self):
+        """
+        Returns total number of WARC files harvested for this collection.
+        """
+        return Harvest.objects.filter(collection=self).aggregate(count=models.Sum("warcs_count"))["count"] or 0
+
+    def warcs_bytes(self):
+        """
+        Returns total number of WARC bytes harvested for this collection.
+        """
+        return Harvest.objects.filter(collection=self).aggregate(total=models.Sum("warcs_bytes"))["total"]
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)

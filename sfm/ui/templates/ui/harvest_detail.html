@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block title %}
     {{ collection_set.name }}
 {% endblock %}
@@ -31,7 +32,7 @@
     {% if harvest.stats %}
         <p><strong>Stats:</strong><ul>
             {% for item, count in harvest.stats.items %}
-                <li>{{ item }}: {{ count }}</li>
+                <li>{{ item }}: {{ count|intcomma }}</li>
             {% endfor %}
         </ul></p>
     {% endif %}
