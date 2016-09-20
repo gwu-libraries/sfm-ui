@@ -619,10 +619,10 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
                 strtoken.append(clean_t)
         if seed_type == 'token' and numtoken:
             raise ValidationError(
-                'Screen name should not contain any entirely numeric seed! Invalid seeds: ' + ', '.join(numtoken) + '.')
+                'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')
         elif seed_type == 'uid' and strtoken:
             raise ValidationError(
-                'UID should all be entirely numeric seeds! Invalid seeds: ' + ', '.join(strtoken) + '.')
+                'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
         return tokens
 
 
