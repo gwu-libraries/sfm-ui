@@ -606,6 +606,25 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
         super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.fields['seeds_type'].choices = (('token', 'Screen Name'), ('uid', 'User id'))
 
+    def clean_tokens(self):
+        seed_type = self.cleaned_data.get("seeds_type")
+        tokens = self.cleaned_data.get("tokens")
+        splittoken = ''.join(tokens).splitlines()
+        numtoken, strtoken = [], []
+        for t in splittoken:
+            clean_t = clean_token(t)
+            if clean_t and clean_t.isdigit():
+                numtoken.append(clean_t)
+            elif clean_t and not clean_t.isdigit():
+                strtoken.append(clean_t)
+        if seed_type == 'token' and numtoken:
+            raise ValidationError(
+                'Screen name should not contain any entirely numeric seed! Invalid seeds: ' + ', '.join(numtoken) + '.')
+        elif seed_type == 'uid' and strtoken:
+            raise ValidationError(
+                'UID should all be entirely numeric seeds! Invalid seeds: ' + ', '.join(strtoken) + '.')
+        return tokens
+
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
