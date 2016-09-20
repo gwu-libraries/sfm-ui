@@ -171,6 +171,29 @@ to create the list of JSON destination files.  To access the tweets in a gzipped
     
     gzip -c <filepath>
 
+Counting posts
+===============
+`wc -l` can be used to count posts. To count the number of tweets in a collection::
+
+    find_warcs.py 7c37157 | xargs twitter_stream_warc_iter.py | wc -l
+
+To count the posts from line-oriented JSON files created as described above::
+
+    cat dest.lst | xargs wc -l
+
+*wc -l gotcha*: When doing a lot of counting, `wc -l` will output a partial total and then reset
+the count. The partial totals must be added together to get the grand total. For example::
+
+        [Some lines skipped ...]
+            1490 ./964be41e1714492bbe8ec5793e05ec86-20160725070757217-00000-7932-62ebe35d576c-8002.json
+            4514 ./5f78a79c6382476889d1ed4734d6105a-20160722202703869-00000-5110-62ebe35d576c-8002.json
+           52043 ./417cf950a00d44408458c93f08f0690e-20160910032351524-00000-1775-c4aea5d70c14-8000.json
+        54392684 total
+        [Some lines skipped ...]
+           34778 ./30bc1c34880d404aa3254f82dd387514-20160806132811173-00000-21585-62ebe35d576c-8000.json
+           30588 ./964be41e1714492bbe8ec5793e05ec86-20160727030754726-00000-10044-62ebe35d576c-8002.json
+        21573971 total
+
 Using jq to process JSON
 ========================
 For tips on using jq with JSON from Twitter and other sources, see:
