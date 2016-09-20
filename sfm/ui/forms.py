@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
@@ -301,7 +302,7 @@ class CollectionFlickrUserForm(BaseCollectionForm):
         ("Original", "Original")
     )
     image_sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
-                                      widget=forms.CheckboxSelectMultiple, label="Image sizes", )
+                                            widget=forms.CheckboxSelectMultiple, label="Image sizes", )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
 
     def __init__(self, *args, **kwargs):
@@ -335,8 +336,8 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
     )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
     image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
-                                      help_text="For harvesting images, select the image sizes.",
-                                      widget=forms.CheckboxSelectMultiple, label="Image sizes")
+                                            help_text="For harvesting images, select the image sizes.",
+                                            widget=forms.CheckboxSelectMultiple, label="Image sizes")
     web_resources_option = forms.BooleanField(initial=False, required=False,
                                               help_text="Perform web harvests of resources (e.g., web pages) linked in "
                                                         "weibo texts.",
@@ -572,8 +573,10 @@ class SeedTumblrBlogPostsForm(BaseSeedForm):
 
 
 class BaseBulkSeedForm(forms.Form):
+    TYPES = (('token', 'Username'), ('uid', 'NSID'))
+    seeds_type = forms.ChoiceField(required=True, choices=TYPES, widget=forms.RadioSelect)
     tokens = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 20}),
-                             help_text="Enter each seed on a separate line.")
+                             help_text="Enter each seed on a separate line.", label="Bulk Seeds")
     history_note = forms.CharField(label=HISTORY_NOTE_LABEL, widget=HISTORY_NOTE_WIDGET, help_text=HISTORY_NOTE_HELP,
                                    required=False)
 
@@ -586,6 +589,7 @@ class BaseBulkSeedForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                'seeds_type',
                 'tokens',
                 'history_note'
             ),
@@ -600,23 +604,38 @@ class BaseBulkSeedForm(forms.Form):
 class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.fields['tokens'].label = "Screen names"
-        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
-                                           @ symbol not required. Use screen names, not numeric user IDs."
+        self.fields['seeds_type'].choices = (('token', 'Screen Name'), ('uid', 'User id'))
+
+    def clean_tokens(self):
+        seed_type = self.cleaned_data.get("seeds_type")
+        tokens = self.cleaned_data.get("tokens")
+        splittoken = ''.join(tokens).splitlines()
+        numtoken, strtoken = [], []
+        for t in splittoken:
+            clean_t = clean_token(t)
+            if clean_t and clean_t.isdigit():
+                numtoken.append(clean_t)
+            elif clean_t and not clean_t.isdigit():
+                strtoken.append(clean_t)
+        if seed_type == 'token' and numtoken:
+            raise ValidationError(
+                'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')
+        elif seed_type == 'uid' and strtoken:
+            raise ValidationError(
+                'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
+        return tokens
 
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedFlickrUserForm, self).__init__(*args, **kwargs)
-        self.fields['tokens'].label = "Username"
-        self.fields['tokens'].help_text = "Enter each screen name on a separate line, \
-                                           Use screen names, not numeric user IDs."
 
 
 class BulkSeedTumblrBlogPostsForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedTumblrBlogPostsForm, self).__init__(*args, **kwargs)
-        self.fields['tokens'].label = "Blog hostnames"
+        self.fields['seeds_type'].choices = (('uid', 'Blog hostnames'),)
+        self.fields['seeds_type'].initial = 'uid'
 
 
 class BaseCredentialForm(forms.ModelForm):

@@ -298,7 +298,8 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
 
     def test_post(self):
 
-        response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]), {'tokens': """
+        response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
+                                    {'seeds_type': 'token', 'tokens': """
         test token
 
         test token2
@@ -306,6 +307,19 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
         """})
         self.assertEqual(3, Seed.objects.filter(collection=self.collection).count())
         self.assertTrue(Seed.objects.filter(collection=self.collection, token='test token3').exists())
+        self.assertTrue(response.url.endswith('/ui/collections/1/'))
+
+    def test_post_uid(self):
+
+        response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
+                                    {'seeds_type': 'uid', 'tokens': """
+        123
+
+        45367
+          9087
+        """})
+        self.assertEqual(3, Seed.objects.filter(collection=self.collection).count())
+        self.assertSetEqual({'123', '45367', '9087'}, {s.uid for s in Seed.objects.filter(collection=self.collection)})
         self.assertTrue(response.url.endswith('/ui/collections/1/'))
 
 
