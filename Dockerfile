@@ -3,7 +3,7 @@ MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 # Install apache
 RUN apt-get update && apt-get install -y \
-    apache2=2.4.10-10+deb8u5 \
+    apache2=2.4.10-10+deb8u* \
     libapache2-mod-wsgi=4.3.0-1
 
 ADD . /opt/sfm-ui/
