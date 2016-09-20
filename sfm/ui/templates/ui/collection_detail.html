@@ -88,7 +88,7 @@
 {% endif %}
 {% if last_harvest.warnings %}
     <div class="alert alert-warning" role="alert">
-        Warnings messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
+        Warning messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
         <ul>
             {% for msg in last_harvest.warnings %}
                 <li>{{ msg.message }}</li>
