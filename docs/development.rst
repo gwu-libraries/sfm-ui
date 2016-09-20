@@ -217,6 +217,14 @@ Job schedule intervals
 To assist with testing and development, a 5 minute interval can be added by setting `SFM_FIVE_MINUTE_SCHEDULE` to
 `True` in the `docker-compose.yml`.
 
+Connecting to the database
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+To connect to postgres using psql::
+
+    docker exec -it sfm_db_1 psql -h db -U postgres -d sfmdatabase
+
+You will be prompted for the password, which you can find in `.env`.
+
 .. _install-helpful-docker:
 
 -------------
