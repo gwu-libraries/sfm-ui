@@ -75,6 +75,13 @@ Weibo timeline
 Collects Weibos by the user and friends of the user whose credentials are provided. 
 Uses the `Weibo friends_timeline API <http://open.weibo.com/wiki/2/statuses/friends_timeline>`_. 
 
+.. _Tumblr blog posts:
+
+-----------------
+Tumblr blog posts
+-----------------
+Collects blog posts by a specified Tumblr blog.
+
 .. _Collecting web resources:
 
 ------------------------
