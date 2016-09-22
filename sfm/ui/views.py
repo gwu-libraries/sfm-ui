@@ -40,11 +40,11 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
         if self.request.user.is_superuser:
             context['collection_set_list_n'] = CollectionSet.objects.exclude(
                 group__in=self.request.user.groups.all()).annotate(
-                num_collections=Count('collections')).order_by('date_updated')
+                num_collections=Count('collections')).order_by('name')
 
         context['collection_set_list'] = CollectionSet.objects.filter(
             group__in=self.request.user.groups.all()).annotate(
-            num_collections=Count('collections')).order_by('date_updated')
+            num_collections=Count('collections')).order_by('name')
         return context
 
 
@@ -56,7 +56,7 @@ class CollectionSetDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(CollectionSetDetailView, self).get_context_data(**kwargs)
         context['collection_list'] = Collection.objects.filter(
-            collection_set=self.object.pk).annotate(num_seeds=Count('seeds'))
+            collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         context["diffs"] = diff_object_history(self.object)
         context["harvest_types"] = Collection.HARVEST_CHOICES
         context["item_id"] = self.object.id
@@ -89,7 +89,7 @@ class CollectionSetUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(CollectionSetUpdateView, self).get_context_data(**kwargs)
         context['collection_list'] = Collection.objects.filter(
-            collection_set=self.object.pk).annotate(num_seeds=Count('seeds'))
+            collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         return context
 
     def get_form_kwargs(self):
@@ -113,7 +113,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context["harvest_count"] = self.object.harvests.all().count()
         context["last_harvest"] = self.object.last_harvest()
         context["diffs"] = diff_object_history(self.object)
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         # For not enough seeds
         seed_warning_message = None
@@ -223,7 +223,7 @@ class CollectionUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(CollectionUpdateView, self).get_context_data(**kwargs)
         context["collection_set"] = self.object.collection_set
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk)
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         return context
 
@@ -432,7 +432,7 @@ class CredentialListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CredentialListView, self).get_context_data(**kwargs)
-        context['credential_list'] = Credential.objects.filter(user=self.request.user)
+        context['credential_list'] = Credential.objects.filter(user=self.request.user).order_by('name')
         context["can_connect_twitter"] = self._can_connect_credential(Credential.TWITTER)
         context["can_connect_weibo"] = self._can_connect_credential(Credential.WEIBO)
         context["can_connect_tumblr"] = self._can_connect_credential(Credential.TUMBLR)
@@ -544,7 +544,7 @@ class HarvestListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.collection = get_object_or_404(Collection, pk=self.kwargs["pk"])
-        return self.collection.harvests.all()
+        return self.collection.harvests.all().order_by('-date_requested')
 
     def get_context_data(self, **kwargs):
         context = super(HarvestListView, self).get_context_data(**kwargs)
@@ -638,5 +638,5 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['collection_set_list'] = CollectionSet.objects.filter(
-            group__in=self.request.user.groups.all())
+            group__in=self.request.user.groups.all()).order_by('name')
         return context
