@@ -105,4 +105,12 @@ urlpatterns = patterns('',
                        url(r'^(?P<model>\w+)/(?P<item_id>\d+)/changes/$',
                            views.ChangeLogView.as_view(),
                            name="change_log"),
+
+                       url(r'^profile/$',
+                           views.UserProfileDetailView.as_view(),
+                           name="user_profile_detail"),
+
+                       url(r'^profile/update/$',
+                           views.UserProfileUpdateView.as_view(),
+                           name="user_profile_update"),
                        )

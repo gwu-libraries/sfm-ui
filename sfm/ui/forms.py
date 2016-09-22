@@ -843,3 +843,33 @@ class ExportForm(forms.ModelForm):
         m.save()
         self.save_m2m()
         return m
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'email_frequency']
+        widgets = {
+            "username": forms.TextInput(attrs={'size': '40'}),
+            "email": forms.TextInput(attrs={'size': '40'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        # set up crispy forms helper
+        self.helper = FormHelper(self)
+        # set up crispy forms helper
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'username',
+                'email',
+                'email_frequency',
+                Div(),
+            ),
+            FormActions(
+                Submit('submit', 'Save'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
+            )
+        )
+

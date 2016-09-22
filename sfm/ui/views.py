@@ -640,3 +640,34 @@ class HomeView(TemplateView):
         context['collection_set_list'] = CollectionSet.objects.filter(
             group__in=self.request.user.groups.all()).order_by('name')
         return context
+
+
+class UserProfileDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'ui/profile_details.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileDetailView, self).get_context_data(**kwargs)
+        context["user_groups"] = ','.join([g.name for g in self.request.user.groups.all()])
+        superusers = User.objects.filter(is_superuser=True)
+        # get the first super user email information
+        context["email_info"] = 'mailto:' + superusers[0].email if superusers else ''
+        return context
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'ui/profile_update.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_form_class(self):
+        class_name = "UserProfileForm"
+        return getattr(forms, class_name)
+
+    def get_success_url(self):
+        return reverse("user_profile_detail")
