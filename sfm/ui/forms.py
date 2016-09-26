@@ -872,4 +872,3 @@ class UserProfileForm(forms.ModelForm):
                 Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
-
