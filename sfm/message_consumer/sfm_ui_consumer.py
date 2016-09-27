@@ -62,15 +62,17 @@ class SfmUiConsumer(BaseConsumer):
 
         # Update seeds based on tokens that have changed
         for seed_id, token in self.message.get("token_updates", {}).items():
-            # Try to find seed based on collection and uid.
-            try:
-                seed = Seed.objects.get(seed_id=seed_id)
-                seed.token = token
-                seed.history_note = "Changed token based on information from harvester from harvest {}".format(
-                        self.message["id"])
-                seed.save()
-            except ObjectDoesNotExist:
-                log.error("Seed model object with seed_id %s not found to update token to %s", seed_id, token)
+            # Handle case when token comes back None
+            if token:
+                # Try to find seed based on collection and uid.
+                try:
+                    seed = Seed.objects.get(seed_id=seed_id)
+                    seed.token = token
+                    seed.history_note = "Changed token based on information from harvester from harvest {}".format(
+                            self.message["id"])
+                    seed.save()
+                except ObjectDoesNotExist:
+                    log.error("Seed model object with seed_id %s not found to update token to %s", seed_id, token)
 
         # Update seeds based on uids that have been returned
         for seed_id, uid in self.message.get("uids", {}).items():
