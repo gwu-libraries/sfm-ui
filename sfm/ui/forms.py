@@ -696,8 +696,8 @@ class CredentialFlickrForm(BaseCredentialForm):
         m = super(CredentialFlickrForm, self).save(commit=False)
         m.platform = Credential.FLICKR
         m.token = {
-            "key": self.cleaned_data["key"],
-            "secret": self.cleaned_data["secret"]
+            "key": self.cleaned_data["key"].strip(),
+            "secret": self.cleaned_data["secret"].strip()
         }
         m.token = json.dumps(m.token)
         m.save()
@@ -724,10 +724,10 @@ class CredentialTwitterForm(BaseCredentialForm):
         m = super(CredentialTwitterForm, self).save(commit=False)
         m.platform = Credential.TWITTER
         token = {
-            "consumer_key": self.cleaned_data["consumer_key"],
-            "consumer_secret": self.cleaned_data["consumer_secret"],
-            "access_token": self.cleaned_data["access_token"],
-            "access_token_secret": self.cleaned_data["access_token_secret"],
+            "consumer_key": self.cleaned_data["consumer_key"].strip(),
+            "consumer_secret": self.cleaned_data["consumer_secret"].strip(),
+            "access_token": self.cleaned_data["access_token"].strip(),
+            "access_token_secret": self.cleaned_data["access_token_secret"].strip(),
         }
         m.token = json.dumps(token)
         m.save()
@@ -748,7 +748,7 @@ class CredentialTumblrForm(BaseCredentialForm):
         m = super(CredentialTumblrForm, self).save(commit=False)
         m.platform = Credential.TUMBLR
         token = {
-            "api_key": self.cleaned_data["api_key"],
+            "api_key": self.cleaned_data["api_key"].strip(),
         }
         m.token = json.dumps(token)
         m.save()
@@ -770,7 +770,7 @@ class CredentialWeiboForm(BaseCredentialForm):
         m = super(CredentialWeiboForm, self).save(commit=False)
         m.platform = Credential.WEIBO
         token = {
-            "access_token": self.cleaned_data["access_token"],
+            "access_token": self.cleaned_data["access_token"].strip(),
         }
         m.token = json.dumps(token)
         m.save()
@@ -872,4 +872,3 @@ class UserProfileForm(forms.ModelForm):
                 Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
-
