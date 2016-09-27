@@ -47,11 +47,15 @@ or just download ``example.prod.docker-compose.yml`` and ``example.env``::
 
     docker-compose up -d
 
+4. It is also recommended that you scale up the Twitter REST Harvester container::
+
+    docker-compose scale twitterrestharvester=2
 
 Notes:
 
 * The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_. This will take several minutes.
 * For instructions on how to make configuration changes *after* the containers have been brought up, see :ref:`install-configuration`.
+* To learn more about scaling , see :ref:`docker-scaling`.
 
 -------------------------
  Amazon EC2 installation
@@ -116,6 +120,7 @@ user details and modify as appropriate as described in :ref:`install-configurati
     # - echo HERITRIX_ADMIN_PORT=8443 >> .env
     # - echo HERITRIX_CONTACT_URL=http://library.myschool.edu >> .env
      - docker-compose up -d
+     - docker-compose scale twitterrestharvester=2
 
 When the instance is launched, SFM will be installed and started.
 

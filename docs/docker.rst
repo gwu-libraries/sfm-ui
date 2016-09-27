@@ -84,13 +84,22 @@ On Ubuntu:
 ``docker-compose scale <service name>=<number of instances>``
     Create multiple instances of a service.
 
+.. _docker-scaling:
 
 ------------------------
  Scaling up with Docker
 ------------------------
+
+Most harvesters and exporters handle one request at a time; requests for exports and harvests queue up waiting
+to be handled. If requests are taking too long to be processed you can scale up (i.e., create additional
+instances of) the appropriate harvester or exporter.
+
 To create multiple instances of a service, use `docker-compose scale <https://docs.docker.com/compose/reference/scale/>`_.
-This can be used to created multiple instances of a harvester when the queue for
-that harvester is too long.
+
+The harvester most likely to need scaling is the Twitter REST harvester since some harvests (e.g., broad Twitter
+searches) may take a long time. To scale up the Twitter REST harvester to 3 instances use::
+
+    docker-compose scale twitterrestharvester=3
 
 To spread containers across multiple containers, use `Docker Swarm <https://docs.docker.com/swarm/overview/>`_.
 
