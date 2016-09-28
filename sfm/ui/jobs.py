@@ -12,9 +12,9 @@ log = logging.getLogger(__name__)
 
 @transaction.atomic
 def collection_harvest(collection_pk):
-
     message = {
         "collection_set": {},
+        "collection": {}
     }
 
     # Retrieve collection
@@ -40,7 +40,7 @@ def collection_harvest(collection_pk):
     # Make sure that have the correct number of seeds.
     required_seed_count = collection.required_seed_count()
     if (required_seed_count is None and len(historical_seeds) == 0) or (
-            required_seed_count is not None and required_seed_count != len(historical_seeds)):
+                    required_seed_count is not None and required_seed_count != len(historical_seeds)):
         log.warning("Collection %s has wrong number of active seeds.", collection_pk)
         return
 
@@ -51,7 +51,13 @@ def collection_harvest(collection_pk):
     # Collection set
     collection_set = historical_collection.collection_set
     message["collection_set"]["id"] = collection_set.collection_set_id
-    message["path"] = "{}/collection_set/{}/{}".format(settings.SFM_DATA_DIR, collection_set.collection_set_id, collection.collection_id)
+
+    # Collection
+    message["collection"]["id"] = historical_collection.collection_id
+
+    # Path
+    message["path"] = "{}/collection_set/{}/{}".format(settings.SFM_DATA_DIR, collection_set.collection_set_id,
+                                                       collection.collection_id)
 
     # Credential
     message["credentials"] = json.loads(str(historical_credential.token))
@@ -100,7 +106,6 @@ def collection_harvest(collection_pk):
 
 @transaction.atomic
 def collection_stop(collection_id):
-
     # Retrieve collection
     try:
         collection = Collection.objects.get(id=collection_id)

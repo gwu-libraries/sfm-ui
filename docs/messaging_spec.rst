@@ -129,6 +129,9 @@ Harvest start messages specify for a harvester the details of a harvest. Example
         },
         "collection_set": {
             "id": "3989a5f99e41487aaef698680537c3f5"
+        },
+        "collection": {
+            "id": "6980fac666c54322a2ebdbcb2a9510f5"
         }
     }
 
@@ -156,6 +159,9 @@ Another example::
         },
         "collection_set": {
             "id": "3989a5f99e41487aaef698680537c3f5"
+        },
+        "collection": {
+            "id": "6980fac666c54322a2ebdbcb2a9510f5"
         }
     }
 
@@ -197,6 +203,9 @@ other harvest start messages, with the differences noted below. Example::
         ],
         "collection_set": {
             "id": "3989a5f99e41487aaef698680537c3f5"
+        },
+        "collection": {
+            "id": "6980fac666c54322a2ebdbcb2a9510f5"
         }
     }
 
@@ -282,6 +291,9 @@ created during a harvest. Example::
         },
         "collection_set": {
             "id": "3989a5f99e41487aaef698680537c3f5"
+        },
+        "collection": {
+            "id": "6980fac666c54322a2ebdbcb2a9510f5"
         },
         "harvest": {
             "id": "98ddaa6e8c1f4b44aaca95bc46d3d6ac",

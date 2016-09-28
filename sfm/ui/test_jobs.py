@@ -39,6 +39,7 @@ class StartJobsTests(TestCase):
         self.assertEqual("send_message", name)
         message = args[0]
         self.assertTrue(message["collection_set"]["id"])
+        self.assertTrue(message["collection"]["id"])
         self.assertEqual(
             "{}/collection_set/{}/{}".format(settings.SFM_DATA_DIR, self.collection_set.collection_set_id,
                                              collection.collection_id),
