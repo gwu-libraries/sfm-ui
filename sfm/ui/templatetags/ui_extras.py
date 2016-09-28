@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+from django.contrib.humanize.templatetags.humanize import intcomma
 import json as json_lib
 
 register = template.Library()
@@ -77,3 +78,14 @@ def render_list(value):
         rend += u"<li>{}</li>".format(render_value(v))
     rend += u"</ul>"
     return rend
+
+
+@register.filter
+def join_stats(d, sep=", "):
+    joined = ""
+    if d:
+        for i, (item, count) in enumerate(d.items()):
+            if i > 1:
+                joined += sep
+            joined += "{} {}".format(intcomma(count), item)
+    return joined if joined else "Waiting for update"
