@@ -60,17 +60,18 @@ On the collection set detail page, under *Collections* click the *Add Collection
 
 .. image:: images/quickstart/collection_types.png
 
-Collection harvest types differ based on the social media platform and the part of the API from which the social media is to
-be collected.  For example, a "Twitter search" collects tweets from Twitter's `search API <https://dev.twitter.com/rest/public/search>`_.
+Collection types differ based on the social media platform and the part of the API from which the social media is to
+be collected. For more information, see :doc:`collections`.
 
 The collection types supported by SFM include:
 
- * Twitter search
- * Twitter filter
- * Twitter user timeline
- * Twitter sample
- * Flickr user
- * Weibo timeline
+ * :ref:`Twitter search`
+ * :ref:`Twitter filter`
+ * :ref:`Twitter user timeline`
+ * :ref:`Twitter sample`
+ * :ref:`Flickr user`
+ * :ref:`Weibo timeline`
+ * :ref:`Tumblr blog posts`
 
 SFM allows you to create multiple collections of each type within a collection set.  For example, you might
 create a "Democratic candidate Twitter user timelines" collection and a "Republican candidate Twitter user

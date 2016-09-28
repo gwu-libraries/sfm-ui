@@ -21,6 +21,10 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    :caption: User Documentation
 
    quickstart
+   credentials
+   collections
+   processing
+   exploring
 
 .. _admin-documentation:
 
@@ -30,9 +34,6 @@ This site provides documentation for installation and usage of SFM. See the `Soc
 
    install
    authentication
-   credentials
-   processing
-   exploring
    docker
    limitations
    troubleshooting
