@@ -31,6 +31,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    install
    authentication
    credentials
+   collections
    processing
    exploring
    docker

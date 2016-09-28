@@ -52,6 +52,12 @@ body {
     margin-left: 15px;
 }
 
+.glyphicon.glyphicon-question-sign {
+    font-size: 24px;
+    color: #999999;
+    padding-left: 10px;
+}
+
 footer {
     position: relative; 
     height: 60px;
