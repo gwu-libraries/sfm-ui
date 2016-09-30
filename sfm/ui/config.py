@@ -17,6 +17,7 @@ class UIConfig(AppConfig):
         from sched import start_sched, schedule_harvest_receiver, unschedule_harvest_receiver
         from export import export_receiver, export_m2m_receiver
         from notifications import send_user_harvest_emails, send_free_space_emails
+        from serialize import serialize_all
 
         if settings.SCHEDULE_HARVESTS:
             log.debug("Setting receivers for collections.")
@@ -37,6 +38,8 @@ class UIConfig(AppConfig):
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
             sched = start_sched()
+
+            # User harvest emails
             if settings.PERFORM_USER_HARVEST_EMAILS:
                 if sched.get_job('user_harvest_emails') is not None:
                     sched.remove_job('user_harvest_emails')
@@ -49,7 +52,12 @@ class UIConfig(AppConfig):
                     sched.remove_job('scan_free_space')
                 sched.add_job(send_free_space_emails, 'cron', hour=settings.SCAN_FREE_SPACE_HOUR,
                               minute=settings.SCAN_FREE_SPACE_MINUTE, id='scan_free_space')
+            # Serialization
+            if settings.PERFORM_SERIALIZE:
+                if sched.get_job('serialize') is not None:
+                    sched.remove_job('serialize')
+                sched.add_job(serialize_all, 'cron', hour=settings.SERIALIZE_HOUR,
+                              minute=settings.SERIALIZE_MINUTE, id='serialize')
 
         else:
             log.debug("Not running scheduler")
-

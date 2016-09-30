@@ -1,0 +1,15 @@
+This is a collection created with Social Feed Manager.
+
+Collection name: {{ collection.name }}
+Collection id: {{ collection.collection_id }}
+Harvest type: {{ collection.get_harvest_type_display }}
+{% if collection.description %}Collection description: {{ collection.description }}{% endif %}
+
+This collection is part of collection set {{ collection.collection_set.name }} (collection set id {{ collection.collection_set.collection_set_id }}).
+
+JSON records that fully describe this collection and its contents can be found in the records directory. These records
+can be used to import the collection into Social Feed Manager.
+
+WARC files are located in subdirectories of this directory, organized by date.
+
+Updated on {{ now }}

@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
+
 import django.db.models.options as options
 from django.conf import settings
 
@@ -51,9 +52,12 @@ def history_save(self, *args, **kw):
             if getattr(orig, field) != getattr(self, field):
                 is_changed = True
                 break
-
     else:
         is_changed = True
+
+    if kw.get("force_history"):
+        is_changed = True
+        del kw["force_history"]
 
     if is_changed:
         return super(self.__class__, self).save(*args, **kw)
@@ -64,6 +68,26 @@ def history_save(self, *args, **kw):
         finally:
             del self.skip_history_when_saving
         return ret
+
+
+class CredentialManager(models.Manager):
+    def get_by_natural_key(self, credential_id):
+        return self.get(credential_id=credential_id)
+
+
+class CredentialHistoryManager(models.Manager):
+    def get_by_natural_key(self, credential_id, history_date):
+        return self.get(credential_id=credential_id, history_date=history_date)
+
+
+class CredentialHistoryModel(models.Model):
+    objects = CredentialHistoryManager()
+
+    class Meta:
+        abstract = True
+
+    def natural_key(self):
+        return self.credential_id, self.history_date
 
 
 class Credential(models.Model):
@@ -77,6 +101,7 @@ class Credential(models.Model):
         (WEIBO, 'Weibo'),
         (TUMBLR, "Tumblr")
     ]
+    credential_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     name = models.CharField(max_length=255, verbose_name='Credential name')
     user = models.ForeignKey(User, related_name='credentials')
     platform = models.CharField(max_length=255, help_text='Platform name', choices=PLATFORM_CHOICES)
@@ -85,7 +110,9 @@ class Credential(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     history_note = models.TextField(blank=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[CredentialHistoryModel])
+
+    objects = CredentialManager()
 
     class Meta:
         diff_fields = ("name", "platform", "token", "is_active")
@@ -93,8 +120,24 @@ class Credential(models.Model):
     def __str__(self):
         return '<Credential %s "%s">' % (self.id, self.platform)
 
+    def natural_key(self):
+        return self.credential_id,
+
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+
+class CollectionSetManager(models.Manager):
+    def get_by_natural_key(self, collection_set_id):
+        return self.get(collection_set_id=collection_set_id)
+
+
+class CollectionSetHistoryModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def natural_key(self):
+        return self.collection_set_id, self.history_date
 
 
 @python_2_unicode_compatible
@@ -108,8 +151,10 @@ class CollectionSet(models.Model):
     is_visible = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[CollectionSetHistoryModel])
     history_note = models.TextField(blank=True)
+
+    objects = CollectionSetManager()
 
     class Meta:
         diff_fields = ("group", "name", "description")
@@ -119,6 +164,9 @@ class CollectionSet(models.Model):
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+    def natural_key(self):
+        return self.collection_set_id,
 
     def stats(self):
         """
@@ -189,6 +237,26 @@ class CollectionSet(models.Model):
             "total"]
 
 
+class CollectionManager(models.Manager):
+    def get_by_natural_key(self, collection_id):
+        return self.get(collection_id=collection_id)
+
+
+class CollectionHistoryManager(models.Manager):
+    def get_by_natural_key(self, collection_id, history_date):
+        return self.get(collection_id=collection_id, history_date=history_date)
+
+
+class CollectionHistoryModel(models.Model):
+    objects = CollectionHistoryManager()
+
+    class Meta:
+        abstract = True
+
+    def natural_key(self):
+        return self.collection_id, self.history_date
+
+
 @python_2_unicode_compatible
 class Collection(models.Model):
     TWITTER_SEARCH = 'twitter_search'
@@ -248,8 +316,10 @@ class Collection(models.Model):
     end_date = models.DateTimeField(blank=True,
                                     null=True,
                                     help_text="If blank, will continue until stopped.")
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[CollectionHistoryModel])
     history_note = models.TextField(blank=True)
+
+    objects = CollectionManager()
 
     class Meta:
         diff_fields = (
@@ -258,6 +328,9 @@ class Collection(models.Model):
 
     def __str__(self):
         return '<Collection %s "%s">' % (self.id, self.name)
+
+    def natural_key(self):
+        return self.collection_id,
 
     def required_seed_count(self):
         """
@@ -317,6 +390,26 @@ def _item_counts_to_dict(item_counts):
     return stats
 
 
+class SeedManager(models.Manager):
+    def get_by_natural_key(self, seed_id):
+        return self.get(seed_id=seed_id)
+
+
+class SeedHistoryManager(models.Manager):
+    def get_by_natural_key(self, seed_id, history_date):
+        return self.get(seed_id=seed_id, history_date=history_date)
+
+
+class SeedHistoryModel(models.Model):
+    objects = SeedHistoryManager()
+
+    class Meta:
+        abstract = True
+
+    def natural_key(self):
+        return self.seed_id, self.history_date
+
+
 @python_2_unicode_compatible
 class Seed(models.Model):
     collection = models.ForeignKey(Collection, related_name='seeds')
@@ -327,8 +420,10 @@ class Seed(models.Model):
     is_valid = models.BooleanField(default=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[SeedHistoryModel])
     history_note = models.TextField(blank=True)
+
+    objects = SeedManager()
 
     class Meta:
         diff_fields = ("token", "uid", "is_active")
@@ -338,6 +433,9 @@ class Seed(models.Model):
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+    def natural_key(self):
+        return self.seed_id,
 
     def label(self):
         labels = []
@@ -351,6 +449,11 @@ class Seed(models.Model):
         if self.uid:
             labels.append("Uid: {}".format(self.uid))
         return "; ".join(labels)
+
+
+class HarvestManager(models.Manager):
+    def get_by_natural_key(self, harvest_id):
+        return self.get(harvest_id=harvest_id)
 
 
 class Harvest(models.Model):
@@ -386,8 +489,13 @@ class Harvest(models.Model):
     warcs_count = models.PositiveIntegerField(default=0)
     warcs_bytes = models.BigIntegerField(default=0)
 
+    objects = HarvestManager()
+
     def __str__(self):
         return '<Harvest %s "%s">' % (self.id, self.harvest_id)
+
+    def natural_key(self):
+        return self.harvest_id,
 
     def get_harvest_type_display(self):
         return self.harvest_type.replace("_", " ").capitalize()
@@ -404,17 +512,32 @@ class Harvest(models.Model):
             HarvestStat.objects.filter(harvest=self).values("item").annotate(count=models.Sum("count")))
 
 
+class HarvestStatManager(models.Manager):
+    def get_by_natural_key(self, harvest, harvest_date, item):
+        return self.get(harvest=harvest, harvest_date=harvest_date, item=item)
+
+
 class HarvestStat(models.Model):
     harvest = models.ForeignKey(Harvest, related_name="harvest_stats")
     harvest_date = models.DateField()
     item = models.CharField(max_length=255)
     count = models.PositiveIntegerField()
 
+    objects = HarvestStatManager()
+
     class Meta:
         unique_together = ("harvest", "harvest_date", "item")
 
+    def natural_key(self):
+        return self.harvest, self.harvest_date, self.item,
+
     def __str__(self):
         return '<HarvestStat %s "%s from %s">' % (self.id, self.item, self.harvest_date)
+
+
+class WarcManager(models.Manager):
+    def get_by_natural_key(self, warc_id):
+        return self.get(warc_id=warc_id)
 
 
 class Warc(models.Model):
@@ -427,9 +550,14 @@ class Warc(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
 
+    objects = WarcManager()
+
     @property
     def harvest_type(self):
         return self.harvest.harvest_type
+
+    def natural_key(self):
+        return self.warc_id,
 
 
 class Export(models.Model):
