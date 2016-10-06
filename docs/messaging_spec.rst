@@ -255,7 +255,10 @@ it performs. Example::
         "warcs": {
             "count": 3
             "bytes": 345234242
-        }
+        },
+        "service": "Twitter Harvester",
+        "host": "f0c3c5ef7031",
+        "instance": "39",
     }
 
 * The routing key will be `harvest.status.<social media platform>.<type>`. For example,
@@ -274,6 +277,10 @@ it performs. Example::
   containing the NSID for a username.
 * `warcs`.`count`: The total number of WARCs created during this harvest.
 * `warcs`.`bytes`: The total number of bytes of the WARCs created during this harvest.
+* `service`, `host`, and `instance` identify what performed the harvest. `service` is the name
+  of the harvester. `host` is the Docker container id. `instance` is the harvest process identifier
+  (PID) within the container.  This is useful in cases where there are multiple instances of a service
+  on a host.  
 
 Warc created message
 --------------------
@@ -400,11 +407,18 @@ it performs. Example::
         "infos": []
         "warnings": [],
         "errors": [],
+        "service": "Twitter Harvester",
+        "host": "f0c3c5ef7031",
+        "instance": "39",
     }
 
 * The routing key will be `export.status.<social media platform>.<type>`. For example,
   `export.status.flickr.flickr_user`.
-* `status`: Valid values are `completed success` or `completed failure`.
+* `status`: Valid values are `running`, `completed success` or `completed failure`.
 * `infos`, `warnings`, and `errors`:  Lists of messages.  A message should be an object
   (i.e., dictionary) containing a `code` and `message` entry.  Codes should be consistent
   to allow message consumers to identify types of messages.
+* `service`, `host`, and `instance` identify what performed the harvest. `service` is the name
+  of the harvester. `host` is an identifier for the location of the harvest, e.g., the Docker
+  container id. `instance` is an identifier for the process of the service on the host, e.g.,
+  the PID. The is helps in cases there may be multiple instances of a service on a host.

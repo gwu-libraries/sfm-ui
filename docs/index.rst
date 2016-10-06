@@ -33,6 +33,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    :caption: Admin and Technical Documentation
 
    install
+   monitoring
    authentication
    docker
    portability

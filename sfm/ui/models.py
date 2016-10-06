@@ -488,6 +488,11 @@ class Harvest(models.Model):
     uids = JSONField(blank=True)
     warcs_count = models.PositiveIntegerField(default=0)
     warcs_bytes = models.BigIntegerField(default=0)
+    # These identify who is doing the harvest
+    service = models.CharField(max_length=255, null=True)
+    host = models.CharField(max_length=255, null=True)
+    # Since a host may have multiple instances of a harvester, this identifies which. Might be a PID.
+    instance = models.CharField(max_length=255, null=True)
 
     objects = HarvestManager()
 
@@ -565,9 +570,11 @@ class Export(models.Model):
     REQUESTED = "requested"
     SUCCESS = "completed success"
     FAILURE = "completed failure"
+    RUNNING = "running"
     STATUS_CHOICES = (
         (NOT_REQUESTED, "Not requested"),
         (REQUESTED, "Requested"),
+        (RUNNING, "Running"),
         (SUCCESS, "Success"),
         (FAILURE, "Failure")
     )
@@ -591,6 +598,7 @@ class Export(models.Model):
     date_requested = models.DateTimeField(blank=True, null=True)
     date_started = models.DateTimeField(blank=True, null=True)
     date_ended = models.DateTimeField(blank=True, null=True)
+    date_updated = models.DateTimeField(auto_now=True)
     dedupe = models.BooleanField(blank=False, default=False)
     item_date_start = models.DateTimeField(blank=True, null=True)
     item_date_end = models.DateTimeField(blank=True, null=True)
@@ -599,6 +607,11 @@ class Export(models.Model):
     infos = JSONField(blank=True)
     warnings = JSONField(blank=True)
     errors = JSONField(blank=True)
+    # These identify who is doing the harvest
+    service = models.CharField(max_length=255, null=True)
+    host = models.CharField(max_length=255, null=True)
+    # Since a host may have multiple instances of a harvester, this identifies which. Might be a PID.
+    instance = models.CharField(max_length=255, null=True)
 
     def save(self, *args, **kwargs):
         self.path = "{}/export/{}".format(settings.SFM_DATA_DIR, self.export_id)

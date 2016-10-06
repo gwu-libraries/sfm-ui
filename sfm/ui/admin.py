@@ -133,7 +133,8 @@ class Harvest(a.ModelAdmin):
     fields = (
        'harvest_type', 'harvest_id', 'historical_collection', 'historical_seeds', 'historical_credential',
        'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended',
-       'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes')
+       'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes',
+       'service', 'host', 'instance')
     list_display = ['harvest_type', 'id', 'harvest_id', 'historical_collection', 'status', 'date_requested',
                     'date_updated']
     list_filter = ['harvest_type', 'status', 'date_requested', 'date_updated']
@@ -164,7 +165,7 @@ class Export(a.ModelAdmin):
        'user', 'collection', 'seeds', 'export_id', 'export_type', 'export_format',
        'status', 'path', 'date_requested', 'date_started', 'date_ended', 'dedupe',
        'item_date_start', 'item_date_end', 'harvest_date_start', 'harvest_date_end',
-       'infos', 'warnings', 'errors')
+       'infos', 'warnings', 'errors', 'service', 'host', 'instance')
     list_display = ['id', 'user', 'export_type', 'date_requested', 'status']
     list_filter = ['date_requested', 'user', 'export_type', 'status']
     search_fields = ['id', 'export_id', 'path']
