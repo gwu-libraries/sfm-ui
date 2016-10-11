@@ -12,7 +12,7 @@ that run within SFM and handle the collecting of social media data from social m
 * Graceful handling of expected and unexpected shutdowns of harvesters.  In previous versions, unexpected shutdowns would kill a harvest and the harvest would not be resumed when the harvester was brought back up.  For both expected and unexpected shutdowns, the counts that were kept of collected social media and the state that was maintained on harvesting might be out of sync with the social media data that was recorded in WARC files.  The lack of a graceful way to shut down harvesters also made upgrades of SFM tricky.
 * Better feedback to users on the status of harvests.  In the previous version, most harvests displayed “requested” until the harvest was completed.
 
-![Old harvest list]({{ site.github.url }}/images/harvester_anatomoy/old_harvest_list.png)
+![Old harvest list]({{ site.github.url }}/images/harvester_anatomy/old_harvest_list.png)
 
 * Better handling of long-running harvests, especially Twitter searches.  In the previous version, harvests were recorded in a single WARC file, meaning the entire harvest would be lost if an error occurred.  Since a broad Twitter search might take a few days to complete, this was problematic.  (Note: This did not apply to long-running Twitter stream harvests, as they are handled differently.)
 * Better handling of harvest errors.  In particular, we observed cases where Twarc would get stuck in a retry loop on odd network problems (DNS, certificate) that don’t resolve.  ([Twarc](https://github.com/edsu/twarc) is the social media client that SFM uses to access the [Twitter APIs](https://dev.twitter.com/overview/documentation).)
@@ -54,7 +54,7 @@ In version 1.2, the harvesters have been re-architected to account for the probl
 
 If on startup, a harvester finds an existing harvest message on disk it repeats the harvest.  The harvest uses the persisted state and results, which are in sync with the last WARC file that was added to the collection.  Thus, the harvester better handles shutdowns, automatically repeating the harvest and resuming from a consistent state.  In addition, the harvester more regularly sends harvest status messages (including as soon as the harvest is started), so the user receives more timely updates.
 
-![New harvest list]({{ site.github.url }}/images/harvester_anatomoy/new_harvest_list.png)
+![New harvest list]({{ site.github.url }}/images/harvester_anatomy/new_harvest_list.png)
 
 To better handle long-running harvests, we made an enhancement to Warcprox (we have our [own fork](https://github.com/gwu-libraries/warcprox)) that rolls over WARC files based on time.  Thus, every 30 minutes the existing WARC file is closed and a new WARC file is created.  (This is configurable.)
 
