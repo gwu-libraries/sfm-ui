@@ -1,0 +1,8 @@
+{% load humanize %}Here's a warning for free space from Social Feed Manager ({{ url }}).
+
+{% for item in space_data %}
+    {% if item.send_email %}
+        Storage for {{ item.volume_id }}
+        The total free space is {{ item.total_free_space }}, which is under the threshold {{ item.threshold }}.
+    {% endif %}
+{% endfor %}

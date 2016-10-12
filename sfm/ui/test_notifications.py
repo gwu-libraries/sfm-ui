@@ -1,8 +1,11 @@
 from django.test import TestCase
 from .notifications import _should_send_email, _create_email, _create_context
+from .notifications import _should_send_space_email, _create_space_email, get_free_space
+from .notifications import MonitorSpace
 from .models import User, Group, CollectionSet, Credential, Collection, Harvest, HarvestStat
 import datetime
 from collections import OrderedDict
+from mock import patch, MagicMock, mock
 
 
 class NotificationTests(TestCase):
@@ -113,38 +116,38 @@ class NotificationTests(TestCase):
         self.assertEqual(
             {'url': 'http://example.com/ui/',
              'collection_sets': OrderedDict([(
-                self.collection_set2, {
-                    'url': 'http://example.com/ui/collection_sets/2/',
-                    'collections': OrderedDict([(
-                        self.collection3, {
-                            'url': 'http://example.com/ui/collections/3/',
-                            'next_run_time': None,
-                            'stats': {}})])}), (
-                self.collection_set1, {
-                    'url': 'http://example.com/ui/collection_sets/1/',
-                    'collections': OrderedDict([(
-                        self.collection2, {
-                            'url': 'http://example.com/ui/collections/2/',
-                            'next_run_time': None,
-                            'stats': {
-                                  u'test_type2': {
-                                      'prev_day': 12,
-                                      'prev_30': 0,
-                                      'last_7': 14,
-                                      'yesterday': 2,
-                                      'prev_7': 0,
-                                      'last_30': 14},
-                                  u'test_type1': {
-                                      'prev_day': 11,
-                                      'prev_30': 11111,
-                                      'last_7': 12,
-                                      'yesterday': 1,
-                                      'prev_7': 111,
-                                      'last_30': 1234}}}),
-                          (
-                          self.collection1,
-                          {
-                              'url': 'http://example.com/ui/collections/1/'})])})])},
+                 self.collection_set2, {
+                     'url': 'http://example.com/ui/collection_sets/2/',
+                     'collections': OrderedDict([(
+                         self.collection3, {
+                             'url': 'http://example.com/ui/collections/3/',
+                             'next_run_time': None,
+                             'stats': {}})])}), (
+                 self.collection_set1, {
+                     'url': 'http://example.com/ui/collection_sets/1/',
+                     'collections': OrderedDict([(
+                         self.collection2, {
+                             'url': 'http://example.com/ui/collections/2/',
+                             'next_run_time': None,
+                             'stats': {
+                                 u'test_type2': {
+                                     'prev_day': 12,
+                                     'prev_30': 0,
+                                     'last_7': 14,
+                                     'yesterday': 2,
+                                     'prev_7': 0,
+                                     'last_30': 14},
+                                 u'test_type1': {
+                                     'prev_day': 11,
+                                     'prev_30': 11111,
+                                     'last_7': 12,
+                                     'yesterday': 1,
+                                     'prev_7': 111,
+                                     'last_30': 1234}}}),
+                         (
+                             self.collection1,
+                             {
+                                 'url': 'http://example.com/ui/collections/1/'})])})])},
             _create_context(self.user1, {}))
 
     def test_create_email(self):
@@ -152,3 +155,61 @@ class NotificationTests(TestCase):
         self.assertTrue(msg.body.startswith("Here's an update on your harvests from Social Feed Manager "
                                             "(http://example.com/ui/)."))
         self.assertEqual([self.user1.email], msg.to)
+
+
+class SpaceNotificationTests(TestCase):
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(username="superuser", email="superuser@test.com",
+                                                       password="test_password")
+        self.user = User.objects.create_user(username="test_user", email="testuser@test.com")
+        self.user_no_email = User.objects.create_user(username="test_user3")
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-data']
+        data_monitor = MonitorSpace('/sfm-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(50, space_msg_cache['space_data']['percentage'])
+        self.assertTrue(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['']
+        data_monitor = MonitorSpace('/sfm-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(0, space_msg_cache['space_data']['percentage'])
+        self.assertFalse(space_msg_cache['space_data']['send_email'])
+
+    def test_should_send_space_email_no_email_address(self):
+        self.assertFalse(_should_send_space_email(self.user_no_email, {}))
+
+    def test_should_send_space_email_non_superuser(self):
+        self.assertFalse(_should_send_space_email(self.user, {}))
+
+    @patch("ui.notifications.get_free_space", autospec=True)
+    def test_should_send_space_email_superuser_space_below(self, mock_get_free_space):
+        data_info1 = {'volume_id': '/sfm-data', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                      'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': True}
+        data_info2 = {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                      'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}
+        mock_get_free_space.side_effect = [(data_info1, data_info2)]
+        self.assertTrue(_should_send_space_email(self.superuser, {}))
+
+    @patch("ui.notifications.get_free_space", autospec=True)
+    def test_should_send_space_email_superuser_space_over(self, mock_get_free_space):
+        data_info1 = {'volume_id': '/sfm-data', 'threshold': '50GB', 'bar_color': 'progress-bar-success',
+                      'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': False}
+        data_info2 = {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                      'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}
+        mock_get_free_space.side_effect = [(data_info1, data_info2)]
+        self.assertFalse(_should_send_space_email(self.superuser, {}))
+
+    def test_create_email(self):
+        msg = _create_space_email(self.superuser, {})
+        self.assertTrue(msg.body.startswith("Here's a warning for free space from Social Feed Manager "
+                                            "(http://example.com/ui/)."))
+        self.assertEqual([self.superuser.email], msg.to)
