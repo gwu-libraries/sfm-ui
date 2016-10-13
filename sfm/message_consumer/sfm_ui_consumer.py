@@ -106,6 +106,7 @@ class SfmUiConsumer(BaseConsumer):
         if harvest.status == Harvest.FAILURE and harvest.collection.is_streaming():
             log.info("Turning collection %s off", harvest.collection.name)
             harvest.collection.is_active = False
+            harvest.collection.history_note = "Turning off due to a failed harvest ({})".format(self.message["id"])
             harvest.collection.save()
             # Send stop message
             collection_stop(harvest.collection.id)
