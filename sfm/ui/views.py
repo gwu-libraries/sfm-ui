@@ -248,6 +248,7 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         collection = get_object_or_404(Collection, pk=kwargs['pk'])
         collection.is_active = not collection.is_active
+        collection.history_note = ""
         if collection.is_active:
             messages.info(self.request, "Harvesting is turned on.")
         else:
