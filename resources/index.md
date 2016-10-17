@@ -18,13 +18,16 @@ Papers and Resources
 
 Upcoming Presentations
 ----------------------
-* Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
-* Laura Wrubel, Dodging the Memory Hole: Saving Online News conference, October 13-14, 2016. 
+* Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.
+* Christie Peterson, Justin Littman, Laura Wrubel, Social Feed Manager webinar for the [Digital Preservation Coalition](http://www.dpconline.org/) (details forthcoming), November 2, 2016.
 
 Recent Presentations
 --------------------
+* Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
+* Laura Wrubel, "Panel: Why save online news?" [Dodging the Memory Hole: Saving Online News](https://www.rjionline.org/events/dodging-the-memory-hole-2016-saving-online-news), October 13-14, 2016. 
 * Vakil Smallen, Seemantani Sharma, Rachel Trent, ["The Challenges of Collecting and Providing Access to Social Media Content"](https://drive.google.com/a/email.gwu.edu/file/d/0BzMejufPhqBaMXBjM21vTUR1QTA/view?usp=sharing) at Archives/Records 2016, Joint Council of State Archivists (CoSa) - Society of American Archivists (SAA) conference, August 5, 2016.
 * Christie Peterson, ["Provenance of a Tweet"]({{ site.github.url }}/resources/prov-tweet-poster.pdf), poster at Society of American Archivists (SAA) Research Forum, August 2, 2016.
+* Rachel Trent, ["Messy Web, Meet Clean(er) Web: An Experiment in Social Media Archiving,"](http://www.slideshare.net/RachelTrent2/messy-web-meet-cleaner-web-an-experiment-in-social-media-archiving) at the Archive-It Annual Partners Meeting, August 2, 2016.
 * Dan Kerchner (moderator) and Laura Wrubel (panelist), "Social media, web archiving, and digital libraries", panel at [Web Archives and Digital Libraries](http://fox.cs.vt.edu/wadl2016.html) workshop at [JCDL 2016](http://www.jcdl2016.org), June 22-23, 2016.
 * Laura Wrubel, Dan Kerchner, Justin Littman, ["Social Feed Manager lightning talks"](https://docs.google.com/presentation/d/14LiqnLAKAI6H9t8gttIIzO0KnnFCTSrONML-ZEmuXDc/edit?usp=sharing) at Archives Unleashed, Library of Congress, Washington, DC, June 15, 2016.
 * Justin Littman, ["Aligning Social Media Harvesting and Web Harvesting"](https://t.co/Rj8LEbBOp8) at [International Internet Preservation Consortium (IIPC) Web Archiving Conference](http://netpreserve.org/2016-WAC), April 14, 2016 in Reykjavík, Iceland.
