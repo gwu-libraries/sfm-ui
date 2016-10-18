@@ -199,6 +199,7 @@ class Collection(models.Model):
     WEIBO_TIMELINE = 'weibo_timeline'
     TUMBLR_BLOG_POSTS = 'tumblr_blog_posts'
     SCHEDULE_CHOICES = [
+        (1, 'One time harvest'),
         (30, 'Every 30 minutes'),
         (60, 'Every hour'),
         (60 * 4, 'Every 4 hours'),
