@@ -36,7 +36,7 @@ class User(AbstractUser):
     local_id = models.CharField(max_length=255, blank=True, default='',
                                 help_text='Local identifier')
     email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
-
+    harvest_notifications = models.BooleanField(default=True)
 
 def history_save(self, *args, **kw):
     """

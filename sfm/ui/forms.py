@@ -848,10 +848,13 @@ class ExportForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'email_frequency']
+        fields = ['username', 'email', 'email_frequency', 'harvest_notifications']
         widgets = {
             "username": forms.TextInput(attrs={'size': '40'}),
             "email": forms.TextInput(attrs={'size': '40'})
+        }
+        help_texts = {
+            'harvest_notifications': "Receive an email when there is a problem with a harvest.",
         }
 
     def __init__(self, *args, **kwargs):
@@ -865,7 +868,8 @@ class UserProfileForm(forms.ModelForm):
                 'username',
                 'email',
                 'email_frequency',
-                Div(),
+                'harvest_notifications',
+                Div()
             ),
             FormActions(
                 Submit('submit', 'Save'),
