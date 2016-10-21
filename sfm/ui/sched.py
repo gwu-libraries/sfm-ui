@@ -59,6 +59,7 @@ def toggle_collection_inactive(collection_id):
     log.debug("Toggling collection %s to inactive and clearing end date.", collection_id)
     collection.is_active = False
     collection.end_date = None
+    collection.history_note = "Turning off since reached end date or one-time harvest."
     collection.save()
 
 
@@ -78,6 +79,9 @@ def schedule_harvest(collection_pk, is_active, schedule_minutes, start_date=None
                       start_date=start_date,
                       end_date=end_date,
                       minutes=schedule_minutes)
+
+        if schedule_minutes == 1:
+            end_date = start_date
 
         if end_date:
             log.debug("Scheduling end job for %s to run at %s", name, end_date)
