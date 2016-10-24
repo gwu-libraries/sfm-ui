@@ -80,12 +80,16 @@ def render_list(value):
     return rend
 
 
-@register.filter
-def join_stats(d, sep=", "):
+@register.assignment_tag
+def join_stats(d, status, sep=", "):
     joined = ""
+    if status in ["completed success", "completed failure"]:
+        empty_extras = ""
+    else:
+        empty_extras = "Waiting for update"
     if d:
         for i, (item, count) in enumerate(d.items()):
             if i > 1:
                 joined += sep
             joined += "{} {}".format(intcomma(count), item)
-    return joined if joined else "Waiting for update"
+    return joined if joined else empty_extras
