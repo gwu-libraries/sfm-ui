@@ -70,8 +70,11 @@ timeline, you can provide a screen name or Twitter user ID (UID). If you provide
 displayed in SFM UI. The Twitter user ID is a number and does not change; a user may change her screen name.  The user
 ID will be used for retrieving the user timeline.
 
-While large number of user timeline seeds are supported in a collection, they may take a long time to collect due to
-Twitter’s rate limits.
+There is no limit on the number of user timeline seeds supported in a collection.  However, they may take a long time 
+to collect due to Twitter’s rate limits.
+
+Note that SFM will handle incorrect or private user timeline seeds. You will be notified when these are found; the other
+valid seeds will be collected.
 
 If the incremental option is selected, only new tweets (i.e., tweets that have not yet been harvested for that user
 timeline) will be harvested, meaning you will not collect duplicate tweets. If the incremental option is not selected,
@@ -111,7 +114,10 @@ For each user, the user's information will be collected using Flickr's `people.g
 photos will be retrieved from `people.getPublicPhotos <https://www.flickr.com/services/api/flickr.people.getPublicPhotos.html>`_. Information on each photo will be collected with
 `photos.getInfo <https://www.flickr.com/services/api/flickr.photos.getInfo.html>`_.
 
-Depending on the image sizes you select, the actual photo files will be collected as well.
+Depending on the image sizes you select, the actual photo files will be collected as well. Be very careful in selecting
+the original file size, as this may require a significant amount of storage. Also note that some Flickr users may have 
+a large number of public photos, which may require a significant amount of storage. It is advisable to check the Flickr
+website to determine the number of photos in each Flickr user's public photo stream before harvesting.
 
 If the incremental option is selected, only new photos will be collected.
 
