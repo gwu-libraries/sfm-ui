@@ -15,6 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
+from notifications import get_free_space
 
 from .forms import CollectionSetForm, ExportForm
 import forms
@@ -640,6 +641,7 @@ class HomeView(TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['collection_set_list'] = CollectionSet.objects.filter(
             group__in=self.request.user.groups.all()).order_by('name')
+        context['space_data'] = get_free_space()
         return context
 
 

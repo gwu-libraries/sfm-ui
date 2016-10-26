@@ -161,6 +161,9 @@ REST_FRAMEWORK = {
 # Directory where SFM data (e.g., harvested WARCs) is stored.
 SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
 
+# Directory where SFM processing data is stored.
+SFM_PROCESSING_DIR = env.get("SFM_PROCESSING_DIR", "/sfm-processing")
+
 # Whether to register receivers on Collection for scheduling harvests.
 SCHEDULE_HARVESTS = True
 
@@ -186,3 +189,12 @@ RUN_SCHEDULER = env.get('SFM_RUN_SCHEDULER', 'False') == 'True'
 PERFORM_USER_HARVEST_EMAILS = env.get('SFM_PERFORM_USER_HARVEST_EMAILS', 'True') == 'True'
 USER_HARVEST_EMAILS_HOUR = env.get('SFM_USER_HARVEST_EMAILS_HOUR', '1')
 USER_HARVEST_EMAILS_MINUTE = env.get('SFM_USER_HARVEST_EMAILS_MINUTE', '0')
+
+# Whether to scan the amount of free space on /sfm-data and /sfm-processing
+PERFORM_SCAN_FREE_SPACE = env.get('SFM_PERFORM_SCAN_FREE_SPACE', 'True') == 'True'
+SCAN_FREE_SPACE_HOUR = env.get('SFM_SCAN_FREE_SPACE_HOUR', '2')
+SCAN_FREE_SPACE_MINUTE = env.get('SFM_SCAN_FREE_SPACE_MINUTE', '0')
+# sfm data space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
+DATA_THRESHOLD = env.get('DATA_VOLUME_THRESHOLD', '10GB')
+# sfm processing space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
+PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')

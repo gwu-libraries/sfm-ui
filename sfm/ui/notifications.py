@@ -2,6 +2,7 @@ import logging
 import datetime
 from collections import OrderedDict
 from smtplib import SMTPException
+from subprocess import check_output, CalledProcessError
 
 from django.template.loader import get_template
 from django.template import Context
@@ -11,11 +12,164 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
-
 from .models import User, CollectionSet, Collection, HarvestStat
 from .sched import next_run_time
 
 log = logging.getLogger(__name__)
+
+
+class MonitorSpace(object):
+    def __init__(self, volume_dir, threshold):
+        """
+        A class for monitor free space of the special directory
+        :param volume_dir: the volume mounted directory, considered as the id of the record.
+        :param threshold: the free space threshold.
+        :return:
+        """
+        # deal with the empty string
+        if not volume_dir:
+            volume_dir = 'None'
+        if not threshold:
+            threshold = '10GB'
+
+        self.space_msg_cache = {'volume_id': volume_dir, 'threshold': threshold, 'bar_color': 'progress-bar-success'}
+
+    def analysis_space(self):
+        """
+        Getting space info from 'df -h'
+        """
+        total_free_space = total_space = 0
+        res = self.run_check_cmd()
+        split_lines = res.split('\n')
+        for line in split_lines:
+            line_units = filter(None, line.split(' '))
+            # the sfm-data and sfm-processing mount at sfm-data,
+            # we only need to count the sfm-data
+            if line_units:
+                # get rid of the unit at the space,12M
+                # eg:['/dev/sda1', '208074M', '47203M', '150279M', '24%', '/sfm-data']
+                total_free_space = int(line_units[3][:-1])
+                total_space = int(line_units[1][:-1])
+        self.space_msg_cache['total_space'] = self._size_readable_fmt(total_space)
+        self.space_msg_cache['total_free_space'] = self._size_readable_fmt(total_free_space)
+        self.space_msg_cache['percentage'] = 0 if not total_space else int(
+            float(total_space - total_free_space) / float(total_space) * 100)
+        # update bar color with percentage
+        self.space_msg_cache['bar_color'] = self._get_bar_color(self.space_msg_cache['percentage'])
+        return total_free_space
+
+    def get_space_info(self):
+        """
+        get the space info and check whether to send email
+        """
+        self.space_msg_cache['send_email'] = False
+
+        # get the free space info
+        total_free_space = self.analysis_space()
+
+        # if not available info return False
+        if self.space_msg_cache['total_space'] == '0.0MB':
+            return self.space_msg_cache
+
+        # deal with the configuration
+        suffix = self.space_msg_cache['threshold'][-2:]
+        if suffix not in {'MB', 'GB', 'TB'}:
+            log.error("Free Space threshold %s, configure suffix error.",
+                      self.space_msg_cache['threshold'])
+            return self.space_msg_cache
+
+        # get rid of the unit and deal with GB/TB, compare with MB
+        space_threshold = int(self.space_msg_cache['threshold'][:-2])
+        if suffix == 'GB':
+            space_threshold *= 1024
+        elif suffix == 'TB':
+            space_threshold *= 11048576
+
+        log.debug("total space %s, space threshold %s,", self.space_msg_cache['total_free_space'],
+                  self.space_msg_cache['threshold'])
+
+        if total_free_space < space_threshold:
+            self.space_msg_cache['send_email'] = True
+        return self.space_msg_cache
+
+    def run_check_cmd(self):
+        cmd = "df -h -BM {volume_id} | grep -w {volume_id}".format(volume_id=self.space_msg_cache['volume_id'])
+        res = ''
+        try:
+            res = check_output(cmd, shell=True)
+            log.debug("Running %s completed.", cmd)
+        except CalledProcessError, e:
+            log.error("%s returned %s: %s", cmd, e.returncode, e.output)
+        return res
+
+    @staticmethod
+    def _size_readable_fmt(num, suffix='B'):
+        for unit in ['M', 'G', 'T', 'P', 'E', 'Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
+
+    @staticmethod
+    def _get_bar_color(percentage):
+        if 70 <= percentage <= 80:
+            return 'progress-bar-warning'
+        elif percentage > 80:
+            return 'progress-bar-danger'
+        return 'progress-bar-success'
+
+
+def get_free_space():
+    """
+    an interface to get the space info
+    :return: a space data list
+    """
+    data_list = []
+    # get sfm-data info
+    data_monitor = MonitorSpace(settings.SFM_DATA_DIR, settings.DATA_THRESHOLD)
+    data_list.append(data_monitor.get_space_info())
+    # get sfm-processing info
+    processing_monitor = MonitorSpace(settings.SFM_PROCESSING_DIR, settings.PROCESSING_THRESHOLD)
+    data_list.append(processing_monitor.get_space_info())
+    return data_list
+
+
+def send_free_space_emails(superusers=None):
+    log.info("Sending free space emails")
+    msg_cache = {}
+
+    if superusers is None:
+        superusers = User.objects.filter(is_superuser=True)
+    for user in superusers:
+        if _should_send_space_email(user, msg_cache):
+            msg = _create_space_email(user, msg_cache)
+            try:
+                log.debug("Sending email to %s: %s", msg.to, msg.subject)
+                msg.send()
+            except SMTPException, ex:
+                log.error("Error sending email: %s", ex)
+        else:
+            log.debug("Not sending email to %s", user.username)
+
+
+def _should_send_space_email(user, msg_cache):
+    if not user.is_superuser or not user.email:
+        return False
+    # get the space mem
+    msg_cache['space_data'] = get_free_space()
+    # if any volume need send email, return true
+    return any(msg['send_email'] for msg in msg_cache['space_data'])
+
+
+def _create_space_email(user, msg_cache):
+    text_template = get_template('email/free_space_email.txt')
+    html_template = get_template('email/free_space_email.html')
+    msg_cache["url"] = _create_url(reverse('home'))
+    d = Context(msg_cache)
+    msg = EmailMultiAlternatives("[WARNING] Free Space Reaches the Threshold",
+                                 text_template.render(d), settings.EMAIL_HOST_USER, [user.email])
+    msg.attach_alternative(html_template.render(d), "text/html")
+    return msg
 
 
 def send_user_harvest_emails(users=None):
