@@ -22,7 +22,7 @@ import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
 from .utils import diff_object_history, clean_token, clean_blogname
-
+import json
 import os
 import logging
 
@@ -392,7 +392,7 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
 class CredentialDetailView(LoginRequiredMixin, DetailView):
     model = Credential
     template_name = 'ui/credential_detail.html'
-
+ 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
@@ -400,6 +400,7 @@ class CredentialDetailView(LoginRequiredMixin, DetailView):
         context["can_edit"] = self.request.user.is_superuser or self.object.user == self.request.user
         context["item_id"] = self.object.id
         context["model_name"] = "credential"
+        context['collection_list'] = Collection.objects.filter(credential=self.object.pk).order_by('name')
         return context
 
 
