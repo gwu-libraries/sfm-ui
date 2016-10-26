@@ -58,7 +58,8 @@
                         {% endif %}
                     </td>
                     <td>{{ harvest.get_status_display }}</td>
-                    <td>{{ harvest.stats|join_stats }}</td>
+                    {% join_stats harvest.stats harvest.status as joined_stats %}
+                    <td>{{ joined_stats }}</td>
                     <td>{% if harvest.message_count %}{{ harvest.message_count }} message{{harvest.message_count|pluralize}}{% endif %}</td>
                 </tr>
 			{% endfor %}
