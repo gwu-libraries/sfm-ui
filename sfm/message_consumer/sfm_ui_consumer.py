@@ -1,6 +1,6 @@
 import logging
 from sfmutils.consumer import BaseConsumer
-from ui.models import Harvest, Collection, Seed, Warc, Export, HarvestStat
+from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
 import json
 from django.core.mail import send_mail
@@ -119,7 +119,7 @@ class SfmUiConsumer(BaseConsumer):
             # Get emails for group members
             receiver_emails = []
             for user in harvest.collection.collection_set.group.user_set.all():
-                if user.email:
+                if user.email and user.harvest_notifications:
                     receiver_emails.append(user.email)
 
             if receiver_emails:
@@ -152,7 +152,7 @@ class SfmUiConsumer(BaseConsumer):
                     except SMTPException, ex:
                         log.error("Error sending email: %s", ex)
             else:
-                log.warn("No email addresses for %s", harvest.collection.collection_set.group)
+                log.warn("No email addresses for %s", harvest.collection.collection_set.group) 
 
     @staticmethod
     def format_messages_for_mail(messages, message_type):

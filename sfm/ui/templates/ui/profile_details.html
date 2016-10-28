@@ -20,6 +20,7 @@
             <p><strong>Email:</strong> {{ user.email }}</p>
             <p><strong>Email Frequency:</strong> {{ user.email_frequency }}</p>
             <p><strong>Groups:</strong> {{ user_groups }}</p>
+            <p><strong>Harvest Notifications:</strong> {{user.harvest_notifications|yesno:"Yes,No" }}</p>
            <p id="msg_grop" class="help-block">To change groups, <a href={{ email_info }}>contact us</a>.</p>
        </div>
     </div>
