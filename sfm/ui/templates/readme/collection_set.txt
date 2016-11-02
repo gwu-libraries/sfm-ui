@@ -1,0 +1,12 @@
+This is a collection set created with Social Feed Manager.
+
+Collection set name: {{ collection_set.name }}
+Collection set id: {{ collection_set.collection_set_id }}
+{% if collection_set.description %}Collection set description: {{ collection_set.description }}{% endif %}
+
+This collection set contains the following collections:{% for collection in collection_set.collections.all %}
+* {{ collection.name }} (collection id {{ collection.collection_id }}){% endfor %}
+
+Each of these collections contains a README.txt.
+
+Updated on {{ now }}

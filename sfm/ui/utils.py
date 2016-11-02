@@ -1,3 +1,7 @@
+from django.conf import settings
+import os
+
+
 class Diff:
     def __init__(self):
         self.user = None
@@ -56,7 +60,8 @@ def diff_field_changed(obj):
     :param obj: the object which has a history
     :return: True if a diff field was changed
     """
-    return obj.date_updated == obj.history.first().date_updated
+    first_object_history = obj.history.first()
+    return first_object_history and obj.date_updated == first_object_history.date_updated
 
 
 def clean_token(token):
@@ -79,3 +84,22 @@ def clean_blogname(blogname):
         return None
     stripped_blogname = blogname.strip().lower()
     return stripped_blogname[:-11] if stripped_blogname.endswith('.tumblr.com') else stripped_blogname
+
+
+def collection_path(collection, sfm_data_dir=None):
+    return collection_path_by_id(collection.collection_set.collection_set_id, collection.collection_id,
+                                 sfm_data_dir=sfm_data_dir)
+
+
+def collection_path_by_id(collection_set_id, collection_id, sfm_data_dir=None):
+    return os.path.join(sfm_data_dir or settings.SFM_DATA_DIR, "collection_set",
+                        collection_set_id,
+                        collection_id)
+
+
+def collection_set_path(collection_set, sfm_data_dir=None):
+    return collection_set_path_by_id(collection_set.collection_set_id, sfm_data_dir=sfm_data_dir)
+
+
+def collection_set_path_by_id(collection_set_id, sfm_data_dir=None):
+    return os.path.join(sfm_data_dir or settings.SFM_DATA_DIR, "collection_set", collection_set_id)

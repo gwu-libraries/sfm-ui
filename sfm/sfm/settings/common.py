@@ -84,6 +84,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ui.context_processors.settings',
             ],
         },
     },
@@ -198,3 +199,9 @@ SCAN_FREE_SPACE_MINUTE = env.get('SFM_SCAN_FREE_SPACE_MINUTE', '0')
 DATA_THRESHOLD = env.get('DATA_VOLUME_THRESHOLD', '10GB')
 # sfm processing space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
 PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')
+
+PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
+SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
+SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
+
+SFM_UI_VERSION = "1.2.0"
