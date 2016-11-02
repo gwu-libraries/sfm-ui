@@ -210,6 +210,6 @@ class SpaceNotificationTests(TestCase):
 
     def test_create_email(self):
         msg = _create_space_email(self.superuser, {})
-        self.assertTrue(msg.body.startswith("Here's a warning for free space from Social Feed Manager "
-                                            "(http://example.com/ui/)."))
+        self.assertTrue(msg.body.startswith("This is a warning that free space on your Social Feed Manager server at "
+                                            "http://example.com/ui/ is low."))
         self.assertEqual([self.superuser.email], msg.to)
