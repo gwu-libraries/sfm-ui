@@ -166,7 +166,7 @@ def _create_space_email(user, msg_cache):
     html_template = get_template('email/free_space_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
     d = Context(msg_cache)
-    msg = EmailMultiAlternatives("[WARNING] Free Space Reaches the Threshold",
+    msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [user.email])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg

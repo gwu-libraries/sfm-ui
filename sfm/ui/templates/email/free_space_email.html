@@ -1,12 +1,12 @@
 {% load humanize %}
 <html>
 <body>
-<p>Here's a warning for free space from <a href="{{ url }}">Social Feed Manager</a>.</p>
+<p>This is a warning that free space on your <a href="{{ url }}">Social Feed Manager</a> server is low.</p>
 <div class="container">
     {% for item in space_data %}
         {% if item.send_email %}
             <h2>Storage for {{ item.volume_id }}</h2>
-            <p>The total free space is <strong>{{ item.total_free_space }}</strong>, which is under the threshold <strong>{{ item.threshold }}</strong>. </p>
+            <p>Remaining free space is currently <strong>{{ item.total_free_space }}</strong>.  This is below the <strong>{{ item.threshold }}</strong> warning level.</p>
         {% endif %}
     {% endfor %}
 </div>
