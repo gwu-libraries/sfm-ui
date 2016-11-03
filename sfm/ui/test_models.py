@@ -1,7 +1,14 @@
 from django.test import TestCase
-from .models import User, CollectionSet, Credential, Collection, Seed, Group, Harvest, HarvestStat
+
+from .models import User, CollectionSet, Credential, Collection, Seed, Group, Harvest, HarvestStat, Warc, \
+    default_uuid, Export
+from .utils import collection_path as get_collection_path, collection_set_path as get_collection_set_path
+
 import pytz
 from datetime import datetime, date
+from tzlocal import get_localzone
+import os
+import shutil
 
 
 class CollectionTest(TestCase):
@@ -12,6 +19,37 @@ class CollectionTest(TestCase):
         self.collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
         self.credential = Credential.objects.create(user=user, platform="test_platform",
                                                     token="{}")
+
+        self.collection = Collection.objects.create(collection_set=self.collection_set,
+                                                    name="test_collection",
+                                                    harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                    credential=self.credential)
+        self.collection_path = get_collection_path(self.collection)
+        os.makedirs(self.collection_path)
+
+        # Seed
+        Seed.objects.create(collection=self.collection, token='{"token":"token1}', is_active=True)
+
+        # Harvest
+        historical_collection = self.collection.history.all()[0]
+        historical_credential = historical_collection.credential.history.all()[0]
+        harvest1 = Harvest.objects.create(collection=self.collection,
+                                          historical_collection=historical_collection,
+                                          historical_credential=historical_credential)
+        Harvest.objects.create(collection=self.collection,
+                               parent_harvest=harvest1)
+
+        # Harvest stats
+        HarvestStat.objects.create(harvest=harvest1, item="tweets", count=5, harvest_date=date(2016, 5, 20))
+        HarvestStat.objects.create(harvest=harvest1, item="tweets", count=7, harvest_date=date(2016, 5, 21))
+
+        # Warcs
+        Warc.objects.create(harvest=harvest1, warc_id=default_uuid(), path="/data/warc1.warc.gz", sha1="warc1sha",
+                            bytes=10, date_created=datetime.now(get_localzone()))
+
+    def tearDown(self):
+        if os.path.exists(self.collection_path):
+            shutil.rmtree(self.collection_path)
 
     def test_required_seed_count(self):
         collection = Collection.objects.create(collection_set=self.collection_set,
@@ -131,6 +169,27 @@ class CollectionTest(TestCase):
         self.assertEqual(3, collection1.warcs_count())
         self.assertEqual(30, collection1.warcs_bytes())
 
+    def test_delete(self):
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(1, Collection.objects.count())
+        self.assertEqual(1, Seed.objects.count())
+        self.assertEqual(2, Harvest.objects.count())
+        self.assertEqual(2, HarvestStat.objects.count())
+        self.assertEqual(1, Warc.objects.count())
+        self.assertTrue(os.path.exists(self.collection_path))
+
+        self.collection.delete()
+
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(0, Collection.objects.count())
+        # Verify that deletes cascade
+        self.assertEqual(0, Seed.objects.count())
+        self.assertEqual(0, Harvest.objects.count())
+        self.assertEqual(0, HarvestStat.objects.count())
+        self.assertEqual(0, Warc.objects.count())
+        # Verify that collection deleted
+        self.assertFalse(os.path.exists(self.collection_path))
+
 
 class CollectionSetTest(TestCase):
     def setUp(self):
@@ -138,6 +197,8 @@ class CollectionSetTest(TestCase):
                                              password="test_password")
         group = Group.objects.create(name="test_group")
         self.collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
+        self.collection_set_path = get_collection_set_path(self.collection_set)
+        os.makedirs(self.collection_set_path)
         self.credential = Credential.objects.create(user=user, platform="test_platform",
                                                     token="{}")
         collection1 = Collection.objects.create(collection_set=self.collection_set,
@@ -179,6 +240,10 @@ class CollectionSetTest(TestCase):
                                           warcs_count=3, warcs_bytes=30)
         HarvestStat.objects.create(harvest=harvest3, item="tweets", count=7, harvest_date=self.day2)
 
+    def tearDown(self):
+        if os.path.exists(self.collection_set_path):
+            shutil.rmtree(self.collection_set_path)
+
     def test_stats(self):
         stats = self.collection_set.stats()
         self.assertEqual(24, stats["tweets"])
@@ -202,6 +267,19 @@ class CollectionSetTest(TestCase):
 
     def test_stats_items(self):
         self.assertListEqual(['tweets', 'users'], self.collection_set.stats_items())
+
+    def test_delete(self):
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(2, Collection.objects.count())
+        self.assertTrue(os.path.exists(self.collection_set_path))
+
+        self.collection_set.delete()
+
+        self.assertEqual(0, CollectionSet.objects.count())
+        # Verify that deletes cascade
+        self.assertEqual(0, Collection.objects.count())
+        # Verify that collection set path deleted
+        self.assertFalse(os.path.exists(self.collection_set_path))
 
 
 class HarvestTest(TestCase):
@@ -233,3 +311,82 @@ class HarvestTest(TestCase):
         stats = self.harvest1.stats()
         self.assertEqual(12, stats["tweets"])
         self.assertEqual(6, stats["users"])
+
+
+class WarcTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
+                                             password="test_password")
+        group = Group.objects.create(name="test_group")
+        collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
+        credential = Credential.objects.create(user=user, platform="test_platform",
+                                               token="{}")
+
+        collection = Collection.objects.create(collection_set=collection_set,
+                                               name="test_collection",
+                                               harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                               credential=credential)
+
+        # Harvest
+        historical_collection = collection.history.all()[0]
+        historical_credential = historical_collection.credential.history.all()[0]
+        harvest1 = Harvest.objects.create(collection=collection,
+                                          historical_collection=historical_collection,
+                                          historical_credential=historical_credential)
+
+        self.collection_path = get_collection_path(collection)
+        os.makedirs(os.path.join(self.collection_path, "2016/11/03"))
+        self.warc_filepath = os.path.join(self.collection_path, "2016/11/03/test.warc.gz")
+        with open(self.warc_filepath, "w") as f:
+            f.write("test")
+
+        # Warcs
+        self.warc = Warc.objects.create(harvest=harvest1, warc_id=default_uuid(), path=self.warc_filepath,
+                                        sha1="warc1sha",
+                                        bytes=10, date_created=datetime.now(get_localzone()))
+
+    def tearDown(self):
+        if os.path.exists(self.collection_path):
+            shutil.rmtree(self.collection_path)
+
+    def test_delete(self):
+        self.assertEqual(1, Warc.objects.count())
+        self.assertTrue(os.path.exists(self.warc_filepath))
+
+        self.warc.delete()
+
+        self.assertEqual(0, Warc.objects.count())
+        self.assertTrue(os.path.exists(self.collection_path))
+        self.assertFalse(os.path.exists(os.path.join(self.collection_path, "2016")))
+        self.assertFalse(os.path.exists(self.warc_filepath))
+
+
+class ExportTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_superuser(username="test_user", email="test_user@test.com",
+                                             password="test_password")
+        group = Group.objects.create(name="test_group")
+        collection_set = CollectionSet.objects.create(group=group, name="test_collection_set")
+        credential = Credential.objects.create(user=user, platform="test_platform",
+                                               token="{}")
+
+        collection = Collection.objects.create(collection_set=collection_set,
+                                               name="test_collection",
+                                               harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                               credential=credential)
+
+        self.export = Export.objects.create(user=user,
+                                            collection=collection,
+                                            export_type=collection.harvest_type)
+        os.makedirs(self.export.path)
+        with open(os.path.join(self.export.path, "test.csv"), "w") as f:
+            f.write("test")
+
+    def test_delete(self):
+        self.assertEqual(1, Export.objects.count())
+        self.assertTrue(os.path.exists(self.export.path))
+
+        self.export.delete()
+
+        self.assertEqual(0, Export.objects.count())
+        self.assertFalse(os.path.exists(self.export.path))
