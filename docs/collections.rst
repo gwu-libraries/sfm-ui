@@ -141,7 +141,7 @@ See the :ref:`Collecting web resources` guidance below for deciding whether to c
 -----------------
 Tumblr blog posts
 -----------------
-Collects blog posts by a specified Tumblr blog.
+Collects blog posts by a specified Tumblr blog using the `Tumblr Posts API <https://www.tumblr.com/docs/en/api/v2#posts>`_.
 
 Each Tumblr blog post collection can have multiple seeds, where each seed is a blog. The blog can be specified
 with or without the .tumblr.com extension.
