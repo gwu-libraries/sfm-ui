@@ -3,14 +3,14 @@ layout: article
 title: "Overview of Social Feed Manager"
 permalink: /about/overview
 date: 2016-06-10
-modified: 2016-06-10
+modified: 2016-11-10
 excerpt: ""
 share: false
 ads: false
 ---
 
 Social Feed Manager is a web application which allows users to create collections of data from social media platforms, 
-including Twitter, Flickr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data. In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from or embedded in the social media.
+including Twitter, Flickr, Tumblr, and Sina Weibo. It is open source software and connects to the platforms' public APIs to harvest data. In addition to harvesting social media data, it can also harvest web resources such as images and web pages that are linked from or embedded in the social media.
  
 Researchers, librarians, archivists, and students can use SFM to:
 
