@@ -6,8 +6,6 @@ author: justin_littman
 excerpt: "A Jupyter notebook that explores the affordances of the Twitter API for retweets, replies, quotes, and favorites."
 ---
 
-# On retweets, replies, quotes & favorites:  A guide for researchers
-
 This notebook explores the affordances of the Twitter API for retweets, replies, quotes, and favorites. It is motivated by questions from several George Washington University researchers who are interested in using [Social Feed Manager](http://go.gwu.edu/sfm) to collect datasets for studying dialogues and interaction on Twitter.
 
 We will not discuss affordances of the Twitter API that are perspectival, that is, depend on the Twitter account that is used to access the API. So, for example, we will not consider [GET statuses/retweets_of_me](https://dev.twitter.com/rest/reference/get/statuses/retweets_of_me).
@@ -642,6 +640,7 @@ print "Found retweeted: {}".format(found_retweeted)
 
 
 This demonstrates that the following are available from the user timeline:
+
 * retweets by the user
 * quotes by the user
 * replies by the user
