@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load ui_extras %}
+{% block title %}
+    Monitoring
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Harvester Status</h4></div>
+    <div class="panel-body">
+        {% if harvests %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Harvester</th>
+                    <th>Harvest</th>
+                    <th>Requested</th>
+                    <th>Updated/Completed</th>
+                    <th>Status</th>
+                    <th>Stats</th>
+                </tr>
+                </thead>
+                {% for harvest in harvests %}
+                <tr>
+                    <td>{{ harvest.service }} on {{ harvest.host }} ({{ harvest.instance }})</td>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.collection.collection_set.name }} > {{ harvest.collection.name }} > {{ harvest.get_harvest_type_display }}</a></td>
+                    <td>{{ harvest.date_requested }}</td>
+                    <td>{% if harvest.status == "completed success" or harvest.status == "completed failure" %}
+                        {{ harvest.date_ended}}
+                        {% else %}
+                            {{ harvest.date_updated|naturaltime }}
+                        {% endif %}
+                    </td>
+                    <td>{{ harvest.get_status_display }}</td>
+                    {% join_stats harvest.stats harvest.status as joined_stats %}
+                    <td>{{ joined_stats }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p class="help-block">These are for harvesters that reported status in last 3 days. Some of the harvesters listed
+            may no longer be running.</p>
+        {% else %}
+            <p>No status for harvesters yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Exporter Status</h4></div>
+    <div class="panel-body">
+        {% if exports %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Exporter</th>
+                    <th>Export</th>
+                    <th>Requested</th>
+                    <th>Updated/Completed</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                {% for export in exports %}
+                <tr>
+                    <td>{{ export.service }} on {{ export.host }} ({{ export.instance }})</td>
+                    <td><a href={% url "export_detail" export.pk %}>{{ export.collection.collection_set.name }} > {{ export.collection.name }}</a></td>
+                    <td>{{ export.date_requested }}</td>
+                    <td>{% if export.status == "completed success" or export.status == "completed failure" %}
+                        {{ export.date_ended}}
+                        {% else %}
+                            {{ export.date_updated|naturaltime }}
+                        {% endif %}
+                    </td>
+                    <td>{{ export.get_status_display }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p class="help-block">These are for exporters that reported status in last 3 days. Some of the exporters listed
+            may no longer be running.</p>
+        {% else %}
+            <p>No status for exporters yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Harvester Queues</h4></div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Queue</th>
+                <th>Queued Requests</th>
+            </tr>
+            </thead>
+            {% for queue, message_count in harvester_queues.items %}
+            <tr>
+                <td>{{ queue }}</td>
+                <td>{{ message_count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Exporter Queues</h4></div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Queue</th>
+                <th>Queued Requests</th>
+            </tr>
+            </thead>
+            {% for queue, message_count in exporter_queues.items %}
+            <tr>
+                <td>{{ queue }}</td>
+                <td>{{ message_count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

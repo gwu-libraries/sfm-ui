@@ -59,6 +59,9 @@ class SfmUiConsumer(BaseConsumer):
         harvest.date_started = iso8601.parse_date(self.message["date_started"])
         if "date_ended" in self.message:
             harvest.date_ended = iso8601.parse_date(self.message["date_ended"])
+        harvest.service = self.message.get("service")
+        harvest.host = self.message.get("host")
+        harvest.instance = self.message.get("instance")
         harvest.save()
 
         # Update seeds based on tokens that have changed
@@ -194,39 +197,44 @@ class SfmUiConsumer(BaseConsumer):
             export.date_started = iso8601.parse_date(self.message["date_started"])
             if "date_ended" in self.message:
                 export.date_ended = iso8601.parse_date(self.message["date_ended"])
+            export.service = self.message.get("service")
+            export.host = self.message.get("host")
+            export.instance = self.message.get("instance")
             export.save()
+            #TODO: Not if RUNNING
 
-            # Get reciever's email address
-            receiver_email = export.user.email
-            if receiver_email:
-                export_url = 'http://{}{}'.format(Site.objects.get_current().domain,
-                                                  reverse('export_detail', args=(export.id,)))
+            if export.status in (Export.SUCCESS, Export.FAILURE):
+                # Get receiver's email address
+                receiver_email = export.user.email
+                if receiver_email:
+                    export_url = 'http://{}{}'.format(Site.objects.get_current().domain,
+                                                      reverse('export_detail', args=(export.id,)))
 
-                # Send Status mail
-                if settings.PERFORM_EMAILS:
-                    collection = export.collection if export.collection else export.seeds.first().collection
-                    mail_message = None
-                    mail_subject = None
-                    if export.status == 'completed success':
-                        mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(
-                            collection.name,
-                            export_url)
-                        mail_subject = "SFM Export is ready"
-                    elif export.status == 'completed failure':
-                        mail_message = u"Your export of {} failed. You can get more information from {}".format(
-                            collection.name, export_url)
-                        mail_subject = "SFM Export failed"
-                    else:
-                        log.debug("Unhandled export status: %s", export.status)
-                    if mail_message:
-                        try:
-                            log.debug("Sending email to %s: %s", receiver_email, mail_subject)
-                            send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
-                                      [receiver_email], fail_silently=False)
-                        except SMTPException, ex:
-                            log.error("Error sending email: %s", ex)
-            else:
-                log.warn("No email address for %s", export.user)
+                    # Send Status mail
+                    if settings.PERFORM_EMAILS:
+                        collection = export.collection if export.collection else export.seeds.first().collection
+                        mail_message = None
+                        mail_subject = None
+                        if export.status == 'completed success':
+                            mail_message = u"Your export of {} is ready. You can retrieve it from {}.".format(
+                                collection.name,
+                                export_url)
+                            mail_subject = "SFM Export is ready"
+                        elif export.status == 'completed failure':
+                            mail_message = u"Your export of {} failed. You can get more information from {}".format(
+                                collection.name, export_url)
+                            mail_subject = "SFM Export failed"
+                        else:
+                            log.debug("Unhandled export status: %s", export.status)
+                        if mail_message:
+                            try:
+                                log.debug("Sending email to %s: %s", receiver_email, mail_subject)
+                                send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                                          [receiver_email], fail_silently=False)
+                            except SMTPException, ex:
+                                log.error("Error sending email: %s", ex)
+                else:
+                    log.warn("No email address for %s", export.user)
 
         except ObjectDoesNotExist:
             log.error("Export model object not found for export status message: %s",

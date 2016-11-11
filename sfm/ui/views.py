@@ -12,16 +12,17 @@ from django.apps import apps
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
-from notifications import get_free_space
 
+from notifications import get_free_space
 from .forms import CollectionSetForm, ExportForm
 import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
 from .utils import diff_object_history, clean_token, clean_blogname
+from .monitoring import monitor_harvests, monitor_queues, monitor_exports
+
 import json
 import os
 import logging
@@ -392,7 +393,7 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
 class CredentialDetailView(LoginRequiredMixin, DetailView):
     model = Credential
     template_name = 'ui/credential_detail.html'
- 
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
@@ -675,3 +676,14 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("user_profile_detail")
+
+
+class MonitorView(LoginRequiredMixin, TemplateView):
+    template_name = "ui/monitor.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(MonitorView, self).get_context_data(**kwargs)
+        context['harvests'] = monitor_harvests()
+        context['exports'] = monitor_exports()
+        context["harvester_queues"], context["exporter_queues"] = monitor_queues()
+        return context

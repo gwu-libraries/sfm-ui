@@ -60,9 +60,10 @@
         <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
           {% if request.user.is_authenticated %} 
             <ul class="nav navbar-nav">
-	      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-	      <li><a href={% url "credential_list" %}>Credentials</a></li>
-              <li><a href={% url "export_list" %}>Exports</a></li>
+	            <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+	            <li><a href={% url "credential_list" %}>Credentials</a></li>
+                <li><a href={% url "export_list" %}>Exports</a></li>
+                <li><a href={% url "monitor" %}>Monitor</a></li>
             </ul>
             {% endif %}
          <ul class="nav navbar-nav navbar-right">

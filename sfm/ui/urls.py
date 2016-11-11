@@ -113,4 +113,8 @@ urlpatterns = patterns('',
                        url(r'^profile/update/$',
                            views.UserProfileUpdateView.as_view(),
                            name="user_profile_update"),
+
+                       url(r'^monitor/$', views.MonitorView.as_view(), name="monitor"),
+
                        )
+

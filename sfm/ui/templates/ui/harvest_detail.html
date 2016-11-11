@@ -19,6 +19,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
+    <p><strong>Id:</strong> {{ harvest.harvest_id }}</p>
     <p><strong>Requested:</strong> {{ harvest.date_requested }}</p>
     {% if harvest.date_started %}
         <p><strong>Started:</strong> {{ harvest.date_started }}</p>
@@ -28,6 +29,9 @@
     {% endif %}
     <p><strong>Updated:</strong> {{ harvest.date_updated }}</p>
     <p><strong>Status:</strong> {{ harvest.get_status_display }}</p>
+    {% if harvest.service %}
+        <p><strong>Performed by:</strong> {{ harvest.service }} on {{ harvest.host }} ({{ harvest.instance }})</p>
+    {% endif %}
     <p><strong>Harvest type:</strong> {{ harvest.harvest_type }}</p>
     {% if harvest.stats %}
         <p><strong>Stats:</strong><ul>

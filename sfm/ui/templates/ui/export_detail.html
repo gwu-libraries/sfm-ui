@@ -36,6 +36,9 @@
     <p><strong>Id:</strong> {{ export.export_id }}</p>
     <p><strong>Requested:</strong> {{ export.date_requested }}</p>
     <p><strong>Status:</strong> {{ export.get_status_display }}</p>
+    {% if export.service %}
+        <p><strong>Performed by:</strong> {{ export.service }} on {{ export.host }} ({{ export.instance }})</p>
+    {% endif %}
     <p><strong>Export type:</strong> {{ export.export_type }}</p>
     <p><strong>Format:</strong> {{ export.export_format }}</p>
     <p><strong>Deduplicate:</strong> {{ export.dedupe }}</p>

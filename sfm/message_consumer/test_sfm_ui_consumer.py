@@ -75,7 +75,10 @@ class ConsumerTest(TestCase):
             "warcs": {
                 "count": 3,
                 "bytes": 345234242
-            }
+            },
+            "service": "Twitter Harvester",
+            "host": "f0c3c5ef7031",
+            "instance": "39",
         }
         # Trigger on_message
         self.consumer.on_message()
@@ -96,6 +99,9 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
+        self.assertEqual("Twitter Harvester", harvest.service)
+        self.assertEqual("f0c3c5ef7031", harvest.host)
+        self.assertEqual("39", harvest.instance)
 
         # Check updated seeds
         seed1 = Seed.objects.get(seed_id="1")
@@ -126,7 +132,10 @@ class ConsumerTest(TestCase):
             "warcs": {
                 "count": 5,
                 "bytes": 645234242
-            }
+            },
+            "service": "Twitter Harvester",
+            "host": "f0c3c5ef7031",
+            "instance": "39",
         }
         # Trigger on_message
         self.consumer.on_message()
@@ -143,6 +152,9 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], harvest.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], harvest.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], harvest.errors)
+        self.assertEqual("Twitter Harvester", harvest.service)
+        self.assertEqual("f0c3c5ef7031", harvest.host)
+        self.assertEqual("39", harvest.instance)
 
     @patch("message_consumer.sfm_ui_consumer.collection_stop")
     def test_harvest_status_stream_failed_on_message(self, mock_collection_stop):
@@ -211,12 +223,43 @@ class ConsumerTest(TestCase):
         self.consumer.routing_key = "export.status.test"
         self.consumer.message = {
             "id": "test:2",
+            "status": "running",
+            "date_started": "2015-07-28T11:17:36.640044",
+            "infos": [{"code": "test_code_1", "message": "congratulations"}],
+            "warnings": [{"code": "test_code_2", "message": "be careful"}],
+            "errors": [{"code": "test_code_3", "message": "oops"}],
+            "service": "Twitter Exporter",
+            "host": "f0c3c5ef7031",
+            "instance": "39",
+        }
+
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check updated harvest model object
+        export = Export.objects.get(export_id="test:2")
+        self.assertEqual("running", export.status)
+        self.assertEqual(iso8601.parse_date("2015-07-28T11:17:36.640044"), export.date_started)
+        self.assertIsNone(export.date_ended)
+        self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], export.infos)
+        self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], export.warnings)
+        self.assertListEqual([{"code": "test_code_3", "message": "oops"}], export.errors)
+        self.assertEqual("Twitter Exporter", export.service)
+        self.assertEqual("f0c3c5ef7031", export.host)
+        self.assertEqual("39", export.instance)
+
+        # Now update
+        self.consumer.message = {
+            "id": "test:2",
             "status": "completed success",
             "date_started": "2015-07-28T11:17:36.640044",
             "date_ended": "2015-07-28T11:17:42.539470",
             "infos": [{"code": "test_code_1", "message": "congratulations"}],
             "warnings": [{"code": "test_code_2", "message": "be careful"}],
-            "errors": [{"code": "test_code_3", "message": "oops"}]
+            "errors": [{"code": "test_code_3", "message": "oops"}],
+            "service": "Twitter Exporter",
+            "host": "f0c3c5ef7031",
+            "instance": "39",
         }
 
         # Trigger on_message
@@ -230,6 +273,9 @@ class ConsumerTest(TestCase):
         self.assertListEqual([{"code": "test_code_1", "message": "congratulations"}], export.infos)
         self.assertListEqual([{"code": "test_code_2", "message": "be careful"}], export.warnings)
         self.assertListEqual([{"code": "test_code_3", "message": "oops"}], export.errors)
+        self.assertEqual("Twitter Exporter", export.service)
+        self.assertEqual("f0c3c5ef7031", export.host)
+        self.assertEqual("39", export.instance)
 
     def test_web_harvest_start_on_message(self):
         self.consumer.routing_key = "harvest.start.web"
