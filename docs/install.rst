@@ -47,6 +47,8 @@ or just download ``example.prod.docker-compose.yml`` and ``example.env``::
 
     docker-compose up -d
 
+It may take several minutes for the images to be downloaded and the containers to start.
+
 4. It is also recommended that you scale up the Twitter REST Harvester container::
 
     docker-compose scale twitterrestharvester=2
@@ -167,3 +169,39 @@ Note that if you make a change to configuration *after* SFM is brought up, you w
 the change only applies to a single container, then you can stop the container with ``docker kill <container name>``. If
 the change applies to multiple containers (or you're not sure), you can stop all containers with ``docker-compose stop``.
 Containers can then be brought back up with ``docker-compose up -d`` and the configuration change will take effect.
+
+-----------
+ Upgrading
+-----------
+
+Following are general instructions for upgrading SFM versions. Always consult the release notes of the new version to
+see if any additional steps are required.
+
+1. Stop the containers::
+
+    docker-compose stop
+
+2. Make a copy of your existing ``docker-compose.yml`` and ``.env`` files::
+
+    cp docker-compose.yml old.docker-compose.yml
+    cp .env old.env
+
+3. Get the latest ``example.prod.docker-compose.yml``. If you previously cloned the sfm-docker repository then::
+
+    git pull
+    cp example.prod.docker-compose.yml docker-compose.yml
+
+otherwise::
+
+    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.prod.docker-compose.yml > docker-compose.yml
+
+4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
+in your new ``docker-compose.yml``.
+
+5. Make any changes in your ``.env`` file prescribed by the release notes.
+
+6. Bring up the containers::
+
+    docker-compose up -d
+
+It may take several minutes for the images to be downloaded and the containers to start.
