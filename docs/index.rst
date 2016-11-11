@@ -37,6 +37,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    authentication
    docker
    portability
+   storage
    limitations
    troubleshooting
 
