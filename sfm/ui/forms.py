@@ -39,6 +39,8 @@ TWITTER_WEB_RESOURCES_HELP = "Perform web harvests of resources (e.g., web pages
 INCREMENTAL_LABEL = "Incremental"
 INCREMENTAL_HELP = "Only harvest new items."
 GROUP_HELP = "Group members will be able to view and edit this collection set."
+USER_PROFILE_LABEL = "User profile images"
+USER_PROFILE_HELP = "Perform web harvests of user profile images and user banner images"
 
 
 class CollectionSetForm(forms.ModelForm):
@@ -167,10 +169,12 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
                                       label=TWITTER_MEDIA_LABEL)
     web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
                                               label=TWITTER_WEB_RESOURCES_LABEL)
+    user_images_option = forms.BooleanField(initial=False, required=False, help_text=USER_PROFILE_HELP,
+                                              label=USER_PROFILE_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option', 'user_images_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -180,6 +184,9 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
                 self.fields['media_option'].initial = harvest_options["media"]
             if "web_resources" in harvest_options:
                 self.fields['web_resources_option'].initial = harvest_options["web_resources"]
+            if "user_images" in harvest_options:
+                self.fields['user_images_option'].initial = harvest_options["user_images"]
+
 
     def save(self, commit=True):
         m = super(CollectionTwitterUserTimelineForm, self).save(commit=False)
@@ -187,7 +194,8 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
             "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"]
+            "web_resources": self.cleaned_data["web_resources_option"],
+            "user_images": self.cleaned_data["user_images_option"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
