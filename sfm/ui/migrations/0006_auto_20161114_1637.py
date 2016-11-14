@@ -4,19 +4,25 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import datetime
 from django.utils.timezone import utc
+import ui.models
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ui', '0006_auto_20161101_1121'),
+        ('ui', '0005_user_harvest_notifications'),
     ]
 
     operations = [
         migrations.AddField(
+            model_name='credential',
+            name='credential_id',
+            field=models.CharField(default=ui.models.default_uuid, null=True, max_length=32),
+        ),
+        migrations.AddField(
             model_name='export',
             name='date_updated',
-            field=models.DateTimeField(default=datetime.datetime(2016, 11, 4, 18, 54, 9, 637584, tzinfo=utc), auto_now=True),
+            field=models.DateTimeField(default=datetime.datetime(2016, 11, 14, 21, 37, 16, 973833, tzinfo=utc), auto_now=True),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -48,6 +54,11 @@ class Migration(migrations.Migration):
             model_name='harvest',
             name='service',
             field=models.CharField(max_length=255, null=True),
+        ),
+        migrations.AddField(
+            model_name='historicalcredential',
+            name='credential_id',
+            field=models.CharField(default=ui.models.default_uuid, max_length=32, db_index=True),
         ),
         migrations.AlterField(
             model_name='export',
