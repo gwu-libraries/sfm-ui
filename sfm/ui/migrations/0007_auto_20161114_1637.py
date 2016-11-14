@@ -9,7 +9,7 @@ import uuid
 def gen_uuid(apps, schema_editor):
     MyModel = apps.get_model('ui', 'Credential')
     for row in MyModel.objects.all():
-        row.credential_id = uuid.uuid4()
+        row.credential_id = uuid.uuid4().hex
         row.save()
 
 
