@@ -22,6 +22,6 @@ ENV LOAD_FIXTURES=false
 EXPOSE 80
 
 CMD sh /opt/sfm-setup/setup_reqs.sh \
-    && appdeps.py --wait-secs 30 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672 \
+    && appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672 \
     && sh /opt/sfm-setup/setup_ui.sh \
     && sh /opt/sfm-setup/invoke_runserver.sh
