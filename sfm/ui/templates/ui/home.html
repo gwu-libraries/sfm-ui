@@ -46,7 +46,7 @@
 {% if user.is_superuser %}
     {% for item in space_data %}
         <h2>Storage for {{ item.volume_id }}</h2>
-        <p>The total space is <strong>{{ item.total_space }}</strong> and the available free space for sfm-data is <strong>{{ item.total_free_space }}</strong>.</p>
+        <p>The total space is <strong>{{ item.total_space }}</strong> and the available free space for {{ item.volume_id }} is <strong>{{ item.total_free_space }}</strong>.</p>
 
         <div class="progress">
             <div class="progress-bar {{ item.bar_color }}" role="progressbar" aria-valuenow="40"
