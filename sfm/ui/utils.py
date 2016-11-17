@@ -103,3 +103,24 @@ def collection_set_path(collection_set, sfm_data_dir=None):
 
 def collection_set_path_by_id(collection_set_id, sfm_data_dir=None):
     return os.path.join(sfm_data_dir or settings.SFM_DATA_DIR, "collection_set", collection_set_id)
+
+
+def get_email_addresses_for_collection_set(collection_set, use_harvest_notification_preference=False,
+                                           include_admins=False):
+    """
+    Get the email addresses of users associated with a collection set.
+    """
+    email_addresses = []
+    for user in collection_set.group.user_set.all():
+        if user.email and (not use_harvest_notification_preference or user.harvest_notifications):
+            email_addresses.append(user.email)
+    if include_admins:
+        email_addresses.extend(get_admin_email_addresses())
+    return email_addresses
+
+
+def get_admin_email_addresses():
+    email_addresses = []
+    for _, email_address in settings.ADMINS:
+        email_addresses.append(email_address)
+    return email_addresses

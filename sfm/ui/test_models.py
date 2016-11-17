@@ -56,22 +56,32 @@ class CollectionTest(TestCase):
         historical_collection = collection.history.all()[0]
         historical_credential = historical_collection.credential.history.all()[0]
 
+        # Add a harvest
         harvest1 = Harvest.objects.create(collection=collection,
                                           historical_collection=historical_collection,
                                           historical_credential=historical_credential)
         self.assertEqual(harvest1, collection.last_harvest())
 
+        # Add a second harvest
         harvest2 = Harvest.objects.create(collection=collection,
                                           historical_collection=historical_collection,
                                           historical_credential=historical_credential)
 
         self.assertEqual(harvest2, collection.last_harvest())
 
-        Harvest.objects.create(harvest_type="web", collection=collection,
-                               historical_collection=historical_collection,
-                               historical_credential=historical_credential)
-
+        # Add a web harvest
+        harvest3 = Harvest.objects.create(harvest_type="web", collection=collection,
+                                          historical_collection=historical_collection,
+                                          historical_credential=historical_credential)
         self.assertEqual(harvest2, collection.last_harvest())
+        self.assertEqual(harvest3, collection.last_harvest(include_web_harvests=True))
+
+        # Add a skipped harvest
+        harvest4 = Harvest.objects.create(status=Harvest.SKIPPED, collection=collection,
+                                          historical_collection=historical_collection,
+                                          historical_credential=historical_credential)
+        self.assertEqual(harvest2, collection.last_harvest())
+        self.assertEqual(harvest4, collection.last_harvest(include_skipped=True))
 
     def test_stats(self):
         collection1 = Collection.objects.create(collection_set=self.collection_set,

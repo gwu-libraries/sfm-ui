@@ -1,11 +1,11 @@
 from django.test import TestCase
-from .notifications import _should_send_email, _create_email, _create_context
-from .notifications import _should_send_space_email, _create_space_email, get_free_space
+from .notifications import _should_send_email, _create_email, _create_context, _create_space_email, \
+    _should_send_space_email
 from .notifications import MonitorSpace
 from .models import User, Group, CollectionSet, Credential, Collection, Harvest, HarvestStat
 import datetime
 from collections import OrderedDict
-from mock import patch, MagicMock, mock
+from mock import patch
 
 
 class NotificationTests(TestCase):
@@ -19,7 +19,6 @@ class NotificationTests(TestCase):
         self.user_no_email = User.objects.create_user(username="test_user3")
         self.collection_set1 = CollectionSet.objects.create(group=self.group1, name="ztest_collection_set1")
         self.collection_set2 = CollectionSet.objects.create(group=self.group1, name="atest_collection_set2")
-        # self.collection_set3 = CollectionSet.objects.create(group=self.group1, name="test_collection_set3")
         self.collection_set4 = CollectionSet.objects.create(group=self.group2, name="test_collection_set4")
         self.credential = Credential.objects.create(user=self.user1, platform="test_platform", token='{}')
         self.collection1 = Collection.objects.create(collection_set=self.collection_set1, credential=self.credential,
@@ -159,8 +158,8 @@ class NotificationTests(TestCase):
 
 class SpaceNotificationTests(TestCase):
     def setUp(self):
-        self.superuser = User.objects.create_superuser(username="superuser", email="superuser@test.com",
-                                                       password="test_password")
+        # self.superuser = User.objects.create_superuser(username="superuser", email="superuser@test.com",
+        #                                                password="test_password")
         self.user = User.objects.create_user(username="test_user", email="testuser@test.com")
         self.user_no_email = User.objects.create_user(username="test_user3")
 
@@ -184,32 +183,26 @@ class SpaceNotificationTests(TestCase):
         self.assertEqual(0, space_msg_cache['space_data']['percentage'])
         self.assertFalse(space_msg_cache['space_data']['send_email'])
 
-    def test_should_send_space_email_no_email_address(self):
-        self.assertFalse(_should_send_space_email(self.user_no_email, {}))
+    def test_should_send_space_email_space_below(self):
+        msg_cache = {
+            'space_data': [{'volume_id': '/sfm-data', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                            'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': True},
+                           {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                            'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}]
+        }
+        self.assertTrue(_should_send_space_email(msg_cache))
 
-    def test_should_send_space_email_non_superuser(self):
-        self.assertFalse(_should_send_space_email(self.user, {}))
-
-    @patch("ui.notifications.get_free_space", autospec=True)
-    def test_should_send_space_email_superuser_space_below(self, mock_get_free_space):
-        data_info1 = {'volume_id': '/sfm-data', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
-                      'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': True}
-        data_info2 = {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
-                      'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}
-        mock_get_free_space.side_effect = [(data_info1, data_info2)]
-        self.assertTrue(_should_send_space_email(self.superuser, {}))
-
-    @patch("ui.notifications.get_free_space", autospec=True)
-    def test_should_send_space_email_superuser_space_over(self, mock_get_free_space):
-        data_info1 = {'volume_id': '/sfm-data', 'threshold': '50GB', 'bar_color': 'progress-bar-success',
-                      'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': False}
-        data_info2 = {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
-                      'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}
-        mock_get_free_space.side_effect = [(data_info1, data_info2)]
-        self.assertFalse(_should_send_space_email(self.superuser, {}))
+    def test_should_send_space_email_space_over(self):
+        msg_cache = {
+            'space_data': [{'volume_id': '/sfm-data', 'threshold': '50GB', 'bar_color': 'progress-bar-success',
+                            'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': False},
+                           {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+                            'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}]
+        }
+        self.assertFalse(_should_send_space_email(msg_cache))
 
     def test_create_email(self):
-        msg = _create_space_email(self.superuser, {})
+        msg = _create_space_email("superuser@test.com", {})
         self.assertTrue(msg.body.startswith("This is a warning that free space on your Social Feed Manager server at "
                                             "http://example.com/ui/ is low."))
-        self.assertEqual([self.superuser.email], msg.to)
+        self.assertEqual(["superuser@test.com"], msg.to)

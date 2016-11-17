@@ -39,6 +39,7 @@ class User(AbstractUser):
     email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
     harvest_notifications = models.BooleanField(default=True)
 
+
 def history_save(self, *args, **kw):
     """
     A save method that skips creating a historical record if none of the
@@ -301,6 +302,7 @@ class Collection(models.Model):
         TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
+    RATE_LIMITED_HARVEST_TYPES = (TWITTER_USER_TIMELINE, TWITTER_SEARCH)
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection_set = models.ForeignKey(CollectionSet, related_name='collections')
     credential = models.ForeignKey(Credential, related_name='collections')
@@ -346,13 +348,17 @@ class Collection(models.Model):
         """
         return self.seeds.filter(is_active=True).count()
 
-    def last_harvest(self):
+    def last_harvest(self, include_skipped=False, include_web_harvests=False):
         """
         Returns the most recent harvest or None if no harvests.
-
-        Web harvests are excluded.
         """
-        return self.harvests.exclude(harvest_type="web").order_by("-date_requested").first()
+        harvests = self.harvests
+        if not include_web_harvests:
+            harvests = harvests.exclude(harvest_type="web")
+        if not include_skipped:
+            harvests = harvests.exclude(status=Harvest.SKIPPED)
+
+        return harvests.order_by("-date_requested").first()
 
     def is_streaming(self):
         """
@@ -475,13 +481,17 @@ class Harvest(models.Model):
     SUCCESS = "completed success"
     FAILURE = "completed failure"
     RUNNING = "running"
+    VOIDED = "voided"
     STOP_REQUESTED = "stop requested"
+    SKIPPED = "skipped"
     STATUS_CHOICES = (
         (REQUESTED, "Requested"),
         (SUCCESS, "Success"),
         (FAILURE, "Failure"),
         (RUNNING, "Running"),
-        (STOP_REQUESTED, "Stop requested")
+        (STOP_REQUESTED, "Stop requested"),
+        (VOIDED, "Voided"),
+        (SKIPPED, "Skipped")
     )
     harvest_type = models.CharField(max_length=255)
     historical_collection = models.ForeignKey(HistoricalCollection, related_name='historical_harvests', null=True)

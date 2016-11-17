@@ -3,6 +3,7 @@ from sfmutils.consumer import BaseConsumer
 from sfmutils.harvester import CODE_UNKNOWN_ERROR
 from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
+from ui.utils import get_email_addresses_for_collection_set
 import json
 from django.core.mail import send_mail
 from django.conf import settings
@@ -21,6 +22,7 @@ class SfmUiConsumer(BaseConsumer):
     Class for the SFM UI Consumer, which subscribes to
     messages from the queue and updates the models as appropriate.
     """
+
     def on_message(self):
         # This is the worst ever, but it avoids a race condition.
         # It is possible for the harvester/exporter to respond before the commit occurs.
@@ -74,7 +76,7 @@ class SfmUiConsumer(BaseConsumer):
                     seed = Seed.objects.get(seed_id=seed_id)
                     seed.token = token
                     seed.history_note = "Changed token based on information from harvester from harvest {}".format(
-                            self.message["id"])
+                        self.message["id"])
                     seed.save()
                 except ObjectDoesNotExist:
                     log.error("Seed model object with seed_id %s not found to update token to %s", seed_id, token)
@@ -86,7 +88,7 @@ class SfmUiConsumer(BaseConsumer):
                 seed = Seed.objects.get(seed_id=seed_id)
                 seed.uid = uid
                 seed.history_note = "Changed uid based on information from harvester from harvest {}".format(
-                        self.message["id"])
+                    self.message["id"])
                 seed.save()
             except ObjectDoesNotExist:
                 log.error("Seed model object with seed_id %s not found to update uid to %s", seed_id, uid)
@@ -118,13 +120,12 @@ class SfmUiConsumer(BaseConsumer):
 
         # Send email if completed and failed or has messages
         if harvest.status == Harvest.FAILURE or (
-                harvest.status == Harvest.SUCCESS and (harvest.infos or harvest.warnings or harvest.errors)):
+                        harvest.status == Harvest.SUCCESS and (harvest.infos or harvest.warnings or harvest.errors)):
 
             # Get emails for group members
-            receiver_emails = []
-            for user in harvest.collection.collection_set.group.user_set.all():
-                if user.email and user.harvest_notifications:
-                    receiver_emails.append(user.email)
+            receiver_emails = get_email_addresses_for_collection_set(harvest.collection.collection_set,
+                                                                     use_harvest_notification_preference=True,
+                                                                     include_admins=False)
 
             # Check if harvest errors contains UNKNOWN_ERRORS
             for msg in harvest.errors:
@@ -164,8 +165,10 @@ class SfmUiConsumer(BaseConsumer):
                                   receiver_emails, fail_silently=False)
                     except SMTPException, ex:
                         log.error("Error sending email: %s", ex)
+                    except IOError, ex:
+                        log.error("Error sending email: %s", ex)
             else:
-                log.warn("No email addresses for %s", harvest.collection.collection_set.group) 
+                log.warn("No email addresses for %s", harvest.collection.collection_set.group)
 
     @staticmethod
     def format_messages_for_mail(messages, message_type):
@@ -211,7 +214,6 @@ class SfmUiConsumer(BaseConsumer):
             export.host = self.message.get("host")
             export.instance = self.message.get("instance")
             export.save()
-            #TODO: Not if RUNNING
 
             if export.status in (Export.SUCCESS, Export.FAILURE):
                 # Get receiver's email address
@@ -243,6 +245,9 @@ class SfmUiConsumer(BaseConsumer):
                                           [receiver_email], fail_silently=False)
                             except SMTPException, ex:
                                 log.error("Error sending email: %s", ex)
+                            except IOError, ex:
+                                log.error("Error sending email: %s", ex)
+
                 else:
                     log.warn("No email address for %s", export.user)
 

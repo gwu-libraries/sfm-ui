@@ -102,6 +102,10 @@ urlpatterns = patterns('',
                            views.HarvestDetailView.as_view(),
                            name="harvest_detail"),
 
+                       url(r'^harvests/(?P<pk>\d+)/void/$',
+                           views.HarvestVoidView.as_view(),
+                           name="harvest_void"),
+
                        url(r'^(?P<model>\w+)/(?P<item_id>\d+)/changes/$',
                            views.ChangeLogView.as_view(),
                            name="change_log"),

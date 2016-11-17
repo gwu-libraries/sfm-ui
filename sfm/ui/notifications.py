@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse
 
 from .models import User, CollectionSet, Collection, HarvestStat
 from .sched import next_run_time
+from .utils import get_admin_email_addresses
 
 log = logging.getLogger(__name__)
 
@@ -134,40 +135,38 @@ def get_free_space():
     return data_list
 
 
-def send_free_space_emails(superusers=None):
+def send_free_space_emails():
     log.info("Sending free space emails")
-    msg_cache = {}
+    msg_cache = {
+        # get the space mem
+        'space_data': get_free_space()
+    }
 
-    if superusers is None:
-        superusers = User.objects.filter(is_superuser=True)
-    for user in superusers:
-        if _should_send_space_email(user, msg_cache):
-            msg = _create_space_email(user, msg_cache)
+    if _should_send_space_email(msg_cache):
+        email_addresses = get_admin_email_addresses()
+        for email_address in email_addresses:
+            msg = _create_space_email(email_address, msg_cache)
             try:
                 log.debug("Sending email to %s: %s", msg.to, msg.subject)
                 msg.send()
             except SMTPException, ex:
                 log.error("Error sending email: %s", ex)
-        else:
-            log.debug("Not sending email to %s", user.username)
+            except IOError, ex:
+                log.error("Error sending email: %s", ex)
 
 
-def _should_send_space_email(user, msg_cache):
-    if not user.is_superuser or not user.email:
-        return False
-    # get the space mem
-    msg_cache['space_data'] = get_free_space()
+def _should_send_space_email(msg_cache):
     # if any volume need send email, return true
     return any(msg['send_email'] for msg in msg_cache['space_data'])
 
 
-def _create_space_email(user, msg_cache):
+def _create_space_email(email_address, msg_cache):
     text_template = get_template('email/free_space_email.txt')
     html_template = get_template('email/free_space_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
     d = Context(msg_cache)
     msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
-                                 text_template.render(d), settings.EMAIL_HOST_USER, [user.email])
+                                 text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg
 
@@ -185,6 +184,9 @@ def send_user_harvest_emails(users=None):
                 msg.send()
             except SMTPException, ex:
                 log.error("Error sending email: %s", ex)
+            except IOError, ex:
+                log.error("Error sending email: %s", ex)
+
         else:
             log.debug("Not sending email to %s", user.username)
 

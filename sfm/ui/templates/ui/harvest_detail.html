@@ -79,4 +79,20 @@
     {% endif %}
 
 </div>
+<br />
+{% if can_void %}
+    <form method="post" action={% url "harvest_void" harvest.pk %}>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            Void
+        </button>
+        <p class="help-block">
+            Voiding this harvest will allow the next harvest to be requested even though this one has not been successfully
+            completed. It will not cancel this harvest if it is still queued to be processed or is already running. You may
+            want to void this harvest if you believe that there is a problem with it and would like the next harvest to
+            be able to proceed.
+        </p>
+    </form>
+{% endif %}
+
 {% endblock %}

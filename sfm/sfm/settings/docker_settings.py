@@ -25,6 +25,9 @@ SITE_OBJECTS_INFO_DICT = {
 }
 SITE_ID = 1
 
+if 'SFM_SITE_ADMIN_EMAIL' in env:
+    ADMINS = [(env.get('SFM_SITE_ADMIN_NAME', 'sfmadmin'), env.get('SFM_SITE_ADMIN_EMAIL'))]
+
 STATIC_ROOT = "/opt/sfm-static"
 
 LOGGING = {
