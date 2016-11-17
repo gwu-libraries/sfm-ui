@@ -34,6 +34,9 @@ class SerializeTests(TestCase):
                                                 token='{"key":"key1"}')
         self.credential2 = Credential.objects.create(user=self.user2, platform="test_platform",
                                                      token='{"key":"key2"}')
+        self.credential3 = Credential.objects.create(user=self.user1, platform="test_platform",
+                                                token='{"key":"key3"}')
+
         # Now change credential2
         self.credential2.token = '{"key":"key1.1"}'
         self.credential2.save()
@@ -63,6 +66,10 @@ class SerializeTests(TestCase):
                                                historical_credential=self.historical_credential)
         self.harvest2 = Harvest.objects.create(collection=self.collection1,
                                                parent_harvest=self.harvest1)
+        # Harvest3 uses a credential that is not elsewhere
+        self.harvest3 = Harvest.objects.create(collection=self.collection1,
+                                               historical_collection=self.historical_collection,
+                                               historical_credential=self.credential3.history.all()[0])
 
         # Harvest stats
         day1 = date(2016, 5, 20)
@@ -102,12 +109,12 @@ class SerializeTests(TestCase):
         self.assertEqual(2, CollectionSet.history.count())
         self.assertEqual(1, Collection.objects.count())
         self.assertEqual(2, Collection.history.count())
-        self.assertEqual(2, Credential.objects.count())
-        self.assertEqual(3, Credential.history.count())
+        self.assertEqual(3, Credential.objects.count())
+        self.assertEqual(4, Credential.history.count())
         self.assertEqual(2, User.objects.count())
         self.assertEqual(2, Seed.objects.count())
         self.assertEqual(3, Seed.history.count())
-        self.assertEqual(2, Harvest.objects.count())
+        self.assertEqual(3, Harvest.objects.count())
         self.assertEqual(3, HarvestStat.objects.count())
         self.assertEqual(2, Warc.objects.count())
 
@@ -119,12 +126,12 @@ class SerializeTests(TestCase):
         self.assertEqual(2, CollectionSet.history.count())
         self.assertEqual(1, Collection.objects.count())
         self.assertEqual(2, Collection.history.count())
-        self.assertEqual(2, Credential.objects.count())
-        self.assertEqual(3, Credential.history.count())
+        self.assertEqual(3, Credential.objects.count())
+        self.assertEqual(4, Credential.history.count())
         self.assertEqual(2, User.objects.count())
         self.assertEqual(2, Seed.objects.count())
         self.assertEqual(3, Seed.history.count())
-        self.assertEqual(2, Harvest.objects.count())
+        self.assertEqual(3, Harvest.objects.count())
         self.assertEqual(3, HarvestStat.objects.count())
         self.assertEqual(2, Warc.objects.count())
 
@@ -137,6 +144,7 @@ class SerializeTests(TestCase):
 
         self.harvest1.delete()
         self.harvest2.delete()
+        self.harvest3.delete()
         self.assertEqual(0, Harvest.objects.count())
 
         Seed.objects.all().delete()
@@ -152,6 +160,7 @@ class SerializeTests(TestCase):
 
         # Note that credential1 still exists.
         self.credential2.delete()
+        self.credential3.delete()
         self.assertEqual(1, Credential.objects.count())
         # This is also deleting credential1's history
         Credential.history.all().delete()
@@ -188,13 +197,13 @@ class SerializeTests(TestCase):
         # +1 for added history note
         self.assertEqual(4, Collection.history.count())
         self.assertEqual(Collection.history.first().instance.history_note, "Collection imported.")
-        self.assertEqual(2, Credential.objects.count())
+        self.assertEqual(3, Credential.objects.count())
         # This is one less since credential1's history was deleted.
-        self.assertEqual(2, Credential.history.count())
+        self.assertEqual(3, Credential.history.count())
         self.assertEqual(2, User.objects.count())
         self.assertEqual(2, Seed.objects.count())
         self.assertEqual(3, Seed.history.count())
-        self.assertEqual(2, Harvest.objects.count())
+        self.assertEqual(3, Harvest.objects.count())
         self.assertEqual(3, HarvestStat.objects.count())
         self.assertEqual(2, Warc.objects.count())
 

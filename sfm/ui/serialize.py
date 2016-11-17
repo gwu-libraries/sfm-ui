@@ -141,6 +141,10 @@ class RecordSerializer:
         credentials = {collection.credential}
         for historical_collection in collection.history.all():
             credentials.add(historical_collection.credential)
+        # Also credentials in harvests
+        for harvest in collection.harvests.all():
+            if harvest.historical_credential:
+                credentials.add(harvest.historical_credential.instance)
 
         credentials_record_filepath = os.path.join(records_path, CREDENTIAL_FILENAME)
         self._serialize_objs(credentials, credentials_record_filepath)
