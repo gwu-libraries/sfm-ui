@@ -3,7 +3,7 @@
 =================
 
 Accessing the APIs of social media platforms requires credentials for authentication
-(also knows as API keys). Social Feed Manager supports managing those credentials.
+(also knows as the API keys). Social Feed Manager supports managing those credentials.
 
 Most API credentials have two parts: an application credential and a user credential.
 (Flickr is the exception -- only an application credential is necessary.)
