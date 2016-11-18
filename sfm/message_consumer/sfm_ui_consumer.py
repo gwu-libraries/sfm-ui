@@ -1,5 +1,6 @@
 import logging
 from sfmutils.consumer import BaseConsumer
+from sfmutils.harvester import CODE_UNKNOWN_ERROR
 from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
 import json
@@ -124,6 +125,15 @@ class SfmUiConsumer(BaseConsumer):
             for user in harvest.collection.collection_set.group.user_set.all():
                 if user.email and user.harvest_notifications:
                     receiver_emails.append(user.email)
+
+            # Check if harvest errors contains UNKNOWN_ERRORS
+            for msg in harvest.errors:
+                if msg['code'] == CODE_UNKNOWN_ERROR:
+                    log.debug("Harvest has unknown error so also sending to admins")
+                    for user in User.objects.filter(is_superuser=True):
+                        if user.email and user.harvest_notifications:
+                            receiver_emails.append(user.email)
+                    break
 
             if receiver_emails:
                 harvest_url = 'http://{}{}'.format(Site.objects.get_current().domain,
