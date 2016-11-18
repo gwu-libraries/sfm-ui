@@ -15,7 +15,6 @@ class MyUserChangeForm(UserChangeForm):
 
 
 class MyUserCreationForm(UserCreationForm):
-
     error_message = UserCreationForm.error_messages.update({
         'duplicate_local_id': 'This local_id has already been taken.'
     })
@@ -42,14 +41,15 @@ class UserAdmin(AuthUserAdmin):
 
 
 class Credential(a.ModelAdmin):
-    fields = ('user', 'platform', 'name', 'token', 'is_active', 'date_added', 'history_note')
+    fields = ('credential_id', 'user', 'platform', 'name', 'token', 'is_active', 'date_added', 'history_note')
     list_display = ['user', 'platform', 'name', 'is_active', 'date_added']
     list_filter = ['user', 'platform', 'is_active', 'date_added']
     search_fields = ['user', 'platform', 'name', 'is_active', 'date_added']
 
 
 class HistoricalCredential(a.ModelAdmin):
-    fields = ('history_user', 'history_date', 'history_note', 'user', 'platform', 'token', 'is_active', 'date_added')
+    fields = ('history_user', 'history_date', 'history_note', 'credential_id', 'user', 'platform', 'token', 'is_active',
+              'date_added')
     list_display = ['user', 'platform', 'token', 'is_active', 'date_added']
     list_filter = ['user', 'platform', 'token', 'is_active', 'date_added']
     search_fields = ['user', 'platform', 'token', 'is_active', 'date_added']
@@ -131,10 +131,10 @@ class HistoricalSeed(a.ModelAdmin):
 
 class Harvest(a.ModelAdmin):
     fields = (
-       'harvest_type', 'harvest_id', 'historical_collection', 'historical_seeds', 'historical_credential',
-       'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended',
-       'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes',
-       'service', 'host', 'instance')
+        'harvest_type', 'harvest_id', 'historical_collection', 'historical_seeds', 'historical_credential',
+        'parent_harvest', 'status', 'date_requested', 'date_started', 'date_ended',
+        'infos', 'warnings', 'errors', 'token_updates', 'uids', 'warcs_count', 'warcs_bytes',
+        'service', 'host', 'instance')
     list_display = ['harvest_type', 'id', 'harvest_id', 'historical_collection', 'status', 'date_requested',
                     'date_updated']
     list_filter = ['harvest_type', 'status', 'date_requested', 'date_updated']
@@ -154,7 +154,7 @@ class HarvestStat(a.ModelAdmin):
 
 class Warc(a.ModelAdmin):
     fields = (
-       'warc_id', 'harvest', 'path', 'sha1', 'bytes', 'date_created')
+        'warc_id', 'harvest', 'path', 'sha1', 'bytes', 'date_created')
     list_display = ['id', 'warc_id', 'harvest', 'date_created']
     list_filter = ['date_created']
     search_fields = ['id', 'warc_id', 'path']
@@ -162,13 +162,14 @@ class Warc(a.ModelAdmin):
 
 class Export(a.ModelAdmin):
     fields = (
-       'user', 'collection', 'seeds', 'export_id', 'export_type', 'export_format',
-       'status', 'path', 'date_requested', 'date_started', 'date_ended', 'dedupe',
-       'item_date_start', 'item_date_end', 'harvest_date_start', 'harvest_date_end',
-       'infos', 'warnings', 'errors', 'service', 'host', 'instance')
+        'user', 'collection', 'seeds', 'export_id', 'export_type', 'export_format',
+        'status', 'path', 'date_requested', 'date_started', 'date_ended', 'dedupe',
+        'item_date_start', 'item_date_end', 'harvest_date_start', 'harvest_date_end',
+        'infos', 'warnings', 'errors', 'service', 'host', 'instance')
     list_display = ['id', 'user', 'export_type', 'date_requested', 'status']
     list_filter = ['date_requested', 'user', 'export_type', 'status']
     search_fields = ['id', 'export_id', 'path']
+
 
 a.site.register(m.Credential, Credential)
 a.site.register(m.HistoricalCredential, HistoricalCredential)
