@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from os import environ as env
+from django.conf.locale.en import formats as sfm_formats
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -121,6 +122,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+sfm_formats.DATETIME_FORMAT = "N j, Y, P e"
 
 SITE_ID = 1
 
