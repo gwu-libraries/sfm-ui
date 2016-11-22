@@ -35,6 +35,11 @@ class UIConfig(AppConfig):
             log.debug("Adding 5 minute timer")
             Collection.SCHEDULE_CHOICES.append((5, "Every 5 minutes"))
 
+        # Add 5 minute interval
+        if settings.HUNDRED_ITEM_SEGMENT:
+            log.debug("Adding 10 item export segment")
+            Export.SEGMENT_CHOICES.append((100, "100"))
+
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
             sched = start_sched()

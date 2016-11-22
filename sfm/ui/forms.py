@@ -799,7 +799,7 @@ class ExportForm(forms.ModelForm):
 
     class Meta:
         model = Export
-        fields = ['seeds', 'export_format', 'dedupe',
+        fields = ['seeds', 'export_format', 'export_segment_size', 'dedupe',
                   'item_date_start', 'item_date_end',
                   'harvest_date_start', 'harvest_date_end']
         localized_fields = None
@@ -825,6 +825,7 @@ class ExportForm(forms.ModelForm):
                 '',
                 'seeds',
                 'export_format',
+                'export_segment_size',
                 'dedupe',
                 'item_date_start',
                 'item_date_end',

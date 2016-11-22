@@ -42,6 +42,7 @@ def request_export(export):
         "id": export.export_id,
         "type": export.export_type,
         "format": export.export_format,
+        "segment_size": export.export_segment_size,
         "dedupe": export.dedupe,
         "path": export.path
     }

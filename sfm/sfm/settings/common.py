@@ -178,6 +178,9 @@ PERFORM_EXPORTS = True
 # Add a 5 minute schedule interval. This is useful for dev and testing.
 FIVE_MINUTE_SCHEDULE = env.get('SFM_FIVE_MINUTE_SCHEDULE', 'False') == 'True'
 
+# Add a 100 item export segment. This is useful for dev and testing.
+HUNDRED_ITEM_SEGMENT = env.get('SFM_HUNDRED_ITEM_SEGMENT', 'False') == 'True'
+
 # Whether to send emails.
 PERFORM_EMAILS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -189,7 +192,6 @@ EMAIL_USE_TLS = True
 
 # Whether to run apscheduler
 RUN_SCHEDULER = env.get('SFM_RUN_SCHEDULER', 'False') == 'True'
-
 
 PERFORM_USER_HARVEST_EMAILS = env.get('SFM_PERFORM_USER_HARVEST_EMAILS', 'True') == 'True'
 USER_HARVEST_EMAILS_HOUR = env.get('SFM_USER_HARVEST_EMAILS_HOUR', '1')

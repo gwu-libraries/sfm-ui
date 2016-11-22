@@ -41,6 +41,7 @@
     {% endif %}
     <p><strong>Export type:</strong> {{ export.export_type }}</p>
     <p><strong>Format:</strong> {{ export.export_format }}</p>
+    <p><strong>Export segment size:</strong> {{ export.get_export_segment_size_display }}</p>
     <p><strong>Deduplicate:</strong> {{ export.dedupe }}</p>
     <p><strong>Item start date:</strong> {{ export.item_date_start }}</p>
     <p><strong>Item end date:</strong> {{ export.item_date_end }}</p>

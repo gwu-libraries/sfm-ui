@@ -521,10 +521,10 @@ def _get_fileinfos(path):
     if os.path.exists(path):
         contents = os.listdir(path)
         for item in contents:
-            path = os.path.join(path, item)
-            if os.path.isfile(path):
-                fileinfos.append((item, os.path.getsize(path)))
-    return fileinfos
+            p = os.path.join(path, item)
+            if os.path.isfile(p):
+                fileinfos.append((item, os.path.getsize(p)))
+    return sorted(fileinfos)
 
 
 class ExportDetailView(LoginRequiredMixin, DetailView):
