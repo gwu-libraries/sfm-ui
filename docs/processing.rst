@@ -3,8 +3,12 @@
 ============
 
 
-Your social media data can be used in a processing/analysis pipeline. SFM provides several
-tools and approaches to support this.
+Your social media collection can be used in a processing/analysis pipeline. SFM
+provides several tools and approaches to support this.
+
+Using these tools requires programming knowledge, particularly in Python and the
+Linux shell. If you are interested in using these resources and do not have the
+requisite experience, please contact your SFM administrator for help.
 
 -------
  Tools
@@ -168,7 +172,7 @@ And to save space, the JSON files can be gzip compressed::
 
 You might also want to change the file extension of the destination file to ".json.gz" by adjusting the commmand use
 to create the list of JSON destination files.  To access the tweets in a gzipped JSON file, use::
-    
+
     gzip -c <filepath>
 
 Counting posts

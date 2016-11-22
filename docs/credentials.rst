@@ -5,12 +5,20 @@
 Accessing the APIs of social media platforms requires credentials for authentication
 (also knows as API keys). Social Feed Manager supports managing those credentials.
 
-Most API credentials have two parts: an application credential and a user credential.
-(Flickr is the exception -- only an application credential is necessary.)
+Credentials/authentication allow a user to collect data through a platform’s
+API. Limits are placed on methods and rate of collection on a per credential
+basis.
 
-It is important to understand how credentials/authentication affect what API methods can be
-invoked and rate limits. For more information, consult the documentation for each
-social media platform's API.
+SFM users are responsible for creating their own new credentials so that
+they can control their own collection rates and can ensure that they are
+following each platform’s API policies.
+
+Most API credentials have two parts: an application credential and a user
+credential.(Flickr is the exception -- only an application credential
+is necessary.)
+
+For more information about platform-specific policies, consult the documentation
+for each social media platform's API.
 
 ----------------------
  Managing credentials
