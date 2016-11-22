@@ -6,8 +6,8 @@
 Your social media collection can be used in a processing/analysis pipeline. SFM
 provides several tools and approaches to support this.
 
-Using these tools requires programming knowledge, particularly in Python and
-JavaScript. If you are interested in using these resources and do not have the
+Using these tools requires programming knowledge, particularly in Python and the
+Linux shell. If you are interested in using these resources and do not have the
 requisite experience, please contact your SFM administrator for help.
 
 -------
