@@ -203,4 +203,5 @@ Using jq to process JSON
 For tips on using jq with JSON from Twitter and other sources, see:
 
 * `Getting Started Working with Twitter Data Using jq <http://nbviewer.jupyter.org/github/gwu-libraries/notebooks/blob/master/20160407-twitter-analysis-with-jq/Working-with-twitter-using-jq.ipynb>`_
+* `Recipes for processing Twitter data with jq <http://nbviewer.jupyter.org/github/gwu-libraries/notebooks/blob/master/20161122-twitter-jq-recipes/twitter_jq_recipes.ipynb>`_
 * `Reshaping JSON with jq <http://programminghistorian.org/lessons/json-and-jq.html>`_
