@@ -19,6 +19,7 @@ from .utils import collection_path as get_collection_path
 from .utils import collection_set_path as get_collection_set_path
 from .utils import collection_path_by_id as get_collection_path_by_id
 from .models import Group, CollectionSet, Collection, User, Credential, Seed, Harvest, Warc
+from sfmutils.utils import datetime_now
 
 log = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ class RecordSerializer:
             return
 
         log.info("Serializing %s", collection)
-        serialization_date = datetime.utcnow()
+        serialization_date = datetime_now()
 
         # Initialize records dir
         self._initialize_records_dir(records_path)
@@ -263,7 +264,7 @@ class RecordSerializer:
     @staticmethod
     def _write_readme(model_name, obj, path):
         readme_template = get_template('readme/{}.txt'.format(model_name))
-        readme_txt = readme_template.render(Context({model_name: obj, "now": datetime.utcnow()}))
+        readme_txt = readme_template.render(Context({model_name: obj, "now": datetime_now()}))
         readme_filepath = os.path.join(path, "README.txt")
         log.debug("Writing %s README to %s: %s", model_name, readme_filepath, readme_txt)
         with codecs.open(readme_filepath, "w") as f:

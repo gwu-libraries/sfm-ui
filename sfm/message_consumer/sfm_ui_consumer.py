@@ -4,6 +4,8 @@ from sfmutils.harvester import CODE_UNKNOWN_ERROR
 from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
 from ui.utils import get_email_addresses_for_collection_set
+from ui.export import create_readme_for_export
+
 import json
 from django.core.mail import send_mail
 from django.conf import settings
@@ -13,6 +15,8 @@ from django.contrib.sites.models import Site
 import iso8601
 import time
 from smtplib import SMTPException
+import os
+import codecs
 
 log = logging.getLogger(__name__)
 
@@ -214,6 +218,17 @@ class SfmUiConsumer(BaseConsumer):
             export.host = self.message.get("host")
             export.instance = self.message.get("instance")
             export.save()
+
+            # Write README
+            if os.path.exists(export.path):
+                readme_txt = create_readme_for_export(export)
+                readme_filepath = os.path.join(export.path, "README.txt")
+                log.debug("Writing export README to %s: %s", readme_filepath, readme_txt)
+                with codecs.open(readme_filepath, "w") as f:
+                    f.write(readme_txt)
+
+            else:
+                log.warn("Not writing export README for %s since %s does not exist.", export, export.path)
 
             if export.status in (Export.SUCCESS, Export.FAILURE):
                 # Get receiver's email address

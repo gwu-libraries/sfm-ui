@@ -190,7 +190,8 @@ Exports are run in the background, and larger exports may take a significant
 amount of time. You will receive an email when it is completed or you can
 monitor the status on the Exports page, where you can vew details about the
 export.  This is also where you will find a link to download the export file
-once it becomes available.
+once it becomes available.  A README file will be created for each export containing
+documentation on the export and the collection.
 
 .. image:: images/quickstart/export_page.png
 

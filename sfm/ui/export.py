@@ -1,7 +1,14 @@
-from .rabbit import RabbitWorker
 import logging
+from datetime import datetime
+
 from django.utils import timezone
+from django.template.loader import get_template
+from django.template import Context
+
 from .models import Export
+from .utils import diff_collection_and_seeds_history
+from .rabbit import RabbitWorker
+from sfmutils.utils import datetime_now
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +33,6 @@ def export_m2m_receiver(sender, **kwargs):
 
 
 def request_export(export):
-
     # Return if already requested
     if export.status != Export.NOT_REQUESTED:
         log.debug("Export %s already requested", export.export_id)
@@ -79,3 +85,21 @@ def request_export(export):
     export.date_requested = timezone.now()
     export.status = Export.REQUESTED
     export.save()
+
+
+def _create_readme(collection, export, now):
+    readme_template = get_template('readme/export.txt')
+    return readme_template.render(Context({"collection": collection,
+                                           "export": export,
+                                           "diffs": diff_collection_and_seeds_history(collection),
+                                           "now": now}))
+
+
+def create_readme_for_collection(collection):
+    return _create_readme(collection, None, datetime_now())
+
+
+def create_readme_for_export(export):
+    # An export will have seeds or collection
+    return _create_readme(export.collection if export.collection else export.seeds.all()[0].collection, export,
+                          export.date_ended)

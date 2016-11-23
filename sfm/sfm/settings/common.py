@@ -126,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/ref/settings/#datetime-format
 # https://docs.djangoproject.com/en/1.10/ref/templates/builtins/#date
 sfm_formats.DATETIME_FORMAT = "N j, Y, g:i:s a e"
+DATETIME_FORMAT = "N j, Y, g:i:s a e"
 
 SITE_ID = 1
 
