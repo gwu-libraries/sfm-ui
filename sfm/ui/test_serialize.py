@@ -35,7 +35,7 @@ class SerializeTests(TestCase):
         self.credential2 = Credential.objects.create(user=self.user2, platform="test_platform",
                                                      token='{"key":"key2"}')
         self.credential3 = Credential.objects.create(user=self.user1, platform="test_platform",
-                                                token='{"key":"key3"}')
+                                                     token='{"key":"key3"}')
 
         # Now change credential2
         self.credential2.token = '{"key":"key1.1"}'
@@ -102,6 +102,12 @@ class SerializeTests(TestCase):
         # users, seed, historical seeds
         # harvests, harvest_stats, warcs, info
         self.assertEqual(14, len(os.listdir(self.collection1_records_path)))
+
+        # Number of historical records for particular objects
+        self.assertEqual(2, self.collection1.history.count())
+        self.assertEqual(2, self.collection_set.history.count())
+        self.assertEqual(2, self.credential2.history.count())
+        self.assertEqual(2, self.seed1.history.count())
 
         # Deserialize while collection set already exists
         self.assertEqual(2, Group.objects.count())
@@ -207,6 +213,13 @@ class SerializeTests(TestCase):
         self.assertEqual(3, HarvestStat.objects.count())
         self.assertEqual(2, Warc.objects.count())
 
+        # Number of historical records for particular objects
+        self.assertEqual(4, Collection.objects.get(collection_id=self.collection1.collection_id).history.count())
+        self.assertEqual(3, CollectionSet.objects.get(
+            collection_set_id=self.collection_set.collection_set_id).history.count())
+        self.assertEqual(2, Credential.objects.get(credential_id=self.credential2.credential_id).history.count())
+        self.assertEqual(2, Seed.objects.get(seed_id=self.seed1.seed_id).history.count())
+
         # Collection turned off
         collection = Collection.objects.get_by_natural_key(self.collection1.collection_id)
         self.assertFalse(collection.is_active)
@@ -253,11 +266,11 @@ class SerializeTests(TestCase):
         self.assertTrue(serializer._should_serialize(self.collection1, self.collection1_records_path))
 
         # Existing serialization_date before last update
-        serializer._write_info(datetime.utcnow()-timedelta(days=1), self.collection1_records_path)
+        serializer._write_info(datetime.utcnow() - timedelta(days=1), self.collection1_records_path)
         self.assertTrue(serializer._should_serialize(self.collection1, self.collection1_records_path))
 
         # Existing serialization after last update
-        serializer._write_info(datetime.utcnow()+timedelta(days=1), self.collection1_records_path)
+        serializer._write_info(datetime.utcnow() + timedelta(days=1), self.collection1_records_path)
         self.assertFalse(serializer._should_serialize(self.collection1, self.collection1_records_path))
 
         # Update collection

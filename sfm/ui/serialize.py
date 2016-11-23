@@ -407,7 +407,9 @@ class RecordDeserializer:
                 self._deserialize(collection_set_record_filepath)
 
                 # Historical collection set
-                self._deserialize(historical_collection_set_record_filepath)
+                self._deserialize_historical_objects(historical_collection_set_record_filepath,
+                                                     collection_set_record_filepath,
+                                                     "collection_set_id", CollectionSet)
 
                 # Add a history note
                 collection_set = CollectionSet.objects.get(collection_set_id=collection_set_id)
@@ -424,13 +426,15 @@ class RecordDeserializer:
             self._deserialize(collection_record_filepath)
 
             # Collection history
-            self._deserialize(historical_collection_record_filepath)
+            self._deserialize_historical_objects(historical_collection_record_filepath, collection_record_filepath,
+                                                 "collection_id", Collection)
 
             # Seeds
             self._deserialize(seed_filepath)
 
             # Historical seeds
-            self._deserialize(historical_seed_filepath)
+            self._deserialize_historical_objects(historical_seed_filepath, seed_filepath,
+                                                 "seed_id", Seed)
 
             # Harvests
             self._deserialize(harvest_filepath)
@@ -486,11 +490,21 @@ class RecordDeserializer:
             else:
                 log.debug("Credential %s already exists", d_credential.object.credential_id)
 
-        for d_historical_credential in self._deserialize_iter(historical_credentials_record_filepath):
-            if d_historical_credential.object.instance.credential_id in credential_ids:
-                log.debug("Saving historical credential %s (%s)", d_historical_credential.object.instance.credential_id,
-                          d_historical_credential.object.history_date)
-                d_historical_credential.save()
+        self._deserialize_historical_objects(historical_credentials_record_filepath, credentials_record_filepath,
+                                             "credential_id", Credential, credential_ids)
+
+    def _deserialize_historical_objects(self, historical_record_filepath, record_filepath, record_id_field, Model,
+                                        limit_ids=None):
+        # Historical objects need to be handled differently because they must have their id set correctly.
+        records_ids_to_keys = {}
+        records = self._load_record(record_filepath)
+        for record in records:
+            record_id = record["fields"][record_id_field]
+            records_ids_to_keys[record_id] = Model.objects.get(**{record_id_field: record_id}).id
+        for d_obj in self._deserialize_iter(historical_record_filepath):
+            d_obj.object.id = records_ids_to_keys[getattr(d_obj.object, record_id_field)]
+            if limit_ids is None or getattr(d_obj.object.instance, record_id_field) in limit_ids:
+                d_obj.save()
 
     @staticmethod
     def _load_record(record_filepath):
