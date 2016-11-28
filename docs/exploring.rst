@@ -33,8 +33,8 @@ also show how to limit to a single collection set by providing the collection se
 By default, Kibana is available at `http://<your hostname>:5601/app/kibana <http://localhost:5601/app/kibana>`_. (Also,
 by default Elasticsearch is available on port 9200 and Logstash is available on port 5000.)
 
-If enabling multiple ELK containers, add multiple containers to your ``docker-compose.yml``. Make sure to give each a
-unique name and map to different ports.
+If enabling multiple ELK containers, add multiple containers to your ``docker-compose.yml``. Make sure to give each container a unique name and a unique ``hostname:`` value, and make sure that each container maps to different ports.
+
 
 --------------
  Loading data
