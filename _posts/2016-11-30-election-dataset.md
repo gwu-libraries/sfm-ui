@@ -3,7 +3,7 @@ layout: article
 permalink: /posts/2016-11-30-election-dataset
 title: "2016 United States Presidential Election Tweet Ids dataset released"
 author: justin_littman 
-excerpt: "The SFM team released a dataset of 280 million tweets related to the 2016 U.S. presidential election."
+excerpt: "The SFM team released a dataset of 280 million tweet ids related to the 2016 U.S. presidential election."
 ---
 
 The 2016 U.S. presidential election has been very influential for the Social Feed Manager project.  First, it provided a ready supply of short-term (think, the debates) and long-term (think, the entire election season) events for testing collecting with SFM.  Second, it provided the SFM team the opportunity to build a collection of social media data that is potentially valuable to researchers.  While not political scientists or historians, the intuition of the SFM team has been that writing the history of the 2016 U.S. presidential election will require the relevant social media data.
