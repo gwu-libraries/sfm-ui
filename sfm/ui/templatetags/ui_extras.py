@@ -2,6 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.contrib.humanize.templatetags.humanize import intcomma
 import json as json_lib
+from collections import OrderedDict
 
 register = template.Library()
 
@@ -11,7 +12,7 @@ def json(value, name=None):
     rend = u""
     if value:
         try:
-            j = json_lib.loads(value)
+            j = json_lib.loads(value, object_pairs_hook=OrderedDict)
         except ValueError:
             j = value
         if isinstance(j, dict):
