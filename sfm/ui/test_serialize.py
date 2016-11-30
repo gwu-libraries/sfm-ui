@@ -30,18 +30,18 @@ class SerializeTests(TestCase):
                                                    password="test_password")
         self.user2 = User.objects.create_superuser(username="test_user2", email="test_user@test.com",
                                                    password="test_password")
-        credential1 = Credential.objects.create(user=self.user1, platform="test_platform",
+        credential1 = Credential.objects.create(user=self.user1, platform="test_platform1",
                                                 token='{"key":"key1"}')
-        self.credential2 = Credential.objects.create(user=self.user2, platform="test_platform",
+        self.credential2 = Credential.objects.create(user=self.user2, platform="test_platform2",
                                                      token='{"key":"key2"}')
-        self.credential3 = Credential.objects.create(user=self.user1, platform="test_platform",
+        self.credential3 = Credential.objects.create(user=self.user1, platform="test_platform3",
                                                      token='{"key":"key3"}')
 
         # Now change credential2
-        self.credential2.token = '{"key":"key1.1"}'
+        self.credential2.token = '{"key":"key2.1"}'
         self.credential2.save()
         self.collection1 = Collection.objects.create(collection_set=self.collection_set,
-                                                     name="test_collection",
+                                                     name="test_collection1",
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      credential=credential1,
                                                      is_active=True)
@@ -85,6 +85,16 @@ class SerializeTests(TestCase):
                             bytes=11,
                             date_created=datetime.utcnow())
 
+        # Another collection
+        self.collection2 = Collection.objects.create(collection_set=self.collection_set,
+                                                     name="test_collection2",
+                                                     harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                     credential=credential1,
+                                                     is_active=True)
+        self.collection2_path = get_collection_path(self.collection2, sfm_data_dir=self.data_dir)
+
+
+
     def tearDown(self):
         if os.path.exists(self.data_dir):
             shutil.rmtree(self.data_dir)
@@ -113,8 +123,8 @@ class SerializeTests(TestCase):
         self.assertEqual(2, Group.objects.count())
         self.assertEqual(1, CollectionSet.objects.count())
         self.assertEqual(2, CollectionSet.history.count())
-        self.assertEqual(1, Collection.objects.count())
-        self.assertEqual(2, Collection.history.count())
+        self.assertEqual(2, Collection.objects.count())
+        self.assertEqual(3, Collection.history.count())
         self.assertEqual(3, Credential.objects.count())
         self.assertEqual(4, Credential.history.count())
         self.assertEqual(2, User.objects.count())
@@ -130,8 +140,8 @@ class SerializeTests(TestCase):
         self.assertEqual(2, Group.objects.count())
         self.assertEqual(1, CollectionSet.objects.count())
         self.assertEqual(2, CollectionSet.history.count())
-        self.assertEqual(1, Collection.objects.count())
-        self.assertEqual(2, Collection.history.count())
+        self.assertEqual(2, Collection.objects.count())
+        self.assertEqual(3, Collection.history.count())
         self.assertEqual(3, Credential.objects.count())
         self.assertEqual(4, Credential.history.count())
         self.assertEqual(2, User.objects.count())
@@ -160,6 +170,7 @@ class SerializeTests(TestCase):
         self.assertEqual(0, Seed.history.count())
 
         self.collection1.delete()
+        self.collection2.delete()
         self.assertEqual(0, Collection.objects.count())
         Collection.history.all().delete()
         self.assertEqual(0, Collection.history.count())
@@ -198,10 +209,10 @@ class SerializeTests(TestCase):
         # +1 for added history note
         self.assertEqual(3, CollectionSet.history.count())
         self.assertEqual(CollectionSet.history.first().instance.history_note, "Collection set imported.")
-        self.assertEqual(1, Collection.objects.count())
-        # +1 for turning off collection after it is deserialized
-        # +1 for added history note
-        self.assertEqual(4, Collection.history.count())
+        self.assertEqual(2, Collection.objects.count())
+        # +2 for turning off collection after it is deserialized
+        # +2 for added history note
+        self.assertEqual(7, Collection.history.count())
         self.assertEqual(Collection.history.first().instance.history_note, "Collection imported.")
         self.assertEqual(3, Credential.objects.count())
         # This is one less since credential1's history was deleted.
@@ -215,9 +226,16 @@ class SerializeTests(TestCase):
 
         # Number of historical records for particular objects
         self.assertEqual(4, Collection.objects.get(collection_id=self.collection1.collection_id).history.count())
+        # Make sure we got the right historical objects
+        for h_collection in Collection.objects.get(collection_id=self.collection1.collection_id).history.all():
+            self.assertEqual("test_collection1", h_collection.name)
+
         self.assertEqual(3, CollectionSet.objects.get(
             collection_set_id=self.collection_set.collection_set_id).history.count())
         self.assertEqual(2, Credential.objects.get(credential_id=self.credential2.credential_id).history.count())
+        # Make sure we got the right historical objects
+        for h_credential in Credential.objects.get(credential_id=self.credential2.credential_id).history.all():
+            self.assertEqual("test_platform2", h_credential.platform)
         self.assertEqual(2, Seed.objects.get(seed_id=self.seed1.seed_id).history.count())
 
         # Collection turned off
@@ -328,3 +346,90 @@ class SerializeTests(TestCase):
         Warc.objects.create(harvest=self.harvest1, warc_id=default_uuid(), path="/data/warc3.warc.gz", sha1="warc3sha",
                             bytes=10, date_created=datetime.utcnow())
         self.assertTrue(serializer._should_serialize(self.collection1, self.collection1_records_path))
+
+    def test_serialize_by_collection(self):
+        serializer = serialize.RecordSerializer(data_dir=self.data_dir)
+        serializer.serialize_collection_set(self.collection_set)
+
+        deserializer = serialize.RecordDeserializer(data_dir=self.data_dir)
+
+        deserializer.deserialize_collection(self.collection2_path)
+        deserializer.deserialize_collection(self.collection1_path)
+
+        # Nothing should change
+        self.assertEqual(2, Group.objects.count())
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(2, CollectionSet.history.count())
+        self.assertEqual(2, Collection.objects.count())
+        self.assertEqual(3, Collection.history.count())
+        self.assertEqual(3, Credential.objects.count())
+        self.assertEqual(4, Credential.history.count())
+        self.assertEqual(2, User.objects.count())
+        self.assertEqual(2, Seed.objects.count())
+        self.assertEqual(3, Seed.history.count())
+        self.assertEqual(3, Harvest.objects.count())
+        self.assertEqual(3, HarvestStat.objects.count())
+        self.assertEqual(2, Warc.objects.count())
+
+        # Partially clean the database in preparation for deserializing
+        Warc.objects.all().delete()
+        HarvestStat.objects.all().delete()
+        self.harvest1.delete()
+        self.harvest2.delete()
+        self.harvest3.delete()
+        Seed.objects.all().delete()
+        Seed.history.all().delete()
+        self.collection1.delete()
+        self.collection2.delete()
+        Collection.history.all().delete()
+        # Note that credential1 still exists.
+        self.credential2.delete()
+        self.credential3.delete()
+        # This is also deleting credential1's history
+        Credential.history.all().delete()
+        self.collection_set.delete()
+        self.group2.delete()
+        # Note that group1 still exists.
+        self.assertEqual(1, Group.objects.count())
+        # Note that user1 still exists
+        self.user2.delete()
+        self.assertEqual(1, User.objects.count())
+        self.assertEqual(1, Credential.objects.count())
+        # Note that collection set still exists
+
+        # Now deserialize again
+        deserializer.deserialize_collection(self.collection2_path)
+        deserializer.deserialize_collection(self.collection1_path)
+
+        # And check the deserialization
+        self.assertEqual(2, Group.objects.count())
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(2, CollectionSet.history.count())
+        self.assertEqual(2, Collection.objects.count())
+        # +2 for turning off collection after it is deserialized
+        # +2 for added history note
+        self.assertEqual(7, Collection.history.count())
+        self.assertEqual(Collection.history.first().instance.history_note, "Collection imported.")
+        self.assertEqual(3, Credential.objects.count())
+        # This is one less since credential1's history was deleted.
+        self.assertEqual(3, Credential.history.count())
+        self.assertEqual(2, User.objects.count())
+        self.assertEqual(2, Seed.objects.count())
+        self.assertEqual(3, Seed.history.count())
+        self.assertEqual(3, Harvest.objects.count())
+        self.assertEqual(3, HarvestStat.objects.count())
+        self.assertEqual(2, Warc.objects.count())
+
+        # Number of historical records for particular objects
+        self.assertEqual(4, Collection.objects.get(collection_id=self.collection1.collection_id).history.count())
+        # Make sure we got the right historical objects
+        for h_collection in Collection.objects.get(collection_id=self.collection1.collection_id).history.all():
+            self.assertEqual("test_collection1", h_collection.name)
+
+        self.assertEqual(3, CollectionSet.objects.get(
+            collection_set_id=self.collection_set.collection_set_id).history.count())
+        self.assertEqual(2, Credential.objects.get(credential_id=self.credential2.credential_id).history.count())
+        # Make sure we got the right historical objects
+        for h_credential in Credential.objects.get(credential_id=self.credential2.credential_id).history.all():
+            self.assertEqual("test_platform2", h_credential.platform)
+        self.assertEqual(2, Seed.objects.get(seed_id=self.seed1.seed_id).history.count())

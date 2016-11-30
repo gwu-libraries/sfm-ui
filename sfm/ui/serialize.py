@@ -13,6 +13,7 @@ from django.template import Context
 from django.conf import settings
 from django.db.models import Max
 from django.core.serializers.base import DeserializationError
+from django.db import transaction
 
 from .utils import collection_path as get_collection_path
 from .utils import collection_set_path as get_collection_set_path
@@ -459,6 +460,7 @@ class RecordDeserializer:
         else:
             log.warning("Collection already exists, so not deserializing")
 
+    @transaction.atomic
     def _deserialize_groups(self, group_record_filepath):
         log.debug("Deserializing groups")
         for d_group in self._deserialize_iter(group_record_filepath):
@@ -468,6 +470,7 @@ class RecordDeserializer:
             else:
                 log.debug("Group %s already exists", d_group.object.name)
 
+    @transaction.atomic
     def _deserialize_users(self, user_record_filepath):
         log.debug("Deserializing users")
         for d_user in self._deserialize_iter(user_record_filepath):
@@ -479,6 +482,7 @@ class RecordDeserializer:
             else:
                 log.debug("User %s already exists", d_user.object.username)
 
+    @transaction.atomic
     def _deserialize_credentials(self, credentials_record_filepath, historical_credentials_record_filepath):
         log.debug("Deserializing credentials")
         credential_ids = []
@@ -493,6 +497,7 @@ class RecordDeserializer:
         self._deserialize_historical_objects(historical_credentials_record_filepath, credentials_record_filepath,
                                              "credential_id", Credential, credential_ids)
 
+    @transaction.atomic
     def _deserialize_historical_objects(self, historical_record_filepath, record_filepath, record_id_field, Model,
                                         limit_ids=None):
         # Historical objects need to be handled differently because they must have their id set correctly.
@@ -515,6 +520,7 @@ class RecordDeserializer:
     def _deserialize_item(self, record_filepath):
         return self._deserialize_iter(record_filepath).next()
 
+    @transaction.atomic
     def _deserialize(self, filepath):
         for d_obj in self._deserialize_iter(filepath):
             d_obj.save()
