@@ -387,15 +387,16 @@ class SerializeTests(TestCase):
         self.credential3.delete()
         # This is also deleting credential1's history
         Credential.history.all().delete()
-        self.collection_set.delete()
-        self.group2.delete()
-        # Note that group1 still exists.
-        self.assertEqual(1, Group.objects.count())
+        # self.group2.delete()
+        # Note that group1 and group2 still exists.
+        self.assertEqual(2, Group.objects.count())
         # Note that user1 still exists
         self.user2.delete()
         self.assertEqual(1, User.objects.count())
         self.assertEqual(1, Credential.objects.count())
         # Note that collection set still exists
+        self.assertEqual(1, CollectionSet.objects.count())
+        self.assertEqual(2, CollectionSet.history.count())
 
         # Now deserialize again
         deserializer.deserialize_collection(self.collection2_path)
@@ -426,7 +427,7 @@ class SerializeTests(TestCase):
         for h_collection in Collection.objects.get(collection_id=self.collection1.collection_id).history.all():
             self.assertEqual("test_collection1", h_collection.name)
 
-        self.assertEqual(3, CollectionSet.objects.get(
+        self.assertEqual(2, CollectionSet.objects.get(
             collection_set_id=self.collection_set.collection_set_id).history.count())
         self.assertEqual(2, Credential.objects.get(credential_id=self.credential2.credential_id).history.count())
         # Make sure we got the right historical objects
