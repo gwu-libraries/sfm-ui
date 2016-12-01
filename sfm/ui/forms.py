@@ -174,7 +174,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option', 'user_images_option'))
+        self.helper.layout[0][3].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -197,7 +197,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
             "web_resources": self.cleaned_data["web_resources_option"],
             "user_images": self.cleaned_data["user_images_option"]
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
         return m
 
@@ -230,7 +230,7 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
         return m
 
@@ -261,7 +261,7 @@ class CollectionTwitterSampleForm(BaseCollectionForm):
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"],
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.schedule_minutes = None
         m.save()
         return m
@@ -294,7 +294,7 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.schedule_minutes = None
         m.save()
         return m
@@ -353,7 +353,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'web_resources_option', 'image_sizes'))
+        self.helper.layout[0][3].extend(('image_sizes', 'incremental', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -372,7 +372,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
             "image_sizes": self.cleaned_data["image_sizes"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
         return m
 
@@ -408,7 +408,7 @@ class CollectionTumblrBlogPostsForm(BaseCollectionForm):
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"]
         }
-        m.harvest_options = json.dumps(harvest_options)
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
         return m
 
