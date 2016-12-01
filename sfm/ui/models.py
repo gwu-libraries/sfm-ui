@@ -587,12 +587,21 @@ class Export(models.Model):
         ("json_full", "Full JSON"),
         ("dehydrate", "Text file of identifiers (dehydrate)")
     )
+    SEGMENT_CHOICES = [
+        (100000, "100,000"),
+        (250000, "250,000"),
+        (5000000, "500,000"),
+        (10000000, "1,000,000"),
+        (None, "Single file"),
+    ]
     user = models.ForeignKey(User, related_name='exports')
     collection = models.ForeignKey(Collection, blank=True, null=True)
     seeds = models.ManyToManyField(Seed, blank=True)
     export_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     export_type = models.CharField(max_length=255)
     export_format = models.CharField(max_length=10, choices=FORMAT_CHOICES, default="csv")
+    export_segment_size = models.BigIntegerField(choices=SEGMENT_CHOICES, default=250000,
+                                                 help_text="Number of items per file.", null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NOT_REQUESTED)
     path = models.TextField(blank=True)
     date_requested = models.DateTimeField(blank=True, null=True)

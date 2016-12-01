@@ -354,6 +354,7 @@ Export start messages specify the requests for an export. Example::
         "path": "/sfm-data/exports/45",
         "format": "csv",
         "dedupe": true,
+        "segment_size": 100000,
         "item_date_start": "2015-07-28T11:17:36.640178",
         "item_date_end": "2016-07-28T11:17:36.640178",
         "harvest_date_start": "2015-07-28T11:17:36.640178",
@@ -376,7 +377,8 @@ Another example::
             }
         ],
         "path": "/sfm-data/exports/45",
-        "format": "json"
+        "format": "json",
+        "segment_size": null
     }
 
 * The routing key will be `export.start.<social media platform>.<type>`. For example,
@@ -392,6 +394,8 @@ Another example::
 * `dedupe`: If true, duplicate social media content should be removed.
 * `item_date_start` and `item_date_end`: The date of social media content should be within this range.
 * `harvest_date_start` and `harvest_date_end`: The harvest date of social media content should be within this range.
+* `segment_size`: Maximum number of items to include in a single file. `null` means that all items should be placed in a
+  single file.
 
 Export status message
 ----------------------
