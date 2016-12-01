@@ -428,6 +428,20 @@ class Seed(models.Model):
     class Meta:
         diff_fields = ("token", "uid", "is_active")
 
+    def social_url(self):
+        twitter_user = 'twitter_user_timeline'
+        flickr_user = 'flickr_user'
+        tumblr_blog = 'tumblr_blog_posts'
+        twitter_user_url = "https://twitter.com/"
+        flickr_user_url = 'https://www.flickr.com/photos/'
+        tumblr_blog_url = '.tumblr.com'
+        if twitter_user in self.collection.harvest_type and self.token:
+            return twitter_user_url + self.token
+        if flickr_user in self.collection.harvest_type and self.token:
+            return flickr_user_url + self.token
+        if tumblr_blog in self.collection.harvest_type and self.uid:
+            return 'https://' + self.uid + tumblr_blog_url
+
     def __str__(self):
         return '<Seed %s "%s">' % (self.id, self.token)
 

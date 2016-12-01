@@ -146,6 +146,7 @@
                 <tr>
                     <th>Token</th>
                     <th>Uid</th>
+                    <th>Link</th>
                     <th>Active</th>
                 </tr>
                 </thead>
@@ -153,6 +154,11 @@
                 <tr>
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
+                    {% if seed.social_url %}
+                    <td><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
                     <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
 				</tr>
 				{% endfor %}
