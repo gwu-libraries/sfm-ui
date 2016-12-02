@@ -31,6 +31,9 @@
             {% if seed.uid %}
                 <p><strong>Uid:</strong> {{ seed.uid }}</p>
             {% endif %}
+            {% if seed.social_url %}
+                <p><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
+            {% endif %}
             <p><strong>Active:</strong> {{seed.is_active|yesno:"Yes,No" }}</p>
             <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
             </p>
