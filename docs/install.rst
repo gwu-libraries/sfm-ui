@@ -209,7 +209,7 @@ It may take several minutes for the images to be downloaded and the containers t
 .. _server-sizing:
 
 ---------------
- Server Sizing
+ Server sizing
 ---------------
 
 While we have not performed any system engineering analysis of optimal server sizing for SFM, the following are
@@ -224,4 +224,4 @@ Use in a class            m4.xlarge (AWS)   4           16
 Continuous integration    t2.medium (AWS)   2           4
 Heavy dataset processing  m4.4xlarge (AWS)  16          64
 Development               Docker for Mac    2           3
-========================  ================  ==========  ======
+========================  ================  ==========  ========
