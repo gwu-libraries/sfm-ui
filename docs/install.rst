@@ -58,6 +58,7 @@ Notes:
 * The first time you bring up the containers, their images will be pulled from `Docker Hub <https://hub.docker.com>`_. This will take several minutes.
 * For instructions on how to make configuration changes *after* the containers have been brought up, see :ref:`install-configuration`.
 * To learn more about scaling , see :ref:`docker-scaling`.
+* For suggestions on sizing your SFM server, see :ref:`server-sizing`.
 
 -------------------------
  Amazon EC2 installation
@@ -130,8 +131,7 @@ Note the following:
 
 * Starting up the EC2 instance will take several minutes.
 * This has been tested with *Ubuntu Server 14.04 LTS*, but may work with other AMI types.
-* We don't have recommendations for sizing, but providing multiple processors even for
-  testing/experimentation is suggested.
+* For suggestions on sizing your SFM server, see :ref:`server-sizing`.
 * If you need to make additional changes to your ``docker-compose.yml``, you can ssh into the EC2 instance
   and make changes.  ``docker-compose.yml`` and ``.env`` will be in the default user's
   home directory.
@@ -142,9 +142,9 @@ Note the following:
 
 .. _install-configuration:
 
--------------
-Configuration
--------------
+---------------
+ Configuration
+---------------
 
 Configuration is documented in ``example.env``. For a production deployment, pay particular attention to the following:
 
@@ -205,3 +205,23 @@ in your new ``docker-compose.yml``.
     docker-compose up -d
 
 It may take several minutes for the images to be downloaded and the containers to start.
+
+.. _server-sizing:
+
+---------------
+ Server Sizing
+---------------
+
+While we have not performed any system engineering analysis of optimal server sizing for SFM, the following are
+different configurations that we use:
+
+========================  ================  ==========  ========
+Use                       Server type       Processors  RAM (gb)
+========================  ================  ==========  ========
+Production                                  6           16
+Sandbox                   m4.large (AWS)    2           8
+Use in a class            m4.xlarge (AWS)   4           16
+Continuous integration    t2.medium (AWS)   2           4
+Heavy dataset processing  m4.4xlarge (AWS)  16          64
+Development               Docker for Mac    2           3
+========================  ================  ==========  ======
