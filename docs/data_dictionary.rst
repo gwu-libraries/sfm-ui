@@ -10,27 +10,28 @@ For more info about source tweet data, see the `Twitter API documentation <https
 | Field	                  | Description                                         | Example                                          |
 |                         |                                                     |                                                  |
 +=========================+=====================================================+==================================================+ 
-| created_at              | UTC time when the tweet was created	                | 2013-10-28T17:52:53Z                             | 
+| created_at              | Date and time the tweet was created, in             | 12/1/2016  1:22:35 AM                            | 
+|                         | Excel-friendly format                               |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | twitter_id              | Twitter identifier for the tweet	                | 114749583439036416                               |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | screen_name             | The screen name of the account that authored the    | NASA                                             |
-|                         | tweet. Screen_names are unique                      |                                                  |
-|                         | but subject to change.                              |                                                  |
+|                         | tweet, at the time the tweet was posted.            |                                                  |
+|                         | Screen names are subject to change.                 |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | followers_count         | Number of followers this account had at the time    | 235                                              |
 |                         | the tweet was harvested                             |                                                  | 
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| friends_count           | Number of users this account wass following at the  | 114                                              |
+| friends_count           | Number of users this account was following at the   | 114                                              |
 |                         | time the tweet was harvested                        |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| retweet_count           | Number of times the tweet has been retweeted at the | 25                                               | 
-|                         | time the tweet was harvested.                       |                                                  | 
+| retweet_count           | Number of times the tweet had been retweeted at the | 25                                               | 
+|                         | time the tweet was harvested                        |                                                  | 
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | hashtags                | Hashtags which have been parsed out of the tweet    | Mars, askNASA                                    |
@@ -56,10 +57,6 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         |                                                     | over the... http://t.co/YpffdKVrgm               |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| mentions                | Other Twitter users mentioned in the text of the    | @NASA_Airborne, @NASA_Ice                        | 
-|                         | tweet, separated by comma and space.                |                                                  | 
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | is_retweet              | Tweet is a retweet of another tweet, according to   | Yes                                              | 
 |                         | the tweet's metadata                                |                                                  |
 |                         |                                                     |                                                  |
@@ -68,13 +65,21 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         | the tweet's metadata                                |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| mentions                | Other Twitter users mentioned in the text of the    | NASA_Airborne, NASA_Ice                          | 
+|                         | tweet, separated by comma and space                 |                                                  | 
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| favorites_count         | Number of times this tweet was favorited by other   | 12                                               |
+|                         | users                                               |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | url1                    | First URL in text of tweet, as shortened by Twitter | http://t.co/WGJ9VmoKME                           |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | url1_expanded           | Expanded version of URL; URL entered by user and    | http://instagram.com/p/gA_zQ5IaCz/               |
 |                         | displayed in Twitter. May itself be a user-shortened|                                                  |
 |                         | URL, e.g. from bit.ly. Further expansion available  |                                                  |
-|                         | in sfm web interface, not in csv export.            |                                                  |
+|                         | in sfm web interface, not in csv export             |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | url2                    | Second URL in text of tweet, as shortened by Twitter|                                                  |
@@ -85,4 +90,9 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         | URL, e.g. from bit.ly. Further expansion available  |                                                  |
 |                         | in SFM web interface, not in csv export             |                                                  |
 |                         |                                                     |                                                  | 
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| media_url               | URL of the media embedded in the tweet.  If the     | http://pbs.twimg.com/media/Cyir15CVIAAfAWd.jpg   |
+|                         | media embedded in the tweet is a video, this is     |                                                  |
+|                         | the URL of the video's thumbnail image              |                                                  |
+|                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+ 
