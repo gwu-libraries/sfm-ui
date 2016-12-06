@@ -460,6 +460,7 @@ class Seed(models.Model):
 
     class Meta:
         diff_fields = ("token", "uid", "is_active")
+        unique_together = ("collection" , "uid", "token")
 
     def social_url(self):
         twitter_user = 'twitter_user_timeline'
