@@ -180,8 +180,8 @@ original form, whereas the other export formats provide a subset of the metadata
 for each social media item. For example, for a tweet, the CSV export 
 includes the tweet's "coordinates" value but not the "geo" value.
 
-Refer to the :doc:`data_dictionary` for details about each of the columns the CSV and Excel
-exports.
+Refer to the :doc:`data_dictionary` for details about each of the columns in the
+the CSV and Excel exports for Twitter collections.
 
 Dehydration (exporting a list of just the IDs of social media items) is supported for certain
 data-sharing purposes.  
