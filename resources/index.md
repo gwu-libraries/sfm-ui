@@ -12,7 +12,7 @@ ads: false
 
 Papers and Resources
 --------------------
-* [API-based social media collecting as a form of web archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf)
+* [API-based Social Media Collecting as a Form of Web Archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf): Article in International Journal on Digital Libraries, Special Issue on Web Archiving 
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
 * [Poster on Provenance of a Tweet]({{ site.github.url }}/resources/prov-tweet-poster.pdf) 
 * [Using Social Media Data: Brief list of resources]({{ site.github.url }}/resources/ethics)
