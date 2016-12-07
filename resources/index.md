@@ -12,17 +12,15 @@ ads: false
 
 Papers and Resources
 --------------------
+* [API-based social media collecting as a form of web archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf)
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
 * [Poster on Provenance of a Tweet]({{ site.github.url }}/resources/prov-tweet-poster.pdf) 
 * [Using Social Media Data: Brief list of resources]({{ site.github.url }}/resources/ethics)
 
-Upcoming Presentations
-----------------------
-* Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.
-* Christie Peterson, Justin Littman, Laura Wrubel, Social Feed Manager webinar for the [Digital Preservation Coalition](http://www.dpconline.org/) (details forthcoming), November 2, 2016.
-
 Recent Presentations
 --------------------
+* Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.
+* Christie Peterson, Justin Littman, Laura Wrubel, Social Feed Manager webinar for the [Digital Preservation Coalition](http://www.dpconline.org/), November 2, 2016.
 * Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
 * Laura Wrubel, "Panel: Why save online news?" [Dodging the Memory Hole: Saving Online News](https://www.rjionline.org/events/dodging-the-memory-hole-2016-saving-online-news), October 13-14, 2016. 
 * Vakil Smallen, Seemantani Sharma, Rachel Trent, ["The Challenges of Collecting and Providing Access to Social Media Content"](https://drive.google.com/a/email.gwu.edu/file/d/0BzMejufPhqBaMXBjM21vTUR1QTA/view?usp=sharing) at Archives/Records 2016, Joint Council of State Archivists (CoSa) - Society of American Archivists (SAA) conference, August 5, 2016.
@@ -38,7 +36,6 @@ Recent Presentations
 For Developers
 --------------
 
-Our list for discussion about the project is [sfm-dev](https://groups.google.com/forum/#!forum/sfm-dev). Please feel welcome to join and post questions there.
+Questions, feedback, and pull requests are welcome.  You can reach us at sfm@gwu.edu or [@SocialFeedMgr](http://twitter.com/SocialFeedMgr).
 
 See the [technical documentation](https://sfm.readthedocs.org) for further details about installing and using SFM. 
-
