@@ -35,8 +35,8 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         | time the tweet was harvested.                       |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| favorites_count         | Number of times this tweet had been favorited by    | 12                                               |
-|                         | other users at the time the tweet was harvested.    |                                                  |
+| favorite_count/         | Number of times this tweet had been favorited/liked | 12                                               |
+| like_count              | by other users at the time the tweet was harvested. |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | retweet_count           | Number of times this tweet had been retweeted at    | 25                                               | 
