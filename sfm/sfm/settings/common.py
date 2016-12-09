@@ -207,8 +207,7 @@ DATA_THRESHOLD = env.get('DATA_VOLUME_THRESHOLD', '10GB')
 PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')
 
 # Temporarily disabling scheduled serialization due to https://github.com/gwu-libraries/sfm-ui/issues/532.
-# PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
-PERFORM_SERIALIZE = False
+PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
 SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
 SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
 

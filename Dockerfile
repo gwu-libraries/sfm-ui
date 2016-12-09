@@ -1,4 +1,4 @@
-FROM gwul/sfm-base@sha256:74fbacb81df7bb26f3efb67074b4b3fc2447bfd876d7197f932d08386cc068d0
+FROM gwul/sfm-base@sha256:9ba2b7d757cf1a285e9af6fbcc35916155779f2944d3018247176a29e0904973
 MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 # Install apache
@@ -15,6 +15,9 @@ RUN pip install django-finalware==0.1.0
 
 # Adds fixtures.
 ADD docker/ui/fixtures.json /opt/sfm-setup/
+
+# Add envvars. User and group for Apache is set in envvars.
+ADD docker/ui/envvars /etc/apache2/
 
 # Enable sfm site
 ADD docker/ui/apache.conf /etc/apache2/sites-available/sfm.conf
@@ -38,6 +41,6 @@ ENV LOAD_FIXTURES=false
 EXPOSE 80
 
 CMD sh /opt/sfm-setup/setup_reqs.sh \
-    && appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672 \
+    && appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672  --file-wait /sfm-data/collection_set \
     && sh /opt/sfm-setup/setup_ui.sh \
     && sh /opt/sfm-setup/invoke.sh
