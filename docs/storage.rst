@@ -21,7 +21,7 @@ SFM stores data on 2 volumes:
 There are 2 types of volumes:
 
 * Internal to Docker. The files on the volume will only be available from within Docker containers.
-* Linked to an host location. The files on the volumes will be available from within Docker containers and from the
+* Linked to a host location. The files on the volumes will be available from within Docker containers and from the
   host operating system.
 
 The type of volume is specified in the `.env` file. When selecting a link to a host location, the path on the host
@@ -101,12 +101,23 @@ crosses a configurable threshold.  The threshold is set in the `.env` file::
 
 These instructions are for Ubuntu. They may need to be adjusted for other operating systems.
 
-1. `docker-compose stop`
-2. `sudo docker cp sfm_data_1:/sfm-data /`
-3. `sudo chown -R 990:990 /sfm-data/*`
-4.  Change .env::
+1. Stop docker containers::
+
+        docker-compose stop
+        
+2. Copy sfm-data contents from inside the container to a linked volume::
+
+        sudo docker cp sfm_data_1:/sfm-data /
+        
+3. Set ownership::
+
+        sudo chown -R 990:990 /sfm-data/*
+        
+4. Change .env::
 
         #DATA_VOLUME=/sfm-data
         DATA_VOLUME=/sfm-data:/sfm-data
 
-5. `docker-compose up -d`
+5. Restart containers::
+
+        docker-compose up -d
