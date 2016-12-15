@@ -4,14 +4,17 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
-
 import django.db.models.options as options
 from django.conf import settings
+
+from .utils import collection_path as get_collection_path, collection_set_path as get_collection_set_path
 
 import uuid
 import datetime
 import logging
 import json
+import os
+import shutil
 
 log = logging.getLogger(__name__)
 
@@ -38,6 +41,7 @@ class User(AbstractUser):
                                 help_text='Local identifier')
     email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
     harvest_notifications = models.BooleanField(default=True)
+
 
 def history_save(self, *args, **kw):
     """
@@ -237,6 +241,18 @@ class CollectionSet(models.Model):
             "total"]
 
 
+def delete_collection_set_receiver(sender, **kwargs):
+    """
+    A post_delete receiver that is triggered when Collection Set model objects are deleted.
+    """
+    collection_set = kwargs["instance"]
+
+    collection_set_path = get_collection_set_path(collection_set)
+    if os.path.exists(collection_set_path):
+        log.info("Deleting %s", collection_set_path)
+        shutil.rmtree(collection_set_path)
+
+
 class CollectionManager(models.Manager):
     def get_by_natural_key(self, collection_id):
         return self.get(collection_id=collection_id)
@@ -381,6 +397,18 @@ class Collection(models.Model):
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+
+def delete_collection_receiver(sender, **kwargs):
+    """
+    A post_delete receiver that is triggered when Collection model objects are deleted.
+    """
+    collection = kwargs["instance"]
+
+    collection_path = get_collection_path(collection)
+    if os.path.exists(collection_path):
+        log.info("Deleting %s", collection_path)
+        shutil.rmtree(collection_path)
 
 
 def _item_counts_to_dict(item_counts):
@@ -579,6 +607,24 @@ class Warc(models.Model):
         return self.warc_id,
 
 
+def delete_warc_receiver(sender, **kwargs):
+    """
+    A post_delete receiver that is triggered when Warc model objects are deleted.
+    """
+    assert kwargs["instance"]
+    warc = kwargs["instance"]
+
+    if os.path.exists(warc.path):
+        log.info("Deleting %s", warc.path)
+        os.remove(warc.path)
+        collection_path = get_collection_path(warc.harvest.collection)
+        parent_path = os.path.dirname(warc.path)
+        # Also delete empty parent directories
+        while len(os.listdir(parent_path)) == 0 and parent_path != collection_path:
+            os.rmdir(parent_path)
+            parent_path = os.path.dirname(parent_path)
+
+
 class Export(models.Model):
     NOT_REQUESTED = "not requested"
     REQUESTED = "requested"
@@ -642,3 +688,14 @@ class Export(models.Model):
 
     def __str__(self):
         return '<Export %s "%s">' % (self.id, self.export_id)
+
+
+def delete_export_receiver(sender, **kwargs):
+    """
+    A post_delete receiver that is triggered when Export model objects are deleted.
+    """
+    export = kwargs["instance"]
+
+    if os.path.exists(export.path):
+        log.info("Deleting %s", export.path)
+        shutil.rmtree(export.path)

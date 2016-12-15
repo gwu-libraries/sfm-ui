@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 from rabbit import RabbitWorker
-from django.db.models.signals import post_save, pre_delete, m2m_changed
+from django.db.models.signals import post_save, pre_delete, m2m_changed, post_delete
 from django.conf import settings
 import logging
 
@@ -13,11 +13,13 @@ class UIConfig(AppConfig):
 
     def ready(self):
         RabbitWorker().declare_exchange()
-        from models import Collection, Export
+        from models import Collection, Export, CollectionSet, Warc
         from sched import start_sched, schedule_harvest_receiver, unschedule_harvest_receiver
         from export import export_receiver, export_m2m_receiver
         from notifications import send_user_harvest_emails, send_free_space_emails
         from serialize import serialize_all
+        from models import delete_collection_set_receiver, delete_collection_receiver, delete_warc_receiver, \
+            delete_export_receiver
 
         if settings.SCHEDULE_HARVESTS:
             log.debug("Setting receivers for collections.")
@@ -66,3 +68,10 @@ class UIConfig(AppConfig):
 
         else:
             log.debug("Not running scheduler")
+
+        # Delete files
+        log.debug("Setting delete receivers")
+        post_delete.connect(delete_collection_set_receiver, sender=CollectionSet)
+        post_delete.connect(delete_collection_receiver, sender=Collection)
+        post_delete.connect(delete_warc_receiver, sender=Warc)
+        post_delete.connect(delete_export_receiver, sender=Export)

@@ -9,6 +9,7 @@ import os
 import shutil
 from datetime import date, datetime, timedelta
 from time import sleep
+from tzlocal import get_localzone
 
 
 class SerializeTests(TestCase):
@@ -80,10 +81,10 @@ class SerializeTests(TestCase):
 
         # Warcs
         Warc.objects.create(harvest=self.harvest1, warc_id=default_uuid(), path="/data/warc1.warc.gz", sha1="warc1sha",
-                            bytes=10, date_created=datetime.utcnow())
+                            bytes=10, date_created=datetime.now(get_localzone()))
         Warc.objects.create(harvest=self.harvest1, warc_id=default_uuid(), path="/data/warc2.warc.gz", sha1="warc2sha",
                             bytes=11,
-                            date_created=datetime.utcnow())
+                            date_created=datetime.now(get_localzone()))
 
         # Another collection
         self.collection2 = Collection.objects.create(collection_set=self.collection_set,
