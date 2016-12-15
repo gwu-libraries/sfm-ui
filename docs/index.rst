@@ -23,6 +23,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    quickstart
    credentials
    collections
+   Data Dictionary <data_dictionary>
    processing
    exploring
 
