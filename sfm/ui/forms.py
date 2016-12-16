@@ -560,7 +560,7 @@ class SeedFlickrUserForm(BaseSeedForm):
 
 class SeedTumblrBlogPostsForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
-        fields = ['uid']
+        fields = ['uid','token']
         fields.extend(BaseSeedForm.Meta.fields)
         labels = dict(BaseSeedForm.Meta.labels)
         labels["uid"] = "Blog hostname"
