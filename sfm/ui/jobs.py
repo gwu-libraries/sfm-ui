@@ -1,12 +1,17 @@
 import json
 import logging
+from smtplib import SMTPException
 
 from .rabbit import RabbitWorker
 from .models import Collection, Harvest, default_uuid
-from .utils import collection_path
+from .utils import collection_path, get_email_addresses_for_collection_set
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 
@@ -86,22 +91,61 @@ def collection_harvest(collection_pk):
                     seed_map["uid"] = historical_seed.uid
                 message["seeds"].append(seed_map)
 
-    routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
-                                               harvest_type)
+    # Skip this harvest if last harvest not completed or voided
+    last_harvest = collection.last_harvest()
+    if not last_harvest or last_harvest.status in (Harvest.SUCCESS, Harvest.FAILURE, Harvest.VOIDED):
+        routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
+                                                   harvest_type)
 
-    log.debug("Sending %s message to %s with id %s", harvest_type,
-              routing_key, harvest_id)
+        log.debug("Sending %s message to %s with id %s", harvest_type,
+                  routing_key, harvest_id)
 
-    # Publish message to queue via rabbit worker
-    RabbitWorker().send_message(message, routing_key)
+        # Publish message to queue via rabbit worker
+        RabbitWorker().send_message(message, routing_key)
 
-    # Record harvest model instance
-    harvest = Harvest.objects.create(harvest_type=harvest_type,
-                                     harvest_id=harvest_id,
-                                     collection=collection,
-                                     historical_collection=historical_collection,
-                                     historical_credential=historical_credential)
-    harvest.historical_seeds.add(*historical_seeds)
+        # Record harvest model instance
+        harvest = Harvest.objects.create(harvest_type=harvest_type,
+                                         harvest_id=harvest_id,
+                                         collection=collection,
+                                         historical_collection=historical_collection,
+                                         historical_credential=historical_credential)
+        harvest.historical_seeds.add(*historical_seeds)
+    else:
+        log.debug("Skipping harvest with id %s", harvest_id)
+
+        # Record harvest model instance
+        harvest = Harvest.objects.create(harvest_type=harvest_type,
+                                         harvest_id=harvest_id,
+                                         collection=collection,
+                                         historical_collection=historical_collection,
+                                         historical_credential=historical_credential,
+                                         status=Harvest.SKIPPED)
+        harvest.historical_seeds.add(*historical_seeds)
+
+        # Send notifications
+        if settings.PERFORM_EMAILS:
+            receiver_emails = get_email_addresses_for_collection_set(harvest.collection.collection_set,
+                                                                     use_harvest_notification_preference=True,
+                                                                     include_admins=True)
+            harvest_url = 'http://{}{}'.format(Site.objects.get_current().domain,
+                                               reverse('harvest_detail', args=(harvest.id,)))
+            mail_subject = u"SFM Harvest for {} was skipped".format(
+                harvest.collection.name)
+            mail_message = u"The harvest for {} ({}) was skipped. This may be because it is scheduled too frequently " \
+                           u"and the last harvest has not had time to commplete. It " \
+                           u"may also indicate a problem with SFM. The SFM administrator has been notified.".format(
+                                harvest.collection.name,
+                                harvest_url)
+
+            if receiver_emails:
+                try:
+                    log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
+                    send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                              receiver_emails, fail_silently=False)
+                except SMTPException, ex:
+                    log.error("Error sending email: %s", ex)
+                except IOError, ex:
+                    log.error("Error sending email: %s", ex)
 
 
 @transaction.atomic

@@ -71,8 +71,8 @@ class StartJobsTests(TestCase):
     @patch("ui.jobs.RabbitWorker", autospec=True)
     def test_collection_without_seeds_harvest(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                         harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                         harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
+                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
 
         mock_rabbit_worker = MagicMock(spec=RabbitWorker)
         mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
@@ -98,6 +98,58 @@ class StartJobsTests(TestCase):
         harvest = Harvest.objects.get(harvest_id=message["id"])
         self.assertIsNotNone(harvest.date_requested)
         self.assertEqual(collection, harvest.collection)
+        self.assertEqual(Harvest.REQUESTED, harvest.status)
+
+    @patch("ui.jobs.RabbitWorker", autospec=True)
+    def test_skip_send(self, mock_rabbit_worker_class):
+        collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
+                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
+                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+
+        Harvest.objects.create(collection=collection,
+                               historical_collection=collection.history.all()[0],
+                               historical_credential=self.credential.history.all()[0])
+
+        mock_rabbit_worker = MagicMock(spec=RabbitWorker)
+        mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
+
+        collection_harvest(collection.id)
+
+        # Last harvest isn't done, so skip this harvest.
+        # Harvest start message not sent
+        mock_rabbit_worker.assert_not_called()
+
+        # Harvest model object created
+        harvest = collection.last_harvest(include_skipped=True)
+        self.assertEqual(Harvest.SKIPPED, harvest.status)
+
+    @patch("ui.jobs.RabbitWorker", autospec=True)
+    def test_skip_send_after_void(self, mock_rabbit_worker_class):
+        collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
+                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
+                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+
+        Harvest.objects.create(collection=collection,
+                               historical_collection=collection.history.all()[0],
+                               historical_credential=self.credential.history.all()[0],
+                               status=Harvest.VOIDED)
+
+        mock_rabbit_worker = MagicMock(spec=RabbitWorker)
+        mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
+
+        collection_harvest(collection.id)
+
+        # Last harvest voided, so this one should be sent.
+        # Harvest start message sent
+        mock_rabbit_worker.assert_not_called()
+
+        # Harvest start message sent
+        name, args, kwargs = mock_rabbit_worker.mock_calls[0]
+        self.assertEqual("send_message", name)
+        message = args[0]
+
+        # Harvest model object created
+        harvest = Harvest.objects.get(harvest_id=message["id"])
         self.assertEqual(Harvest.REQUESTED, harvest.status)
 
     @patch("ui.jobs.RabbitWorker", autospec=True)

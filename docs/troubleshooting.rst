@@ -18,6 +18,18 @@
  Specific problems
 -------------------
 
+Skipped harvests
+^^^^^^^^^^^^^^^^
+A new harvest will not be requested if the previous harvest has not completed. Instead, a harvest record will be created
+with the status of skipped. Some of the reasons that this might happen include:
+* Harvests are scheduled too closely together, such that the previous harvest cannot complete before the new harvest is
+  requested.
+* There are not enough running harvesters, such that harvest requests have to wait too long before being processed.
+* There is a problem with harvesters, such that they are not processing harvest requests.
+* Something else has gone wrong, and a harvest request was not completed.
+After correcting the problem to resume harvesting for a collection, void the last (non-skipped) harvest. To void a
+harvest, go to that harvest's detail page and click the void button.
+
 Bind error
 ^^^^^^^^^^
 If when bringing up the containers you receive something like::

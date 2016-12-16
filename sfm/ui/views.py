@@ -182,6 +182,29 @@ def _get_credential_list(collection_set_pk, harvest_type):
         groups=collection_set.group)).order_by('name')
 
 
+def _get_credential_use_map(credentials, harvest_type):
+    credential_use_map = {}
+    if harvest_type in Collection.RATE_LIMITED_HARVEST_TYPES:
+        for credential in credentials:
+            active_collections = 0
+            inactive_collections = 0
+            for collection in credential.collections.all():
+                if collection.is_active:
+                    active_collections += 1
+                else:
+                    inactive_collections += 1
+            if active_collections == 0 and inactive_collections == 0:
+                credential_use_map[credential.id] = ("info", "Credential is not used in any other collections.")
+            else:
+                credential_use_map[credential.id] = ("warning",
+                                                     "Credential is in use by {0} collections that are turned on and "
+                                                     "{1} collections that are turned off. Be mindful that over-using "
+                                                     "credentials may result in collecting being rate limited by the "
+                                                     "social media API.".format(active_collections,
+                                                                                inactive_collections))
+        return credential_use_map
+
+
 class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Collection
     template_name = 'ui/collection_create.html'
@@ -194,8 +217,11 @@ class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(CollectionCreateView, self).get_context_data(**kwargs)
         context["collection_set"] = CollectionSet.objects.get(pk=self.kwargs["collection_set_pk"])
-        context["harvest_type_name"] = _get_harvest_type_name(self.kwargs["harvest_type"])
-        context["credentials"] = _get_credential_list(self.kwargs["collection_set_pk"], self.kwargs["harvest_type"])
+        harvest_type = self.kwargs["harvest_type"]
+        context["harvest_type_name"] = _get_harvest_type_name(harvest_type)
+        credentials = _get_credential_list(self.kwargs["collection_set_pk"], harvest_type)
+        context["credentials"] = credentials
+        context["credential_use_map"] = _get_credential_use_map(credentials, harvest_type)
         context["platform"] = Collection.HARVEST_TYPES_TO_PLATFORM[self.kwargs["harvest_type"]]
         return context
 
@@ -227,6 +253,8 @@ class CollectionUpdateView(LoginRequiredMixin, UpdateView):
         context["collection_set"] = self.object.collection_set
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
+        credentials = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
+        context["credential_use_map"] = _get_credential_use_map(credentials, self.object.harvest_type)
         return context
 
     def get_form_kwargs(self):
@@ -565,7 +593,29 @@ class HarvestDetailView(LoginRequiredMixin, DetailView):
         context = super(HarvestDetailView, self).get_context_data(**kwargs)
         context["collection_set"] = self.object.collection.collection_set
         context["collection"] = self.object.collection
+        # If status is running or requested and not a streaming and if this is the most recent harvest
+        context["can_void"] = False
+        if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED) \
+                and not self.object.collection.is_streaming() \
+                and self.object == self.object.collection.last_harvest():
+            context["can_void"] = True
         return context
+
+
+class HarvestVoidView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "harvest_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        harvest = get_object_or_404(Harvest, pk=kwargs['pk'])
+        if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED):
+            log.debug("Voiding %s", harvest)
+            harvest.status = Harvest.VOIDED
+            harvest.save()
+        else:
+            log.debug("Not voiding %s since status is %s", harvest, harvest.status)
+        return super(HarvestVoidView, self).get_redirect_url(*args, **kwargs)
 
 
 def _read_file_chunkwise(file_obj):

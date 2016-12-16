@@ -24,6 +24,9 @@ PERFORM_USER_HARVEST_EMAILS = False
 
 PERFORM_SERIALIZE = False
 
+ADMINS = [("sfmadmin", "superuser@test.com")]
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

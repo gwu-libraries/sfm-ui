@@ -3,7 +3,7 @@ from ui.models import Harvest, Collection, Group, CollectionSet, Credential, Use
 import json
 from sfm_ui_consumer import SfmUiConsumer
 import iso8601
-from mock import MagicMock, patch
+from mock import patch
 
 from datetime import date
 

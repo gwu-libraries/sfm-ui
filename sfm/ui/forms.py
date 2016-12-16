@@ -141,6 +141,7 @@ class BaseCollectionForm(forms.ModelForm):
                 'name',
                 'description',
                 'credential',
+                Div(css_id='credential_warning'),
                 Div(),
                 'schedule_minutes',
                 'end_date',
@@ -174,7 +175,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -211,7 +212,7 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -246,7 +247,7 @@ class CollectionTwitterSampleForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('media_option', 'web_resources_option'))
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "media" in harvest_options:
@@ -278,7 +279,7 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -315,7 +316,7 @@ class CollectionFlickrUserForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'image_sizes'))
+        self.helper.layout[0][4].extend(('incremental', 'image_sizes'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -353,7 +354,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('image_sizes', 'incremental', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -389,7 +390,7 @@ class CollectionTumblrBlogPostsForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][3].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)

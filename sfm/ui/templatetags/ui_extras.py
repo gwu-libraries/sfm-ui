@@ -4,6 +4,8 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 import json as json_lib
 from collections import OrderedDict
 
+from ui.models import Harvest
+
 register = template.Library()
 
 
@@ -84,10 +86,13 @@ def render_list(value):
 @register.assignment_tag
 def join_stats(d, status, sep=", "):
     joined = ""
-    if status in ["completed success", "completed failure"]:
-        empty_extras = ""
-    else:
+
+    empty_extras = ""
+    if status == Harvest.RUNNING:
+        empty_extras = "Nothing yet"
+    elif status == Harvest.REQUESTED:
         empty_extras = "Waiting for update"
+
     if d:
         for i, (item, count) in enumerate(d.items()):
             if i > 1:
