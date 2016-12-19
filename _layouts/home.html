@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html  xmlns:wb="http://open.weibo.com/wb">
   <head>
     <meta charset="utf-8">
     <title>{% if page.title %}{{ page.title }} • {% endif %}{{ site.title }}</title>
@@ -47,7 +47,10 @@
       {% include browser-upgrade.html %}
       <div id="main" role="main">
         <div class="wrap">
-          <div class="ads" style="float: right">{% include twitter.html %}</div>
+          <div class="ads" style="float: right">
+            <wb:share-button appkey="1037696311" addition="simple" type="button" ralateUid="1700022427"></wb:share-button>
+            {% include twitter.html %}
+          </div>
           <div class="archive-wrap">
             <!-- <div class="ads">{% include twitter.html %}</div>  -->
             <div class="page-content">
@@ -62,7 +65,7 @@
 
     <script src="{{ site.github.url }}/js/vendor/jquery-1.9.1.min.js"></script>
     <script src="{{ site.github.url }}/js/main.js"></script>
-
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
   </body>
 
 </html>
