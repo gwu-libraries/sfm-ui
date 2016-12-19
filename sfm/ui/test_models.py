@@ -68,10 +68,10 @@ class CollectionTest(TestCase):
                                                credential=self.credential)
         self.assertEqual(0, collection.active_seed_count())
 
-        Seed.objects.create(collection=collection, token='{}', is_active=True)
+        Seed.objects.create(collection=collection, token='{}', uid="seed1", is_active=True)
         self.assertEqual(1, collection.active_seed_count())
 
-        Seed.objects.create(collection=collection, token='{}', is_active=False)
+        Seed.objects.create(collection=collection, token='{}', uid="seed2", is_active=False)
         self.assertEqual(1, collection.active_seed_count())
 
     def test_is_streaming(self):
