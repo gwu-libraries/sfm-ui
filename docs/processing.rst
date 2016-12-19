@@ -65,6 +65,15 @@ The collection id can be found from the SFM UI.
 Note that if you are running ``find_warcs.py`` from outside a Docker environment, you will need
 to supply ``--api-base-url``.
 
+READMEs
+=======
+The `exportreadme` management command will output a README file that can be used as part of the
+documentation for a dataset.  The README contains information on the collection, including the
+complete change log. Here is an example of creating a README::
+
+    docker-compose exec ui /bin/bash -c "/opt/sfm-ui/sfm/manage.py exportreadme 4f4d1 > /sfm-processing/README.txt"
+
+For examples, see the README files in `this open dataset <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FPDI7IN>`_.
 
 ------------
  Approaches

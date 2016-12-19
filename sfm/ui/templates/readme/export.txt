@@ -1,0 +1,38 @@
+{% load ui_extras %}{% autoescape off %}This is an export created with Social Feed Manager.
+{% if export%}
+EXPORT INFORMATION
+{% if not export.collection %}Selected seeds:{% for seed in export.seeds.all %}
+* {{ seed.label }}
+{% endfor %}{% else %}{% if export.collection.seeds.all %}Selected seeds: All seeds{% endif %}{% endif %}
+Export id: {{ export.export_id }}
+Export type: {{ export.export_type }}
+Format: {{ export.get_export_format_display }}
+Export completed:  {{ export.date_ended }}
+Deduplicate: {{ export.dedupe | yesno | capfirst }}{% if export.item_date_start %}
+Item start date: {{ export.item_date_start }}{% endif %}{% if export.item_date_end %}
+Item end date: {{ export.item_date_end }}{% endif %}{% if export.harvest_date_start %}
+Harvest start date: {{ export.harvest_date_start }}{% endif %}{% if export.harvest_date_end  %}
+Harvest end date: {{ export.harvest_date_end }}{% endif %}
+{% endif %}
+COLLECTION INFORMATION
+Collection name: {{ collection.name }}
+Collection id: {{ collection.collection_id }}
+Collection set: {{ collection.collection_set.name }} (collection set id {{ collection.collection_set.collection_set_id }})
+Harvest type: {{ collection.get_harvest_type_display }}{% if collection.description %}
+Collection description: {{ collection.description }}{% endif %}{% if collection.schedule_minutes %}
+Schedule: {{ collection.get_schedule_minutes_display }}{% endif %}
+
+Harvest options:
+{{ collection.harvest_options|json_text }}
+{% if collection.seeds.all %}Seeds:{% for seed in collection.seeds.all %}
+* {{ seed.label }} - {{ seed.is_active|yesno:"Active,Inactive" }}
+{% endfor %}{% endif %}
+Change log:
+
+{% for diff in diffs %}Change to {{ diff.obj | name }} ({{ diff.obj|verbose_name }}) on {{ diff.date }} by {{ diff.user|default_if_none:"system" }}:
+{% for key, values in diff.fields.iteritems %}* {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}"
+{% endfor %}{% if diff.note %}Note: {{ diff.note}}
+{% endif %}
+{% empty %}No changes yet.{% endfor %}
+Created on {{ now }}
+{% endautoescape %}

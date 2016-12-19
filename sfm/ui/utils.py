@@ -1,9 +1,12 @@
 from django.conf import settings
+
 import os
+from itertools import chain
 
 
 class Diff:
     def __init__(self):
+        self.obj = None
         self.user = None
         self.date = None
         self.note = None
@@ -22,6 +25,7 @@ def diff_historical_object(original_historical_object, changed_historical_object
     :return: a Diff
     """
     diff = Diff()
+    diff.obj = changed_historical_object.instance
     diff.date = changed_historical_object.history_date
     diff.user = changed_historical_object.history_user
     diff.note = changed_historical_object.history_note
@@ -49,6 +53,18 @@ def diff_object_history(obj):
         diffs.append(diff_historical_object(historical_objects[i + 1] if i < len(historical_objects) - 1 else None,
                                             historical_object))
     return diffs
+
+
+def diff_collection_and_seeds_history(collection):
+    """
+    Performs a diff on a collection and its seeds historical objects
+    :param collection: the collection
+    :return: a list of Diffs, from most recent historical objects backwards
+    """
+    diffs = [diff_object_history(collection)]
+    for seed in collection.seeds.all():
+        diffs.append(diff_object_history(seed))
+    return sorted(chain(*diffs), key=lambda diff: diff.date, reverse=True)
 
 
 def diff_field_changed(obj):

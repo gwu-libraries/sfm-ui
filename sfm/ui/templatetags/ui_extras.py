@@ -83,6 +83,54 @@ def render_list(value):
     return rend
 
 
+@register.filter
+def json_text(value, name=None):
+    rend = u""
+    if value:
+        try:
+            j = json_lib.loads(value)
+        except ValueError:
+            j = value
+        if isinstance(j, dict):
+            rend = render_paragraphs_dict_text(j)
+        elif name:
+            rend = render_paragraphs_dict_text({name: j})
+        else:
+            rend = render_value(j)
+    return mark_safe(rend)
+
+
+@register.filter
+def json_list_text(value, name=None):
+    rend = u""
+    if value:
+        try:
+            j = json_lib.loads(value)
+        except ValueError:
+            j = value
+        if isinstance(j, dict):
+            rend = render_dict_text(j)
+        elif name:
+            rend = render_dict_text({name: j})
+        else:
+            rend = render_value(j)
+    return rend
+
+
+def render_paragraphs_dict_text(value):
+    rend = u""
+    for k, v in value.items():
+        rend += u"{}: {}\n".format(render_key(k), render_value(v))
+    return rend
+
+
+def render_dict_text(value):
+    rend = u""
+    for k, v in value.items():
+        rend += u"{}: {}\n".format(render_key(k), render_value(v))
+    return rend
+
+
 @register.assignment_tag
 def join_stats(d, status, sep=", "):
     joined = ""
@@ -99,3 +147,26 @@ def join_stats(d, status, sep=", "):
                 joined += sep
             joined += "{} {}".format(intcomma(count), item)
     return joined if joined else empty_extras
+
+
+@register.filter
+def name(value):
+    if value and hasattr(value, "name"):
+        if callable(value.name):
+            return value.name()
+        return value.name
+    elif value and hasattr(value, "label"):
+        if callable(value.label):
+            return value.label()
+        return value.label
+    return value
+
+
+@register.filter
+def verbose_name(instance, field_name=None):
+    """
+    Returns verbose_name for a model instance or a field.
+    """
+    if field_name:
+        return instance._meta.get_field(field_name).verbose_name
+    return instance._meta.verbose_name

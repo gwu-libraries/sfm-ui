@@ -1,7 +1,7 @@
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView
@@ -20,7 +20,7 @@ from .forms import CollectionSetForm, ExportForm
 import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
 from .sched import next_run_time
-from .utils import diff_object_history, clean_token, clean_blogname
+from .utils import diff_object_history, diff_collection_and_seeds_history, clean_token, clean_blogname
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 
 import json
@@ -114,7 +114,7 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
         context["last_harvest"] = self.object.last_harvest()
-        context["diffs"] = diff_object_history(self.object)
+        context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         # For not enough seeds
@@ -661,7 +661,10 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
         context["item"] = item
-        diffs = diff_object_history(item)
+        if model_name == 'collection':
+            diffs = diff_collection_and_seeds_history(item)
+        else:
+            diffs = diff_object_history(item)
         paginator = Paginator(diffs, 15)
         # if no page in URL, show first
         page = self.request.GET.get("page", 1)
