@@ -104,7 +104,7 @@ See the :ref:`Collecting web resources` guidance below for deciding whether to c
 Flickr user
 -----------
 
-Collects metadata about public photos by a specific Flickr user.
+Collects metadata about public photos by a specific Flickr user, and, optionally, copies of the photos at specified sizes.
 
 Each Flickr user collection can have multiple seeds, where each seed is a Flickr user. To identify a user,
 you can provide a either a username or an NSID. If you provide one, the other will be looked up and displayed in the

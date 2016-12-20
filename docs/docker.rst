@@ -15,7 +15,7 @@ administration, and development.
 
 On OS X:
 
-* Install the `Docker for Mac <https://www.docker.com/products/docker#/mac>`_.
+* Install `Docker for Mac <https://www.docker.com/products/docker#/mac>`_.
 * If you are using Docker Toolbox, switch to Docker for Mac.
 
 On Ubuntu:
@@ -26,6 +26,10 @@ On Ubuntu:
   avoids having to use sudo to run docker commands. Note that depending on how
   users/groups are set up, you may need to manually need to add your user to the
   group in ``/etc/group``.
+
+While Docker is available on other platforms (e.g., `Windows <https://docs.docker.com/engine/installation/windows/>`_,
+`Red Hat Enterprise Linux <https://docs.docker.com/engine/installation/linux/rhel/>`_), the SFM team does not have any experience running
+SFM on those platforms.
 
 .. _docker-helpful:
 

@@ -69,6 +69,9 @@ can be refreshed used the ``serializecollectionset`` and ``serializecollection``
 
 Note:
 
+* If loading a collection set, all of the collection set's collections will also be loaded.
+* When loading, all related items are also loaded.  For example, when a collection is loaded, all of the seeds,
+  harvests, credentials, and their histories are also loaded.
 * If a database record already exists for a collection set, loading will not continue for the collection set or any
   of its collections or related records (e.g., groups).
 * If a database record already exists for a collection, loading will not continue for the collection or any of the
@@ -78,3 +81,17 @@ Note:
 * Users that are loaded are set to inactive.
 * A history note is added to collection sets and collections to document the load.
 
+-------------------------------
+ Moving an entire SFM instance
+-------------------------------
+
+1. Stop the source instance: ``docker-compose stop``.
+2. Copy the ``/sfm-data`` directory from the source server to the destination server.
+3. If preserving processing data, also copy the ``/sfm-processing`` directory from the source server to the destination
+   server.
+4. Copy the ``docker-compose.yml`` and ``.env`` files from the source server to the destination server.
+5. Make any changes necessary in the ``.env`` file, e.g., ``SFM_HOSTNAME``.
+6. Start the destination instance: ``docker-compose up -d``.
+
+If moving between AWS EC2 instances and ``/sfm-data`` is on a separate EBS volume, the volume can be detached from
+the source EC2 instances and attached to the destination EC2 instance.
