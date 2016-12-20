@@ -2,19 +2,24 @@
  Data Dictionary for Twitter CSV/Excel Exports
 ===============================================
 
-Social Feed Manager captures entire tweets, with all their data. To download selected, processed fields for each tweet in a user timeline, use the csv export option, available on each user page. 
+Social Feed Manager captures entire tweets, with all their data. To download
+selected, processed fields for each tweet in a user timeline, use the csv export
+ option, available on each user page.
 
-This data dictionary currently only describes SFM's Twitter exports.  Tumblr, Flickr,
-and Weibo exports contain fewer columns that are generally self-explanatory and/or are
-similar to the columns described here in the Twitter export.
+------------------
+Twitter Dictionary
+------------------
 
-For more info about source tweet data, see the `Twitter API documentation <https://dev.twitter.com/docs>`_, including `Tweets <https://dev.twitter.com/docs/platform-objects/tweets>`_ and `Entities <https://dev.twitter.com/docs/platform-objects/entities>`_.
+For more info about source tweet data, see the `Twitter API documentation
+<https://dev.twitter.com/docs>`_, including `Tweets
+<https://dev.twitter.com/docs/platform-objects/tweets>`_ and `Entities
+<https://dev.twitter.com/docs/platform-objects/entities>`_.
 
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | Field	                  | Description                                         | Example                                          |
 |                         |                                                     |                                                  |
-+=========================+=====================================================+==================================================+ 
-| created_at              | Date and time the tweet was created, in             | 12/1/2016  1:22:35 AM                            | 
++=========================+=====================================================+==================================================+
+| created_at              | Date and time the tweet was created, in             | 12/1/2016  1:22:35 AM                            |
 |                         | Excel-friendly format.                              |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
@@ -28,7 +33,7 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | followers_count         | Number of followers this account had at the time    | 235                                              |
-|                         | the tweet was harvested.                            |                                                  | 
+|                         | the tweet was harvested.                            |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | friends_count           | Number of users this account was following at the   | 114                                              |
@@ -39,41 +44,41 @@ For more info about source tweet data, see the `Twitter API documentation <https
 | like_count              | by other users at the time the tweet was harvested. |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| retweet_count           | Number of times this tweet had been retweeted at    | 25                                               | 
-|                         | the time the tweet was harvested.                   |                                                  | 
+| retweet_count           | Number of times this tweet had been retweeted at    | 25                                               |
+|                         | the time the tweet was harvested.                   |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | hashtags                | Hashtags from the tweet                             | Mars, askNASA                                    |
 |                         | text, as a comma-separated list.                    |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| mentions                | Other Twitter accounts mentioned in the text of the | NASA_Airborne, NASA_Ice                          | 
-|                         | tweet, separated by comma and space.                |                                                  | 
+| mentions                | Other Twitter accounts mentioned in the text of the | NASA_Airborne, NASA_Ice                          |
+|                         | tweet, separated by comma and space.                |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | in_reply_to_screen_name | If the tweet is a reply, the screen name of         | wiredscience                                     |
-|                         | the original tweet's author.                        |                                                  | 
+|                         | the original tweet's author.                        |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | twitter_url             | URL of the tweet. If the tweet is a retweet made    | http://twitter.com/NASA/status/394883921303056384|
-|                         | using the Twitter retweet feature, the URL will     | retweet redirecting to original tweet:           | 
+|                         | using the Twitter retweet feature, the URL will     | retweet redirecting to original tweet:           |
 |                         | redirect to the original tweet.                     | http://twitter.com/NASA/status/394875351894994944|
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| text                    | The text of the tweet.  Newline characters are      | Observing Hurricane Raymond Lashing Western      | 
+| text                    | The text of the tweet.  Newline characters are      | Observing Hurricane Raymond Lashing Western      |
 |                         | stripped out.                                       | Mexico: Low pressure System 96E developed quickly|
 |                         |                                                     | over the... http://t.co/YpffdKVrgm               |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| is_retweet              | `Yes` if tweet is a retweet of another tweet,       | Yes                                              | 
+| is_retweet              | `Yes` if tweet is a retweet of another tweet,       | Yes                                              |
 |                         | according to the tweet's metadata; otherwise `No`.  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| is_quote                | `Yes` if tweet is a quote of another tweet,         | No                                               | 
+| is_quote                | `Yes` if tweet is a quote of another tweet,         | No                                               |
 |                         | according to the tweet's metadata; otherwise `No`.  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| coordinates             | The geographic coordinates of the tweet.  This is   | [-0.22012208, 51.59248806]                       | 
+| coordinates             | The geographic coordinates of the tweet.  This is   | [-0.22012208, 51.59248806]                       |
 |                         | only enabled if geotagging is enabled on the        |                                                  |
 |                         | account.  The value, if present, is of the form     |                                                  |
 |                         | [longitude, latitude]                               |                                                  |
@@ -102,4 +107,60 @@ For more info about source tweet data, see the `Twitter API documentation <https
 |                         | media embedded in the tweet is a video, this is     |                                                  |
 |                         | the URL of the video's thumbnail image              |                                                  |
 |                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+ 
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+
+
+
+-----------------
+Tumblr Dictionary
+-----------------
+
+For more info about source tweet data, see the `Tumblr API documentation
+<https://www.tumblr.com/docs/en/api/v2>`_, particularly `Posts
+<https://www.tumblr.com/docs/en/api/v2#posts>`_.
+
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| Field	                  | Description                                         | Example                                          |
+|                         |                                                     |                                                  |
++=========================+=====================================================+==================================================+
+| created_at              | Date and time the tweet was created, in             |                                                  |
+|                         | Excel-friendly format.                              |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| tumblr_id               | Tumblr identifier for the tweet.                    |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| blog_name               | The screen name of the account that authored the    |                                                  |
+|                         | tweet, at the time the tweet was posted.            |                                                  |
+|                         | Note that an account's screen name may change over  |                                                  |
+|                         | time.                                               |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| post_type               | Number of followers this account had at the time    |                                                  |
+|                         | the tweet was harvested.                            |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| post_slug               | Number of users this account was following at the   |                                                  |
+|                         | time the tweet was harvested.                       |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| post_summary            | Number of times this tweet had been favorited/liked |                                                  |
+|                         | by other users at the time the tweet was harvested. |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| post_text               | Number of times this tweet had been retweeted at    |                                                  |
+|                         | the time the tweet was harvested.                   |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| tags                    | Hashtags from the tweet                             |                                                  |
+|                         | text, as a comma-separated list.                    |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| tumblr_url              | Other Twitter accounts mentioned in the text of the |                                                  |
+|                         | tweet, separated by comma and space.                |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| tumblr_short_url        | If the tweet is a reply, the screen name of         |                                                  |
+|                         | the original tweet's author.                        |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
