@@ -1,4 +1,4 @@
-FROM gwul/sfm-base@sha256:9ba2b7d757cf1a285e9af6fbcc35916155779f2944d3018247176a29e0904973
+FROM gwul/sfm-base@sha256:57882ae7eef059a36cb2df00a4e62d698fdf9a48535dd1120e501f2886f60cc9
 MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 ADD . /opt/sfm-ui/
