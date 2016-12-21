@@ -19,17 +19,17 @@ For more info about source tweet data, see the `Twitter API documentation
 | Field	                  | Description                                         | Example                                          |
 |                         |                                                     |                                                  |
 +=========================+=====================================================+==================================================+
-| created_at              | Date and time the tweet was created, in             | 12/1/2016  1:22:35 AM                            |
-|                         | Excel-friendly format.                              |                                                  |
+| created_at              | Date and time the tweet was created, in             | 2016-12-21T19:30:03+00:00                        |
+|                         | ISO 8601 format and UTC time zone.                  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | twitter_id              | Twitter identifier for the tweet.                   | 114749583439036416                               |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| screen_name             | The screen name of the account that authored the    | NASA                                             |
-|                         | tweet, at the time the tweet was posted.            |                                                  |
-|                         | Note that an account's screen name may change over  |                                                  |
-|                         | time.                                               |                                                  |
+| screen_name             | The unique screen name of the account that          | NASA                                             |
+|                         | authored the tweet, at the time the tweet was       |                                                  |
+|                         | posted. Note that an account's screen name may      |                                                  |
+|                         | change over time.                                   |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | followers_count         | Number of followers this account had at the time    | 235                                              |
@@ -93,7 +93,7 @@ For more info about source tweet data, see the `Twitter API documentation
 |                         | e.g. from bit.ly.                                   |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| url2                    | Second URL in text of tweet, as shortened           |                                                  |
+| url2                    | Second URL in text of tweet, as shortened           | https://t.co/ZTUQZcikJa                          |
 |                         | Twitter.                                            |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
@@ -123,44 +123,43 @@ For more info about source tweet data, see the `Tumblr API documentation
 | Field	                  | Description                                         | Example                                          |
 |                         |                                                     |                                                  |
 +=========================+=====================================================+==================================================+
-| created_at              | Date and time the tweet was created, in             |                                                  |
-|                         | Excel-friendly format.                              |                                                  |
+| created_at              | Date and time the tweet was created, in             | 2016-12-21 19:30:03+00:00                        |
+|                         | ISO 8601 format and UTC time zone.                  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tumblr_id               | Tumblr identifier for the tweet.                    |                                                  |
+| tumblr_id               | Tumblr identifier for the tweet.                    | 154774150409                                     |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| blog_name               | The screen name of the account that authored the    |                                                  |
-|                         | tweet, at the time the tweet was posted.            |                                                  |
-|                         | Note that an account's screen name may change over  |                                                  |
-|                         | time.                                               |                                                  |
+| blog_name               | The short name used to uniquely identify a blog.    | nasa                                             |
+|                         | This is the first part of the blog url, like        |                                                  |
+|                         | <nasa.tumblr.com>.                                  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_type               | Number of followers this account had at the time    |                                                  |
-|                         | the tweet was harvested.                            |                                                  |
+| post_type               | The type of post, such as one of the following:     | text                                             |
+|                         | text, quote, link, answer, video, audio,            |                                                  |
+|                         | photo, or chat.                                     |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_slug               | Number of users this account was following at the   |                                                  |
-|                         | time the tweet was harvested.                       |                                                  |
+| post_slug               | Text summary of the post, taken from the final      | 10-questions-for-our-chief-scientist             |
+|                         | portion of the url.                                 |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_summary            | Number of times this tweet had been favorited/liked |                                                  |
-|                         | by other users at the time the tweet was harvested. |                                                  |
+| post_summary            | Text summary of the post, taken from the title      | 10 Questions for Our Chief Scientist             |
+|                         | of the post.                                        |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_text               | Number of times this tweet had been retweeted at    |                                                  |
-|                         | the time the tweet was harvested.                   |                                                  |
+| post_text               | Body of the post text, using html markup.           | See https://notepad.pw/w8133kzj                  |
+|                         |                                                     |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tags                    | Hashtags from the tweet                             |                                                  |
-|                         | text, as a comma-separated list.                    |                                                  |
+| tags                    | Hashtags from the post                              | nasa, space, solarsystem,                        |
+|                         | as a comma-separated list.                          | chiefscientist, scientist                        |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tumblr_url              | Other Twitter accounts mentioned in the text of the |                                                  |
-|                         | tweet, separated by comma and space.                |                                                  |
+| tumblr_url              | Full url location of the post.                      | http://nasa.tumblr.com/post/154774150409/        |
+|                         |                                                     | 10-questions-for-our-chief-scientist             |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tumblr_short_url        | If the tweet is a reply, the screen name of         |                                                  |
-|                         | the original tweet's author.                        |                                                  |
+| tumblr_short_url        | Short url of the post.                              | https://tmblr.co/Zz_Uqj2G9GXq9                   |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
