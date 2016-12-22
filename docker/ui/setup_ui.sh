@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Syncing db"
-/opt/sfm-ui/sfm/manage.py syncdb --noinput
-
 echo "Migrating db"
 /opt/sfm-ui/sfm/manage.py migrate --noinput
 
