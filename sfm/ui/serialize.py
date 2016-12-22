@@ -3,7 +3,6 @@ import shutil
 import codecs
 import logging
 import json
-from datetime import datetime
 import iso8601
 import itertools
 
@@ -256,7 +255,7 @@ class RecordSerializer:
 
     @staticmethod
     def _serialize_objs(objs, filepath):
-        with codecs.open(filepath, "w") as f:
+        with codecs.open(filepath, "w", encoding="utf-8") as f:
             serializers.serialize("json", objs, indent=4, use_natural_foreign_keys=True,
                                   use_natural_primary_keys=True, stream=f)
         assert os.path.exists(filepath)
@@ -267,7 +266,7 @@ class RecordSerializer:
         readme_txt = readme_template.render(Context({model_name: obj, "now": datetime_now()}))
         readme_filepath = os.path.join(path, "README.txt")
         log.debug("Writing %s README to %s: %s", model_name, readme_filepath, readme_txt)
-        with codecs.open(readme_filepath, "w") as f:
+        with codecs.open(readme_filepath, "w", encoding="utf-8") as f:
             f.write(readme_txt)
 
     @staticmethod
@@ -278,14 +277,14 @@ class RecordSerializer:
         }, indent=4)
         info_filepath = os.path.join(records_path, INFO_FILENAME)
         log.debug("Writing info to %s: %s", info_filepath, info_txt)
-        with codecs.open(info_filepath, "w") as f:
+        with codecs.open(info_filepath, "w", encoding="utf-8") as f:
             f.write(info_txt)
 
     @staticmethod
     def _read_last_serialization(records_path):
         info_filepath = os.path.join(records_path, INFO_FILENAME)
         if os.path.exists(info_filepath):
-            with codecs.open(info_filepath, "r") as f:
+            with codecs.open(info_filepath, "r", encoding="utf-8") as f:
                 info = json.load(f)
             return iso8601.parse_date(info["serialization_date"])
         return None
@@ -514,7 +513,7 @@ class RecordDeserializer:
 
     @staticmethod
     def _load_record(record_filepath):
-        with codecs.open(record_filepath, "r") as f:
+        with codecs.open(record_filepath, "r", encoding="utf-8") as f:
             record = json.load(f)
         return record
 
@@ -529,7 +528,7 @@ class RecordDeserializer:
     @staticmethod
     def _deserialize_iter(filepath):
         log.debug("Deserializing %s", filepath)
-        with codecs.open(filepath, "r") as f:
+        with codecs.open(filepath, "r", encoding="utf-8") as f:
             for d_obj in serializers.deserialize("json", f):
                 yield d_obj
 
