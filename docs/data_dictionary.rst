@@ -1,10 +1,14 @@
-===============================================
- Data Dictionary for Twitter CSV/Excel Exports
-===============================================
+=========================================
+ Data Dictionaries for CSV/Excel Exports
+=========================================
 
-Social Feed Manager captures entire tweets, with all their data. To download
-selected, processed fields for each tweet in a user timeline, use the csv export
- option, available on each user page.
+Social Feed Manager captures a variety of data from each platform. These data
+dictionaries give explanations for each selected and processed field in csv
+exports.
+
+* `Twitter Dictionary`_
+* `Tumblr Dictionary`_
+* `Flickr Dictionary`_
 
 ------------------
 Twitter Dictionary
@@ -14,6 +18,13 @@ For more info about source tweet data, see the `Twitter API documentation
 <https://dev.twitter.com/docs>`_, including `Tweets
 <https://dev.twitter.com/docs/platform-objects/tweets>`_ and `Entities
 <https://dev.twitter.com/docs/platform-objects/entities>`_.
+
+Documentation about older archived tweets is archived by Wayback Machine for
+`the Twitter API
+<https://web.archive.org/web/*/https://dev.twitter.com/docs>`_, `Tweets
+<https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_,
+and `Entities
+<https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_.
 
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | Field	                  | Description                                         | Example                                          |
@@ -119,6 +130,12 @@ For more info about source tweet data, see the `Tumblr API documentation
 <https://www.tumblr.com/docs/en/api/v2>`_, particularly `Posts
 <https://www.tumblr.com/docs/en/api/v2#posts>`_.
 
+Documentation about older archived posts is archived by Wayback Machine for the
+`original Tumblr API
+<https://web.archive.org/web/*/https://www.tumblr.com/docs/en/api/>`_ and the
+`newer Tumblr API
+<https://web.archive.org/web/*/https://www.tumblr.com/docs/en/api/v2>`_.
+
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | Field	                  | Description                                         | Example                                          |
 |                         |                                                     |                                                  |
@@ -148,7 +165,7 @@ For more info about source tweet data, see the `Tumblr API documentation
 |                         | of the post.                                        |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_text               | Body of the post text, using html markup.           | See https://notepad.pw/w8133kzj                  |
+| post_text               | Body of the post text, using html markup.           | *See* https://notepad.pw/w8133kzj                |
 |                         |                                                     |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
@@ -156,10 +173,91 @@ For more info about source tweet data, see the `Tumblr API documentation
 |                         | as a comma-separated list.                          | chiefscientist, scientist                        |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tumblr_url              | Full url location of the post.                      | http://nasa.tumblr.com/post/154774150409/        |
-|                         |                                                     | 10-questions-for-our-chief-scientist             |
+| tumblr_url              | Full url location of the post.                      | `http://nasa.tumblr.com/post/154774150409/       |
+|                         |                                                     | 10-questions-for-our-chief-scientist <http://    |
+|                         |                                                     | nasa.tumblr.com/post/154774150409/10-questions-  |
+|                         |                                                     | for-our-chief-scientist>`_                       |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | tumblr_short_url        | Short url of the post.                              | https://tmblr.co/Zz_Uqj2G9GXq9                   |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+
+
+
+-----------------
+Flickr Dictionary
+-----------------
+
+For more info about source tweet data, see the `Flickr API documentation
+<https://www.flickr.com/services/api/>`_, particularly *People* and *Photos*.
+
+Documentation about older archived posts is archived by Wayback Machine `here
+<https://web.archive.org/web/*/https://www.flickr.com/services/api/>`_.
+
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| Field	                  | Description                                         | Example                                          |
+|                         |                                                     |                                                  |
++=========================+=====================================================+==================================================+
+| photo_id                | Unique Flickr identifier of the photo.              | 11211844604                                      |
+|                         |                                                     |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| date_posted             | Date and time that the post was uploaded to         | 2013-12-04 21:39:40+00:00                        |
+|                         | Flickr, in ISO 8601 format and UTC time zone.       |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| date_taken              | Date and time that media was captured, either       | 6/7/2014 13:35                                   |
+|                         | extracted from EXIF or from the date posted,        |                                                  |
+|                         | in mm/dd/yyyy hh:mm format.                         |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| license                 | Licensing allowed for media, given as a             | 4                                                |
+|                         | numeral according to the following key:             | *(Attribution license)*                          |
+|                         |                                                     |                                                  |
+|                         | - 0 = All Rights Reserved                           |                                                  |
+|                         | - 1 = Attribution-NonCommercial-Sharealike License  |                                                  |
+|                         | - 2 = Attribution-NonCommercial License             |                                                  |
+|                         | - 3 = Attribution-NonCommercial NoDerivs License    |                                                  |
+|                         | - 4 = Attribution License                           |                                                  |
+|                         | - 5 = Attribution-ShareAlike License                |                                                  |
+|                         | - 6 = Attribution-NoDerivs License                  |                                                  |
+|                         | - 7 = No known copyright restrictions               |                                                  |
+|                         | - 8 = United States Government work                 |                                                  |
+|                         | - More information at creativecommons.org/licenses  |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| safety_level            | Appropriateness of post, given as a numeral         | 0                                                |
+|                         | according to the following key:                     | *(Safe level)*                                   |
+|                         |                                                     |                                                  |
+|                         | - 0 = Safe - Content suitable for everyone          |                                                  |
+|                         | - 1 = Moderate - Approximately PG-13 content        |                                                  |
+|                         | - 2 = Restricted - Approximately R rated content    |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| original_format         | File format of uploaded media.                      | jpg                                              |
+|                         |                                                     |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| owner_nsid              | Unique Flickr identifier of the owner account.      | 28399705@N04                                     |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| owner_username          | Unique plaintext username of the owner account.     | GW Museum and Textile Museum                     |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| title                   | Title of the post.                                  | Original Museum entrance                         |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| description             | Short description of the post.                      | Historic photo courtesy of The Textile           |
+|                         |                                                     | Museum Archives.                                 |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| media                   | Media type of the post.                             | photo                                            |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| photopage               | Location url of the post.                           | `https://www.flickr.com/photos/textilemuseum/    |
+|                         |                                                     | 11211844604/                                     |
+|                         |                                                     | <https://www.flickr.com/photos/textilemuseum/    |
+|                         |                                                     | 11211844604/>`_                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
