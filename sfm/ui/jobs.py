@@ -132,7 +132,7 @@ def collection_harvest(collection_pk):
             mail_subject = u"SFM Harvest for {} was skipped".format(
                 harvest.collection.name)
             mail_message = u"The harvest for {} ({}) was skipped. This may be because it is scheduled too frequently " \
-                           u"and the last harvest has not had time to commplete. It " \
+                           u"and the last harvest has not had time to complete. It " \
                            u"may also indicate a problem with SFM. The SFM administrator has been notified.".format(
                                 harvest.collection.name,
                                 harvest_url)
