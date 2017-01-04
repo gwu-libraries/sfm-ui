@@ -5,6 +5,7 @@ import json as json_lib
 from collections import OrderedDict
 
 from ui.models import Harvest
+import ui.auth
 
 register = template.Library()
 
@@ -170,3 +171,12 @@ def verbose_name(instance, field_name=None):
     if field_name:
         return instance._meta.get_field(field_name).verbose_name
     return instance._meta.verbose_name
+
+
+@register.assignment_tag(takes_context=True)
+def has_collection_set_based_permission(context, obj, allow_superuser=True, allow_staff=False):
+    return ui.auth.has_collection_set_based_permission(obj, context["user"], allow_superuser, allow_staff)
+
+@register.assignment_tag(takes_context=True)
+def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=False):
+    return ui.auth.has_user_based_permission(obj, context["user"], allow_superuser, allow_staff)

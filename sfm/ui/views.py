@@ -22,8 +22,10 @@ from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export
 from .sched import next_run_time
 from .utils import diff_object_history, diff_collection_and_seeds_history, clean_token, clean_blogname
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
+from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetOrSuperuserPermissionMixin, \
+    check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
+    has_collection_set_based_permission
 
-import json
 import os
 import logging
 
@@ -39,7 +41,7 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CollectionSetListView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_staff:
             context['collection_set_list_n'] = CollectionSet.objects.exclude(
                 group__in=self.request.user.groups.all()).annotate(
                 num_collections=Count('collections')).order_by('name')
@@ -50,7 +52,7 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
         return context
 
 
-class CollectionSetDetailView(LoginRequiredMixin, DetailView):
+class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = CollectionSet
     template_name = 'ui/collection_set_detail.html'
     context_object_name = 'collection_set'
@@ -63,6 +65,7 @@ class CollectionSetDetailView(LoginRequiredMixin, DetailView):
         context["harvest_types"] = sorted(Collection.HARVEST_CHOICES)
         context["item_id"] = self.object.id
         context["model_name"] = "collection_set"
+        context["can_edit"] = has_collection_set_based_permission(self.object, self.request.user)
         return context
 
 
@@ -81,7 +84,7 @@ class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
         return reverse('collection_set_detail', args=(self.object.pk,))
 
 
-class CollectionSetUpdateView(LoginRequiredMixin, UpdateView):
+class CollectionSetUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, UpdateView):
     model = CollectionSet
     form_class = CollectionSetForm
     template_name = 'ui/collection_set_update.html'
@@ -103,7 +106,7 @@ class CollectionSetUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("collection_set_detail", args=(self.object.pk,))
 
 
-class CollectionDetailView(LoginRequiredMixin, DetailView):
+class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
 
@@ -117,6 +120,9 @@ class CollectionDetailView(LoginRequiredMixin, DetailView):
         context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
+        has_perms = has_collection_set_based_permission(self.object, self.request.user)
+        context["can_edit"] = not self.object.is_active and has_perms
+        context["can_toggle"] = has_perms
         # For not enough seeds
         seed_warning_message = None
         # For too many seeds
@@ -205,7 +211,8 @@ def _get_credential_use_map(credentials, harvest_type):
         return credential_use_map
 
 
-class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class CollectionCreateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, SuccessMessageMixin,
+                           CreateView):
     model = Collection
     template_name = 'ui/collection_create.html'
 
@@ -243,7 +250,7 @@ class CollectionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return "New collection added."
 
 
-class CollectionUpdateView(LoginRequiredMixin, UpdateView):
+class CollectionUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, UpdateView):
     model = Collection
     template_name = 'ui/collection_update.html'
     initial = {'history_note': ''}
@@ -277,6 +284,8 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         collection = get_object_or_404(Collection, pk=kwargs['pk'])
+        # Check permissions to toggle
+        check_collection_set_based_permission(collection, self.request.user)
         collection.is_active = not collection.is_active
         collection.history_note = ""
         if collection.is_active:
@@ -287,15 +296,7 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
         return super(CollectionToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 
-class SeedListView(LoginRequiredMixin, ListView):
-    model = Seed
-    template_name = 'ui/seed_list.html'
-    paginate_by = 20
-    allow_empty = True
-    paginate_orphans = 0
-
-
-class SeedDetailView(LoginRequiredMixin, DetailView):
+class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Seed
     template_name = 'ui/seed_detail.html'
 
@@ -306,6 +307,8 @@ class SeedDetailView(LoginRequiredMixin, DetailView):
         context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
+        context["can_edit"] = not self.object.collection.is_active \
+                              and has_collection_set_based_permission(self.object, self.request.user)
         return context
 
 
@@ -313,13 +316,15 @@ def _get_seed_form_class(harvest_type):
     return "Seed{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
 
 
-class SeedCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class SeedCreateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, SuccessMessageMixin, CreateView):
     model = Seed
     template_name = 'ui/seed_create.html'
 
     def get_initial(self):
         initial = super(SeedCreateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        collection = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        initial["collection"] = collection
+        initial["collection_set"] = collection.collection_set
         return initial
 
     def get_context_data(self, **kwargs):
@@ -348,7 +353,7 @@ class SeedCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return "New seed added."
 
 
-class SeedUpdateView(LoginRequiredMixin, UpdateView):
+class SeedUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, UpdateView):
     model = Seed
     template_name = 'ui/seed_update.html'
     initial = {'history_note': ''}
@@ -375,11 +380,15 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         collection = Collection.objects.get(pk=kwargs["collection_pk"])
+        # Check permissions
+        check_collection_set_based_permission(collection, request.user)
         form = self._form_class(collection)(initial={}, collection=kwargs["collection_pk"])
         return self._render(request, form, collection)
 
     def post(self, request, *args, **kwargs):
         collection = Collection.objects.get(pk=kwargs["collection_pk"])
+        # Check permissions
+        check_collection_set_based_permission(collection, request.user)
         form = self._form_class(collection)(request.POST, collection=kwargs["collection_pk"])
         if form.is_valid():
             tokens = form.cleaned_data['tokens'].splitlines()
@@ -418,7 +427,7 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
                        'harvest_type_name': _get_harvest_type_name(collection.harvest_type)})
 
 
-class CredentialDetailView(LoginRequiredMixin, DetailView):
+class CredentialDetailView(LoginRequiredMixin, UserOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Credential
     template_name = 'ui/credential_detail.html'
 
@@ -470,14 +479,15 @@ class CredentialListView(LoginRequiredMixin, ListView):
         context["can_connect_tumblr"] = self._can_connect_credential(Credential.TUMBLR)
         return context
 
-    def _can_connect_credential(self, platform):
+    @staticmethod
+    def _can_connect_credential(platform):
         """
         Returns True if a Social App is configured for this platform.
         """
         return SocialApp.objects.filter(provider=platform).exists()
 
 
-class CredentialUpdateView(LoginRequiredMixin, UpdateView):
+class CredentialUpdateView(LoginRequiredMixin, UserOrSuperuserPermissionMixin, UpdateView):
     model = Credential
     template_name = 'ui/credential_update.html'
     initial = {'history_note': ''}
@@ -511,7 +521,8 @@ class ExportListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ExportCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class ExportCreateView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, SuccessMessageMixin,
+                       CreateView):
     model = Export
     form_class = ExportForm
     template_name = 'ui/export_create.html'
@@ -519,7 +530,9 @@ class ExportCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_initial(self):
         initial = super(ExportCreateView, self).get_initial()
-        initial["collection"] = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        collection = Collection.objects.get(pk=self.kwargs["collection_pk"])
+        initial["collection"] = collection
+        initial["collection_set"] = collection.collection_set
         return initial
 
     def get_context_data(self, **kwargs):
@@ -555,7 +568,7 @@ def _get_fileinfos(path):
     return sorted(fileinfos)
 
 
-class ExportDetailView(LoginRequiredMixin, DetailView):
+class ExportDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Export
     template_name = 'ui/export_detail.html'
 
@@ -576,6 +589,8 @@ class HarvestListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.collection = get_object_or_404(Collection, pk=self.kwargs["pk"])
+        # Check permissions
+        check_collection_set_based_permission(self.collection, self.request.user, allow_staff=True)
         return self.collection.harvests.all().order_by('-date_requested')
 
     def get_context_data(self, **kwargs):
@@ -585,7 +600,7 @@ class HarvestListView(LoginRequiredMixin, ListView):
         return context
 
 
-class HarvestDetailView(LoginRequiredMixin, DetailView):
+class HarvestDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Harvest
     template_name = 'ui/harvest_detail.html'
 
@@ -597,7 +612,8 @@ class HarvestDetailView(LoginRequiredMixin, DetailView):
         context["can_void"] = False
         if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED) \
                 and not self.object.collection.is_streaming() \
-                and self.object == self.object.collection.last_harvest():
+                and self.object == self.object.collection.last_harvest() \
+                and has_collection_set_based_permission(self.object, self.request.user):
             context["can_void"] = True
         return context
 
@@ -609,6 +625,10 @@ class HarvestVoidView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         harvest = get_object_or_404(Harvest, pk=kwargs['pk'])
+
+        # Check permissions to void
+        check_collection_set_based_permission(harvest, self.request.user)
+
         if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED):
             log.debug("Voiding %s", harvest)
             harvest.status = Harvest.VOIDED
@@ -660,6 +680,10 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
         model_name = self.kwargs["model"].replace("_", "")
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
+
+        # Check permissions to view
+        check_collection_set_based_permission(item, self.request.user, allow_staff=True)
+
         context["item"] = item
         if model_name == 'collection':
             diffs = diff_collection_and_seeds_history(item)

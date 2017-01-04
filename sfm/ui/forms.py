@@ -171,7 +171,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
     web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
                                               label=TWITTER_WEB_RESOURCES_LABEL)
     user_images_option = forms.BooleanField(initial=False, required=False, help_text=USER_PROFILE_HELP,
-                                              label=USER_PROFILE_LABEL)
+                                            label=USER_PROFILE_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
@@ -187,7 +187,6 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
                 self.fields['web_resources_option'].initial = harvest_options["web_resources"]
             if "user_images" in harvest_options:
                 self.fields['user_images_option'].initial = harvest_options["user_images"]
-
 
     def save(self, commit=True):
         m = super(CollectionTwitterUserTimelineForm, self).save(commit=False)

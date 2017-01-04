@@ -39,30 +39,28 @@
      </div>
   </div>
 {% endif %} 
-{% if user.is_superuser %}
-  {% if collection_set_list_n %}
-    <div class="row">
-      <div class="col-md-12">
-        <h2>Other Collection Sets</h2>
-        <table class="table">
-          <thead>
-            <th>Name</th>
-            <th>Collections</th>
-            <th>Date Added</th>
-            <th>Groups</th>
-          </thead>
-          {% for collection_set in collection_set_list_n %}
-           <tr>
-             <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
-	     <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize }}</td>
-	     <td>{{ collection_set.date_added }}</td>
-             <td>{{ collection_set.group }}</td>
-           </tr>
-          {% endfor %}
-        </table>
-      </div>
-     </div>
-   {% endif %}
+{% if collection_set_list_n %}
+<div class="row">
+  <div class="col-md-12">
+    <h2>Other Collection Sets</h2>
+    <table class="table">
+      <thead>
+        <th>Name</th>
+        <th>Collections</th>
+        <th>Date Added</th>
+        <th>Groups</th>
+      </thead>
+      {% for collection_set in collection_set_list_n %}
+       <tr>
+         <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
+     <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize }}</td>
+     <td>{{ collection_set.date_added }}</td>
+         <td>{{ collection_set.group }}</td>
+       </tr>
+      {% endfor %}
+    </table>
+  </div>
+ </div>
 {% endif %}
 <div class="row">
     <div class="col-md-12">
