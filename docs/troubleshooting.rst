@@ -30,6 +30,17 @@ with the status of skipped. Some of the reasons that this might happen include:
 After correcting the problem to resume harvesting for a collection, void the last (non-skipped) harvest. To void a
 harvest, go to that harvest's detail page and click the void button.
 
+Connection errors when harvesting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If harvests from a container fail with something like::
+
+    HTTPSConnectionPool(host='api.flickr.com', port=443): Max retries exceeded with url: /services/rest/?user_id=148553609%40N08&nojsoncallback=1&method=flickr.people.getInfo&format=json (Caused by ProxyError('Cannot connect to proxy.', error('Tunnel connection failed: 500 [Errno -3] Temporary failure in name resolution',)))
+
+then stop and restart the container.  For example::
+
+    docker-compose stop flickrharvester
+    docker-compose up -d
+
 Bind error
 ^^^^^^^^^^
 If when bringing up the containers you receive something like::
