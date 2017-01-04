@@ -23,7 +23,8 @@ Collection description: {{ collection.description }}{% endif %}{% if collection.
 Schedule: {{ collection.get_schedule_minutes_display }}{% endif %}
 
 Harvest options:
-{{ collection.harvest_options|json_text }}
+{% json_text collection.harvest_options False as json_text_nohtml %}
+{{ json_text_nohtml }}
 {% if collection.seeds.all %}Seeds:{% for seed in collection.seeds.all %}
 * {{ seed.label }} - {{ seed.is_active|yesno:"Active,Inactive" }}
 {% endfor %}{% endif %}
