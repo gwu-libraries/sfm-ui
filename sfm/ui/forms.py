@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from django import forms
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
@@ -377,6 +380,47 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         return m
 
 
+class CollectionWeiboSearchForm(BaseCollectionForm):
+    SIZE_OPTIONS = (
+        ("Thumbnail", "Thumbnail"),
+        ("Medium", "Medium"),
+        ("Large", "Large")
+    )
+    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
+                                            help_text="For harvesting images, select the image sizes.",
+                                            widget=forms.CheckboxSelectMultiple, label="Image sizes")
+    web_resources_option = forms.BooleanField(initial=False, required=False,
+                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
+                                                        "weibo texts.",
+                                              label="Web resources")
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+            if "image_sizes" in harvest_options:
+                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
+
+    def save(self, commit=True):
+        m = super(CollectionWeiboSearchForm, self).save(commit=False)
+        m.harvest_type = Collection.WEIBO_SEARCH
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "image_sizes": self.cleaned_data["image_sizes"],
+            "web_resources": self.cleaned_data["web_resources_option"]
+        }
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
+        m.save()
+        return m
+
+
 class CollectionTumblrBlogPostsForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
     media_option = forms.BooleanField(initial=False, required=False,
@@ -489,6 +533,24 @@ class SeedTwitterSearchForm(BaseSeedForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].append('token')
+
+
+class SeedWeiboSearchForm(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Query"
+        help_texts = dict(BaseSeedForm.Meta.help_texts)
+        help_texts["token"] = u'See <a href="http://open.weibo.com/wiki/2/search/topics" target="_blank">' \
+                              u'API documents</a> for writing a query. ' \
+                              u'Example: "科技".'
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.Textarea(attrs={'rows': 4})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedWeiboSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].append('token')
 
 
