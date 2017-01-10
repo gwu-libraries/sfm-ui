@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .notifications import _should_send_email, _create_email, _create_context, _create_space_email, \
-    _should_send_space_email
+    _should_send_space_email, get_warn_queue, _create_queue_warn_email
 from .notifications import MonitorSpace
 from .models import User, Group, CollectionSet, Credential, Collection, Harvest, HarvestStat
 import datetime
@@ -174,7 +174,7 @@ class SpaceNotificationTests(TestCase):
         self.assertTrue(space_msg_cache['space_data']['send_email'])
 
     @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
-    def test_get_free_info(self, mock_run_cmd):
+    def test_get_free_info_empty(self, mock_run_cmd):
         mock_run_cmd.side_effect = ['']
         data_monitor = MonitorSpace('/sfm-data', '200GB')
         space_msg_cache = {'space_data': data_monitor.get_space_info()}
@@ -205,4 +205,47 @@ class SpaceNotificationTests(TestCase):
         msg = _create_space_email("superuser@test.com", {})
         self.assertTrue(msg.body.startswith("This is a warning that free space on your Social Feed Manager server at "
                                             "http://example.com/ui/ is low."))
+        self.assertEqual(["superuser@test.com"], msg.to)
+
+
+class QueueNotificationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="test_user", email="testuser@test.com")
+        self.user_no_email = User.objects.create_user(username="test_user3")
+
+    @patch("ui.monitoring.monitor_queues", autospec=True)
+    def test_get_queue_info(self, mock_monitor_queues):
+        mock_monitor_queues.return_value = ({'Twitter Rest Harvester': 0, 'Web Harvester': 0, 'Flickr Harvester': 0,
+                                             'Tumblr Harvester': 0, 'Twitter Harvester': 0, 'Weibo Harvester': 0},
+                                            {'Weibo Exporter': 0, 'Twitter Stream Exporter': 0,
+                                             'Twitter Rest Exporter': 0, 'Tumblr Exporter': 0, 'Flickr Exporter': 0},
+                                            {'Sfm Ui': 0})
+
+        msg_cache = {}
+        queue_th_map = {'Twitter Rest Harvester': '20', 'Web Harvester': '10'}
+        queue_th_other = '10'
+        msg_cache['queue_data'] = get_warn_queue(queue_th_map, queue_th_other)
+        self.assertEqual([], msg_cache['queue_data'])
+
+    @patch("ui.monitoring.monitor_queues", autospec=True)
+    def test_get_queue_info_full(self, mock_monitor_queues):
+        mock_monitor_queues.return_value = ({'Twitter Rest Harvester': 100, 'Web Harvester': 50, 'Flickr Harvester': 0,
+                                             'Tumblr Harvester': 200, 'Twitter Harvester': 0, 'Weibo Harvester': 0},
+                                            {'Weibo Exporter': 0, 'Twitter Stream Exporter': 5,
+                                             'Twitter Rest Exporter': 100, 'Tumblr Exporter': 0, 'Flickr Exporter': 0},
+                                            {'Sfm Ui': 25})
+
+        msg_cache = {}
+        queue_th_map = {'Twitter Rest Harvester': '20', 'Web Harvester': '25', 'Sfm Ui': '15'}
+        queue_th_other = '10'
+        msg_cache['queue_data'] = get_warn_queue(queue_th_map, queue_th_other)
+        self.assertEqual(
+            [('Twitter Rest Harvester', 100), ('Web Harvester', 50), ('Tumblr Harvester', 200),
+             ('Twitter Rest Exporter', 100), ('Sfm Ui', 25)],
+            msg_cache['queue_data'])
+
+    def test_create_email(self):
+        msg = _create_queue_warn_email("superuser@test.com", {})
+        self.assertTrue(msg.body.startswith("The following message queues on your Social Feed Manager server at "
+                                            "http://example.com/ui/"))
         self.assertEqual(["superuser@test.com"], msg.to)

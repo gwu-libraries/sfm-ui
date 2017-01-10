@@ -16,7 +16,7 @@ class UIConfig(AppConfig):
         from models import Collection, Export, CollectionSet, Warc
         from sched import start_sched, schedule_harvest_receiver, unschedule_harvest_receiver
         from export import export_receiver, export_m2m_receiver
-        from notifications import send_user_harvest_emails, send_free_space_emails
+        from notifications import send_user_harvest_emails, send_free_space_emails, send_queue_warn_emails
         from serialize import serialize_all
         from models import delete_collection_set_receiver, delete_collection_receiver, delete_warc_receiver, \
             delete_export_receiver
@@ -59,6 +59,14 @@ class UIConfig(AppConfig):
                     sched.remove_job('scan_free_space')
                 sched.add_job(send_free_space_emails, 'cron', hour=settings.SCAN_FREE_SPACE_HOUR,
                               minute=settings.SCAN_FREE_SPACE_MINUTE, id='scan_free_space')
+
+            # scheduled job to check monitor queue message
+            if settings.PERFORM_MONITOR_QUEUE:
+                if sched.get_job('monitor_queue_length') is not None:
+                    sched.remove_job('monitor_queue_length')
+                sched.add_job(send_queue_warn_emails, 'interval', hours=int(settings.MONITOR_QUEUE_HOUR),
+                              id='monitor_queue_length')
+
             # Serialization
             if settings.PERFORM_SERIALIZE:
                 if sched.get_job('serialize') is not None:

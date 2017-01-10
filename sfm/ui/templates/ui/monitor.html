@@ -125,5 +125,24 @@
     </div>
 </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>UI Queues</h4></div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Queue</th>
+                <th>Queued Requests</th>
+            </tr>
+            </thead>
+            {% for queue, message_count in ui_queues.items %}
+            <tr>
+                <td>{{ queue }}</td>
+                <td>{{ message_count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 
 {% endblock %}

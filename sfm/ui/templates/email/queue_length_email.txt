@@ -1,0 +1,7 @@
+{% load humanize %}The following message queues on your Social Feed Manager server at {{ url }} reach the warning level.
+
+{% for queue, msgcount in queue_data %}
+    Queue: {{ queue }}, Queued Requests: {{ msgcount }}
+{% endfor %}
+
+For details, please go to SFM Monitor page at {{monitor_url}}.

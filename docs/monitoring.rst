@@ -12,7 +12,8 @@ For more information on troubleshooting, see :doc:`troubleshooting`.
 
 To reach the monitoring page, click "Monitor" on the header of any page in SFM UI.
 
-The monitor page provides status and queue lengths for harvesters and exporters.
+The monitor page provides status and queue lengths for SFM components, including
+harvesters and exporters.
 
 The status is based on the most recent status reported back by each harvester
 or exporter (within the last 3 days). A harvester or exporter reports its status
@@ -27,6 +28,10 @@ The queue length lists the number of harvest or export requests that are waiting
 A long queue length can indicate that additional harvesters or exporters are needed
 to handle the load (see :ref:`docker-scaling`) or that there is a problem with the
 harvester or exporter.
+
+The queue length for SFM UI is also listed. This is a queue of status update messages
+from harvesters or exporters. SFM UI uses these messages to update the
+records for harvests and exports. Any sort of a queue here indicates a problem.
 
 ------
  Logs
