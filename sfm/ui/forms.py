@@ -549,6 +549,11 @@ class SeedFlickrUserForm(BaseSeedForm):
         labels = dict(BaseSeedForm.Meta.labels)
         labels["token"] = "Username"
         labels["uid"] = "NSID"
+        help_texts = dict(BaseSeedForm.Meta.help_texts)
+        help_texts["token"] = 'A string name for the user account. Finding this on the Flickr website can be ' \
+                              'confusing, so see NSID below.'
+        help_texts["uid"] = 'An unchanging identifier for a user account, e.g., 80136838@N05. To find the NSID for a ' \
+                            'user account, use <a href="http://www.webpagefx.com/tools/idgettr/">idGettr</a>.'
         widgets = dict(BaseSeedForm.Meta.widgets)
         widgets["token"] = forms.TextInput(attrs={'size': '40'})
         widgets["uid"] = forms.TextInput(attrs={'size': '40'})
