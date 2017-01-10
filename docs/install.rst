@@ -198,7 +198,7 @@ otherwise::
 4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
 in your new ``docker-compose.yml``.
 
-5. Make any changes in your ``.env`` file prescribed by the release notes.
+5. Make any changes in your ``.env`` file prescribed by the release notes. This should include changing ``SFM_VERSION``.
 
 6. Bring up the containers::
 
