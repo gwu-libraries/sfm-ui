@@ -3,12 +3,17 @@
 =========================================
 
 Social Feed Manager captures a variety of data from each platform. These data
-dictionaries give explanations for each selected and processed field in csv
+dictionaries give explanations for each selected and processed field in
 exports.
+
+Note that these are subsets of the data that are collected for each
+post. The full data is available for export by selecting "Full JSON" as the export format
+or by exporting from the commandline. See :doc:`processing`.
 
 * `Twitter Dictionary`_
 * `Tumblr Dictionary`_
 * `Flickr Dictionary`_
+* `Weibo Dictionary`_
 
 ------------------
 Twitter Dictionary
@@ -19,8 +24,8 @@ For more info about source tweet data, see the `Twitter API documentation
 <https://dev.twitter.com/docs/platform-objects/tweets>`_ and `Entities
 <https://dev.twitter.com/docs/platform-objects/entities>`_.
 
-Documentation about older archived tweets is archived by Wayback Machine for
-`the Twitter API
+Documentation about older archived tweets is archived by the Wayback Machine for
+the `Twitter API
 <https://web.archive.org/web/*/https://dev.twitter.com/docs>`_, `Tweets
 <https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_,
 and `Entities
@@ -130,7 +135,7 @@ For more info about source tweet data, see the `Tumblr API documentation
 <https://www.tumblr.com/docs/en/api/v2>`_, particularly `Posts
 <https://www.tumblr.com/docs/en/api/v2#posts>`_.
 
-Documentation about older archived posts is archived by Wayback Machine for the
+Documentation about older archived posts is archived by the Wayback Machine for the
 `original Tumblr API
 <https://web.archive.org/web/*/https://www.tumblr.com/docs/en/api/>`_ and the
 `newer Tumblr API
@@ -144,7 +149,7 @@ Documentation about older archived posts is archived by Wayback Machine for the
 |                         | ISO 8601 format and UTC time zone.                  |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| tumblr_id               | Tumblr identifier for the tweet.                    | 154774150409                                     |
+| tumblr_id               | Tumblr identifier for the blog post                 | 154774150409                                     |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | blog_name               | The short name used to uniquely identify a blog.    | nasa                                             |
@@ -165,7 +170,7 @@ Documentation about older archived posts is archived by Wayback Machine for the
 |                         | of the post.                                        |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| post_text               | Body of the post text, using html markup.           | *See* https://notepad.pw/w8133kzj                |
+| post_text               | Body of the post text, using html markup.           | See https://notepad.pw/w8133kzj                  |
 |                         |                                                     |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
@@ -192,7 +197,7 @@ Flickr Dictionary
 For more info about source tweet data, see the `Flickr API documentation
 <https://www.flickr.com/services/api/>`_, particularly *People* and *Photos*.
 
-Documentation about older archived posts is archived by Wayback Machine `here
+Documentation about older archived posts is archived by the Wayback Machine `here
 <https://web.archive.org/web/*/https://www.flickr.com/services/api/>`_.
 
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
@@ -259,5 +264,84 @@ Documentation about older archived posts is archived by Wayback Machine `here
 |                         |                                                     | 11211844604/                                     |
 |                         |                                                     | <https://www.flickr.com/photos/textilemuseum/    |
 |                         |                                                     | 11211844604/>`_                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+
+
+----------------
+Weibo Dictionary
+----------------
+
+For more info about source tweet data, see the `Sina Weibo API
+friends_timeline documentation
+<http://open.weibo.com/wiki/2/statuses/friends_timeline>`_.
+
+Documentation about older archived tweets is archived by the Wayback Machine `here
+<https://web.archive.org/web/*/
+http://open.weibo.com/wiki/2/statuses/friends_timeline>`_.
+
+*Note that for privacy purposes, Weibo dictionary examples are not consistent.*
+
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| Field	                  | Description                                         | Example                                          |
+|                         |                                                     |                                                  |
++=========================+=====================================================+==================================================+
+| created_at              | Date and time the tweet was created, in             | 2016-12-21T19:30:03+00:00                        |
+|                         | ISO 8601 format and UTC time zone.                  |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| weibo_id                | Sina Weibo identifier for the tweet.                | 4060309792585658                                 |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| screen_name             | The unique screen name of the account that          |  下厨房                                          |
+|                         | authored the weibo, at the time the weibo was       |                                                  |
+|                         | posted.                                             |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| followers_count         | Number of followers this account had at the time    | 3655329                                          |
+|                         | the weibo was harvested.                            |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| friends_count           | Number of users this account was following at the   | 2691                                             |
+|                         | time the weibo was harvested.                       |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| reposts_count           | Number of times this weibo had been reposted at     | 68                                               |
+|                         | the time the weibo was harvested.                   |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| topics                  | Topics (similar to hashtags) from the weibo text    |  魅族三分时刻                                    |
+|                         | as a comma-separated list.                          |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| in_reply_to_screen_name | If the weibo is a reply, the screen name of         |  下厨房                                          |
+|                         | the original weibo's author.                        |                                                  |
+|                         | (This is not yet supported by Sina Weibo.)          |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| weibo_url               | URL of the weibo. If the tweet is a retweet made    | http://m.weibo.cn/1618051664/4060300716095462    |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| text                    | The text of the weibo.                              |  马住！                                          |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| url1                    | First URL in text of weibo, as shortened by         | http://t.cn/RM2xyx6                              |
+|                         | Sina Weibo.                                         |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| url2                    | Second URL in text of weibo, as shortened by        | http://t.cn/Rc52gDY                              |
+|                         | Sina Weibo.                                         |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| retweeted_text          | Text of original weibo when the collected weibo     |  马住！                                          |
+|                         | is a repost.                                        |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| retweeted_url1          | First URL in text of original weibo, as shortened   | http://t.cn/RVR4cAQ                              |
+|                         | by Sina Weibo.                                      |                                                  |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| retweeted_url2          | Second URL in text of original weibo, as shortened  | http://t.cn/RMAJISP                              |
+|                         | by Sina Weibo.                                      |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
