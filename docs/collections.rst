@@ -9,18 +9,17 @@ Reading the social media platform's documentation provides further important
 details.
 
 Collection types
-  * `Twitter user timeline`_: Collect tweets from specific Twitter handles
-  * `Twitter search`_: Collects tweets by user-chosen criteria from a sample of
-    recent tweets
-  * `Twitter sample`_: Collects a Twitter provided stream of all tweets in real
+  * `Twitter user timeline`_: Collect tweets from specific Twitter accounts
+  * `Twitter search`_: Collects tweets by a user-provided search query from recent tweets
+  * `Twitter sample`_: Collects a Twitter provided stream of a subset of all tweets in real
     time.
-  * `Twitter filter`_: Collects tweets by user-chosen criteria from a stream of
+  * `Twitter filter`_: Collects tweets by user-provided criteria from a stream of
     tweets in real time.
-  * `Flickr user`_: Collects posts and photos from specific Flickr handles
+  * `Flickr user`_: Collects posts and photos from specific Flickr accounts
   * `Weibo timeline`_: Collects posts from the user and the user's friends
-  * `Tumblr blog posts`_: Collects blog posts from specific Tumblr Handles
-  * `Collecting Web resources`_: Secondary collections of resources linked to in
-    social media posts.
+  * `Tumblr blog posts`_: Collects blog posts from specific Tumblr blogs
+  * `Collecting Web resources`_: Secondary collections of resources linked to or
+    embedded in social media posts.
 
 
 .. _Twitter user timeline:
@@ -44,15 +43,16 @@ or Twitter user ID (a numeric string which never changes, like 11348282 for
 in SFM UI the first time the harvester runs.
 
 The number of user timeline seeds is not limited in collections, but harvests
-may longer if the collection exceeds Twitter's rate limits.
+may take longer if the collection exceeds Twitter's rate limits.
 
-Incorrect or private user timeline seeds are handled by SFM by notifying you
-when these are found; all other valid seeds will be collected.
+SFM will notify you when incorrect or private user timeline seeds are requested;
+all other valid seeds will be collected.
 
 The incremental option will collect tweets that haven't been harvested before,
 preventing duplicate tweets. When the incremental option is not selected, the
-3,200 most recent tweets will be collected; there will (most likely) be
-duplicates, but you will may be able to track changes in time about a user's
+3,200 most recent tweets will be collected. If a non-incremental harvest is
+performed multiple times, there will most likely be
+duplicates. However, you will may be able to track changes across time about a user's
 timeline, such as retweet and like counts, deletion of tweets, and follower
 counts.
 
@@ -70,31 +70,30 @@ collect media or web resources.
 Twitter search
 ---------------
 
-Collects tweets from the previous week that match search queries using
+Collects tweets from the last 7-9 days that match search queries using
 the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_, similar
 to a regular search made on `Twitter <https://twitter.com/search-home>`_.
 Based on relevance, this is **not** a complete search of all tweets, limited
 both by time and arbitrary relevance (determined by Twitter).
 
-Search collections are made up of only one search query.
+Search collections collect tweets from a single search query.
 
-Search queries mostly follow standard search term formulation; permitted queries
+Search queries must follow standard search term formulation; permitted queries
 are listed in the documentation for the `Twitter Search API
 <https://dev.twitter.com/rest/public/search>`_, or you can construct a query
 using the `Twitter Advanced Search query builder
 <https://twitter.com/search-advanced>`_.
 
-Broad Twitter searches may take longer to complete---possibly days---due
+Broad Twitter searches may take longer to complete -- possibly days -- due
 to Twitter’s rate limits and the amount of data available from the Search
 API. In choosing a schedule, make sure that there is enough time between
-searches, so that the previous search is not cut off. In some cases, you may only
+searches. (If there is not enough time between searches, later harvests will
+be skipped until earlier harvests complete.) In some cases, you may only
 want to run the search once and then turn off the collection.
 
 The incremental option will collect tweets that haven't been harvested before,
 preventing duplicate tweets. When the incremental option is not selected, the
-search will be performed again, and there will (most likely) be duplicates; you
-may be able to track changes in time about a user's timeline, such as retweet
-and like counts, deletion of tweets, and follower counts.
+search will be performed again, and there will most likely be duplicates.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect media or web resources.
@@ -112,8 +111,9 @@ capturing a sample of what people are talking about on Twitter.
 The Twitter sample stream returns approximately 0.5-1% of public tweets,
 which is approximately 3GB a day (compressed).
 
-There are no seeds like in other Twitter collections; rather, the sample returns
-data every 30 minutes when on.
+Unlike other Twitter collections, there are no seeds for a Twitter sample.
+
+When on, the sample returns data every 30 minutes.
 
 Only one sample or :ref:`Twitter filter` can be run at a time per credential.
 
@@ -143,8 +143,8 @@ matching is not supported. See the `track parameter documentation
 information.
 
 **Follow** collects tweets that are posted by or about a user (not including
-mentions) from a comma separated list of user IDs (the part after the @, like
-NASA in @NASA). Tweets collected will include those made by the user, retweeting
+mentions) from a comma separated list of user IDs (the numeric identifier for
+a user account). Tweets collected will include those made by the user, retweeting
 the user, or replying to the user. See the `follow parameter documentation
 <https://dev.twitter.com/streaming/overview/request-parameters#follow>`_ for
 more information.
@@ -162,10 +162,11 @@ will usually return more complete results.
 Only one filter or :ref:`Twitter sample` can be run at a time per credential.
 
 SFM captures the filter stream in 30 minute chunks and then momentarily stops.
-Between rate limiting and this momentary stop, you should never assume that
+Between rate limiting and these momentary stops, you should never assume that
 you are getting every tweet.
 
-There is only one seed in a filter collection, and is either turned on or off.
+There is only one seed in a filter collection. Twitter filter collection are
+either turned on or off (there is no schedule).
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collection media or web resources.
@@ -185,6 +186,11 @@ user. To identify a user, you can provide a either a username or an NSID. If you
 provide one, the other will be looked up and displayed in the SFM UI during the
 first harvest. The NSID is a unique identifier and does not change; usernames
 may be changed but are unique.
+
+Usernames can be difficult to find, so to ensure that you have the correct
+account, use `this tool <http://www.webpagefx.com/tools/idgettr/>`_ to find the
+NSID from the account URL (i.e., the URL when viewing the account on the Flickr
+website).
 
 For each user, the user's information will be collected using Flickr's
 `people.getInfo <https://www.flickr.com/services/api/flickr.people.getInfo.html>`_
@@ -208,7 +214,7 @@ If the incremental option is selected, only new photos will be collected.
 Weibo timeline
 --------------
 
-Collects Weibos by the user and friends of the user whose credentials are
+Collects weibos by the user and friends of the user whose credentials are
 provided using the `Weibo friends_timeline API
 <http://open.weibo.com/wiki/2/statuses/friends_timeline>`_.
 
@@ -241,7 +247,7 @@ collect image or web resources.
 Collecting Web resources
 ------------------------
 Most collection types allow you to select an option to collect web resources
-such as images, web pages, etc. that are included in the social media post. When 
+such as images, web pages, etc. that are included in the social media post. When
 a social media post includes a URL, SFM will harvest the web page at that URL.
 It will harvest only that web page, not any pages linked from that page.
 
