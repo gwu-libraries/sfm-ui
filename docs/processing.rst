@@ -1,23 +1,67 @@
-============
- Processing
-============
+==================================
+ Commandline exporting/processing
+==================================
 
 
-Your social media collection can be used in a processing/analysis pipeline. SFM
-provides several tools and approaches to support this.
+While social media data can be exported from the SFM UI, in some cases you may want to export
+from the commandline.  These cases include:
 
-Using these tools requires programming knowledge, particularly in Python and the
-Linux shell. If you are interested in using these resources and do not have the
-requisite experience, please contact your SFM administrator for help.
+* Exporting very large datasets. (Export via the UI is performed serially; export via the commandline
+  can be performed in parallel, which may be much faster.)
+* Performing more advanced filtering or transformation that is not supported by the UI export.
+* Integrating with a processing/analysis pipeline.
 
--------
- Tools
--------
+To support export and processing from the commandline, SFM provides a processing container.  A processing
+container is a Linux shell environment with access to the SFM's data and preloaded with a set of useful tools.
+
+Using a processing container requires familiarity with the Linux shell and shell access to the SFM server.  If
+you are interested in using a processing container, please contact your SFM administrator for help.
+
+When exporting/processing data, remember that harvested social media content and and web resources are stored
+in ``/sfm-data``.  ``/sfm-processing`` is provided to store your exports, processed data, or scripts.  Depending
+on how it is configured, you may have access to ``/sfm-processing`` from your local filesystem. See :doc:`storage`.
+
+----------------------
+ Processing container
+----------------------
+
+To bootstrap export/processing, a processing image is provided. A container instantiated from this
+image is Ubuntu 14.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, and some other
+useful tools. (Warc iterators and ``find_warcs.py`` are described below.)  It will also have read-only
+access to the data from ``/sfm-data`` and read/write access to ``/sfm-processing``.
+
+The other tools available in a processing container are:
+
+* `jq <https://stedolan.github.io/jq/>`_ for JSON processing.
+* `twarc <https://github.com/edsu/twarc>`_ for access to the `Twarc utils <https://github.com/edsu/twarc/tree/master/utils>`_.
+* `JWAT Tools <https://sbforge.org/display/JWAT/JWAT-Tools>`_ for processing WARCs.
+* `warctools <https://github.com/internetarchive/warctools>`_ for processing WARCs.
+* `parallel <https://www.gnu.org/software/parallel/>`_ for parallelizing processing.
+
+To instantiate a processing container, from the directory that contains your ``docker-compose.yml`` file::
+
+    docker-compose run --rm processing /bin/bash
+
+
+You will then be provided with a bash shell inside the container from which you can execute commands::
+
+    root@0ac9caaf7e72:/sfm-processing# find_warcs.py 4f4d1 | xargs twitter_rest_warc_iter.py | python /opt/twarc/utils/wordcloud.py
+
+
+Note that once you exit the processing container, the container will be automatically removed.  However, if you have
+saved all of your scripts and output files to ``/sfm-processing``, they will be available when you create a new
+processing container.
+
+
+-----------------------
+ SFM commandline tools
+-----------------------
 
 Warc iterators
 ==============
-A warc iterator tool provides an iterator to the social media data contained in WARC files. When
-used from the commandline, it writes out the social items one at a time to standard out.
+SFM stores harvested social media data in WARC files.  A warc iterator tool provides an iterator
+to the social media data contained in WARC files. When
+used from the commandline, it writes out the social media items one at a time to standard out.
 (Think of this as ``cat``-ing a line-oriented JSON file. It is also equivalent to the output of
 Twarc.)
 
@@ -75,59 +119,8 @@ complete change log. Here is an example of creating a README::
 
 For examples, see the README files in `this open dataset <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FPDI7IN>`_.
 
-------------
- Approaches
-------------
-
-Processing in container
-=======================
-To bootstrap processing, a processing image is provided. A container instantiated from this
-image is Ubuntu 14.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, and some other
-use tools. It will also have read-only access to the data from ``/sfm-data``.
-
-The other tools are:
-
-* `jq <https://stedolan.github.io/jq/>`_ for JSON processing.
-* `twarc <https://github.com/edsu/twarc>`_ for access to the `Twarc utils <https://github.com/edsu/twarc/tree/master/utils>`_.
-* `JWAT Tools <https://sbforge.org/display/JWAT/JWAT-Tools>`_ for processing WARCs.
-* `warctools <https://github.com/internetarchive/warctools>`_ for processing WARCs.
-* `parallel <https://www.gnu.org/software/parallel/>`_ for parallelizing processing.
-
-To instantiate::
-
-    docker-compose run --rm processing /bin/bash
-
-
-You will then be provided with a bash shell inside the container from which you can execute commands::
-
-    root@0ac9caaf7e72:/sfm-processing# find_warcs.py 4f4d1 | xargs twitter_rest_warc_iter.py | python /opt/twarc/utils/wordcloud.py
-
-Setting ``PROCESSOR_VOLUME`` in ``.env`` to a host volume will link ``/sfm-processing``
-to your local filesystem.  You can place scripts in this directory to make them
-available inside the processing container or write output files to this directory to make them available outside the
-processing container.
-
-Note that once you exit the processing container, the container will be automatically removed.  However, if you have
-saved all of your scripts and output files to ``/sfm-processing``, they will be available when you create a new
-processing container.
-
-Processing locally
-==================
-In a typical Docker configuration, the data directory will be linked into the Docker environment.
-This means that the data is available both inside and outside the Docker environment. Given this,
-processing can be performed locally (i.e., outside of Docker).
-
-The various tools can be installed locally::
-
-    GLSS-F0G5RP:tmp justinlittman$ virtualenv ENV
-    GLSS-F0G5RP:tmp justinlittman$ source ENV/bin/activate
-    (ENV)GLSS-F0G5RP:tmp justinlittman$ pip install git+https://github.com/gwu-libraries/sfm-utils.git
-    (ENV)GLSS-F0G5RP:tmp justinlittman$ pip install git+https://github.com/gwu-libraries/sfm-twitter-harvester.git
-    (ENV)GLSS-F0G5RP:tmp justinlittman$ twitter_rest_warc_iter.py
-    usage: twitter_rest_warc_iter.py [-h] [--pretty] [--dedupe]
-                                     [--print-item-type]
-                                     filepaths [filepaths ...]
-    twitter_rest_warc_iter.py: error: too few arguments
+Note that this is a management command; thus, it is executed differently than the commandline tools
+described above.
 
 ---------
  Recipes
