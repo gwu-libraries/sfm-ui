@@ -190,6 +190,9 @@ FIVE_MINUTE_SCHEDULE = env.get('SFM_FIVE_MINUTE_SCHEDULE', 'False') == 'True'
 # Add a 100 item export segment. This is useful for dev and testing.
 HUNDRED_ITEM_SEGMENT = env.get('SFM_HUNDRED_ITEM_SEGMENT', 'False') == 'True'
 
+# Turn on or off the weibo search collection, default is turn off
+WEIBO_SEARCH_OPTION = env.get('SFM_WEIBO_SEARCH_OPTION', 'False') == 'True'
+
 # Whether to send emails.
 PERFORM_EMAILS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

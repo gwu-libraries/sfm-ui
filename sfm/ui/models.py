@@ -309,7 +309,6 @@ class Collection(models.Model):
         (TWITTER_SAMPLE, 'Twitter sample'),
         (FLICKR_USER, 'Flickr user'),
         (WEIBO_TIMELINE, 'Weibo timeline'),
-        (WEIBO_SEARCH, 'Weibo search'),
         (TUMBLR_BLOG_POSTS, 'Tumblr blog posts')
     ]
     REQUIRED_SEED_COUNTS = {
