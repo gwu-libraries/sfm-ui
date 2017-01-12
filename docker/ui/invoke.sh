@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Starting message consumer"
-/opt/sfm-ui/sfm/manage.py startconsumer &
-
 echo "Running server"
 export SFM_RUN_SCHEDULER=True
 # source /etc/apache2/envvars
