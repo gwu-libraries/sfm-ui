@@ -110,9 +110,9 @@ The unshrtn service can be run as a Docker container.  Here’s how I built and 
 
 I encountered a few gotchas using `unshorten.py` / unshrtn service.
 
-First, `unshorten.py` was hardcoded with the URL of the unshrtn service.  Since I wanted to link the unshrtn container into the processing container, I had to [make the URL of the unshrtn service configurable](https://github.com/edsu/twarc/pull/108) in `unshorten.py`.  Thus, when the unshrtn container was linked in (with `--link=unshrtn` in the processing container’s docker run command), `unshorten.py` could be configured to use it (by adding  `--unshrtn http://unshrtn:3000` to the `unshorten.py` command).
+First, `unshorten.py` was hardcoded with the URL of the unshrtn service.  Since I wanted to link the unshrtn container into the processing container, I had to [make the URL of the unshrtn service configurable](https://github.com/DocNow/twarc/pull/108) in `unshorten.py`.  Thus, when the unshrtn container was linked in (with `--link=unshrtn` in the processing container’s docker run command), `unshorten.py` could be configured to use it (by adding  `--unshrtn http://unshrtn:3000` to the `unshorten.py` command).
 
-Second, the unshrtn service crashed in the middle of my first long run.  To address this, I set the unshrtn container to automatically restart (by adding `--restart=always` to unshrtn’s docker run command) and [added retrying](https://github.com/edsu/twarc/pull/109) to unshorten.py.
+Second, the unshrtn service crashed in the middle of my first long run.  To address this, I set the unshrtn container to automatically restart (by adding `--restart=always` to unshrtn’s docker run command) and [added retrying](https://github.com/DocNow/twarc/pull/109) to unshorten.py.
 
 ### `urls.py`: Extract URLs from tweets
 [`urls.py`](https://github.com/edsu/twarc/blob/master/utils/urls.py) is a Twarc utility that extracts URLs from tweet metadata.
