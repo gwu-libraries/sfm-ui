@@ -3,41 +3,21 @@ layout: article
 title: "1.0 Release Description"
 permalink: /about/1-0-release
 date: 2016-03-29
-modified: 2016-03-29
+modified: 2017-01-13
 share: false
 ads: false
 ---
 
-## 1.0 should include:
+## Version 1.0 was released on June 14, 2016.
 
-### Harvesters from two platforms
-* twitter-filter
-* twitter-search 
-* flickr-user
+It included:
+* A web user interface that lets users directly build, manage, and export social media collections
+* Support for multiple Twitter public APIs, Flickr, and Sina Weibo
+* Options for exporting data in several formats
+* Deployment using Docker and Amazon Web Services
+* Exploration of data using the Elasticsearch/Logstash/Kibana
+* Command-line tools for working with the data as stored in WARCs
+* Quick start guide for users and technical documentation.
 
-### Data models
-* Models for collections, seedsets, seeds, credentials, harvests, users, and groups
-* Models for warcs
+Read more about version 1.0 in [Announcing SFM Version 1.0]({{ site.github.url }}/posts/2016-06-20-releasing-1-0).
 
-### User interface for creating collections
-* Create a collection, define a seedset, define seeds
-* Preliminary credentials pages, non-platform-specific (enter JSON; more information via help)
-* Display basic harvest information (next harvest, last harvest, last status)
-* Start and stop stream collection 
-
-### Exporting collected data
-* Request export of seedsets from Twitter and Flickr (minimal parameters)
-* Notification of export availability and ability to retrieve
-* Create warc model objects based on warc created messages.
-* Expose REST API to allow exporters to query warc model.
-* Basic Terms of Service notification with export
-
-### Audit/Change log
-* Infrastructure to record changes initiated by user
-* Record and display changes to collections, seedsets, seeds, and credentials
-* Record and display notes about changes entered by collection builder
-
-### Documentation
-* End-user documentation (http://sfm.readthedocs.org)
-* Technical documentation for installation and use
-* In-app contextual help (basic)

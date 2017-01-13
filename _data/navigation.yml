@@ -3,6 +3,9 @@
 - title: About
   url: /about/
 
+- title: Code
+  url: https://github.com/gwu-libraries/sfm-ui
+
 - title: Documentation 
   url: http://sfm.readthedocs.org
 
