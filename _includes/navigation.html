@@ -1,6 +1,6 @@
 <ul class="menu-item">
 	<li class="home"><a href="/">{{ site.title }}</a></li>
-	{% for link in site.data.navigation %}
+  {% for link in site.data.navigation %}
     {% if link.url contains 'http' %}
         {% assign domain = '' %}
         {% else %}
@@ -8,4 +8,5 @@
     {% endif %}
     <li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}>{{ link.title }}</a></li>
   {% endfor %}
+  <li><a href="http://twitter.com/SocialFeedMgr"><img src="{{ site.github.url }}/images/square-twitter.png"></a></li>
 </ul>
