@@ -3,7 +3,7 @@
 =================
 
 Accessing the APIs of social media platforms requires credentials for authentication
-(also knows as API keys). Social Feed Manager supports managing those credentials.
+(also knows as the API keys). Social Feed Manager supports managing those credentials.
 
 Credentials/authentication allow a user to collect data through a platform’s
 API. Limits are placed on methods and rate of collection on a per credential
