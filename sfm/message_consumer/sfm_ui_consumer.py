@@ -124,7 +124,8 @@ class SfmUiConsumer(BaseConsumer):
 
         # Send email if completed and failed or has messages
         if harvest.status == Harvest.FAILURE or (
-                        harvest.status == Harvest.SUCCESS and (harvest.infos or harvest.warnings or harvest.errors)):
+                        harvest.status in (Harvest.SUCCESS, Harvest.PAUSED) and (
+                            harvest.infos or harvest.warnings or harvest.errors)):
 
             # Get emails for group members
             receiver_emails = get_email_addresses_for_collection_set(harvest.collection.collection_set,
