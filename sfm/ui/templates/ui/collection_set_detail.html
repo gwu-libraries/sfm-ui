@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-md-12">
         <h1>{{ collection_set.name }} 
-            <a class="btn btn-primary btn-aligned" href="{% url "collection_set_update" collection_set.pk %}" >
+            <a class="btn btn-primary btn-aligned" href="{% url "collection_set_update" collection_set.pk %}"  {% if not can_edit %} disabled {% endif %}>
             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit
         </a>
         </h1>
@@ -78,7 +78,7 @@
             </table>
             <!-- Single button -->
             <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  {% if not can_edit %} disabled {% endif %}>
                       Add Collection <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">

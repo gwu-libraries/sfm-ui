@@ -62,10 +62,6 @@ urlpatterns = patterns('',
                            views.SeedDetailView.as_view(),
                            name="seed_detail"),
 
-                       url(r'^seeds/$',
-                           views.SeedListView.as_view(),
-                           name="seed_list"),
-
                        url(r'^credentials/(?P<pk>\d+)/$',
                            views.CredentialDetailView.as_view(),
                            name="credential_detail"),

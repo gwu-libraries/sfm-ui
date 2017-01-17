@@ -24,7 +24,8 @@
                 {% for harvest in harvests %}
                 <tr>
                     <td>{{ harvest.service }} on {{ harvest.host }} ({{ harvest.instance }})</td>
-                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.collection.collection_set.name }} > {{ harvest.collection.name }} > {{ harvest.get_harvest_type_display }}</a></td>
+                    {% has_collection_set_based_permission harvest as has_perm %}
+                    <td>{% if has_perm  %}<a href="{% url "harvest_detail" harvest.pk %}">{% endif %}{{ harvest.collection.collection_set.name }} > {{ harvest.collection.name }} > {{ harvest.get_harvest_type_display }}{% if has_perm %}</a>{% endif %}</td>
                     <td>{{ harvest.date_requested }}</td>
                     <td>{% if harvest.status == "completed success" or harvest.status == "completed failure" %}
                         {{ harvest.date_ended}}
@@ -63,7 +64,8 @@
                 {% for export in exports %}
                 <tr>
                     <td>{{ export.service }} on {{ export.host }} ({{ export.instance }})</td>
-                    <td><a href={% url "export_detail" export.pk %}>{{ export.collection.collection_set.name }} > {{ export.collection.name }}</a></td>
+                    {% has_collection_set_based_permission export as has_perm %}
+                    <td>{% if has_perm %}<a href={% url "export_detail" export.pk %}>{% endif %}{{ export.collection.collection_set.name }} > {{ export.collection.name }}{% if has_perm %}</a>{% endif %}</td>
                     <td>{{ export.date_requested }}</td>
                     <td>{% if export.status == "completed success" or export.status == "completed failure" %}
                         {{ export.date_ended}}

@@ -42,6 +42,9 @@ class User(AbstractUser):
     email_frequency = models.CharField(max_length=10, choices=EMAIL_FREQUENCY_CHOICES, default=DAILY)
     harvest_notifications = models.BooleanField(default=True)
 
+    def get_user(self):
+        return self
+
 
 def history_save(self, *args, **kw):
     """
@@ -129,6 +132,9 @@ class Credential(models.Model):
 
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
+
+    def get_user(self):
+        return self.user
 
 
 class CollectionSetManager(models.Manager):
@@ -239,6 +245,9 @@ class CollectionSet(models.Model):
         """
         return Harvest.objects.filter(collection__collection_set=self).aggregate(total=models.Sum("warcs_bytes"))[
             "total"]
+
+    def get_collection_set(self):
+        return self
 
 
 def delete_collection_set_receiver(sender, **kwargs):
@@ -403,6 +412,9 @@ class Collection(models.Model):
     def save(self, *args, **kw):
         return history_save(self, *args, **kw)
 
+    def get_collection_set(self):
+        return self.collection_set
+
 
 def delete_collection_receiver(sender, **kwargs):
     """
@@ -498,6 +510,8 @@ class Seed(models.Model):
             labels.append("Uid: {}".format(self.uid))
         return "; ".join(labels)
 
+    def get_collection_set(self):
+        return self.collection.collection_set
 
 class HarvestManager(models.Manager):
     def get_by_natural_key(self, harvest_id):
@@ -568,6 +582,9 @@ class Harvest(models.Model):
         return _item_counts_to_dict(
             HarvestStat.objects.filter(harvest=self).values("item").annotate(count=models.Sum("count")))
 
+    def get_collection_set(self):
+        return self.collection.collection_set
+
 
 class HarvestStatManager(models.Manager):
     def get_by_natural_key(self, harvest, harvest_date, item):
@@ -615,6 +632,9 @@ class Warc(models.Model):
 
     def natural_key(self):
         return self.warc_id,
+
+    def get_collection_set(self):
+        return self.harvest.collection.collection_set
 
 
 def delete_warc_receiver(sender, **kwargs):
@@ -698,6 +718,15 @@ class Export(models.Model):
 
     def __str__(self):
         return '<Export %s "%s">' % (self.id, self.export_id)
+
+    def get_collection_set(self):
+        # Export can have a collection or seeds
+        if self.collection:
+            return self.collection.collection_set
+        seed = self.seeds.first()
+        if seed:
+            return seed.get_collection_set()
+        return None
 
 
 def delete_export_receiver(sender, **kwargs):
