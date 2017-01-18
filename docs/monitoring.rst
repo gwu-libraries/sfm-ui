@@ -42,8 +42,13 @@ The logs for harvesters and exporters can be accessed using Docker's `log` comma
 First, determine the name of the harvester or exporter using ``docker ps``. In general,
 the name will be something like `sfm_twitterrestharvester_1`.
 
-Second, get the log with ``docker logs <name>``. Add `-f` to follow the log. For example,
+Second, get the log with ``docker logs <name>``.
+
+Add `-f` to follow the log. For example,
 ``docker logs -f sfm_twitterrestharvester_1``.
+
+Add `--tail=<number of lines` to get the tail of the log. For example,
+``docker logs --tail=100 sfm_twitterrestharvester_1``.
 
 Side note: To follow the logs of all services, use ``docker-compose logs -f``.
 
@@ -52,13 +57,17 @@ Twitter Stream Harvester logs
 Since the Twitter Stream Harvester runs multiple harvests on the same host, accessing its
 logs are a bit different.
 
-First, determine the name of the Twitter Stream Harvester as described above.
+First, determine the name of the Twitter Stream Harvester and the container id using
+``docker ps``.  The name will probably be `sfm_twitterstreamharvester_1` and the container
+id will be something like `bffcae5d0603`.
 
 Second, determine the harvest id. This is available from the harvest's detail page.
 
-Third, get the log with ``docker exec -t <name> cat /var/log/sfm/<harvest id>.out.log``.
+Third, get the stdout log with ``docker exec -t <name> cat /sfm-data/containers/<container id>/log/<harvest id>.out.log``.
+To get the stderr log, substitute `.err` for `.out`.
+
 To follow the log, use `tail -f` instead of `cat`. For example,
-``docker exec -t sfm_twitterstreamharvester_1 tail -f /var/log/sfm/d7a900095efa449cb9a1460e70780ccc.out.log``.
+``docker exec -t sfm_twitterstreamharvester_1 tail -f /sfm-data/containers/bffcae5d0603/log/d4493eed5f4f49c6a1981c89cb5d525f.err.log``.
 
 ---------------------
  Management consoles
