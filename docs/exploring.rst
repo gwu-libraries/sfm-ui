@@ -59,8 +59,8 @@ If you would like to load social media data that was harvested before the ELK Do
 
 The ``resendwarccreatedmsgs`` command resends warc_created messages which will trigger the loading of data by ELK.
 
-To use this command, you will need to know the routing key. The routing key is ``elk_loader_<container id>.warc_created``.
-The container id can be found with ``docker ps``.
+To use this command, you will need to know the routing key. The routing key is ``elk_loader_<hostname>.warc_created``.
+The hostname is available as part of the definition of the ELK container in the ``docker-compose.yml`` file.
 
 The loading can be limited by collection set (``--collection-set``) and/or (``--harvest-type``). You can get collection
 set ids from the collection set detail page. The available harvest types are twitter_search, twitter_filter,
@@ -68,7 +68,7 @@ twitter_user_timeline, twitter_sample, and weibo_timeline.
 
 This shows loading the data limited to a collection set::
 
-    docker exec docker_sfmuiapp_1 python sfm/manage.py resendwarccreatedmsgs --collection-set b438a62cbcf74ad0adc09be3b07f039e elk_loader_26ce21fa2e43.warc_created
+    docker exec docker_sfmuiapp_1 python sfm/manage.py resendwarccreatedmsgs --collection-set b438a62cbcf74ad0adc09be3b07f039e elk_loader_myproject_elk.warc_created
 
 
 --------------------
