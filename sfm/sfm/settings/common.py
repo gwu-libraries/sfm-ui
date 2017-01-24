@@ -166,6 +166,12 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
 }
 
+# Institution name, such as 'GW Libraries'
+INSTITUTION_NAME = env.get('SFM_INSTITUTION_NAME')
+
+# a link for the institution name, such as 'http://library.gwu.edu'
+INSTITUTION_LINK = env.get('SFM_INSTITUTION_LINK')
+
 # Directory where SFM data (e.g., harvested WARCs) is stored.
 SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
 
@@ -192,6 +198,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env.get('SFM_EMAIL_USER')
 EMAIL_HOST_PASSWORD = env.get('SFM_EMAIL_PASSWORD')
 EMAIL_USE_TLS = True
+
+# contact email
+CONTACT_EMAIL = env.get('SFM_CONTACT_EMAIL')
 
 # Whether to run apscheduler
 RUN_SCHEDULER = env.get('SFM_RUN_SCHEDULER', 'False') == 'True'

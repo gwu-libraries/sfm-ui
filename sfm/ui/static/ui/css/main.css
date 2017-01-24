@@ -1,9 +1,15 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
     font-family: "Open Sans", Verdana, Arial, Helvetica, sans-serif;
     font-size: 16px;
     color: #333;
     padding: 3px;
     height: 100%;
+    margin-bottom: 120px;
 }
 
 .navbar-default .navbar-nav>li>a,p {
@@ -52,13 +58,40 @@ body {
     margin-left: 15px;
 }
 
-footer {
-    position: relative; 
-    height: 60px;
-    border-top: 1px solid #999;
-    padding-top: 10px;
-    padding-bottom: 40px;
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 120px;
     font-size: 14px;
+    text-align: center;
+}
+
+.footer .footer-upper {
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.footer .footer-blue {
+    color: #0e90d2;
+}
+
+.footer .footer-divider {
+    color: #ccc;
+}
+
+.footer .footer-lower {
+    color: #999;
+    font-size: 12px;
+}
+
+.footer .footer-lower p {
+    display: inline-block;
+    margin: 5px;
+}
+
+.footer .footer-lower a  {
+    color: #555;
 }
 
 .sfm-container {

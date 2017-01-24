@@ -504,7 +504,7 @@ class Seed(models.Model):
                 j = json.loads(self.token)
                 for key, value in j.items():
                     labels.append("{}: {}".format(key.title(), value))
-            except ValueError:
+            except (ValueError, AttributeError):
                 labels.append("Token: {}".format(self.token))
         if self.uid:
             labels.append("Uid: {}".format(self.uid))
