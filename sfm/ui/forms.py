@@ -691,6 +691,13 @@ class BaseCredentialForm(forms.ModelForm):
             )
         )
 
+    def clean(self):
+        cleaned_data = super(BaseCredentialForm, self).clean()
+        token = json.dumps(self.to_token())
+        if Credential.objects.filter(token=token).exists():
+            raise ValidationError('This is a duplicate of an existing credential')
+        return cleaned_data
+
 
 class CredentialFlickrForm(BaseCredentialForm):
     key = forms.CharField(required=True)
@@ -705,14 +712,16 @@ class CredentialFlickrForm(BaseCredentialForm):
             self.fields['key'].initial = token.get('key')
             self.fields['secret'].initial = token.get('secret')
 
+    def to_token(self):
+        return {
+            "key": self.cleaned_data["key"].strip(),
+            "secret": self.cleaned_data["secret"].strip(),
+        }
+
     def save(self, commit=True):
         m = super(CredentialFlickrForm, self).save(commit=False)
         m.platform = Credential.FLICKR
-        m.token = {
-            "key": self.cleaned_data["key"].strip(),
-            "secret": self.cleaned_data["secret"].strip()
-        }
-        m.token = json.dumps(m.token)
+        m.token = json.dumps(self.to_token())
         m.save()
         return m
 
@@ -733,16 +742,18 @@ class CredentialTwitterForm(BaseCredentialForm):
             self.fields['access_token'].initial = token.get('access_token')
             self.fields['access_token_secret'].initial = token.get('access_token_secret')
 
-    def save(self, commit=True):
-        m = super(CredentialTwitterForm, self).save(commit=False)
-        m.platform = Credential.TWITTER
-        token = {
+    def to_token(self):
+        return {
             "consumer_key": self.cleaned_data["consumer_key"].strip(),
             "consumer_secret": self.cleaned_data["consumer_secret"].strip(),
             "access_token": self.cleaned_data["access_token"].strip(),
             "access_token_secret": self.cleaned_data["access_token_secret"].strip(),
         }
-        m.token = json.dumps(token)
+
+    def save(self, commit=True):
+        m = super(CredentialTwitterForm, self).save(commit=False)
+        m.platform = Credential.TWITTER
+        m.token = json.dumps(self.to_token())
         m.save()
         return m
 
@@ -757,13 +768,15 @@ class CredentialTumblrForm(BaseCredentialForm):
             token = json.loads(self.instance.token)
             self.fields['api_key'].initial = token.get('api_key')
 
+    def to_token(self):
+        return {
+            "api_key": self.cleaned_data["api_key"].strip(),
+        }
+
     def save(self, commit=True):
         m = super(CredentialTumblrForm, self).save(commit=False)
         m.platform = Credential.TUMBLR
-        token = {
-            "api_key": self.cleaned_data["api_key"].strip(),
-        }
-        m.token = json.dumps(token)
+        m.token = json.dumps(self.to_token())
         m.save()
         return m
 
@@ -779,13 +792,15 @@ class CredentialWeiboForm(BaseCredentialForm):
             token = json.loads(self.instance.token)
             self.fields['access_token'].initial = token.get('access_token')
 
+    def to_token(self):
+        return {
+            "access_token": self.cleaned_data["access_token"].strip(),
+        }
+
     def save(self, commit=True):
         m = super(CredentialWeiboForm, self).save(commit=False)
         m.platform = Credential.WEIBO
-        token = {
-            "access_token": self.cleaned_data["access_token"].strip(),
-        }
-        m.token = json.dumps(token)
+        m.token = json.dumps(self.to_token())
         m.save()
         return m
 
