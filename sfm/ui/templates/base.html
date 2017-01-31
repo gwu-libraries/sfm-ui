@@ -35,7 +35,7 @@
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
+        
 	{% block javascript %}
 
     {% endblock %}
@@ -99,32 +99,31 @@
       {% endblock content %}
 
     </div> <!-- /container -->
-
     {% block modal %}{% endblock modal %}
-    <div class="container"> 
-      <div class="row">
-        <div class="col-md-12">
-         <footer>
-          <nav>
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="navbar-collapse-footer" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar-collapse-footer">
-                <ul class="nav navbar-nav">
-                  <li><a href="{% url 'home' %}">SFM UI {{ SFM_UI_VERSION }}</a></li>
-                  <li><a href="https://sfm.readthedocs.org/en/latest/quickstart.html" target="_blank">Getting Started</a></li>
-                  <li><a href="https://sfm.readthedocs.org" target="_blank">Documentation</a></li>
-                </ul>
-            </div>
-            </nav>
-            </footer>
+    <footer class="footer">
+        <div class="footer-upper">
+            <hr>
+            <a class="footer-blue" href="{% url 'home' %}">SFM UI {{ SFM_UI_VERSION }}</a>
+            <span class="footer-divider"> | </span>
+            <a id="getstarted" class="footer-blue" target="_blank" href="https://sfm.readthedocs.org/en/latest/quickstart.html">
+             Getting Started
+            </a>
+            <span class="footer-divider"> | </span>
+            <a id="doc" class="footer-blue" target="_blank" href="https://sfm.readthedocs.org">
+              Documentation
+            </a>
+            {% if CONTACT_EMAIL %}
+            <span class="footer-divider"> | </span>
+            <a id="contactus" class="footer-blue" target="_blank" href="mailto:{{ CONTACT_EMAIL }}">
+              Contact Us
+            </a>
+            {% endif %}
         </div>
-      </div>
-    </div>
+        <div class="footer-lower">
+                <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
+            </p>
+        </div>
+    </footer>
+
 </body>
 </html>
