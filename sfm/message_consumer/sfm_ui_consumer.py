@@ -59,11 +59,12 @@ class SfmUiConsumer(BaseConsumer):
         harvest.infos = self.message.get("infos", [])
         harvest.warnings = self.message.get("warnings", [])
         harvest.errors = self.message.get("errors", [])
-        harvest.token_updates = self.message.get("token_updates")
-        harvest.uids = self.message.get("uids")
+        harvest.token_updates = self.message.get("token_updates", {})
+        harvest.uids = self.message.get("uids", {})
         harvest.warcs_count = self.message.get("warcs", {}).get("count", 0)
         harvest.warcs_bytes = self.message.get("warcs", {}).get("bytes", 0)
-        harvest.date_started = iso8601.parse_date(self.message["date_started"])
+        if "date_started" in self.message:
+            harvest.date_started = iso8601.parse_date(self.message["date_started"])
         if "date_ended" in self.message:
             harvest.date_ended = iso8601.parse_date(self.message["date_ended"])
         harvest.service = self.message.get("service")
