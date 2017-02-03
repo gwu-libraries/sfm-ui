@@ -44,6 +44,25 @@
 
 {% block content %}
 {% if user.is_superuser %}
+    {% if queue_data %}
+        <h2>Queue warning message</h2>
+        <p>The following message queues have reached the warning level.</p>
+        <table class="table" >
+         <thead>
+            <tr>
+                <th>Queue</th>
+                <th>Queued Requests</th>
+            </tr>
+         </thead>
+        {% for queue, msgcount in queue_data %}
+        <tr  class="alert-warning">
+            <td><strong>{{ queue }}</strong></td>
+            <td>{{ msgcount }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+
     {% for item in space_data %}
         <h2>Storage for {{ item.volume_id }}</h2>
         <p>The total space is <strong>{{ item.total_space }}</strong> and the available free space for {{ item.volume_id }} is <strong>{{ item.total_free_space }}</strong>.</p>

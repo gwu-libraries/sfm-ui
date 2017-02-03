@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse
 from .models import User, CollectionSet, Collection, HarvestStat
 from .sched import next_run_time
 from .utils import get_admin_email_addresses
+import ui.monitoring
 
 log = logging.getLogger(__name__)
 
@@ -166,6 +167,52 @@ def _create_space_email(email_address, msg_cache):
     msg_cache["url"] = _create_url(reverse('home'))
     d = Context(msg_cache)
     msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
+                                 text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
+    msg.attach_alternative(html_template.render(d), "text/html")
+    return msg
+
+
+def get_queue_data():
+    queue_threshold_map = settings.QUEUE_LENGTH_THRESHOLD
+    queue_threshold_other = settings.QUEUE_LENGTH_THRESHOLD_OTHER
+    return get_warn_queue(queue_threshold_map, queue_threshold_other)
+
+
+def get_warn_queue(q_th_map, q_th_other):
+    hqs, eqs, uqs = ui.monitoring.monitor_queues()
+
+    # filter any msg count larger than the threshold
+    return filter(lambda x: x[1] >= int(q_th_map[x[0]] if x[0] in q_th_map else q_th_other),
+                  hqs.items() + eqs.items() + uqs.items())
+
+
+def send_queue_warn_emails():
+    log.info("Sending queue length warning emails")
+    # get queue data and determine whether to send email
+    msg_cache = {
+        'queue_data': get_queue_data()
+    }
+
+    if len(msg_cache['queue_data']):
+        email_addresses = get_admin_email_addresses()
+        for email_address in email_addresses:
+            msg = _create_queue_warn_email(email_address, msg_cache)
+            try:
+                log.debug("Sending email to %s: %s", msg.to, msg.subject)
+                msg.send()
+            except SMTPException, ex:
+                log.error("Error sending email: %s", ex)
+            except IOError, ex:
+                log.error("Error sending email: %s", ex)
+
+
+def _create_queue_warn_email(email_address, msg_cache):
+    text_template = get_template('email/queue_length_email.txt')
+    html_template = get_template('email/queue_length_email.html')
+    msg_cache["url"] = _create_url(reverse('home'))
+    msg_cache["monitor_url"] = _create_url(reverse('monitor'))
+    d = Context(msg_cache)
+    msg = EmailMultiAlternatives("[WARNING] Long message queue on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg
