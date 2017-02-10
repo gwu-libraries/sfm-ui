@@ -18,7 +18,7 @@ from allauth.socialaccount.models import SocialApp
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
 import forms
-from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
+from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
 from .utils import diff_object_history, diff_collection_and_seeds_history, clean_token, clean_blogname
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
@@ -162,10 +162,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
                                               historical_collection__id=self.object.id)
-        if not harvest_list or "completed success" not in [str(item.status) for item in harvest_list]:
-            context["can_export"] = False
-        else:
-            context["can_export"] = True
+        # Can export if there is a WARC
+        context["can_export"] = Warc.objects.filter(harvest__harvest_type=self.object.harvest_type,
+                                                    harvest__historical_collection__id=self.object.id).exists()
         context["item_id"] = self.object.id
         context["model_name"] = "collection"
         return context
