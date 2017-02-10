@@ -42,7 +42,7 @@
                     <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn off
                 </button><br />
             {% else %}
-            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle %}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
+            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle or stream_stopping%}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn on
             </button><br />
         {% endif %}
@@ -106,6 +106,9 @@
             {% endfor %}
         </ul>
     </div>
+{% endif %}
+{% if stream_stopping %}
+    <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
 {% endif %}
 <div class="row subsection">
     <div class="col-md-8">
