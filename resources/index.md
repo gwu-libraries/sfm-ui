@@ -19,6 +19,7 @@ Papers and Resources
 
 Recent Presentations
 --------------------
+* ["Collecting Social Media with Social Feed Manager,"]({{ site.github.url }}/resources/CollectingSocialMediaData.pdf) library workshop, February 14, 2017. 
 * Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.
 * Christie Peterson, Justin Littman, Laura Wrubel, Social Feed Manager webinar for the [Digital Preservation Coalition](http://www.dpconline.org/), November 2, 2016.
 * Vakil Smallen, Seemantani Sharma, "Building Social Media Collections: Legal and Ethical Issues," poster at [TPRC44: Research Conference on Communications, Information and Internet Policy](http://www.tprcweb.com/), September 30, 2016 at George Mason University School of Law, Arlington, VA.
