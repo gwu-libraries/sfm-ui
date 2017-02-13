@@ -20,7 +20,7 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    :maxdepth: 2
    :caption: User Documentation
 
-   quickstart_r
+   userguide
    quickstart
    credentials
    collections
