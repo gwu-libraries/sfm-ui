@@ -100,7 +100,7 @@ For example, to get a list of the WARC files in a particular collection, provide
 the collection id::
 
     root@0ac9caaf7e72:/sfm-data# find_warcs.py 4f4d1
-    /sfm-data/collections/b06d164c632d405294d3c17584f03278/4f4d1a6677f34d539bbd8486e22de33b/2016/05/04/14/515dab00c05740f487e095773cce8ab1-20160504143638715-00000-47-88e5bc8a36a5-8000.warc.gz
+    /sfm-data/collection_set/b06d164c632d405294d3c17584f03278/4f4d1a6677f34d539bbd8486e22de33b/2016/05/04/14/515dab00c05740f487e095773cce8ab1-20160504143638715-00000-47-88e5bc8a36a5-8000.warc.gz
 
 (In this case there is only one WARC file. If there was more than one, it would be space separated.)
 
