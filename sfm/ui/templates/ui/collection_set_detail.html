@@ -25,30 +25,30 @@
 {% endblock %}
 {% block content %}
 <div class="row subsection">
-    <div class="col-md-8">
+    <div class="col-md-12">
         {% if collection_set.description %}
-            <p>{{ collection_set.description }}</p>
+            <p><strong>Description: </strong>{{ collection_set.description }}</p>
         {% endif %}
-        <a data-toggle="collapse" href="#details">Details</a>
-        <div id="details" class="collapse" style="margin-bottom: 10px;margin-top: 10px;">
+    </div>
+    <div class="col-md-12">
+      <div class="panel panel-default">
+       <div class="panel-heading">
+           <a data-toggle="collapse" href="#collapse">Details</a>
+       </div>
+       <div id="collapse" class="collapse" style="margin-left: 10px; margin-top: 10px">
         <p><strong>Group:</strong> {{collection_set.group }}</p>
         <p><strong>Id:</strong> {{ collection_set.collection_set_id }}</p>
         <p><strong>Created:</strong> {{ collection_set.date_added|date }}</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                 {% if collection_set.stats %}
-                     <p><strong>Stats:</strong><ul>
-                         {% for item, count in collection_set.stats.items %}
-                             <li>{{ item }}: {{ count|intcomma }}</li>
-                         {% endfor %}
-                     </ul></p>
-                 {% endif %}
-                 <p><strong>Data Collected</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
-            </div>
-        </div>
+        {% if collection_set.stats %}
+         <p><strong>Stats:</strong><ul>
+          {% for item, count in collection_set.stats.items %}
+             <li>{{ item }}: {{ count|intcomma }}</li>
+          {% endfor %}
+             </ul></p>
+        {% endif %}
+        <p><strong>Data Collected</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
+       </div>
+      </div>
     </div>
 </div>
 

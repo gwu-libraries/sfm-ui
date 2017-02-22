@@ -108,41 +108,37 @@
     </div>
 {% endif %}
 <div class="row subsection">
-    <div class="col-md-8">
+    <div class="col-md-12">
         {% if collection.description %}
-            <p>{{ collection.description }}</p>
+            <p style="margin-left: 10px; margin-top: 10px;"><strong>Description: </strong>{{ collection.description }}</p>
         {% endif %}
-        {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
-        <a data-toggle="collapse" href="#details">Details</a>
-        <div id="details" class="collapse" style="margin-bottom: 10px;margin-top: 10px;">
-         <div class="col-md-6">
-           <p><strong>Credential:</strong> {% if has_perm %}<a href={% url "credential_detail" collection.credential.pk %}>{% endif %}{{ collection.credential.name }}{% if has_perm %}</a>{% endif %}</p>
-           {{ collection.harvest_options|json }}
-           {% if collection.schedule_minutes %}
-         </div>
-         <div class="col-md-6">
-              <p><strong>Schedule:</strong> {{ collection.get_schedule_minutes_display }}</p>
-           {% endif %}
-           <p><strong>Id:</strong> {{ collection.collection_id }}</p>
-           <p><strong>Created:</strong> {{ collection.date_added|date }}</p>
-           <p><strong>End date: </strong> {{ collection.end_date|date }}</p>
-         </div>
-        </div>
     </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <p><strong>Data Collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
-                {% if collection.stats %}
-                    <p><strong>Stats:</strong><ul>
-                        {% for item, count in collection.stats.items %}
-                            <li>{{ item }}: {{ count|intcomma }}</li>
-                        {% endfor %}
-                    </ul></p>
-                {% endif %}
+    {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
+    <div class="col-md-12">
+          <div class="panel panel-default">
+               <div class="panel-heading">
+                 <a data-toggle="collapse" href="#collapse">Details</a>
+               </div>
+             <div id="collapse" class="collapse" style="margin-bottom: 10px;margin-left: 10px; margin-top: 10px">
+                     <p><strong>Credential:</strong> {% if has_perm %}<a href={% url "credential_detail" collection.credential.pk %}>{% endif %}{{ collection.credential.name }}{% if has_perm %}</a>{% endif %}</p>
+                     {{ collection.harvest_options|json }}
+                     {% if collection.schedule_minutes %}
+                     <p><strong>Schedule:</strong> {{ collection.get_schedule_minutes_display }}</p>
+                     {% endif %}
+                     <p><strong>Id:</strong> {{ collection.collection_id }}</p>
+                     <p><strong>Created:</strong> {{ collection.date_added|date }}</p>
+                     <p><strong>End date: </strong> {{ collection.end_date|date }}</p>
+                     <p><strong>Data Collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
+                     {% if collection.stats %}
+                         <p><strong>Stats:</strong><ul>
+                         {% for item, count in collection.stats.items %}
+                             <li>{{ item }}: {{ count|intcomma }}</li>
+                         {% endfor %}
+                         </ul></p>
+                     {% endif %}
             </div>
-        </div>
-    </div>
+         </div>
+     </div>
 </div>
 
 <script>
