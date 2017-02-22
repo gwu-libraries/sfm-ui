@@ -73,7 +73,7 @@ class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
     model = CollectionSet
     form_class = CollectionSetForm
     template_name = 'ui/collection_set_create.html'
-    success_message = "New collection set added. You can now add collections."
+    success_message = "New collection set added. You can now add collections. A collection retrieves data from a particular social media platform."
 
     def get_form_kwargs(self):
         kwargs = super(CollectionSetCreateView, self).get_form_kwargs()
