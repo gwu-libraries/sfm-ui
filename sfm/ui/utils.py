@@ -86,6 +86,7 @@ def clean_token(token):
     """
     if token is None:
         return None
+    # all save as lowercase
     stripped_token = token.strip()
     return stripped_token[1:] if stripped_token.startswith('@') else stripped_token
 
@@ -98,7 +99,7 @@ def clean_blogname(blogname):
     """
     if blogname is None:
         return None
-    stripped_blogname = blogname.strip().lower()
+    stripped_blogname = blogname.strip()
     return stripped_blogname[:-11] if stripped_blogname.endswith('.tumblr.com') else stripped_blogname
 
 

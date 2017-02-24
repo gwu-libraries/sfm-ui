@@ -476,6 +476,10 @@ class BaseSeedForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.collection = kwargs.pop("collection", None)
+        # for createView and updateView
+        self.view_type = kwargs.pop("view_type", None)
+        # for updateView check the updates for the original token and  uid
+        self.entry = kwargs.pop("entry", None)
         super(BaseSeedForm, self).__init__(*args, **kwargs)
         cancel_url = reverse('collection_detail', args=[self.collection])
 
@@ -498,6 +502,56 @@ class BaseSeedForm(forms.ModelForm):
             )
         )
 
+    def clean_token(self):
+        token_val = self.cleaned_data.get("token")
+        return token_val.strip()
+
+    def clean_uid(self):
+        uid_val = self.cleaned_data.get("uid")
+        return uid_val.strip()
+
+    def clean(self):
+        fields = self._meta.fields
+        uid_val, token_val = '', ''
+        uid_label, token_label = '', ''
+        if "uid" in fields:
+            uid_val = self.cleaned_data.get("uid")
+            uid_label = self._meta.labels["uid"]
+        if "token" in fields:
+            token_val = self.cleaned_data.get("token")
+            token_label = self._meta.labels["token"]
+
+        # if has invalid error before, directly not check deep error
+        if self.errors:
+            return
+
+        # should not both empty if has token or uid fields, the twitter filter should deal with separately
+        if (uid_label or token_label) and (not uid_val and not token_val):
+            or_text = 'or' * (1 if uid_label and token_label else 0)
+            raise ValidationError(
+                u'One of the following fields is required :{} {} {}.'.format(token_label, or_text, uid_label))
+
+        # for the update view
+        if self.view_type == Seed.UPDATE_VIEW:
+            # check updated seeds exist in db if changes
+            # case insensitive match, and user can't add 'token:TeSt' or 'token:teSt', etc if 'token:test exist.',
+            # but can update to 'token:TeSt' or other.
+            if token_val.lower() != self.entry.token.lower() and \
+                    token_val and Seed.objects.filter(collection=self.collection,
+                                                      token__iexact=token_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+            # check updated uid whether exist in db if changes
+            if uid_val.lower() != self.entry.uid.lower() and \
+                    uid_val and Seed.objects.filter(collection=self.collection,
+                                                    uid__iexact=uid_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+        else:
+            if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+
+            if uid_val and Seed.objects.filter(collection=self.collection, uid__iexact=uid_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
@@ -514,8 +568,19 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
         super(SeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('token', 'uid'))
 
+    def clean_uid(self):
+        uid_val = self.cleaned_data.get("uid")
+        # check the format
+        if uid_val and not uid_val.isdigit():
+            raise ValidationError('Uid should be numeric.', code='invalid')
+        return uid_val
+
     def clean_token(self):
-        return clean_token(self.cleaned_data.get("token"))
+        token_val = clean_token(self.cleaned_data.get("token"))
+        # check the format
+        if token_val and token_val.isdigit():
+            raise ValidationError('Screen name may not be numeric.', code='invalid')
+        return token_val
 
 
 class SeedTwitterSearchForm(BaseSeedForm):
@@ -583,11 +648,51 @@ class SeedTwitterFilterForm(BaseSeedForm):
             if 'locations' in token:
                 self.fields['locations'].initial = token['locations']
 
+    def clean_track(self):
+        track_val = self.cleaned_data.get("track")
+        return track_val.strip()
+
+    def clean_locations(self):
+        locations_val = self.cleaned_data.get("locations")
+        return locations_val.strip()
+
     def clean_follow(self):
-        follow = self.cleaned_data["follow"]
-        if re.compile(r'[^0-9, ]').search(follow):
+        follow_val = self.cleaned_data.get("follow")
+        return follow_val.strip()
+
+    def clean(self):
+        # if do string strip in here, string ends an empty space, not sure why
+        track_val = self.cleaned_data.get("track")
+        follow_val = self.cleaned_data.get("follow")
+        locations_val = self.cleaned_data.get("locations")
+
+        # should not all be empty
+        if not track_val and not follow_val and not locations_val:
+            raise ValidationError(u'One of the following fields is required :track, follow, locations.')
+
+        # check follow should be number uid
+        if re.compile(r'[^0-9, ]').search(follow_val):
             raise ValidationError('Follow must be user ids', code='invalid_follow')
-        return follow
+
+        token_val = {}
+        if track_val:
+            token_val['track'] = track_val
+        if follow_val:
+            token_val['follow'] = follow_val
+        if locations_val:
+            token_val['locations'] = locations_val
+        token_val = json.dumps(token_val, ensure_ascii=False)
+        # for the update view
+        if self.view_type == Seed.UPDATE_VIEW:
+            # check updated seeds exist in db if changes
+            # case insensitive match, and user can update seed `tack:Test` to 'tack:test'
+            if token_val.lower() != self.entry.token.lower() and \
+                    token_val and Seed.objects.filter(collection=self.collection,
+                                                      token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
+        else:
+            if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
 
     def save(self, commit=True):
         m = super(SeedTwitterFilterForm, self).save(commit=False)
@@ -626,12 +731,13 @@ class SeedFlickrUserForm(BaseSeedForm):
 
 class SeedTumblrBlogPostsForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
-        fields = ['uid','token']
+        fields = ['uid']
         fields.extend(BaseSeedForm.Meta.fields)
         labels = dict(BaseSeedForm.Meta.labels)
         labels["uid"] = "Blog hostname"
         help_texts = dict(BaseSeedForm.Meta.help_texts)
         help_texts["uid"] = 'Please provide the standard blog hostname, eg. codingjester or codingjester.tumblr.com.' \
+                            'If blog hostname is codingjester.tumblr.com, it would be considered as codingjester. ' \
                             'To better understand standard blog hostname, See ' \
                             '<a target="_blank" href="https://www.tumblr.com/docs/en/api/v2#hostname">' \
                             'these instructions</a>.'
