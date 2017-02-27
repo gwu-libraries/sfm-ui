@@ -42,6 +42,11 @@ class UIConfig(AppConfig):
             log.debug("Adding 10 item export segment")
             Export.SEGMENT_CHOICES.append((100, "100"))
 
+        # Add weibo search collection
+        if settings.WEIBO_SEARCH_OPTION:
+            log.debug("Adding weibo search collection")
+            Collection.HARVEST_CHOICES.append(('weibo_search', 'Weibo search'))
+
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
             sched = start_sched()

@@ -290,6 +290,7 @@ class Collection(models.Model):
     TWITTER_SAMPLE = 'twitter_sample'
     FLICKR_USER = 'flickr_user'
     WEIBO_TIMELINE = 'weibo_timeline'
+    WEIBO_SEARCH = 'weibo_search'
     TUMBLR_BLOG_POSTS = 'tumblr_blog_posts'
     SCHEDULE_CHOICES = [
         (1, 'One time harvest'),
@@ -313,6 +314,7 @@ class Collection(models.Model):
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
         TWITTER_SEARCH: 1,
+        WEIBO_SEARCH: 1,
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }
@@ -323,6 +325,7 @@ class Collection(models.Model):
         TWITTER_SAMPLE: Credential.TWITTER,
         FLICKR_USER: Credential.FLICKR,
         WEIBO_TIMELINE: Credential.WEIBO,
+        WEIBO_SEARCH: Credential.WEIBO,
         TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
@@ -472,7 +475,7 @@ class Seed(models.Model):
 
     class Meta:
         diff_fields = ("token", "uid", "is_active")
-        unique_together = ("collection" , "uid", "token")
+        unique_together = ("collection", "uid", "token")
 
     def social_url(self):
         twitter_user = 'twitter_user_timeline'
@@ -503,15 +506,16 @@ class Seed(models.Model):
             try:
                 j = json.loads(self.token)
                 for key, value in j.items():
-                    labels.append("{}: {}".format(key.title(), value))
-            except (ValueError, AttributeError):
-                labels.append("Token: {}".format(self.token))
+                    labels.append(u"{}: {}".format(key.title(), value))
+            except ValueError:
+                labels.append(u"Token: {}".format(self.token))
         if self.uid:
             labels.append("Uid: {}".format(self.uid))
         return "; ".join(labels)
 
     def get_collection_set(self):
         return self.collection.collection_set
+
 
 class HarvestManager(models.Manager):
     def get_by_natural_key(self, harvest_id):
