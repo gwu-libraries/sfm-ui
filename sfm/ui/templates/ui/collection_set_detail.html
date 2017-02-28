@@ -116,7 +116,7 @@ $(document).ready(function(){
                           {% for harvest_type, harvest_label in harvest_types %}
                           <li><a  href="{% url "collection_create" collection_set.id harvest_type %}" class="flex-column align-items">
                               <p><strong>Add {{ harvest_label }}</strong><br/>
-                                           {{ harvest_description|get_dict_item:harvest_type }}
+                                           {{ harvest_description|get_item:harvest_type }}
                                </p>
                           </a></li>
                           {% endfor %}
