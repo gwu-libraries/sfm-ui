@@ -85,6 +85,10 @@ in the heritrix container logs then kill, remove, and restart the containers::
     docker-compose rm -vf webharvester heritrix
     docker-compose up -d
 
+CSV export problems
+^^^^^^^^^^^^^^^^^^^
+Excel for Mac has problems with unicode characters in CSV files. As a work-around, export to Excel (XLSX) format.
+
 --------------
  Still stuck?
 --------------
