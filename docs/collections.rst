@@ -17,6 +17,7 @@ Collection types
     tweets in real time.
   * `Flickr user`_: Collects posts and photos from specific Flickr accounts
   * `Weibo timeline`_: Collects posts from the user and the user's friends
+  * `Weibo search`_: Collects recent weibo posts by a user-provided search query
   * `Tumblr blog posts`_: Collects blog posts from specific Tumblr blogs
   * `Collecting Web resources`_: Secondary collections of resources linked to or
     embedded in social media posts.
@@ -221,6 +222,28 @@ provided using the `Weibo friends_timeline API
 Note that because collection is determined by the user whose credentials are
 provided, there are no seeds for a Weibo timeline collection. To change what is
 being collected, change the user's friends from the Weibo website or app.
+
+See the :ref:`Collecting web resources` guidance below for deciding whether to
+collect image or web resources.
+
+.. _Weibo search:
+
+--------------
+Weibo search
+--------------
+
+Collects recent weibos that match a search query using the `Weibo
+search_topics API<http://open.weibo.com/wiki/2/search/topics>`_.
+Based on API limitation, this is not a complete search of all Weibo posts,
+It only returns the recent 200 posts match a single topic
+between '#' on the Weibo posts.
+
+The incremental option will collect Weibo posts that haven't been harvested before.
+Due to there are no since_id and max_id on the search API, an additional API
+request will send to check whether it has new Weibo posts.
+In such case, the collection might contain a little duplicates.
+When the incremental option is not selected, the search will be performed again,
+and there will most likely be duplicates.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.
