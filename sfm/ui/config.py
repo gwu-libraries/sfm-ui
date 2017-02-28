@@ -46,6 +46,7 @@ class UIConfig(AppConfig):
         if settings.WEIBO_SEARCH_OPTION:
             log.debug("Adding weibo search collection")
             Collection.HARVEST_CHOICES.append(('weibo_search', 'Weibo search'))
+            Collection.HARVEST_DESCRIPTION.append(('weibo_search', 'Recent Weibo posts matching a query'))
 
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")

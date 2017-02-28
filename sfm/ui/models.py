@@ -311,6 +311,15 @@ class Collection(models.Model):
         (WEIBO_TIMELINE, 'Weibo timeline'),
         (TUMBLR_BLOG_POSTS, 'Tumblr blog posts')
     ]
+    HARVEST_DESCRIPTION = [
+        (TWITTER_SEARCH, 'Recent tweets matching a query'),
+        (TWITTER_FILTER, 'Tweets in real time matching filter criteria'),
+        (TWITTER_USER_TIMELINE, 'Tweets from specific accounts'),
+        (TWITTER_SAMPLE, 'A subset of all tweets in real time'),
+        (FLICKR_USER, 'Posts and photos from specific accounts'),
+        (WEIBO_TIMELINE, "Posts from a user and the user's friends"),
+        (TUMBLR_BLOG_POSTS, 'Blog posts from specific blogs')
+    ]
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
         TWITTER_SEARCH: 1,

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load ui_extras %}
 {% block title %}
     {{ collection_set.name }}
 {% endblock %}
@@ -115,18 +116,11 @@ $(document).ready(function(){
                           {% for harvest_type, harvest_label in harvest_types %}
                           <li><a  href="{% url "collection_create" collection_set.id harvest_type %}" class="flex-column align-items">
                               <p><strong>Add {{ harvest_label }}</strong><br/>
-                                            {% if 'twitter_user_time' in harvest_type %}Tweets from specific accounts{% endif %}
-                                            {% if 'twitter_search' in harvest_type %}Recent tweets matching a query{% endif %}
-                                            {% if 'twitter_filter' in harvest_type %}Tweets in real time matching filter criteria{% endif %}
-                                            {% if 'twitter_sample' in harvest_type %}A sample of all tweets available. Collects significant amounts of data.{% endif %}
-                                            {% if 'flickr_user' in harvest_type %}Posts and photos from specific accounts{% endif %}
-                                            {% if 'weibo_timeline' in harvest_type %}Posts from a user and the user's friends{% endif %}
-                                            {% if 'tumblr_blog_posts' in harvest_type %}Blog posts from specific blogs{% endif %}
+                                           {{ harvest_description|get_dict_item:harvest_type }}
                                </p>
                           </a></li>
                           {% endfor %}
                      </ul>
-  
             </div>
                <br/>
         </div>

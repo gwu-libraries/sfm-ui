@@ -177,10 +177,15 @@ def verbose_name(instance, field_name=None):
 def has_collection_set_based_permission(context, obj, allow_superuser=True, allow_staff=False):
     return ui.auth.has_collection_set_based_permission(obj, context["user"], allow_superuser, allow_staff)
 
+
 @register.assignment_tag(takes_context=True)
 def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=False):
     return ui.auth.has_user_based_permission(obj, context["user"], allow_superuser, allow_staff)
 
+
 @register.filter
-def get_item(dictionary, key):
-    return dictionary.get(key)
+def get_dict_item(d, key):
+    for harvester_type, harvester_text in d:
+        if key == harvester_type:
+            return harvester_text
+

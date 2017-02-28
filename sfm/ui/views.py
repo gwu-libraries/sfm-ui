@@ -63,6 +63,7 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         context["diffs"] = diff_object_history(self.object)
         context["harvest_types"] = sorted(Collection.HARVEST_CHOICES)
+        context["harvest_description"] = sorted(Collection.HARVEST_DESCRIPTION)
         context["item_id"] = self.object.id
         context["model_name"] = "collection_set"
         context["can_edit"] = has_collection_set_based_permission(self.object, self.request.user)
