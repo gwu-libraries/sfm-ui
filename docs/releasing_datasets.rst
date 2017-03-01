@@ -39,7 +39,7 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
 
    This commands executes a Twitter Stream WARC iterator to extract the tweets from the WARC files and jq to extract the tweet ids. Parallel is used to perform this process in parallel (using multiple processors), using WARC files from `source.lst` and text files from `dest.lst`.
 
-    Note: `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
+   Note: `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
 
 4. Combine multiple files into large files:
 
@@ -47,7 +47,7 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
 
     cat *.txt > womensmarch.txt
 
-  Recommendation:  If there are a large number of tweet ids in a file, split into multiple, smaller files.  (We limit to 50 million tweet ids per file.):
+   Recommendation:  If there are a large number of tweet ids in a file, split into multiple, smaller files.  (We limit to 50 million tweet ids per file.):
 
 5. Create a README file that contains information on each collection (management command for sfm ui):
 
@@ -59,9 +59,11 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
 
     scp -P 9999 username@gwsfm-prod2.wrlc.org:/sfm-processing/womensmarch*.txt .
 
-  Replace ‘username’ with your user ID.
+   Replace ‘username’ with your user ID.
 
-
+|
+|
+|
 
 ---------------------------------------
 Publishing collection data on Dataverse
@@ -80,11 +82,12 @@ Publishing collection data on Dataverse
 .. image:: images/releasing_datasets/Dataverse-Editing_Metadata.png
 
 4. Upload the files (both data and README files) and save the dataset:
-  - Note: The dataset will be saved as a draft.
+   Note: The dataset will be saved as a draft.
 
 .. image:: images/releasing_datasets/Dataverse-Uploading_files.png
 
 5. Publish the dataset:
-  - Go to the page of the draft that was just saved, and click ‘Publish’ button.
+
+   Go to the page of the draft that was just saved, and click ‘Publish’ button.
 
 .. image:: images/releasing_datasets/Dataverse-Publishing_data.png
