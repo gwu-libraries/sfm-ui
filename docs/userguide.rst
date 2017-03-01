@@ -10,8 +10,9 @@ media sites, including Twitter, Flickr, Tumblr, and Weibo.
 This guide is for users who are using SFM to collect. If you're an administrator
 trying to set up SFM for your institution, see :ref:`admin-documentation`.
 
+-----
 Guide
-^^^^^
+-----
 
 | `Getting Started`_
 | `What is SFM used for?`_
@@ -82,7 +83,7 @@ collected data for research, analysis or archiving.
 Try `Getting Started`_, or continue reading to learn more.
 
 Some ideas for how to use SFM:
-  - **Collecting from individual accounts** like the tweets of every U.S. Senator.          Add link for twitter user timeline instructions
+  - **Collecting from individual accounts** like the tweets of every U.S. Senator by :ref:`guide-twitter-user-timeline` 
   - **Gathering Flickr images for analysis** like comparing the styles of active            Add link for Flickr user timeline
     photographers.
   - **Researching social media use** by getting a sample of all tweets, or by               Add link for Twitter Sample and Twitter Filter
@@ -148,122 +149,15 @@ each platform.
 For more information about platform-specific policies, consult the documentation
 for each social media platform's API.
 
-:ref:`guide-twitter-credentials`
+:ref:`twitter-credentials`
 
-:ref:`guide-flickr-credentials`
+:ref:`flickr-credentials`
 
-:ref:`guide-tumblr-credentials`
+:ref:`tumblr-credentials`
 
-:ref:`guide-weibo-credentials`
-
-
-
-.. _guide-twitter-credentials:
-
-Twitter Credentials
-^^^^^^^^^^^^^^^^^^^
-
-The easiest way to set up Twitter credentials is to connect them to your
-personal Twitter account (or another Twitter account you control). If you want
-more fine-tuned control, you can manually set up application-level credentials
-(see below).
-
-To connect to Twitter credentials, first sign in to Twitter with the account you
-want to use. Then, on the Credentials page, click *Connect to Twitter*. A
-window will pop up from Twitter, asking you for authorization. Click authorize,
-and your credentials will automatically connect.
-
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
-
-.. _guide-manual-twitter-credentials:
-
-Manually Adding Twitter Credentials
------------------------------------
-
-Manually adding Twitter Credentials, rather than connecting them automatically
-using your Twitter account (see above), gives you greater control over your
-credentials and allows you to use multiple credentials.
-
-To manually add credentials:
-  * **Navigate to** https://apps.twitter.com/.
-
-  * **Sign in to Twitter and select "Create New App."**
-
-  * **Enter a name for the app** like *Social Feed Manager* or the name of a new
-    Collection Set.
-  * **Enter a description.** You may copy and paste:
-    *This is a social media research and archival tool, which collects data for
-    academic researchers through an accessible user interface.*
-  * **Enter a Website** such as the SFM url. Any website will work.
-  * **Enter a Callback URL** such as the same url used for the website field.
-  * **Review and agree to the Twitter Developer Agreement** and click *Create your Twitter
-    Application.*
-  * Recommended:
-      * Click on your new application.
-      * Navigate to the *Permissions* tab.
-      * Select *Read only* then *Update settings*.
-  * **Go to the Credentials page of SFM,** and click *Add Twitter Credential*.
-  * Fill out all fields:
-      * On the Twitter apps page (https://apps.twitter.com/) click your new
-        application.
-      * Navigate to the *Keys and Access Tokens* tab.
-      * From the top half of the page, copy and paste into the matching fields
-        in SFM: *Consumer Key* and *Consumer Secret*.
-      * From the bottom half of the page, copy and paste into the matching
-        fields in SFM: *Access Token* and *Access Token Secret*.
-  * **Click** *Save*
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
-
-.. _guide-flickr-credentials:
-
-Flickr Credentials
-^^^^^^^^^^^^^^^^^^
-
-* **Navigate to** https://www.flickr.com/services/api/keys/.
-* **Sign in to your Yahoo! account.**
-* **Click** *Get Another Key*
-* **Choose** *Apply for a Non-commercial key,* which is for API users that are
-  not charging a fee.
-* **Enter an Application Name** like *Social Feed Manager*
-* **Enter Application Description** such as: *This is a social media research
-  and archival tool, which collects data for academic researchers through an
-  accessible user interface.*
-* **Check both checkboxes**
-* **Click** *Submit*
-* **Navigate to the SFM Credentials page** and click *Add Flicker Credential*
-* **Enter the Key and Secret** in the correct fields and save.
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
+:ref:`weibo-credentials`
 
 
-.. _guide-tumblr-credentials:
-
-Tumblr Credentials
-^^^^^^^^^^^^^^^^^^
-
-* **Navigate to** https://www.tumblr.com/oauth/apps/.
-* **Sign in to Tumblr.**
-* **Click** *Register Application*
-* **Enter an Application Name** like *Social Feed Manager*
-* **Enter a website** such as the SFM url
-* **Enter Application Description** such as: *This is a social media research
-  and archival tool, which collects data for academic researchers through an
-  accessible user interface.*
-* **Enter Administrative contact email.** You should use your own email.
-* **Enter default callback url,** the same url used for the website.
-* **Click** *Register*
-* **Navigate to the SFM Credentials page** and click *Add Tumblr Credential*
-* **Enter the OAuth Consumer Key** in the API key field and save.
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
-
-
-
-.. _guide-weibo-credentials:
-
-Sina Weibo Credentials
-^^^^^^^^^^^^^^^^^^^^^^
-
-Still needed
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
 
 
 .. _guide-creating-collections:
@@ -466,11 +360,10 @@ Add Tumblr Blog Posts
 
 Tumblr Blog Post collections harvest posts from a list of Tumblr blogs.
 
-**Seeds* are individual blogs for these collections. Blogs can be specified with
- or without the .tumblr.com extension.
+**Seeds** are individual blogs for these collections. Blogs can be specified with
+or without the .tumblr.com extension.
 
- See :ref:`guide-incremental-collecting` to decide whether or not to collect
- incrementally.
+See :ref:`guide-incremental-collecting` to decide whether or not to collect incrementally.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.
@@ -532,24 +425,25 @@ With normal exports, you are able to download yoru data in several formats,
 including Excel (.xlsx) and Comma Separated Value (.csv) files, which can be
 loaded into spreadsheet or data analytic software.
 
-At the top of the individual collection, click *Export*.
+To export:
+  * At the top of the individual collection, click *Export*.
 
-Select the file type you want (.csv is recommended; .xlsx types will also be
-easily accessible).
+  * Select the file type you want (.csv is recommended; .xlsx types will also be
+    easily accessible).
 
-Select the export size you want, based on number of posts per file. Note that
-larger file sizes will take longer to download.
+  * Select the export size you want, based on number of posts per file. Note that
+    larger file sizes will take longer to download.
 
-Select Deduplicate if you only want one instance of every post. This will clean
-up your data, but will make the export take longer.
+  * Select Deduplicate if you only want one instance of every post. This will clean
+    up your data, but will make the export take longer.
 
-Item start date/end date allow you to define when you want data from, as
-embedded in each post.
+  * Item start date/end date allow you to define when you want data from, as
+    embedded in each post.
 
-Harvest start date/end date allow you to define when you want data from
-based on your harvest dates.
+  * Harvest start date/end date allow you to define when you want data from
+    based on your harvest dates.
 
-When you have the settings you want, click *Save*. At this point, you will be
-redirected to the export screen. When the export is complete, the files will
-appear for you to click on and download. You will receive an email as well when
-your export completes.
+  * When you have the settings you want, click *Save*. At this point, you will be
+    redirected to the export screen. When the export is complete, the files will
+    appear for you to click on and download. You will receive an email as well when
+    your export completes.
