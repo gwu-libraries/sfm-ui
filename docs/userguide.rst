@@ -7,7 +7,7 @@ Welcome to Social Feed Manager!
 Social Feed Manager (SFM) is an open-source tool for collecting data from social
 media sites, including Twitter, Flickr, Tumblr, and Weibo.
 
-This guide is for users who are using SFM to collect. If you're an administrator
+This guide is for users who are collecting data with SFM. If you're an administrator
 trying to set up SFM for your institution, see :ref:`admin-documentation`.
 
 -----
@@ -18,23 +18,21 @@ Guide
 | `What is SFM used for?`_
 |     `Types of Collections`_
 |     `How to use the data`_
+|     `Privacy and platform policy considerations`_
+|         `Ethical considerations`_
 | `Setting up Credentials`_
-|     :ref:`guide-twitter-credentials`
-|           :ref:`guide-manual-twitter-credentials`
-|     :ref:`guide-flickr-credentials`
-|     :ref:`guide-tumblr-credentials`
-|     :ref:`guide-weibo-credentials`
 | `Creating Collections`_
-|    `Adding Seeds`_
-|    :ref:`guide-twitter-user-timelines`
-|    :ref:`guide-twitter-search`
-|    :ref:`guide-twitter-sample`
-|    :ref:`guide-twitter-filter`
-|    :ref:`guide-flickr-user-timeline`
-|    :ref:`guide-tumblr-blog-posts`
-|    :ref:`guide-weibo-timelines`
-|    `Choosing Incremental Collecting`_
-|    `Collecting Web Resources`_
+|     `Setting up Collections and Collection Sets`_
+|     `Adding Seeds`_
+|         `Add Twitter User Timelines`_
+|         `Add a Twitter Search`_
+|         `Add a Twitter Sample`_
+|         `Add a Twitter Filter`_
+|         `Add Flickr User Timelines`_
+|         `Add Tumblr Blog Posts`_
+|         `Add Weibo Timelines`_
+|         `Choosing Incremental Collecting`_
+|         `Collecting Web Resources`_
 | `Exporting your Data`_
 |
 |
@@ -83,17 +81,20 @@ collected data for research, analysis or archiving.
 Try `Getting Started`_, or continue reading to learn more.
 
 Some ideas for how to use SFM:
-  - **Collecting from individual accounts** like the tweets of every U.S. Senator by :ref:`guide-twitter-user-timeline` 
-  - **Gathering Flickr images for analysis** like comparing the styles of active            Add link for Flickr user timeline
-    photographers.
-  - **Researching social media use** by getting a sample of all tweets, or by               Add link for Twitter Sample and Twitter Filter
-    filtering by specific search terms.
-  - **Capturing a major event** by collecting tweets in a specific geographic               Add link for blogs about geographic location and event capture
+  - **Collecting from individual accounts** like the tweets of every U.S.
+    Senator (:ref:`guide-twitter-user-timelines`).
+  - **Gathering Flickr images for analysis** like comparing the styles of active
+    photographers (:ref:`guide-flickr-user-timeline`).
+  - **Researching social media use** by getting a sample of all tweets
+    (:ref:`guide-twitter-sample`), or by filtering by specific search terms
+    (:ref:`guide-twitter-filter`).
+  - **Capturing a major event** by collecting tweets in a specific geographic
     location or by following specific hashtags.
-  - **Collecting Tumblr posts** for preserving artistic entries.                            Add link for Tumblr user timeline instructions
-  - **Archiving posts** from any social media platform for later research.                  Add link for blog about archiving
-  - **Analyzing trends** using the ELK processing tool (note that ELK requires              Add link for ELK
-    coding ability--contact your SFM administrator for help).
+  - **Collecting Tumblr posts** for preserving artistic entries
+    (:ref:`guide-tumblr-blog-posts`).
+  - **Archiving posts** from any social media platform for later research.
+  - **Analyzing trends** by :ref:`exploring` (note that ELK requires coding
+    ability--contact your SFM administrator for help).
 
 Note that SFM only collects social media data from Twitter, Tumblr, Flickr, and
 Sina Weibo.
@@ -123,13 +124,56 @@ How to use the data
 ^^^^^^^^^^^^^^^^^^^
 
 Once you've collected data, there are a few ways to use it:
-  * You could export it into a CSV or Excel format for analysis.                          Add link for exports
-  * You could use the ELK processor for data analysis (although ELK requires              Add link for processing
-    coding ability, so ask your SFM admin for help).
-  * You could set up an archive using the JSON files or excel files.                      Add link for archive blog post
+  * You could export it into a CSV or Excel format for analysis
+    (:ref:`guide-export-data`).
+  * You could use try :ref:`exploring`, a processor for data analysis (although
+    ELK requires coding ability, so ask your SFM admin for help if you need it).
+  * You could set up an archive using the JSON files or excel files.
 
-There are some limitations on how data may be used due to each platform's
-policies and due to privacy concerns. See here for details.                               Add relevant link
+Privacy and platform policy considerations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Collecting and using data from social media platforms is subject to those
+platforms' terms (`Twitter <https://twitter.com/rules>`_,
+`Flickr <https://www.flickr.com/help/guidelines>`_,
+`Sina Weibo <http://www.weibo.com/signup/v5/protocol>`_,
+`Tumblr <https://www.tumblr.com/policy/en/terms-of-service>`_),
+as you agreed to them when you created your social media account. Social Feed
+Manager respects those platforms' terms as an application
+(`Twitter <https://dev.twitter.com/overview/terms/policy>`_,
+`Flickr <https://www.flickr.com/services/developer>`_,
+`Sina Weibo <http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5>`_,
+`Tumblr <https://www.tumblr.com/docs/en/api_agreement>`_).
+
+Social Feed Manager provides data to you for your research and academic use.
+Social media platforms' terms of service generally do not allow republishing of
+full datasets, and you should refer to their terms to understand what you may
+share. Authors typically retain rights and ownership to their content.
+
+Ethical considerations
+----------------------
+
+In addition to respecting the platforms' terms, as a user of Social Feed Manager
+and data collected within it, it is your responsibility to consider the ethical
+aspects of collecting and using social media data. Your discipline or
+professional organization may offer guidance.
+
+Many people have written about the important ethical and legal considerations in
+collecting and using social media data. To begin understanding these aspects,
+here are a few resources with which to start:
+
+* Association of Internet Researchers, `“Ethical Decision-Making and Internet
+  Research” <http://aoir.org/reports/ethics2.pdf>`_, 2012.
+* Annette Markham, `“OKCupid data release fiasco”
+  <https://points.datasociety.net/okcupid-data-release-fiasco-ba0388348cd>`_,
+  May 18, 2016.
+* North Carolina State University Libraries, `“Social Media Toolkit: Legal and
+  Ethical Implications”
+  <https://www.lib.ncsu.edu/social-media-archives-toolkit/legal>`_, 2015.
+* Katrin Weller and Katharina Kinder-Kurlanda, `“A manifesto for data sharing in
+  social media research”
+  <https://www.lib.ncsu.edu/social-media-archives-toolkit/legal>`_,
+  Proceedings of the 8th ACM Conference on Web Science, 2016.
 
 
 .. _guide-setting-up-credentials:
@@ -177,7 +221,21 @@ include a collection of the Twitter user timelines of each band member, a collec
 the band's Flickr, and a Twitter Filter collection of tweets that use the band's
 hashtag.
 
-##Instructions about Collection Sets##
+Setting up Collections and Collection Sets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Because collections are housed in collection sets, you must make a collection
+set first.
+
+Navigate to the Collection Sets page from the top menu, then click the *Add
+Collection Set* button.
+
+Give the collection Set a unique name and description. You should think about a
+collection set like a folder for all collections in a project.
+
+If you are part of a group project, you can contact your SFM administrator and
+set up a group, which you can share each Collection Set with. (This can be
+changed or added later on).
 
 Once you are in a Collection Set, click the "Add Collection" dropdown menu and
 select the collection type you want to add.
