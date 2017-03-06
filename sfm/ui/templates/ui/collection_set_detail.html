@@ -33,7 +33,7 @@
     <div class="col-md-12">
       <div class="panel panel-default">
        <div class="panel-heading">
-           <a data-toggle="collapse" href="#collapse">Details</a>
+           <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
        </div>
        <div id="collapse" class="collapse" style="margin-left: 10px; margin-top: 10px">
         <p><strong>Group:</strong> {{collection_set.group }}</p>
@@ -91,22 +91,26 @@ $(document).ready(function(){
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  {% if not can_edit %} disabled {% endif %}>
                       Add Collection <span class="caret"></span>
                 </button>
-                <a target="_blank" href="http://sfm.readthedocs.io/en/latest/collections.html">
-                    <span class="glyphicon glyphicon-info-sign"  style="padding-top:7px;  margin-left: 10px"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    {% for harvest_type, harvest_label in harvest_types %}
-                        <li><a data-toggle="tooltip" data-placement="right"
-                                                                            title="{% if 'twitter_user_time' in harvest_type %}Tweets from specific accounts{% endif %}
-                                                                                   {% if 'twitter_search' in harvest_type %}Recent tweets matching a query{% endif %}
-                                                                                   {% if 'twitter_filter' in harvest_type %}Tweets in real time matching filter criteria{% endif %}
-                                                                                   {% if 'twitter_sample' in harvest_type %}A subset of all tweets in real time{% endif %}
-                                                                                   {% if 'flickr_user' in harvest_type %}Posts and photos from specific accounts{% endif %}
-                                                                                   {% if 'weibo_timeline' in harvest_type %}Posts from a user and the user's friends{% endif %}
-                                                                                   {% if 'tumblr_blog_posts' in harvest_type %}Blog posts from specific blogs{% endif %}" 
-                               href="{% url "collection_create" collection_set.id harvest_type %}">Add {{ harvest_label }}</a></li>
-                    {% endfor %}          
-                </ul>
+
+                <a target="_blank" href="http://sfm.readthedocs.io/en/latest/collections.html" data-toggle="tooltip" title="Collections connect to a social media platform's APIs, or methods for retrieving data. Understanding what each collection type provides is important to ensure you collect what you need and are aware of any limitations. Click for more info"><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
+   
+                     <ul class="dropdown-menu">
+                          {% for harvest_type, harvest_label in harvest_types %}
+                          <li><a  href="{% url "collection_create" collection_set.id harvest_type %}" class="flex-column align-items">
+                               <h4>Add {{ harvest_label }}</h4>
+                               <p class="mb-1">
+                                            {% if 'twitter_user_time' in harvest_type %}Tweets from specific accounts{% endif %}
+                                            {% if 'twitter_search' in harvest_type %}Recent tweets matching a query{% endif %}
+                                            {% if 'twitter_filter' in harvest_type %}Tweets in real time matching filter criteria{% endif %}
+                                            {% if 'twitter_sample' in harvest_type %}A sample of all tweets available. Collects significant amounts of data.{% endif %}
+                                            {% if 'flickr_user' in harvest_type %}Posts and photos from specific accounts{% endif %}
+                                            {% if 'weibo_timeline' in harvest_type %}Posts from a user and the user's friends{% endif %}
+                                            {% if 'tumblr_blog_posts' in harvest_type %}Blog posts from specific blogs{% endif %}
+                               </p>
+                          </a></li>
+                          {% endfor %}
+                     </ul>
+  
             </div>
                <br/>
         </div>

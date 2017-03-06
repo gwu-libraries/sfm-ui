@@ -230,7 +230,7 @@ def _get_credential_use_map(credentials, harvest_type):
                 else:
                     inactive_collections += 1
             if active_collections == 0 and inactive_collections == 0:
-                credential_use_map[credential.id] = ("info", "Credential is not used in any other collections.")
+                credential_use_map[credential.id] = ("","")
             else:
                 credential_use_map[credential.id] = ("warning",
                                                      "Credential is in use by {0} collections that are turned on and "
