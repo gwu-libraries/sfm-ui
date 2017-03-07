@@ -112,11 +112,18 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
 
     def get_context_data(self, **kwargs):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
+
         context["next_run_time"] = next_run_time(self.object.id)
         # Last 5 harvests
         context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
-        context["last_harvest"] = self.object.last_harvest()
+        last_harvest = self.object.last_harvest()
+        context["last_harvest"] = last_harvest
+        context["seed_infos"] = _get_seed_msg_map(last_harvest.infos) if last_harvest else {}
+        seed_warnings = _get_seed_msg_map(last_harvest.warnings) if last_harvest else {}
+        _add_duplicate_seed_warnings(self.object, seed_warnings)
+        context["seed_warnings"] = seed_warnings
+        context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
         context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
@@ -168,6 +175,30 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["item_id"] = self.object.id
         context["model_name"] = "collection"
         return context
+
+
+def _add_duplicate_seed_warnings(collection, seed_warnings):
+    for result in collection.seeds.values("token").annotate(count=Count("id")).filter(count__gt=1):
+        for seed in Seed.objects.filter(token=result["token"]):
+            if seed.seed_id not in seed_warnings:
+                seed_warnings[seed.seed_id] = []
+            seed_warnings[seed.seed_id].append("Duplicate seeds exist with this token.")
+    for result in collection.seeds.values("uid").annotate(count=Count("id")).filter(count__gt=1):
+        for seed in Seed.objects.filter(token=result["uid"]):
+            if seed.seed_id not in seed_warnings:
+                seed_warnings[seed.seed_id] = []
+            seed_warnings[seed.seed_id].append("Duplicate seeds exist with this uid.")
+
+
+def _get_seed_msg_map(msgs):
+    seed_msg_map = {}
+    for msg in msgs:
+        if "seed_id" in msg:
+            seed_id = msg["seed_id"]
+            if seed_id not in seed_msg_map:
+                seed_msg_map[seed_id] = []
+            seed_msg_map[seed_id].append(msg["message"])
+    return seed_msg_map
 
 
 def _get_collection_form_class(harvest_type):

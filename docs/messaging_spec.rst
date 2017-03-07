@@ -265,7 +265,8 @@ it performs. Example::
   `harvest.status.flickr.flickr_photo`.
 * `status`: Valid values are `completed success`, `completed failure`, or `running`.
 * `infos`, `warnings`, and `errors`:  Lists of messages.  A message should be an object
-  (i.e., dictionary) containing a `code` and `message` entry.  Codes should be consistent
+  (i.e., dictionary) containing a `code` and `message` entry. It may optionally contain
+  a `seed_id` entry giving the seed id to which the messages applies. Codes should be consistent
   to allow message consumers to identify types of messages.
 * `stats`:  A count of items that are harvested by date.  Items should be a human-understandable
   labels (plural and lower-cased).  Stats is optional for in progress statuses, but required for final statuses.

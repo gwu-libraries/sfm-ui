@@ -155,22 +155,36 @@ $(document).ready(function(){
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Link</th>
+                    <th class="col-md-1">Link</th>
                     <th>Token<a href="#" data-toggle="tooltip" title="Twitter handle or blog name"><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a></th>
                     <th>Uid<a href="#" data-toggle="tooltip" title="Unique user ID"><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a></th>
-                    <th>Active</th>
+                    <th class="col-md-1">Active</th>
+                    <th class="col-md-4">Messages</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
                     {% if seed.social_url %}
-                    <td><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
+                    <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
                     {% else %}
-                    <td></td>
+                    <td class="col-md-1"></td>
                     {% endif %}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                    <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+                    <td class="col-md-1">{{ seed.is_active|yesno:"Yes,No" }}</td>
+                    <td class="col-md-4">
+                        <ul>
+                            {% for msg in seed_infos|get_item:seed.seed_id %}
+                                <li><p class="text-info">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_warnings|get_item:seed.seed_id %}
+                                <li><p class="text-warning">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_errors|get_item:seed.seed_id %}
+                                <li><p class="text-danger">{{ msg }}</p></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
 				</tr>
 				{% endfor %}
             </table>
