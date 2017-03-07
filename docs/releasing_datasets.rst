@@ -18,76 +18,75 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
 
 1. Access the server where your target collection is located and instantiate a processing container. (See :doc:`processing`)::
 
-     ssh gwsfm-prod2.wrlc.org
+      ssh gwsfm-prod2.wrlc.org
       cd /opt/sfm
       docker-compose run --rm processing /bin/bash
-
+|
 2. Find a list of WARC files where the data of your target collection are stored, and create a list of WARC files (`source.lst`) and a list of destination text files (`dest.lst`)::
 
-     find_warcs.py 0110497 | tr ' ' '\n' > source.lst
+      find_warcs.py 0110497 | tr ' ' '\n' > source.lst
       cat source.lst | xargs basename -a | sed 's/.warc.gz/.txt/' > dest.lst
 
-
-    Replace 0110497 with the first few characters of the collection id that you want to export. The collection id is available on the collection detail page in SFM UI. (See the picture below.)
+   Replace 0110497 with the first few characters of the collection id that you want to export. The collection id is available on the collection detail page in SFM UI. (See the picture below.)
 
 .. image:: images/releasing_datasets/collection_detail_page.png
-
+|
 3. Write the tweet ids to the destination text files::
 
-    time parallel –j 3 -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | jq –r ‘.id_str’  > {2}"
+     time parallel –j 3 -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | jq –r ‘.id_str’  > {2}"
 
 
    This commands executes a Twitter Stream WARC iterator to extract the tweets from the WARC files and jq to extract the tweet ids. Parallel is used to perform this process in parallel (using multiple processors), using WARC files from `source.lst` and text files from `dest.lst`.
 
-   Note: `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
-
+   - Note: `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
+|
 4. Combine multiple files into large files:
 
    The previous command creates a single text file containing tweet ids for each WARC file.  To combine the tweets into a single file::
 
-    cat *.txt > womensmarch.txt
+     cat *.txt > womensmarch.txt
 
-   Recommendation:  If there are a large number of tweet ids in a file, split into multiple, smaller files.  (We limit to 50 million tweet ids per file.):
-
+   - Recommendation:  If there are a large number of tweet ids in a file, split into multiple, smaller files.  (We limit to 50 million tweet ids per file.):
+|
 5. Create a README file that contains information on each collection (management command for sfm ui):
 
    Connect to the UI container and execute the exportreadme management command to create a README file for the dataset::
 
-    docker-compose exec ui /bin/bash -c "/opt/sfm-ui/sfm/manage.py exportreadme 0110497 > /sfm-processing/   womensmarch-README.txt"
-
+     docker-compose exec ui /bin/bash -c "/opt/sfm-ui/sfm/manage.py exportreadme 0110497 > /sfm-processing/   womensmarch-README.txt"
+|
 6. Copy the files from the server to your local hard drive::
 
-    scp -P 9999 username@gwsfm-prod2.wrlc.org:/sfm-processing/womensmarch*.txt .
+     scp -P 9999 username@gwsfm-prod2.wrlc.org:/sfm-processing/womensmarch*.txt .
 
    Replace ‘username’ with your user ID.
-
 |
 |
-|
-
 ---------------------------------------
 Publishing collection data on Dataverse
 ---------------------------------------
 1. Go to Dataverse instance and `log in <https://dataverse.harvard.edu/dataverse.xhtml?alias=gwu-libraries>`_. For this example, we will be adding the collection to the GW Libraries Dataverse on the Harvard Dataverse instance.
-  - Note: You should be a Curator for the dataverse to be able to upload data.
-
+   - Note: You should be a Curator for the dataverse to be able to upload data.
+|
 2. Open the New Dataset page
-  - Click ‘Add Data > New Dataset’:
+   
+   Click ‘Add Data > New Dataset’:
 
 .. image:: images/releasing_datasets/Dataverse-Add_new_dataset.png
-
+|
 3. Fill the metadata with proper information (title, author, contact, description, subject, keyword):
-  - Note: Make sure you input the right number of tweets collected and appropriate dates in the description.
+   
+   - Note: Make sure you input the right number of tweets collected and appropriate dates in the description.
 
 .. image:: images/releasing_datasets/Dataverse-Editing_Metadata.png
-
+|
 4. Upload the files (both data and README files) and save the dataset:
-   Note: The dataset will be saved as a draft.
 
 .. image:: images/releasing_datasets/Dataverse-Uploading_files.png
 
+   - Note: The dataset will be saved as a draft.
+|
 5. Publish the dataset:
-
+   
    Go to the page of the draft that was just saved, and click ‘Publish’ button.
 
 .. image:: images/releasing_datasets/Dataverse-Publishing_data.png
