@@ -125,7 +125,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
         context["diffs"] = diff_collection_and_seeds_history(self.object)
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_active and has_perms
@@ -178,12 +178,12 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
 
 
 def _add_duplicate_seed_warnings(collection, seed_warnings):
-    for result in collection.seeds.values("token").annotate(count=Count("id")).filter(count__gt=1):
+    for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(count__gt=1):
         for seed in Seed.objects.filter(token=result["token"]):
             if seed.seed_id not in seed_warnings:
                 seed_warnings[seed.seed_id] = []
             seed_warnings[seed.seed_id].append("Duplicate seeds exist with this token.")
-    for result in collection.seeds.values("uid").annotate(count=Count("id")).filter(count__gt=1):
+    for result in collection.seeds.exclude(uid__exact="").values("uid").annotate(count=Count("id")).filter(count__gt=1):
         for seed in Seed.objects.filter(token=result["uid"]):
             if seed.seed_id not in seed_warnings:
                 seed_warnings[seed.seed_id] = []
@@ -288,7 +288,7 @@ class CollectionUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissio
     def get_context_data(self, **kwargs):
         context = super(CollectionUpdateView, self).get_context_data(**kwargs)
         context["collection_set"] = self.object.collection_set
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         credentials = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
         context["credential_use_map"] = _get_credential_use_map(credentials, self.object.harvest_type)
@@ -368,6 +368,7 @@ class SeedCreateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin
     def get_form_kwargs(self):
         kwargs = super(SeedCreateView, self).get_form_kwargs()
         kwargs["collection"] = self.kwargs["collection_pk"]
+        kwargs["view_type"] = Seed.CREATE_VIEW
         return kwargs
 
     def get_form_class(self):
@@ -391,6 +392,8 @@ class SeedUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin
     def get_form_kwargs(self):
         kwargs = super(SeedUpdateView, self).get_form_kwargs()
         kwargs["collection"] = self.object.collection.pk
+        kwargs["view_type"] = Seed.UPDATE_VIEW
+        kwargs["entry"] = self.get_object()
         return kwargs
 
     def get_context_data(self, **kwargs):

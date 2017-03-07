@@ -460,6 +460,8 @@ class SeedHistoryModel(models.Model):
 
 @python_2_unicode_compatible
 class Seed(models.Model):
+    UPDATE_VIEW = "updateView"
+    CREATE_VIEW = "createView"
     collection = models.ForeignKey(Collection, related_name='seeds')
     seed_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     token = models.TextField(blank=True)
@@ -507,11 +509,11 @@ class Seed(models.Model):
                 j = json.loads(self.token)
                 for key, value in j.items():
                     labels.append(u"{}: {}".format(key.title(), value))
-            except ValueError:
+            except (AttributeError, ValueError):
                 labels.append(u"Token: {}".format(self.token))
         if self.uid:
-            labels.append("Uid: {}".format(self.uid))
-        return "; ".join(labels)
+            labels.append(u"Uid: {}".format(self.uid))
+        return u"; ".join(labels)
 
     def get_collection_set(self):
         return self.collection.collection_set

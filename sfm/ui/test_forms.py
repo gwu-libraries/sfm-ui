@@ -143,7 +143,7 @@ class SeedFormTest(TestCase):
                                                     )
         self.data = {
             "token": "test_token",
-            "uid": "test_uid",
+            "uid": "123456",
             "collection": self.collection.pk,
             "date_added": "01/01/2016",
         }
@@ -151,6 +151,10 @@ class SeedFormTest(TestCase):
     def test_valid_from(self):
         form = SeedTwitterUserTimelineForm(self.data, collection=self.collection.pk)
         self.assertTrue(form.is_valid())
+
+    def test_blank_from(self):
+        form = SeedTwitterUserTimelineForm({}, collection=self.collection.pk)
+        self.assertFalse(form.is_valid())
 
 
 class CredentialFlickrFormTest(TestCase):
