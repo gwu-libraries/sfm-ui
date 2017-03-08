@@ -46,7 +46,7 @@
           {% endfor %}
              </ul></p>
         {% endif %}
-        <p><strong>Data Collected</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
+        <p><strong>Data collected:</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
        </div>
       </div>
     </div>
@@ -91,14 +91,30 @@ $(document).ready(function(){
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  {% if not can_edit %} disabled {% endif %}>
                       Add Collection <span class="caret"></span>
                 </button>
+                <a href="#collectionsModal" data-toggle="modal" role="button" ><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
 
-                <a target="_blank" href="http://sfm.readthedocs.io/en/latest/collections.html" data-toggle="tooltip" title="Collections connect to a social media platform's APIs, or methods for retrieving data. Understanding what each collection type provides is important to ensure you collect what you need and are aware of any limitations. Click for more info"><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
-   
-                     <ul class="dropdown-menu">
+                <!-- modal for i button -->
+                <div class="modal fade" tabindex="-1" role="dialog" id="collectionsModal">
+                   <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                         <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">Collection Types</h4>
+                         </div>
+                         <div class="modal-body">
+                           <p>Collections connect to a social media platform's APIs, which are methods for retrieving data. Understanding 
+                           what each collection type provides is important to ensure you collect what you need and are aware of any limitations. 
+                           <a href="http://sfm.readthedocs.io/en/latest/collections.html" target="_blank">More details.</a></p>
+                         </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal --> 
+             
+             
+                  <ul class="dropdown-menu">
                           {% for harvest_type, harvest_label in harvest_types %}
                           <li><a  href="{% url "collection_create" collection_set.id harvest_type %}" class="flex-column align-items">
-                               <h4>Add {{ harvest_label }}</h4>
-                               <p class="mb-1">
+                              <p><strong>Add {{ harvest_label }}</strong><br/>
                                             {% if 'twitter_user_time' in harvest_type %}Tweets from specific accounts{% endif %}
                                             {% if 'twitter_search' in harvest_type %}Recent tweets matching a query{% endif %}
                                             {% if 'twitter_filter' in harvest_type %}Tweets in real time matching filter criteria{% endif %}

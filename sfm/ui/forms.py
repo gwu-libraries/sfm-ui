@@ -38,10 +38,10 @@ DATETIME_WIDGET = DateTimeWidget(
 SCHEDULE_HELP = "How frequently you want data to be retrieved."
 TWITTER_MEDIA_LABEL = "Media (e.g., images) embedded in tweets."
 TWITTER_WEB_RESOURCES_LABEL = "Web pages referenced in tweets."
-INCREMENTAL_LABEL = "Incremental Harvest"
+INCREMENTAL_LABEL = "Incremental harvest"
 INCREMENTAL_HELP = "Only collect new items since the last data retrieval."
-GROUP_HELP = "Your default group is your username, unless the SFM team has added you to another group"
-USER_PROFILE_LABEL = "User profile images and user banner images"
+GROUP_HELP = "Your default group is your username, unless the SFM team has added you to another group."
+USER_PROFILE_LABEL = "User profile images and user banner images."
 WEIBO_LABEL = "Perform web harvests of resources (e.g., web pages) linked in weibo texts."
 TUMBLR_LABEL = "Perform web harvests of resources (e.g., web pages) linked in Tumblr posts."
 
