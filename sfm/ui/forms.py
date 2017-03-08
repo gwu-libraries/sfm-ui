@@ -35,15 +35,15 @@ DATETIME_WIDGET = DateTimeWidget(
     }
 )
 
-TWITTER_MEDIA_LABEL = "Media"
-TWITTER_MEDIA_HELP = "Perform web harvests of media (e.g., images) embedded in tweets."
-TWITTER_WEB_RESOURCES_LABEL = "Web resources"
-TWITTER_WEB_RESOURCES_HELP = "Perform web harvests of resources (e.g., web pages) linked in tweets."
-INCREMENTAL_LABEL = "Incremental"
-INCREMENTAL_HELP = "Only harvest new items."
-GROUP_HELP = "Group members will be able to view and edit this collection set."
-USER_PROFILE_LABEL = "User profile images"
-USER_PROFILE_HELP = "Perform web harvests of user profile images and user banner images"
+SCHEDULE_HELP = "How frequently you want data to be retrieved."
+TWITTER_MEDIA_LABEL = "Media (e.g., images) embedded in tweets."
+TWITTER_WEB_RESOURCES_LABEL = "Web pages referenced in tweets."
+INCREMENTAL_LABEL = "Incremental harvest"
+INCREMENTAL_HELP = "Only collect new items since the last data retrieval."
+GROUP_HELP = "Your default group is your username, unless the SFM team has added you to another group."
+USER_PROFILE_LABEL = "User profile images and user banner images."
+WEIBO_LABEL = "Perform web harvests of resources (e.g., web pages) linked in weibo texts."
+TUMBLR_LABEL = "Perform web harvests of resources (e.g., web pages) linked in Tumblr posts."
 
 
 class CollectionSetForm(forms.ModelForm):
@@ -118,7 +118,8 @@ class BaseCollectionForm(forms.ModelForm):
             'history_note': HISTORY_NOTE_LABEL
         }
         help_texts = {
-            'history_note': HISTORY_NOTE_HELP
+            'history_note': HISTORY_NOTE_HELP,
+            'schedule_minutes': SCHEDULE_HELP
         }
         error_messages = {}
 
@@ -168,13 +169,10 @@ class BaseCollectionForm(forms.ModelForm):
 
 
 class CollectionTwitterUserTimelineForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
-    user_images_option = forms.BooleanField(initial=False, required=False, help_text=USER_PROFILE_HELP,
-                                            label=USER_PROFILE_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
+    user_images_option = forms.BooleanField(initial=False, required=False, label=USER_PROFILE_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
@@ -206,11 +204,9 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
 
 class CollectionTwitterSearchForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSearchForm, self).__init__(*args, **kwargs)
@@ -239,10 +235,8 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
 
 
 class CollectionTwitterSampleForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
@@ -271,10 +265,8 @@ class CollectionTwitterSampleForm(BaseCollectionForm):
 
 
 class CollectionTwitterFilterForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
@@ -314,7 +306,7 @@ class CollectionFlickrUserForm(BaseCollectionForm):
     )
     image_sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
                                             widget=forms.CheckboxSelectMultiple, label="Image sizes", )
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
@@ -345,14 +337,11 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         ("Medium", "Medium"),
         ("Large", "Large")
     )
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
     image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
                                             help_text="For harvesting images, select the image sizes.",
                                             widget=forms.CheckboxSelectMultiple, label="Image sizes")
-    web_resources_option = forms.BooleanField(initial=False, required=False,
-                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
-                                                        "weibo texts.",
-                                              label="Web resources")
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=WEIBO_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
@@ -422,14 +411,11 @@ class CollectionWeiboSearchForm(BaseCollectionForm):
 
 
 class CollectionTumblrBlogPostsForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
     media_option = forms.BooleanField(initial=False, required=False,
                                       help_text="Perform web harvests of images in photo type posts.",
                                       label="Images option")
-    web_resources_option = forms.BooleanField(initial=False, required=False,
-                                              help_text="Perform web harvests of resources (e.g., web pages) "
-                                                        "linked in Tumblr posts.",
-                                              label="Web resources")
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TUMBLR_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)

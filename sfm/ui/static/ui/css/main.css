@@ -104,3 +104,7 @@ body {
     min-width: 200px;
     background-color: #333;
 }
+.modal {
+    top: 35%;
+}
+
