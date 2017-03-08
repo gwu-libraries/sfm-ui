@@ -9,17 +9,21 @@ share: false
 ads: false
 ---
 
-* Laura Wrubel, Software Development Librarian, Primary Investigator (PI)
+* Laura Wrubel, Software Development Librarian, Principal Investigator (PI)
+* Aditya Dharne, Graduate Student Programmer
 * Dan Kerchner, Senior Software Developer
 * Justin Littman, Software Developer
 * Christie Peterson, University Archivist 
-* Seemantani Sharma, Policy Assistant
 * Vakil Smallen, Project Archivist
 * Yecheng Tan, Graduate Student Programmer
 * Rachel Trent, Digital Services Manager
-* Rajat Vij, Graduate Student Programmer
 
 Dan Chudnov served as PI until January 2016; Dan and Bergis Jules were the original PIs for this project as funded by the NHPRC.
+
+Former team members:
+
+* Seemantani Sharma, Policy Assistant
+* Rajat Vij, Graduate Student Programmer
 
 Many other staff at GW Libraries support and contribute to this project. 
 

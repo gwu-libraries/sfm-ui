@@ -11,6 +11,7 @@ ads: false
 ## Version 1.0 was released on June 14, 2016.
 
 It included:
+
 * A web user interface that lets users directly build, manage, and export social media collections
 * Support for multiple Twitter public APIs, Flickr, and Sina Weibo
 * Options for exporting data in several formats
