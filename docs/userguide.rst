@@ -267,7 +267,7 @@ for Twitter Samples:
 Add Twitter User Timelines
 --------------------------
 
-Twitter user timeline collections collect the 32,000 most recent tweets from
+Twitter user timeline collections collect the 3,200 most recent tweets from
 a list of Twitter accounts.
 
 **Seeds** for Twitter User Timelines are individual Twitter accounts.
