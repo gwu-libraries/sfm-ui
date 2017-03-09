@@ -185,7 +185,5 @@ def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=Fa
 
 @register.filter
 def get_item(items, key):
-    for harvester_type, harvester_text in items:
-        if key == harvester_type:
-            return harvester_text
+    return items[key]
 
