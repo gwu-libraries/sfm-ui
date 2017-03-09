@@ -239,13 +239,13 @@ It only returns the most recent 200 posts matching a single keyword
 when found between pairs of '#' in Weibo posts (for example: `#keyword#` or
 `#你好#`)
 
-The incremental option will attempt to collect tweets that haven't been harvested before,
-reducing the number of duplicate tweets.  Because the Weibo search API does not accept
+The incremental option will attempt to only count weibo posts that haven't been harvested before,
+maintaining a count of non-duplicate weibo posts.  Because the Weibo search API does not accept
 `since_id` or `max_id` parameters, filtering out already-harvested weibos from the
-search result is accomplished within SFM.
+search count is accomplished within SFM.
 
 When the incremental option is not selected, the search will be performed again,
-and there will most likely be duplicates.
+and there will most likely be duplicates in the count.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.
