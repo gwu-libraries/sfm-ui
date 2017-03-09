@@ -234,14 +234,16 @@ Weibo search
 
 Collects recent weibos that match a search query using the `Weibo
 search_topics API<http://open.weibo.com/wiki/2/search/topics>`_.
-Based on API limitation, this is not a complete search of all Weibo posts,
-It only returns the recent 200 posts match a single topic
-between '#' on the Weibo posts.
+The Weibo API does not return a complete search of all Weibo posts. 
+It only returns the most recent 200 posts matching a single keyword
+when found between pairs of '#' in Weibo posts (for example: `#keyword#` or
+`#你好#`)
 
-The incremental option will collect Weibo posts that haven't been harvested before.
-Due to there are no since_id and max_id on the search API, an additional API
-request will send to check whether it has new Weibo posts.
-In such case, the collection might contain a little duplicates.
+The incremental option will attempt to collect tweets that haven't been harvested before,
+reducing the number of duplicate tweets.  Because the Weibo search API does not accept
+`since_id` or `max_id` parameters, filtering out already-harvested weibos from the
+search result is accomplished within SFM.
+
 When the incremental option is not selected, the search will be performed again,
 and there will most likely be duplicates.
 
