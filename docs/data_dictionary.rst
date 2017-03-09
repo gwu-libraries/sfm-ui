@@ -48,7 +48,7 @@ and `Entities
 |                         | change over time.                                   |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| location                | The user profile's self-described location.         | San Francisco, California                        |
+| location                | The user's self-described location.                 | San Francisco, California                        |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | followers_count         | Number of followers this account had at the time    | 235                                              |
