@@ -378,6 +378,9 @@ class Collection(models.Model):
         """
         return self.REQUIRED_SEED_COUNTS.get(str(self.harvest_type))
 
+    def seed_count(self):
+        return self.seeds.filter(collection=self).count()
+
     def active_seed_count(self):
         """
         Returns the number of active seeds.

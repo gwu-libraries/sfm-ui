@@ -57,6 +57,8 @@
 </div>
 {% endblock %}
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
 {% if next_run_time %}
     <div class="alert alert-info" role="alert">Next harvest at {{ next_run_time }}</div>
 {% endif %}
@@ -106,15 +108,25 @@
             {% endfor %}
         </ul>
     </div>
-{% endif %}
-{% if stream_stopping %}
-    <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
-{% endif %}
+    {% endif %}
+    {% if stream_stopping %}
+        <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
+    {% endif %}
+  </div>
+</div>
 <div class="row subsection">
     <div class="col-md-12">
         {% if collection.description %}
-            <p style="margin-left: 10px; margin-top: 10px;"><strong>Description: </strong>{{ collection.description }}</p>
+            <p><strong>Description: </strong>{{ collection.description }}</p>
         {% endif %}
+        <p><strong>Data collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
+           {% if collection.stats %}
+              <p><strong>Stats:</strong><ul>
+              {% for item, count in collection.stats.items %}
+                <li>{{ item }}: {{ count|intcomma }}</li>
+              {% endfor %}
+              </ul></p>
+           {% endif %}
     </div>
     {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
     <div class="col-md-12">
@@ -131,14 +143,6 @@
                      <p><strong>Id:</strong> {{ collection.collection_id }}</p>
                      <p><strong>Created:</strong> {{ collection.date_added|date }}</p>
                      <p><strong>End date: </strong> {{ collection.end_date|date }}</p>
-                     <p><strong>Data collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
-                     {% if collection.stats %}
-                         <p><strong>Stats:</strong><ul>
-                         {% for item, count in collection.stats.items %}
-                             <li>{{ item }}: {{ count|intcomma }}</li>
-                         {% endfor %}
-                         </ul></p>
-                     {% endif %}
             </div>
          </div>
      </div>
@@ -146,16 +150,56 @@
 
 <script>
 $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();   
+
+    var trs = $("#internalActivities tr");
+    var btnMore = $("#seeMoreRecords");
+    var btnLess = $("#seeLessRecords");
+    var trsLength = trs.length;
+    var currentIndex = 10;
+
+    trs.hide();
+    trs.slice(0, 10).show(); 
+    checkButton();
+
+    btnMore.click(function (e) { 
+        e.preventDefault();
+        $("#internalActivities tr").slice(currentIndex, currentIndex + 10).show();
+        currentIndex += 10;
+        checkButton();
+    });
+
+    btnLess.click(function (e) { 
+        e.preventDefault();
+        $("#internalActivities tr").slice(currentIndex - 10, currentIndex).hide();          
+        currentIndex -= 10;
+        checkButton();
+    });
+
+    function checkButton() {
+        var currentLength = $("#internalActivities tr:visible").length;
+
+        if (currentLength >= trsLength) {
+            btnMore.hide();            
+        } else {
+            btnMore.show();   
+        }
+
+        if (trsLength > 10 && currentLength > 10) {
+            btnLess.show();
+        } else {
+            btnLess.hide();
+        }
+    }
 });
 </script>
 
 {% if has_seeds_list %}
-<div class="row subsection">
+<div class="row">
+    <div class="col-md-12">
     <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seeds</h4></div>
+        <div class="panel-heading"><h4>Seeds ({{ collection.seed_count }})</h4></div>
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-condensed" id="internalActivities">
                 <thead>
                 <tr>
                     <th class="col-md-1">Link</th>
@@ -223,12 +267,17 @@ $(document).ready(function(){
 				</tr>
 				{% endfor %}
             </table>
+            <a href="#" id="seeMoreRecords">See all {{ collection.seed_count }} seeds<span class="caret"></span></a>
+            <a href="#" id="seeLessRecords">See fewer seeds</a> 
+            <div style="padding-top: 15px">
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
                 <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
             {% endif %}
+            </div>
         </div>
     </div>
+  </div>
 </div>
 {% endif %}
 {% if harvests %}
