@@ -109,6 +109,9 @@
         </ul>
     </div>
     {% endif %}
+    {% if stream_stopping %}
+        <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
+    {% endif %}
 </div>
 </div>
 
