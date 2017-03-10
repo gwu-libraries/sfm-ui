@@ -282,7 +282,8 @@ $(document).ready(function(){
 {% endif %}
 {% if harvests %}
 <div class="row">
-    <div class="panel panel-default">
+  <div class="col-md-12">
+      <div class="panel panel-default">
         <div class="panel-heading"><h4>Harvests</h4> (1-{{ harvests|length }} of {{ harvest_count }})</div>
         <div class="panel-body">
             <table class="table">
@@ -318,6 +319,7 @@ $(document).ready(function(){
         <div class="panel-footer"><a href="{% url "collection_harvests" collection.pk %}">View all {{ harvest_count }} harvests</a></div>
         {% endif %}
     </div>
+  </div>
 </div>
 {% endif %}
 
