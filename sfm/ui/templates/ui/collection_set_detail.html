@@ -30,7 +30,17 @@
         {% if collection_set.description %}
             <p><strong>Description: </strong>{{ collection_set.description }}</p>
         {% endif %}
+        <p><strong>Data collected:</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p> 
+        {% if collection_set.stats %}
+            <p><strong>Stats:</strong><ul>
+            {% for item, count in collection_set.stats.items %}
+              <li>{{ item }}: {{ count|intcomma }}</li>
+            {% endfor %}
+            </ul></p>
+        {% endif %}
     </div>
+</div>
+<div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
        <div class="panel-heading">
@@ -40,14 +50,6 @@
         <p><strong>Group:</strong> {{collection_set.group }}</p>
         <p><strong>Id:</strong> {{ collection_set.collection_set_id }}</p>
         <p><strong>Created:</strong> {{ collection_set.date_added|date }}</p>
-        {% if collection_set.stats %}
-         <p><strong>Stats:</strong><ul>
-          {% for item, count in collection_set.stats.items %}
-             <li>{{ item }}: {{ count|intcomma }}</li>
-          {% endfor %}
-             </ul></p>
-        {% endif %}
-        <p><strong>Data collected:</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
        </div>
       </div>
     </div>
@@ -60,6 +62,7 @@ $(document).ready(function(){
 </script>
 
 <div class="row subsection">
+  <div class="col-md-12">
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Collections</h4></div>
         <div class="panel-body">
@@ -125,6 +128,7 @@ $(document).ready(function(){
                <br/>
         </div>
     </div>
+  </div>
 </div>
 <div class="row">
     <div class="col-md-12">
