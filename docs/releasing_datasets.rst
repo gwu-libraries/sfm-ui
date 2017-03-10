@@ -68,7 +68,9 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
 ---------------------------------------
 Publishing collection data on Dataverse
 ---------------------------------------
-1. Go to Dataverse instance and `log in <https://dataverse.harvard.edu>`_. For this example, we will be adding the collection to the GW Libraries Dataverse on the Harvard Dataverse instance:
+For this example, we will be adding the collection to the GW Libraries Dataverse on the Harvard Dataverse instance.
+
+1. Go to `the GW Libraries Dataverse <https://dataverse.harvard.edu/dataverse/gwu-libraries>`_ and log in. 
    
    - Note: You should be a Curator for the dataverse to be able to upload data.
 
