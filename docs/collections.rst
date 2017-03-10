@@ -150,6 +150,9 @@ the user, or replying to the user. See the `follow parameter documentation
 <https://dev.twitter.com/streaming/overview/request-parameters#follow>`_ for
 more information.
 
+- Note: The Twitter UI does not provide a way to look up the numeric ID for a user account. You can use the twitter ID converter websites, such as `https://tweeterid.com <https://tweeterid.com/>`_, for this purpose.
+
+
 **Location** collects tweets that were geolocated within specific parameters,
 based on a bounding box made using the southwest and northeast corner
 coordinates. See the `location parameter documentation
