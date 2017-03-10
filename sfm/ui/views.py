@@ -63,6 +63,7 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         context["diffs"] = diff_object_history(self.object)
         context["harvest_types"] = sorted(Collection.HARVEST_CHOICES)
+        context["harvest_description"] = Collection.HARVEST_DESCRIPTION
         context["item_id"] = self.object.id
         context["model_name"] = "collection_set"
         context["can_edit"] = has_collection_set_based_permission(self.object, self.request.user)
@@ -130,6 +131,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_active and has_perms
         context["can_toggle"] = has_perms
+        # If last harvest is stopping
+        context["stream_stopping"] = self.object.last_harvest().status == Harvest.STOP_REQUESTED \
+            if self.object.last_harvest() else False
         # For not enough seeds
         seed_warning_message = None
         # For too many seeds
@@ -643,8 +647,7 @@ class HarvestDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermi
         context["collection"] = self.object.collection
         # If status is running or requested and not a streaming and if this is the most recent harvest
         context["can_void"] = False
-        if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED) \
-                and not self.object.collection.is_streaming() \
+        if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED, Harvest.STOP_REQUESTED, Harvest.PAUSED) \
                 and self.object == self.object.collection.last_harvest() \
                 and has_collection_set_based_permission(self.object, self.request.user):
             context["can_void"] = True
@@ -662,7 +665,7 @@ class HarvestVoidView(LoginRequiredMixin, RedirectView):
         # Check permissions to void
         check_collection_set_based_permission(harvest, self.request.user)
 
-        if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED):
+        if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED, Harvest.STOP_REQUESTED, Harvest.PAUSED):
             log.debug("Voiding %s", harvest)
             harvest.status = Harvest.VOIDED
             harvest.save()
