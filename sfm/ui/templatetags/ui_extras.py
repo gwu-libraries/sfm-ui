@@ -185,5 +185,5 @@ def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=Fa
 
 @register.filter
 def get_item(items, key):
-    return items[key]
+    return items.get(key)
 
