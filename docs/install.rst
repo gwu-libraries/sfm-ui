@@ -178,6 +178,27 @@ the change only applies to a single container, then you can stop the container w
 the change applies to multiple containers (or you're not sure), you can stop all containers with ``docker-compose stop``.
 Containers can then be brought back up with ``docker-compose up -d`` and the configuration change will take effect.
 
+----------
+ Stopping
+----------
+
+To stop the containers gracefully::
+
+    docker-compose stop -t 180
+
+SFM can then be restarted with ``docker-compose up -d``.
+
+-----------------
+ Server restarts
+-----------------
+If Docker is configured to automatically start when the server starts, then SFM will start. (This is enabled by default
+when Docker is installed.)
+
+SFM will even be started if it was stopped prior to the server reboot. If you do not want SFM to start, then configure
+Docker to not automatically start.
+
+To configure whether Docker is automatically starts, see :ref:`docker-stopping`.
+
 -----------
  Upgrading
 -----------
@@ -185,9 +206,11 @@ Containers can then be brought back up with ``docker-compose up -d`` and the con
 Following are general instructions for upgrading SFM versions. Always consult the release notes of the new version to
 see if any additional steps are required.
 
-1. Stop the containers::
+1. Stop the containers gracefully::
 
-    docker-compose stop
+    docker-compose stop -t 180
+
+This may take several minutes.
 
 2. Make a copy of your existing ``docker-compose.yml`` and ``.env`` files::
 
