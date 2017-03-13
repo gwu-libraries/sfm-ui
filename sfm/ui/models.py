@@ -303,13 +303,13 @@ class Collection(models.Model):
         (60 * 24 * 7 * 4, 'Every 4 weeks')
     ]
     HARVEST_CHOICES = [
+        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SEARCH, 'Twitter search'),
         (TWITTER_FILTER, 'Twitter filter'),
-        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SAMPLE, 'Twitter sample'),
+        (TUMBLR_BLOG_POSTS, 'Tumblr blog posts'),
         (FLICKR_USER, 'Flickr user'),
-        (WEIBO_TIMELINE, 'Weibo timeline'),
-        (TUMBLR_BLOG_POSTS, 'Tumblr blog posts')
+        (WEIBO_TIMELINE, 'Weibo timeline')
     ]
     HARVEST_DESCRIPTION = {
         TWITTER_SEARCH: 'Recent tweets matching a query',
