@@ -62,7 +62,7 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
         context['collection_list'] = Collection.objects.filter(
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         context["diffs"] = diff_object_history(self.object)
-        context["harvest_types"] = sorted(Collection.HARVEST_CHOICES)
+        context["harvest_types"] = Collection.HARVEST_CHOICES
         context["harvest_description"] = Collection.HARVEST_DESCRIPTION
         context["item_id"] = self.object.id
         context["model_name"] = "collection_set"
