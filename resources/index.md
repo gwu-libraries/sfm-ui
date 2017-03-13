@@ -10,14 +10,14 @@ ads: false
 ---
 
 
-Papers and Resources
+Guidelines and Resources on Social Media Archiving
 --------------------
+* [Building Social Media Archives: Collection Development Guidelines]({{ site.github.url }}/resources/guidelines)
 * [API-based Social Media Collecting as a Form of Web Archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf): Article in International Journal on Digital Libraries, Special Issue on Web Archiving 
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
-* [Poster on Provenance of a Tweet]({{ site.github.url }}/resources/prov-tweet-poster.pdf) 
-* [Using Social Media Data: Brief list of resources]({{ site.github.url }}/resources/ethics)
+* [Using Social Media Data: Articles and resources on ethics]({{ site.github.url }}/resources/ethics)
 
-Recent Presentations
+Presentations
 --------------------
 * ["Collecting Social Media with Social Feed Manager,"]({{ site.github.url }}/resources/CollectingSocialMediaData.pdf) library workshop, February 14, 2017. 
 * Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.

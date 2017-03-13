@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Building Social Media Archives: Collection Development Guidelines"
+title: "Building Social Media Archives: \nCollection Development Guidelines"
 permalink: /resources/guidelines
 date: 2017-03-13
 modified: 2017-03-13
@@ -70,11 +70,11 @@ Social media APIs' terms and conditions appear to have been designed primarily w
 
 *If terms of service state that you may only share identifiers or only portions of the data content, what will your institution's response be? For example, will you share complete tweets rather than only tweet IDs?  Will you differentiate level of access based on the audience (e.g., a member of your institution vs. a user at another institution)?*
 
-*To what extent can you inform users of the limitations on reuse/distribution and request that they abide by platforms' terms of service? *
+*To what extent can you inform users of the limitations on reuse/distribution and request that they abide by platforms' terms of service?*
 
-*Will you preserve or provide access to content that has disappeared from or changed on its original platform? *
+*Will you preserve or provide access to content that has disappeared from or changed on its original platform?*
 
-*Are you able to meet your collecting goals while still adhering to the agreements and terms of service? What risks in this area are you and/or your institution willing to take? *
+*Are you able to meet your collecting goals while still adhering to the agreements and terms of service? What risks in this area are you and/or your institution willing to take?*
 
 *Will the answers to any of these questions vary based on the nature of the content creator, e.g., content created by your own institution, by donors who have signed deeds of gift, by public figures or by government agencies?*
 
@@ -108,7 +108,7 @@ The core scoping options offered by the APIs themselves can be complex and requi
 
 If an archivist wanted to collect data related to a recently-emerged and ongoing issue, for example, she might use the search API to collect recent tweets related to designated keywords, while also setting up a collection using the filter streaming API to gather on an ongoing basis, and retrieving the timelines of recent tweets from central individuals. As the issue develops over the course of days and weeks, the archivist may add new terms to her ongoing harvests.
 
-With some platforms, such as Twitter, the credentials used to harvest tweets will also affect what is collected. If the account whose credentials are used for a harvest has been allowed to follow an account set to private, all tweets from that account will be harvested, including ones not intended for public distribution.* *
+With some platforms, such as Twitter, the credentials used to harvest tweets will also affect what is collected. If the account whose credentials are used for a harvest has been allowed to follow an account set to private, all tweets from that account will be harvested, including ones not intended for public distribution.*
 
 ### 3.1 Questions
 
@@ -134,9 +134,9 @@ The SFM project has focused special attention on the ability to thoroughly docum
 
 ### 4.1 Questions
 
-*Who are your intended users, and what information will they need to understand and reuse the collections? Do your users have established specifications for how this information should be provided? Is it necessary that you attempt to meet those specifications? *
+*Who are your intended users, and what information will they need to understand and reuse the collections? Do your users have established specifications for how this information should be provided? Is it necessary that you attempt to meet those specifications?*
 
-*What information is collected, maintained, and made available by the harvesting tools that your institution has adopted? How can that information be exported? Do they meet your users' needs? If not, how much value is lost? *
+*What information is collected, maintained, and made available by the harvesting tools that your institution has adopted? How can that information be exported? Do they meet your users' needs? If not, how much value is lost?*
 
 *What additional provenance/appraisal information might your institution choose to collect and document outside your harvesting application?*
 
@@ -170,13 +170,13 @@ Decisions about access may come into play as you select your API harvesting tool
 
 *Is content in immediate and high demand? Does your institution have designated communities it intends to serve, and are these the communities demonstrating high demand? If the data is in demand by law enforcement, commercial companies, or political groups, will this influence your institution's decisions around access and data sharing? Does your institution not want to make content available to specific audiences?*
 
-*Will content be made publicly available, or available only to certain audiences? If terms of service state that you may not make content publicly accessible, what will your institution's response be? Would this response be in line with your archives' mission, existing collection development policies, and access procedures? What additional resources would you need to create and enforce that kind of access environment? *
+*Will content be made publicly available, or available only to certain audiences? If terms of service state that you may not make content publicly accessible, what will your institution's response be? Would this response be in line with your archives' mission, existing collection development policies, and access procedures? What additional resources would you need to create and enforce that kind of access environment?*
 
 *Will access be limited to certain access points (e.g., on-site only)? Why, and what risk does this mitigate? Do you expect to receive users if you limit to on-site access? Does this raise issues of exclusion and privilege that conflict with your organization's mission?*
 
 *Will access be mediated by staff of your institution? Why, and what risk does this mitigate?*
 
-*How will users discover that content exists? Will you provide multiple points of discovery for different user types (e.g., catalog records, finding aids, public search engine full text indexing**)? Considering that today's users expect to discover and access content simultaneously through fulltext searching, will these traditional means of archival discovery be suited to meet user needs? *
+*How will users discover that content exists? Will you provide multiple points of discovery for different user types (e.g., catalog records, finding aids, public search engine full text indexing**)? Considering that today's users expect to discover and access content simultaneously through fulltext searching, will these traditional means of archival discovery be suited to meet user needs?*
 
 *What format will content be available in? Will it be accessible only as datasets? Will an interface be provided for search and browsing?*
 
