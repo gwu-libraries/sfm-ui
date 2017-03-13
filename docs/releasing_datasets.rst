@@ -60,6 +60,7 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
    
    Exit from the SFM server with ``exit`` command, move to a location in your local hard drive where you want to store the data, and run the command below:   
    ::
+     exit
      scp -p username@sfmserver.org:/sfm-processing/womensmarch*.txt .
 
    Replace ``username`` and ``sfmserver.org`` with your user ID and the address of the SFM server, respectively.  
