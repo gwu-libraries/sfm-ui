@@ -150,9 +150,9 @@ Social media platforms' terms of service generally do not allow republishing of
 full datasets, and you should refer to their terms to understand what you may
 share. Authors typically retain rights and ownership to their content.
 
-Take a look at 
-`this blog <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_ 
-for collection and archival guidelines within SFM.
+Take a look at
+`these guidelines <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_
+on social media collection development.
 
 Ethical considerations
 ----------------------
@@ -166,6 +166,13 @@ Many people have written about the important ethical and legal considerations in
 collecting and using social media data. To begin understanding these aspects,
 here are a few resources with which to start:
 
+* Social Feed Manager's `"Building Social Media Archives: Collection Development
+  Guidelines" <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_,
+  2017
+* Sara Mannheimer and Elizabeth A. Hull, `"Sharing selves: Developing an ethical
+  framework for curating social media data,"
+  <https://scholarworks.montana.edu/xmlui/bitstream/handle/1/12661/Mannheimer-Hull-Sharing-Selves-2017.pdf>_,
+  2017.
 * Association of Internet Researchers, `“Ethical Decision-Making and Internet
   Research” <http://aoir.org/reports/ethics2.pdf>`_, 2012.
 * Annette Markham, `“OKCupid data release fiasco”
@@ -178,6 +185,7 @@ here are a few resources with which to start:
   social media research”
   <https://www.lib.ncsu.edu/social-media-archives-toolkit/legal>`_,
   Proceedings of the 8th ACM Conference on Web Science, 2016.
+
 
 
 .. _guide-setting-up-credentials:
@@ -218,12 +226,16 @@ Creating Collections
 Each collection either gathers posts from individual accounts or gathers posts based
 on search criteria.
 
-Collections are contained in **Collection Sets**. While Collecion Sets sometimes
-only include one collection, sets can be used to organize all of the data from
-a single project or archive--for example, a Collection Set about a band might
-include a collection of the Twitter user timelines of each band member, a collection of
-the band's Flickr, and a Twitter Filter collection of tweets that use the band's
-hashtag.
+Collections are contained in **Collection Sets**. While Collection Sets
+sometimes only include one collection, sets can be used to organize all of the
+data from a single project or archive--for example, a Collection Set about a
+band might include a collection of the Twitter user timelines of each band
+member, a collection of the band's Flickr, and a Twitter Filter collection of
+tweets that use the band's hashtag.
+
+Before you begin collecting, you may want to consider these `collection
+development guidelines
+<https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_.
 
 Setting up Collections and Collection Sets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -483,7 +495,7 @@ In order to access the data collected in any harvest, you will need to export it
 For the advanced processing provided by ELK, see
 :ref:`Commandline exporting/processing`.
 
-With normal exports, you are able to download yoru data in several formats,
+With normal exports, you are able to download your data in several formats,
 including Excel (.xlsx) and Comma Separated Value (.csv) files, which can be
 loaded into spreadsheet or data analytic software.
 
