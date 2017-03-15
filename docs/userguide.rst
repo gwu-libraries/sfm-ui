@@ -150,6 +150,10 @@ Social media platforms' terms of service generally do not allow republishing of
 full datasets, and you should refer to their terms to understand what you may
 share. Authors typically retain rights and ownership to their content.
 
+Take a look at 
+`this blog <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_ 
+for collection and archival guidelines within SFM.
+
 Ethical considerations
 ----------------------
 
