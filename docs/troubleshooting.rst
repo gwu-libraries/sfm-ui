@@ -61,6 +61,8 @@ Social Network Login Failure for Twitter
 If you receive a Social Network Login Failure when trying to connect a Twitter account, make sure that the Twitter app
 from which you got the Twitter credentials is configured with a callback URL. The URL you provide doesn't matter.
 
+If you have made a change to the credentials configured in ``.env``, try deleting twitter from Social Applications in the admin interface and restarting SFM UI (``docker-compose stop ui`` then ``docker-compose up -d``).
+
 Docker problems
 ^^^^^^^^^^^^^^^
 If you are having problems bringing up the Docker containers (e.g., ``driver failed programming external connectivity on endpoint``),
