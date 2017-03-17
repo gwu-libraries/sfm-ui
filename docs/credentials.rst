@@ -45,7 +45,7 @@ social media platform by the systems administrator. The user credentials are
 obtained by the user being redirected to the social media website to give
 permission to SFM to access her account.
 
-SFM is configured with the application credentials in the ``docker-compose.yml``.
+SFM is configured with the application credentials in the ``.env``.
 If additional management is necessary, it can be performed using the Social
 Accounts section of the Admin interface.
 
