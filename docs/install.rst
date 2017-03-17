@@ -242,6 +242,12 @@ in your new ``docker-compose.yml``.
 
 It may take several minutes for the images to be downloaded and the containers to start.
 
+7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 1.5.0 with the correct previous version::
+
+    docker rmi $(docker images | grep "1.5.0" | awk '{print $3}')
+
+You may also want to periodically clean up Docker (>= 1.13) with ``docker system prune``.
+
 .. _server-sizing:
 
 ---------------
