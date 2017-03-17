@@ -33,13 +33,15 @@ Installing locally requires Docker and Docker-Compose. See :ref:`docker-installi
 
     git clone https://github.com/gwu-libraries/sfm-docker.git
     cd sfm-docker
+    # Replace 1.6.0 with the correct version.
+    git checkout 1.6.0    
     cp example.prod.docker-compose.yml docker-compose.yml
     cp example.env .env
 
-or just download ``example.prod.docker-compose.yml`` and ``example.env``::
+or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 1.6.0 with the correct version)::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.prod.docker-compose.yml > docker-compose.yml
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.env > .env
+    curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.6.0/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.6.0/example.env > .env
 
 2. Update configuration in ``.env`` as described in :ref:`install-configuration`.
 
@@ -65,7 +67,8 @@ Notes:
 -------------------------
 To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
 In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
-user details and modify as appropriate as described in :ref:`install-configuration`::
+user details and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
+statements change *master* to the correct version, e.g., *1.6.0*::
 
     #cloud-config
     repo_update: true
@@ -220,11 +223,13 @@ This may take several minutes.
 3. Get the latest ``example.prod.docker-compose.yml``. If you previously cloned the sfm-docker repository then::
 
     git pull
+    # Replace 1.6.0 with the correct version.
+    git checkout 1.6.0    
     cp example.prod.docker-compose.yml docker-compose.yml
 
-otherwise::
+otherwise, replacing 1.6.0 with the correct version::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://github.com/gwu-libraries/sfm-docker/1.6.0/master/example.prod.docker-compose.yml > docker-compose.yml
 
 4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
 in your new ``docker-compose.yml``.
