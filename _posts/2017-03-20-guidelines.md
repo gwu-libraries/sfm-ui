@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Building Social Media Archives: Collection Development Guidelines"
+title: "Collection development guidelines for social media archiving"
 permalink: /posts/2017-03-20-releasing-datasets
 date: 2017-03-20
 modified: 2017-03-20
