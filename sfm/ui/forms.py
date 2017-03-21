@@ -273,7 +273,7 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
