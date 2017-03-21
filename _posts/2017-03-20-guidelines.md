@@ -5,7 +5,7 @@ permalink: /posts/2017-03-20-releasing-datasets
 date: 2017-03-20
 modified: 2017-03-20
 author: rachel_trent
-excerpt: "We're sharing some guidance for those interested in building social media archives or collections."
+excerpt: "We're pleased to share some recently-developed guidelines on building social media archives."
 
 ---
 
