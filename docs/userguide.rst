@@ -4,17 +4,36 @@ User Guide
 
 Welcome to Social Feed Manager!
 
-Social Feed Manager (SFM) is an open-source tool for collecting data from social
-media sites, including Twitter, Flickr, Tumblr, and Weibo.
+Social Feed Manager (SFM) is an open-source tool designed for researchers,
+archivists, and curious people to collect social media data from Twitter,
+Tumblr, Flickr, or Sina Weibo.
 
-This guide is for users who are collecting data with SFM. If you're an administrator
-trying to set up SFM for your institution, see :ref:`admin-documentation`.
+If you want to learn more about what SFM can do, read :ref:`guide-uses`
+
+This guide is for users who have access to SFM to learn how to collect. If
+you're an administrator setting up SFM for your institution, see
+:ref:`admin-documentation`.
+
+To get your first collection up and running:
+  * **Sign up**: On the SFM homepage, click "Sign up." Fill out the form,
+    including a unique email. Once you sign up, you will be automatically logged in.
+  * **Get credentials**: You'll need to authorize access to the social
+    media platforms using credentials. See :ref:`guide-setting-up-credentials`.
+  * **Create a collection set** and within it a collection, where you'll actually
+    collect data. See :ref:`guide-creating-collections`.
+  * **Add Seeds**: Seeds are the criteria used to collect data. You'll add user
+    accounts or search criteria. See :ref:`guide-adding-seeds`.
+  * **Set your collections running!**
+  * **Export your collections** when you want to see and work with your data, or
+    adjust settings. See :ref:`guide-export-data`.
+
+You can always come back to this user guide for help by clicking *Documentation*
+at the bottom of the SFM page and selecting *User Guide*
 
 -----
 Guide
 -----
 
-| `Getting Started`_
 | `What is SFM used for?`_
 |     `Types of Collections`_
 |     `How to use the data`_
@@ -37,35 +56,6 @@ Guide
 |
 |
 
----------------
-Getting Started
----------------
-
-Social Feed Manager (SFM) is designed for researchers, archivists, and curious
-people to collect social media data from Twitter, Tumblr, Flickr, or Sina Weibo.
-
-This is a quick summary of steps to get your first collection up and running.
-You can always come back to this user guide for help.
-
-If you want to learn more about what SFM can do, read :ref:`guide-uses`
-
-This guide is for users who have access to SFM to get started on collecting. If
-you're an administrator trying to set up SFM for your institution, see
-:ref:`admin-documentation`.
-
-* **Sign up**: On the SFM homepage, click "Sign up." Fill out the field,
-  including a unique email. Once you sign up, you will be automatically logged in.
-* **Get credentials**: You'll need to connect credential authorization through
-  the social media platform you want. See :ref:`guide-setting-up-credentials`.
-* **Create a collection Set** and within it a collection, where you'll actually
-  collect data. See :ref:`guide-creating-collections`.
-* **Add Seeds**: Seeds are the criteria used to collect data. You'll add user
-  accounts or search criteria. See :ref:`guide-adding-seeds`.
-* **Set your collections running!**
-* **Export your collections** when you want to see and work with your data, or
-  adjust settings. See :ref:`guide-export-data`.
-
-
 
 .. _`guide-uses`:
 
@@ -73,18 +63,18 @@ you're an administrator trying to set up SFM for your institution, see
 What is SFM used for?
 ---------------------
 
-Social Feed Manager (SFM) systematically collects individual posts--tweets,
-photos, blogs--from social media sites. These posts are put into data files
-called JSONs and made accessible in spreadsheet formats. Users can then use this
-collected data for research, analysis or archiving.
+Social Feed Manager (SFM) collects individual posts--tweets,
+photos, blogs--from social media sites. These posts are collected in a raw data
+format called JOSN and can be exported in many formats, including spreadsheets.
+Users can then use this collected data for research, analysis or archiving.
 
 Try `Getting Started`_, or continue reading to learn more.
 
 Some ideas for how to use SFM:
-  - **Collecting from individual accounts** like the tweets of every U.S.
+  - **Collecting from individual accounts** such as the tweets of every U.S.
     Senator (:ref:`guide-twitter-user-timelines`).
-  - **Gathering Flickr images for analysis** like comparing the styles of active
-    photographers (:ref:`guide-flickr-user-timeline`).
+  - **Gathering Flickr images for analysis** or archiving the photographs from
+    an institution like the Smithsonian (:ref:`guide-flickr-user-timeline`).
   - **Researching social media use** by getting a sample of all tweets
     (:ref:`guide-twitter-sample`), or by filtering by specific search terms
     (:ref:`guide-twitter-filter`).
@@ -96,8 +86,8 @@ Some ideas for how to use SFM:
   - **Analyzing trends** by :ref:`exploring` (note that ELK requires coding
     ability--contact your SFM administrator for help).
 
-Note that SFM only collects social media data from Twitter, Tumblr, Flickr, and
-Sina Weibo.
+Note that SFM currently collects social media data from Twitter, Tumblr, Flickr,
+and Sina Weibo.
 
 
 Types of Collections
@@ -107,7 +97,7 @@ Types of Collections
     Twitter accounts
   * :ref:`guide-twitter-search`: Collects tweets by a user-provided search query
     from recent tweets
-  * :ref:`guide-twitter-sample`: Collects a Twitter provided stream of a subset
+  * :ref:`guide-twitter-sample`: Collects a Twitter-provided stream of a subset
     of all tweets in real time.
   * :ref:`guide-twitter-filter`: Collects tweets by user-provided criteria from
     a stream of tweets in real time.
@@ -124,11 +114,12 @@ How to use the data
 ^^^^^^^^^^^^^^^^^^^
 
 Once you've collected data, there are a few ways to use it:
-  * You could export it into a CSV or Excel format for analysis
-    (:ref:`guide-export-data`).
+  * You could export it into a CSV or Excel format for a basic analysis
+    (:ref:`guide-export-data`), or load the format into analysis software such
+    as Stata, SPSS, or Gephi.
   * You could use try :ref:`exploring`, a processor for data analysis (although
     ELK requires coding ability, so ask your SFM admin for help if you need it).
-  * You could set up an archive using the JSON files or excel files.
+  * You could set up an archive using the JSON files or Excel files.
 
 Privacy and platform policy considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -170,8 +161,8 @@ here are a few resources with which to start:
   Guidelines" <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_,
   2017
 * Sara Mannheimer and Elizabeth A. Hull, `"Sharing selves: Developing an ethical
-  framework for curating social media data,"
-  <https://scholarworks.montana.edu/xmlui/bitstream/handle/1/12661/Mannheimer-Hull-Sharing-Selves-2017.pdf>_,
+  framework for curating social media data"
+  <https://scholarworks.montana.edu/xmlui/bitstream/handle/1/12661/Mannheimer-Hull-Sharing-Selves-2017.pdf>`_,
   2017.
 * Association of Internet Researchers, `“Ethical Decision-Making and Internet
   Research” <http://aoir.org/reports/ethics2.pdf>`_, 2012.
@@ -205,14 +196,12 @@ each platform.
 For more information about platform-specific policies, consult the documentation
 for each social media platform's API.
 
-:ref:`twitter-credentials`
-
-:ref:`flickr-credentials`
-
-:ref:`tumblr-credentials`
-
-:ref:`weibo-credentials`
-
+| :ref:`twitter-credentials`
+| :ref:`flickr-credentials`
+| :ref:`tumblr-credentials`
+| :ref:`weibo-credentials`
+|
+|
 
 
 
@@ -226,9 +215,9 @@ Creating Collections
 Each collection either gathers posts from individual accounts or gathers posts based
 on search criteria.
 
-Collections are contained in **Collection Sets**. While Collection Sets
+Collections are contained in **collection sets**. While collection sets
 sometimes only include one collection, sets can be used to organize all of the
-data from a single project or archive--for example, a Collection Set about a
+data from a single project or archive--for example, a collection set about a
 band might include a collection of the Twitter user timelines of each band
 member, a collection of the band's Flickr, and a Twitter Filter collection of
 tweets that use the band's hashtag.
@@ -246,17 +235,17 @@ set first.
 Navigate to the Collection Sets page from the top menu, then click the *Add
 Collection Set* button.
 
-Give the collection Set a unique name and description. You should think about a
-collection set like a folder for all collections in a project.
+Give the collection set a unique name and description. A collection set is like
+a folder for all collections in a project.
 
 If you are part of a group project, you can contact your SFM administrator and
-set up a group, which you can share each Collection Set with. (This can be
+set up a new group which you can share each collection set with. (This can be
 changed or added later on).
 
-Once you are in a Collection Set, click the "Add Collection" dropdown menu and
+Once you are in a collection set, click the "Add Collection" dropdown menu and
 select the collection type you want to add.
 
-Enter a unique Collection name and a short description. The description is a
+Enter a unique collection name and a short description. The description is a
 great location to describe how you chose what to put in your collection.
 
 Select which credential you want to use. If you need to set up new credentials,
@@ -271,12 +260,12 @@ Adding Seeds
 be individual social media accounts or search terms used to filter posts.
 
 The basic process for adding seeds is the same for every collection type, except
-for Twitter Samples:
+for Twitter Sample:
 
-  * The collection must be turned off first.
-  * Then click *Add Seed* for adding one seed or *Add Bulk Seeds* for multiple.
-  * Then enter either the user ids or search criteria and save.
-  * Finally, when you have added all seeds you want, click *Turn on*
+  * Turn off the collection.
+  * Click *Add Seed* for adding one seed or *Add Bulk Seeds* for multiple.
+  * Enter either the user ids or search criteria and save.
+  * When you have added all seeds you want, click *Turn on*.
 
 .. _guide-twitter-user-timelines:
 
@@ -490,10 +479,7 @@ original social media post.
 Exporting your Data
 -------------------
 
-In order to access the data collected in any harvest, you will need to export it.
-
-For the advanced processing provided by ELK, see
-:ref:`Commandline exporting/processing`.
+In order to access the data in a collection, you will need to export it.
 
 With normal exports, you are able to download your data in several formats,
 including Excel (.xlsx) and Comma Separated Value (.csv) files, which can be
@@ -511,13 +497,21 @@ To export:
   * Select Deduplicate if you only want one instance of every post. This will clean
     up your data, but will make the export take longer.
 
-  * Item start date/end date allow you to define when you want data from, as
-    embedded in each post.
+  * Item start date/end date allow you to limit the export based on the date
+    each post was created.
 
-  * Harvest start date/end date allow you to define when you want data from
-    based on your harvest dates.
+  * Harvest start date/end date allow you to limit the export based on the
+    harvest dates.
 
-  * When you have the settings you want, click *Save*. At this point, you will be
-    redirected to the export screen. When the export is complete, the files will
-    appear for you to click on and download. You will receive an email as well when
-    your export completes.
+  * When you have the settings you want, click *Save*. You will be
+    redirected to the export screen. When the export is complete, the files,
+    along with a README file describing what was included in the export and the
+    collection, will appear for you to click on and download. You will receive
+    an email as well when your export completes.
+
+  * To help understand each category of meta-data in each export, see
+    :ref:`data-dictionaries`.
+
+
+For the advanced processing provided by ELK, see
+:ref:`Commandline exporting/processing`.
