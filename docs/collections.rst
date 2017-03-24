@@ -28,13 +28,11 @@ Collection types
 Twitter user timeline
 ---------------------
 
-Collects tweets and their metadata by particular Twitter user accounts using
-`Twitter's user_timeline API
+Twitter user timeline collections collect the 3,200 most recent tweets from
+a list of Twitter accounts using `Twitter's user_timeline API
 <https://dev.twitter.com/rest/reference/get/statuses/user_timeline>`_.
-Twitter provides up to 3,200 of the most recent tweets from each user.
 
-Each Twitter user timeline collection can have multiple seeds, where each seed
-is a user timeline.
+**Seeds** for Twitter User Timelines are individual Twitter accounts.
 
 To identify a user timeline, you can provide a screen name
 (the string after @, like NASA for @NASA, which the user can change)
@@ -42,23 +40,15 @@ or Twitter user ID (a numeric string which never changes, like 11348282 for
 @NASA). If you provide one identifier, the other will be looked up and displayed
 in SFM UI the first time the harvester runs.
 
-The number of user timeline seeds is not limited in collections, but harvests
-may take longer if the collection exceeds Twitter's rate limits.
+Scheduling harvests should depend on how prolific the Twitter users are.
+In general, the more frequent the tweeter, the more frequent you’ll want to
+schedule harvests.
 
 SFM will notify you when incorrect or private user timeline seeds are requested;
 all other valid seeds will be collected.
 
-The incremental option will collect tweets that haven't been harvested before,
-preventing duplicate tweets. When the incremental option is not selected, the
-3,200 most recent tweets will be collected. If a non-incremental harvest is
-performed multiple times, there will most likely be
-duplicates. However, you will may be able to track changes across time about a user's
-timeline, such as retweet and like counts, deletion of tweets, and follower
-counts.
-
-Scheduling harvests should depend on how prolific the Twitter users are.
-In general, the more frequent the tweeter, the more frequent you’ll want to
-schedule harvests.
+See :ref:`guide-incremental-collecting` to decide whether or not to collect
+incrementally.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect media or web resources.
@@ -243,14 +233,31 @@ collect image or web resources.
 
 .. _Collecting web resources:
 
+.. _guide-incremental-collecting:
+
+-------------------------------
+Choosing Incremental Collecting
+-------------------------------
+
+The incremental option will collect tweets that haven't been harvested before,
+preventing duplicate tweets. When the incremental option is not selected, the
+3,200 most recent tweets will be collected. If a non-incremental harvest is
+performed multiple times, there will most likely be
+duplicates. However, you will may be able to track changes across time about a user's
+timeline, such as retweet and like counts, deletion of tweets, and follower
+counts.
+
+.. _guide-web-resources:
+
 ------------------------
-Collecting Web resources
+Collecting Web Resources
 ------------------------
+
 Most collection types allow you to select an option to collect web resources
 such as images, web pages, etc. that are included in the social media post. When
 a social media post includes a URL, SFM will harvest the web page at that URL.
 It will harvest only that web page, not any pages linked from that page.
 
-Be very deliberate in collecting web resources.  Performing a web harvest both
+Be very deliberate in collecting web resources. Performing a web harvest both
 takes longer and requires significantly more storage than collecting the
 original social media post.

@@ -446,32 +446,6 @@ being collected, change the user's friends from the Weibo website or app.
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.
 
-.. _guide-incremental-collecting:
-
-Choosing Incremental Collecting
--------------------------------
-
-The incremental option will collect tweets that haven't been harvested before,
-preventing duplicate tweets. When the incremental option is not selected, the
-3,200 most recent tweets will be collected. If a non-incremental harvest is
-performed multiple times, there will most likely be
-duplicates. However, you will may be able to track changes across time about a user's
-timeline, such as retweet and like counts, deletion of tweets, and follower
-counts.
-
-.. _guide-web-resources:
-
-Collecting Web Resources
-------------------------
-
-Most collection types allow you to select an option to collect web resources
-such as images, web pages, etc. that are included in the social media post. When
-a social media post includes a URL, SFM will harvest the web page at that URL.
-It will harvest only that web page, not any pages linked from that page.
-
-Be very deliberate in collecting web resources. Performing a web harvest both
-takes longer and requires significantly more storage than collecting the
-original social media post.
 
 .. _guide-export-data:
 
