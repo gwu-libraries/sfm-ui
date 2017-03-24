@@ -21,6 +21,7 @@ Collection types
   * `Collecting Web resources`_: Secondary collections of resources linked to or
     embedded in social media posts.
 
+.. _guide-twitter-user-timelines:
 
 .. _Twitter user timeline:
 
@@ -53,6 +54,7 @@ incrementally.
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect media or web resources.
 
+.. _guide-twitter-search:
 
 .. _Twitter search:
 
@@ -60,13 +62,12 @@ collect media or web resources.
 Twitter search
 ---------------
 
-Collects tweets from the last 7-9 days that match search queries using
+Twitter searches collect tweets from the last 7-9 days that match search
+queries, similar to a regular search made on Twitter, using
 the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_, similar
 to a regular search made on `Twitter <https://twitter.com/search-home>`_.
 Based on relevance, this is **not** a complete search of all tweets, limited
 both by time and arbitrary relevance (determined by Twitter).
-
-Search collections collect tweets from a single search query.
 
 Search queries must follow standard search term formulation; permitted queries
 are listed in the documentation for the `Twitter Search API
@@ -81,13 +82,13 @@ searches. (If there is not enough time between searches, later harvests will
 be skipped until earlier harvests complete.) In some cases, you may only
 want to run the search once and then turn off the collection.
 
-The incremental option will collect tweets that haven't been harvested before,
-preventing duplicate tweets. When the incremental option is not selected, the
-search will be performed again, and there will most likely be duplicates.
+See :ref:`guide-incremental-collecting` to decide whether or not to collect
+incrementally.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect media or web resources.
 
+.. _guide-twitter-sample:
 
 .. _Twitter sample:
 
@@ -95,7 +96,8 @@ collect media or web resources.
 Twitter sample
 --------------
 
-Collects a random sample of all public tweets using the `Twitter sample stream
+Twitter samples are a random collection of approximately 0.5--1% of public
+tweets, using the `Twitter sample stream
 <https://dev.twitter.com/streaming/reference/get/statuses/sample>`_, useful for
 capturing a sample of what people are talking about on Twitter.
 The Twitter sample stream returns approximately 0.5-1% of public tweets,
@@ -111,14 +113,17 @@ See the :ref:`Collecting web resources` guidance below for deciding whether to
 collection media or web resources.
 
 
+.. _guide-twitter-filter:
+
 .. _Twitter filter:
 
 ---------------
 Twitter filter
 ---------------
 
-Collects a live selection of public tweets from criteria matching keywords,
-locations, or users, based on the `Twitter filter streaming API
+Twitter Filter collections harvest a live selection of public tweets from
+criteria matching keywords, locations, or users, based on the
+`Twitter filter streaming API
 <https://dev.twitter.com/streaming/reference/post/statuses/filter>`_. Because
 tweets are collected live, tweets from the past are not included. (Use a
 :ref:`Twitter search` collection to find tweets from the recent past.)
@@ -126,7 +131,7 @@ tweets are collected live, tweets from the past are not included. (Use a
 There are three different filter queries supported by SFM: track, follow, and
 location.
 
-**Track** collects tweets based on a keyword search A space between words
+**Track** collects tweets based on a keyword search. A space between words
 is treated as 'AND' and a comma is treated as 'OR'. Note that exact phrase
 matching is not supported. See the `track parameter documentation
 <https://dev.twitter.com/streaming/overview/request-parameters#track>`_ for more
@@ -161,6 +166,7 @@ either turned on or off (there is no schedule).
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collection media or web resources.
 
+.. _guide-flickr-user-timeline:
 
 .. _Flickr user:
 
@@ -168,8 +174,8 @@ collection media or web resources.
 Flickr user
 -----------
 
-Collects metadata about public photos by a specific Flickr user, and,
-optionally, copies of the photos at specified sizes.
+Flickr User Timeline collections gather metadata about public photos by a
+specific Flickr user, and, optionally, copies of the photos at specified sizes.
 
 Each Flickr user collection can have multiple seeds, where each seed is a Flickr
 user. To identify a user, you can provide a either a username or an NSID. If you
@@ -182,13 +188,6 @@ account, use `this tool <http://www.webpagefx.com/tools/idgettr/>`_ to find the
 NSID from the account URL (i.e., the URL when viewing the account on the Flickr
 website).
 
-For each user, the user's information will be collected using Flickr's
-`people.getInfo <https://www.flickr.com/services/api/flickr.people.getInfo.html>`_
-API and the list of her public photos will be retrieved from `people.getPublicPhotos
-<https://www.flickr.com/services/api/flickr.people.getPublicPhotos.html>`_.
-Information on each photo will be collected with
-`photos.getInfo <https://www.flickr.com/services/api/flickr.photos.getInfo.html>`_.
-
 Depending on the image sizes you select, the actual photo files will be
 collected as well. Be very careful in selecting the original file size, as this
 may require a significant amount of storage. Also note that some Flickr users
@@ -196,16 +195,45 @@ may have a large number of public photos, which may require a significant amount
 of storage. It is advisable to check the Flickr website to determine the number
 of photos in each Flickr user's public photo stream before harvesting.
 
-If the incremental option is selected, only new photos will be collected.
+For each user, the user's information will be collected using Flickr's
+`people.getInfo <https://www.flickr.com/services/api/flickr.people.getInfo.html>`_
+API and the list of her public photos will be retrieved from `people.getPublicPhotos
+<https://www.flickr.com/services/api/flickr.people.getPublicPhotos.html>`_.
+Information on each photo will be collected with
+`photos.getInfo <https://www.flickr.com/services/api/flickr.photos.getInfo.html>`_.
 
+See :ref:`guide-incremental-collecting` to decide whether or not to collect
+incrementally.
+
+.. _guide-tumblr-blog-posts:
+
+.. _Tumblr blog posts:
+
+-----------------
+Tumblr blog posts
+-----------------
+
+Tumblr Blog Post collections harvest posts by specified Tumblr blogs using the
+`Tumblr Posts API <https://www.tumblr.com/docs/en/api/v2#posts>`_.
+
+**Seeds** are individual blogs for these collections. Blogs can be specified with
+or without the .tumblr.com extension.
+
+See :ref:`guide-incremental-collecting` to decide whether or not to collect incrementally.
+
+See the :ref:`Collecting web resources` guidance below for deciding whether to
+collect image or web resources.
+
+.. _guide-weibo-timelines:
 .. _Weibo timeline:
+
 
 --------------
 Weibo timeline
 --------------
 
-Collects weibos by the user and friends of the user whose credentials are
-provided using the `Weibo friends_timeline API
+Weibo Timeline collections harvest weibos (microblogs) by the user and friends
+of the user whose credentials are provided using the `Weibo friends_timeline API
 <http://open.weibo.com/wiki/2/statuses/friends_timeline>`_.
 
 Note that because collection is determined by the user whose credentials are
@@ -215,23 +243,7 @@ being collected, change the user's friends from the Weibo website or app.
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.
 
-.. _Tumblr blog posts:
 
------------------
-Tumblr blog posts
------------------
-Collects blog posts by a specified Tumblr blog using the `Tumblr Posts API
-<https://www.tumblr.com/docs/en/api/v2#posts>`_.
-
-Each Tumblr blog post collection can have multiple seeds, where each seed is a
-blog. The blog can be specified with or without the .tumblr.com extension.
-
-If the incremental option is selected, only new blog posts will be collected.
-
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect image or web resources.
-
-.. _Collecting web resources:
 
 .. _guide-incremental-collecting:
 
@@ -248,6 +260,8 @@ timeline, such as retweet and like counts, deletion of tweets, and follower
 counts.
 
 .. _guide-web-resources:
+
+.. _Collecting web resources:
 
 ------------------------
 Collecting Web Resources
