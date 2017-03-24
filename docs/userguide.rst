@@ -7,9 +7,7 @@ Welcome to Social Feed Manager!
 Social Feed Manager (SFM) is an open-source tool designed for researchers,
 archivists, and curious people to collect social media data from Twitter,
 Tumblr, Flickr, or Sina Weibo.
-
 If you want to learn more about what SFM can do, read :ref:`guide-uses`
-
 This guide is for users who have access to SFM to learn how to collect. If
 you're an administrator setting up SFM for your institution, see
 :ref:`admin-documentation`.
@@ -60,13 +58,14 @@ Some ideas for how to use SFM:
   - **Collecting from individual accounts** such as the tweets of every U.S.
     Senator (:ref:`guide-twitter-user-timelines`).
   - **Gathering Flickr images for analysis** or archiving the photographs from
-    an institution like the Smithsonian (:ref:`guide-flickr-user-timeline`).
+    institutions like Smithsonian (:ref:`guide-flickr-user-timeline`).
   - **Researching social media use** by getting a sample of all tweets
     (:ref:`guide-twitter-sample`), or by filtering by specific search terms
     (:ref:`guide-twitter-filter`).
   - **Capturing a major event** by collecting tweets in a specific geographic
     location or by following specific hashtags.
-  - **Collecting Tumblr posts** for preserving artistic entries
+  - **Collecting Tumblr posts** for preserving institutional blogs or the work
+    of online artists.
     (:ref:`guide-tumblr-blog-posts`).
   - **Archiving posts** from any social media platform for later research.
   - **Analyzing trends** by :ref:`exploring` (note that ELK requires coding
@@ -75,6 +74,9 @@ Some ideas for how to use SFM:
 Note that SFM currently collects social media data from Twitter, Tumblr, Flickr,
 and Sina Weibo.
 
+Here's a sample of what a collection set looks like:
+
+.. image:: images/quickstart/collection_set.png
 
 Types of Collections
 ^^^^^^^^^^^^^^^^^^^^
@@ -197,7 +199,7 @@ for each social media platform's API.
 Creating Collections
 --------------------
 
-**Collections** are the most basic SFM levels used to gather social media data.
+**Collections** are the basic SFM containers for social media data.
 Each collection either gathers posts from individual accounts or gathers posts based
 on search criteria.
 
