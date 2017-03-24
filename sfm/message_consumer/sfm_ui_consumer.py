@@ -45,7 +45,7 @@ class SfmUiConsumer(BaseConsumer):
 
     def _on_harvest_status_message(self):
         try:
-            log.info("Updating harvest with id %s: %s", self.message["id"], self.message["status"])
+            log.info("Updating harvest with id %s: %s", self.message["id"], self.message.get("status"))
             # Retrieve harvest model object
             harvest = Harvest.objects.get(harvest_id=self.message["id"])
 
