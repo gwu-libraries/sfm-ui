@@ -92,7 +92,7 @@ def collection_harvest(collection_pk):
                     message["seeds"].append(seed_map)
 
         routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
-                                                           harvest_type)
+                                                   harvest_type)
 
         # Skip this harvest if last harvest not completed or voided
         last_harvest = collection.last_harvest()
@@ -105,7 +105,7 @@ def collection_harvest(collection_pk):
                                              historical_credential=historical_credential)
             harvest.historical_seeds.add(*historical_seeds)
         else:
-            log.debug("Skipping harvest with id %s", harvest_id)
+            log.warning("Skipping harvest with id %s", harvest_id)
 
             # Set message to None to indicate that should not be sent
             message = None
@@ -131,8 +131,8 @@ def collection_harvest(collection_pk):
                 mail_message = u"The harvest for {} ({}) was skipped. This may be because it is scheduled too frequently " \
                                u"and the last harvest has not had time to complete. It " \
                                u"may also indicate a problem with SFM. The SFM administrator has been notified.".format(
-                                    harvest.collection.name,
-                                    harvest_url)
+                    harvest.collection.name,
+                    harvest_url)
 
                 if receiver_emails:
                     try:
@@ -146,8 +146,8 @@ def collection_harvest(collection_pk):
 
     # Send message outside the transaction
     if message:
-        log.debug("Sending %s message to %s with id %s", harvest_type,
-                  routing_key, harvest_id)
+        log.info("Sending %s message to %s with id %s for collection %s", harvest_type,
+                 routing_key, harvest_id, collection_pk)
 
         # Publish message to queue via rabbit worker
         RabbitWorker().send_message(message, routing_key)
@@ -173,7 +173,8 @@ def collection_stop(collection_id):
 
     routing_key = "harvest.stop.{}.{}".format(harvest.historical_credential.platform, harvest.harvest_type)
 
-    log.debug("Sending %s stop message to %s with id %s", harvest.harvest_type, routing_key, harvest.harvest_id)
+    log.info("Sending %s stop message to %s with id %s for collection %s", harvest.harvest_type, routing_key,
+              harvest.harvest_id, collection_id)
 
     # Publish message to queue via rabbit worker
     RabbitWorker().send_message(message, routing_key)
