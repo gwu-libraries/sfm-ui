@@ -100,3 +100,11 @@ body {
 .subsection {
     padding-top: 30px;
 }
+.tooltip > .tooltip-inner {
+    min-width: 200px;
+    background-color: #333;
+}
+.modal {
+    top: 35%;
+}
+

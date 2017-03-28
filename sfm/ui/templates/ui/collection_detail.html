@@ -42,7 +42,7 @@
                     <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn off
                 </button><br />
             {% else %}
-            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle %}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
+            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle or stream_stopping%}"btn btn-default" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Turn on
             </button><br />
         {% endif %}
@@ -57,6 +57,8 @@
 </div>
 {% endblock %}
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
 {% if next_run_time %}
     <div class="alert alert-info" role="alert">Next harvest at {{ next_run_time }}</div>
 {% endif %}
@@ -106,75 +108,182 @@
             {% endfor %}
         </ul>
     </div>
-{% endif %}
-<div class="row subsection">
-    <div class="col-md-8">
-        {% if collection.description %}
-            <p>{{ collection.description }}</p>
-        {% endif %}
-        {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
-        <p><strong>Credential:</strong> {% if has_perm %}<a href={% url "credential_detail" collection.credential.pk %}>{% endif %}{{ collection.credential.name }}{% if has_perm %}</a>{% endif %}</p>
-        {{ collection.harvest_options|json }}
-        {% if collection.schedule_minutes %}
-            <p><strong>Schedule:</strong> {{ collection.get_schedule_minutes_display }}</p>
-        {% endif %}
-        <p><strong>End date: </strong> {{ collection.end_date }}</p>
-        {% if collection.stats %}
-            <p><strong>Stats:</strong><ul>
-                {% for item, count in collection.stats.items %}
-                    <li>{{ item }}: {{ count|intcomma }}</li>
-                {% endfor %}
-            </ul></p>
-        {% endif %}
-        <p><strong>WARCs:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <p><strong>Id:</strong> {{ collection.collection_id }}</p>
-                <p><strong>Created:</strong> {{ collection.date_added }}</p>
-            </div>
-        </div>
-    </div>
+    {% endif %}
+    {% if stream_stopping %}
+        <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
+    {% endif %}
+  </div>
 </div>
-{% if has_seeds_list %}
 <div class="row subsection">
+    <div class="col-md-12">
+        {% if collection.description %}
+            <p><strong>Description: </strong>{{ collection.description }}</p>
+        {% endif %}
+        <p><strong>Data collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
+           {% if collection.stats %}
+              <p><strong>Stats:</strong><ul>
+              {% for item, count in collection.stats.items %}
+                <li>{{ item }}: {{ count|intcomma }}</li>
+              {% endfor %}
+              </ul></p>
+           {% endif %}
+    </div>
+    {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
+    <div class="col-md-12">
+          <div class="panel panel-default">
+               <div class="panel-heading">
+                   <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
+               </div>
+             <div id="collapse" class="collapse" style="margin-bottom: 10px;margin-left: 10px; margin-top: 10px">
+                     <p><strong>Credential:</strong> {% if has_perm %}<a href={% url "credential_detail" collection.credential.pk %}>{% endif %}{{ collection.credential.name }}{% if has_perm %}</a>{% endif %}</p>
+                     {{ collection.harvest_options|json }}
+                     {% if collection.schedule_minutes %}
+                     <p><strong>Schedule:</strong> {{ collection.get_schedule_minutes_display }}</p>
+                     {% endif %}
+                     <p><strong>Id:</strong> {{ collection.collection_id }}</p>
+                     <p><strong>Created:</strong> {{ collection.date_added|date }}</p>
+                     <p><strong>End date: </strong> {{ collection.end_date|date }}</p>
+            </div>
+         </div>
+     </div>
+</div>
+
+<script>
+$(document).ready(function(){
+
+    var trs = $("#internalActivities tr");
+    var btnMore = $("#seeMoreRecords");
+    var btnLess = $("#seeLessRecords");
+    var trsLength = trs.length;
+    var currentIndex = 10;
+
+    trs.hide();
+    trs.slice(0, 10).show(); 
+    checkButton();
+
+    btnMore.click(function (e) { 
+        e.preventDefault();
+        $("#internalActivities tr").slice(currentIndex, currentIndex + 10).show();
+        currentIndex += 10;
+        checkButton();
+    });
+
+    btnLess.click(function (e) { 
+        e.preventDefault();
+        $("#internalActivities tr").slice(currentIndex - 10, currentIndex).hide();          
+        currentIndex -= 10;
+        checkButton();
+    });
+
+    function checkButton() {
+        var currentLength = $("#internalActivities tr:visible").length;
+
+        if (currentLength >= trsLength) {
+            btnMore.hide();            
+        } else {
+            btnMore.show();   
+        }
+
+        if (trsLength > 10 && currentLength > 10) {
+            btnLess.show();
+        } else {
+            btnLess.hide();
+        }
+    }
+});
+</script>
+
+{% if has_seeds_list %}
+<div class="row">
+    <div class="col-md-12">
     <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seeds</h4></div>
+        <div class="panel-heading"><h4>Seeds ({{ collection.seed_count }})</h4></div>
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-condensed" id="internalActivities">
                 <thead>
                 <tr>
-                    <th>Token</th>
-                    <th>Uid</th>
-                    <th>Link</th>
-                    <th>Active</th>
+                    <th class="col-md-1">Link</th>
+                    <th>Token
+                        <a href="#tokenModal" data-toggle="modal" role="button" ><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
+                    <!-- modal for i button -->
+                        <div class="modal fade" tabindex="-1" role="dialog" id="tokenModal">
+                           <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Token</h4>
+                                 </div>
+                                 <div class="modal-body">
+                                    <p>Twitter handle or blog name</p>
+                                 </div>
+                              </div><!-- /.modal-content -->
+                           </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+                    </th>
+                    <th>Uid
+                        <a href="#uidModal" data-toggle="modal" role="button" ><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
+                    <!-- modal for i button -->
+                        <div class="modal fade" tabindex="-1" role="dialog" id="uidModal">
+                           <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                 <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Uid</h4>
+                                 </div>
+                                 <div class="modal-body">
+                                    <p>Unique user ID</p>
+                                 </div>
+                              </div><!-- /.modal-content -->
+                           </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+                    </th>
+                    <th class="col-md-1">Active</th>
+                    <th class="col-md-4">Messages</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
                 <tr>
+                    {% if seed.social_url %}
+                    <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
+                    {% else %}
+                    <td class="col-md-1"></td>
+                    {% endif %}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                    {% if seed.social_url %}
-                    <td><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
-                    {% else %}
-                    <td></td>
-                    {% endif %}
-                    <td>{{ seed.is_active|yesno:"Yes,No" }}</td>
+                    <td class="col-md-1">{{ seed.is_active|yesno:"Yes,No" }}</td>
+                    <td class="col-md-4">
+                        <ul>
+                            {% for msg in seed_infos|get_item:seed.seed_id %}
+                                <li><p class="text-info">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_warnings|get_item:seed.seed_id %}
+                                <li><p class="text-warning">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_errors|get_item:seed.seed_id %}
+                                <li><p class="text-danger">{{ msg }}</p></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
 				</tr>
 				{% endfor %}
             </table>
+            <a href="#" id="seeMoreRecords">See all {{ collection.seed_count }} seeds<span class="caret"></span></a>
+            <a href="#" id="seeLessRecords">See fewer seeds</a> 
+            <div style="padding-top: 15px">
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
                 <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
             {% endif %}
+            </div>
         </div>
     </div>
+  </div>
 </div>
 {% endif %}
 {% if harvests %}
 <div class="row">
-    <div class="panel panel-default">
+  <div class="col-md-12">
+      <div class="panel panel-default">
         <div class="panel-heading"><h4>Harvests</h4> (1-{{ harvests|length }} of {{ harvest_count }})</div>
         <div class="panel-body">
             <table class="table">
@@ -210,6 +319,7 @@
         <div class="panel-footer"><a href="{% url "collection_harvests" collection.pk %}">View all {{ harvest_count }} harvests</a></div>
         {% endif %}
     </div>
+  </div>
 </div>
 {% endif %}
 

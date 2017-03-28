@@ -86,7 +86,6 @@ def has_collection_set_based_permission(obj, user, allow_superuser=True, allow_s
 
 
 def check_collection_set_based_permission(obj, user, allow_superuser=True, allow_staff=False):
-    log.info(has_collection_set_based_permission(obj, user, allow_superuser=allow_superuser, allow_staff=allow_staff))
     if not has_collection_set_based_permission(obj, user, allow_superuser=allow_superuser, allow_staff=allow_staff):
         log.warning("Permission denied for %s", user)
         raise PermissionDenied()

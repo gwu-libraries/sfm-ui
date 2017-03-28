@@ -45,7 +45,7 @@ class SfmUiConsumer(BaseConsumer):
 
     def _on_harvest_status_message(self):
         try:
-            log.debug("Updating harvest with id %s", self.message["id"])
+            log.info("Updating harvest with id %s: %s", self.message["id"], self.message.get("status"))
             # Retrieve harvest model object
             harvest = Harvest.objects.get(harvest_id=self.message["id"])
 
@@ -174,7 +174,7 @@ class SfmUiConsumer(BaseConsumer):
                     except IOError, ex:
                         log.error("Error sending email: %s", ex)
             else:
-                log.warn("No email addresses for %s", harvest.collection.collection_set.group)
+                log.debug("No email addresses for %s", harvest.collection.collection_set.group)
 
     @staticmethod
     def format_messages_for_mail(messages, message_type):
@@ -205,7 +205,7 @@ class SfmUiConsumer(BaseConsumer):
 
     def _on_export_status_message(self):
         try:
-            log.debug("Updating export with id %s", self.message["id"])
+            log.info("Updating export with id %s: %s", self.message["id"], self.message["status"])
             # Retrieve export model object
             export = Export.objects.get(export_id=self.message["id"])
             # And update export model object

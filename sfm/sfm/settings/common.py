@@ -190,6 +190,9 @@ FIVE_MINUTE_SCHEDULE = env.get('SFM_FIVE_MINUTE_SCHEDULE', 'False') == 'True'
 # Add a 100 item export segment. This is useful for dev and testing.
 HUNDRED_ITEM_SEGMENT = env.get('SFM_HUNDRED_ITEM_SEGMENT', 'False') == 'True'
 
+# Turn on or off the weibo search collection, default is turn off
+WEIBO_SEARCH_OPTION = env.get('SFM_WEIBO_SEARCH_OPTION', 'False') == 'True'
+
 # Whether to send emails.
 PERFORM_EMAILS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -211,8 +214,7 @@ USER_HARVEST_EMAILS_MINUTE = env.get('SFM_USER_HARVEST_EMAILS_MINUTE', '0')
 
 # Whether to scan the amount of free space on /sfm-data and /sfm-processing
 PERFORM_SCAN_FREE_SPACE = env.get('SFM_PERFORM_SCAN_FREE_SPACE', 'True') == 'True'
-SCAN_FREE_SPACE_HOUR = env.get('SFM_SCAN_FREE_SPACE_HOUR', '2')
-SCAN_FREE_SPACE_MINUTE = env.get('SFM_SCAN_FREE_SPACE_MINUTE', '0')
+SCAN_FREE_SPACE_HOUR_INTERVAL = env.get('SFM_SCAN_FREE_SPACE_HOUR_INTERVAL', '12')
 # sfm data space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
 DATA_THRESHOLD = env.get('DATA_VOLUME_THRESHOLD', '10GB')
 # sfm processing space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
@@ -221,7 +223,7 @@ PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')
 # Whether to scan the amount of free space on /sfm-data and /sfm-processing
 PERFORM_MONITOR_QUEUE = env.get('SFM_PERFORM_MONITOR_QUEUE', 'True') == 'True'
 # frequency to check the queue message length,default is 2 hour
-MONITOR_QUEUE_HOUR = env.get('SFM_MONITOR_QUEUE_HOUR', '2')
+MONITOR_QUEUE_HOUR_INTERVAL = env.get('SFM_MONITOR_QUEUE_HOUR_INTERVAL', '12')
 # queue threshold for each harvester to send warning message
 QUEUE_LENGTH_THRESHOLD = {
     'Web Harvester': env.get('WEB_QUEUE_LENGTH_THRESHOLD', '25')
@@ -245,4 +247,4 @@ PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
 SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
 SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
 
-SFM_UI_VERSION = "1.5.0"
+SFM_UI_VERSION = "1.6.0"

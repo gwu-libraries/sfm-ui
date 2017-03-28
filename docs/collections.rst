@@ -17,6 +17,7 @@ Collection types
     tweets in real time.
   * `Flickr user`_: Collects posts and photos from specific Flickr accounts
   * `Weibo timeline`_: Collects posts from the user and the user's friends
+  * `Weibo search`_: Collects recent weibo posts by a user-provided search query
   * `Tumblr blog posts`_: Collects blog posts from specific Tumblr blogs
   * `Collecting Web resources`_: Secondary collections of resources linked to or
     embedded in social media posts.
@@ -144,6 +145,9 @@ the user, or replying to the user. See the `follow parameter documentation
 <https://dev.twitter.com/streaming/overview/request-parameters#follow>`_ for
 more information.
 
+- Note: The Twitter UI does not provide a way to look up the numeric ID for a user account. You can use the twitter ID converter websites, such as `https://tweeterid.com <https://tweeterid.com/>`_, for this purpose.
+
+
 **Location** collects tweets that were geolocated within specific parameters,
 based on a bounding box made using the southwest and northeast corner
 coordinates. See the `location parameter documentation
@@ -227,7 +231,6 @@ collect image or web resources.
 .. _guide-weibo-timelines:
 .. _Weibo timeline:
 
-
 --------------
 Weibo timeline
 --------------
@@ -239,6 +242,30 @@ of the user whose credentials are provided using the `Weibo friends_timeline API
 Note that because collection is determined by the user whose credentials are
 provided, there are no seeds for a Weibo timeline collection. To change what is
 being collected, change the user's friends from the Weibo website or app.
+
+See the :ref:`Collecting web resources` guidance below for deciding whether to
+collect image or web resources.
+
+.. _Weibo search:
+
+--------------
+Weibo search
+--------------
+
+Collects recent weibos that match a search query using the `Weibo
+search_topics API<http://open.weibo.com/wiki/2/search/topics>`_.
+The Weibo API does not return a complete search of all Weibo posts. 
+It only returns the most recent 200 posts matching a single keyword
+when found between pairs of '#' in Weibo posts (for example: `#keyword#` or
+`#你好#`)
+
+The incremental option will attempt to only count weibo posts that haven't been harvested before,
+maintaining a count of non-duplicate weibo posts.  Because the Weibo search API does not accept
+`since_id` or `max_id` parameters, filtering out already-harvested weibos from the
+search count is accomplished within SFM.
+
+When the incremental option is not selected, the search will be performed again,
+and there will most likely be duplicates in the count.
 
 See the :ref:`Collecting web resources` guidance below for deciding whether to
 collect image or web resources.

@@ -109,3 +109,39 @@ To spread containers across multiple containers, use `Docker Swarm <https://docs
 
 `Using compose in production <https://docs.docker.com/compose/production/>`_ provides
 some additional guidance.
+
+.. _docker-stopping:
+
+---------------------------------------------
+ Stopping Docker from automatically starting
+---------------------------------------------
+
+Docker automatically starts when the server starts. To control this:
+
+Ubuntu 14 (Upstart)
+^^^^^^^^^^^^^^^^^^^
+Stop Docker from automatically starting::
+
+    echo manual | sudo tee /etc/init/docker.override
+
+Allow Docker to automatically start::
+
+    sudo rm /etc/init/docker.override
+
+Manually start Docker::
+
+    sudo service docker start
+
+Ubuntu 16 (Systemd)
+^^^^^^^^^^^^^^^^^^^
+Stop Docker from automatically starting::
+
+    sudo systemctl disable docker
+
+Allow Docker to automatically start::
+
+    sudo systemctl enable docker
+
+Manually start Docker::
+
+    sudo systemctl start docker

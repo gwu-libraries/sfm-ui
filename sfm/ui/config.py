@@ -42,6 +42,12 @@ class UIConfig(AppConfig):
             log.debug("Adding 10 item export segment")
             Export.SEGMENT_CHOICES.append((100, "100"))
 
+        # Add weibo search collection
+        if settings.WEIBO_SEARCH_OPTION:
+            log.debug("Adding weibo search collection")
+            Collection.HARVEST_CHOICES.append(('weibo_search', 'Weibo search'))
+            Collection.HARVEST_DESCRIPTION['weibo_search'] = 'Recent Weibo posts matching a query'
+
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
             sched = start_sched()
@@ -57,14 +63,14 @@ class UIConfig(AppConfig):
             if settings.PERFORM_SCAN_FREE_SPACE:
                 if sched.get_job('scan_free_space') is not None:
                     sched.remove_job('scan_free_space')
-                sched.add_job(send_free_space_emails, 'cron', hour=settings.SCAN_FREE_SPACE_HOUR,
-                              minute=settings.SCAN_FREE_SPACE_MINUTE, id='scan_free_space')
+                sched.add_job(send_free_space_emails, 'interval', hours=int(settings.SCAN_FREE_SPACE_HOUR_INTERVAL),
+                              id='scan_free_space')
 
             # scheduled job to check monitor queue message
             if settings.PERFORM_MONITOR_QUEUE:
                 if sched.get_job('monitor_queue_length') is not None:
                     sched.remove_job('monitor_queue_length')
-                sched.add_job(send_queue_warn_emails, 'interval', hours=int(settings.MONITOR_QUEUE_HOUR),
+                sched.add_job(send_queue_warn_emails, 'interval', hours=int(settings.MONITOR_QUEUE_HOUR_INTERVAL),
                               id='monitor_queue_length')
 
             # Serialization

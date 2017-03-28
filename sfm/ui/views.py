@@ -18,7 +18,7 @@ from allauth.socialaccount.models import SocialApp
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
 import forms
-from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User
+from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
 from .utils import diff_object_history, diff_collection_and_seeds_history, clean_token, clean_blogname
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
@@ -62,7 +62,8 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
         context['collection_list'] = Collection.objects.filter(
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
         context["diffs"] = diff_object_history(self.object)
-        context["harvest_types"] = sorted(Collection.HARVEST_CHOICES)
+        context["harvest_types"] = Collection.HARVEST_CHOICES
+        context["harvest_description"] = Collection.HARVEST_DESCRIPTION
         context["item_id"] = self.object.id
         context["model_name"] = "collection_set"
         context["can_edit"] = has_collection_set_based_permission(self.object, self.request.user)
@@ -73,7 +74,7 @@ class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
     model = CollectionSet
     form_class = CollectionSetForm
     template_name = 'ui/collection_set_create.html'
-    success_message = "New collection set added. You can now add collections."
+    success_message = "New collection set added. You can now add collections. A collection retrieves data from a particular social media platform."
 
     def get_form_kwargs(self):
         kwargs = super(CollectionSetCreateView, self).get_form_kwargs()
@@ -112,17 +113,27 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
 
     def get_context_data(self, **kwargs):
         context = super(CollectionDetailView, self).get_context_data(**kwargs)
+
         context["next_run_time"] = next_run_time(self.object.id)
         # Last 5 harvests
         context["harvests"] = self.object.harvests.all().order_by('-date_requested')[:5]
         context["harvest_count"] = self.object.harvests.all().count()
-        context["last_harvest"] = self.object.last_harvest()
+        last_harvest = self.object.last_harvest()
+        context["last_harvest"] = last_harvest
+        context["seed_infos"] = _get_seed_msg_map(last_harvest.infos) if last_harvest else {}
+        seed_warnings = _get_seed_msg_map(last_harvest.warnings) if last_harvest else {}
+        _add_duplicate_seed_warnings(self.object, seed_warnings)
+        context["seed_warnings"] = seed_warnings
+        context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
         context["diffs"] = diff_collection_and_seeds_history(self.object)
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_active and has_perms
         context["can_toggle"] = has_perms
+        # If last harvest is stopping
+        context["stream_stopping"] = self.object.last_harvest().status == Harvest.STOP_REQUESTED \
+            if self.object.last_harvest() else False
         # For not enough seeds
         seed_warning_message = None
         # For too many seeds
@@ -162,13 +173,36 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
         harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
                                               historical_collection__id=self.object.id)
-        if not harvest_list or "completed success" not in [str(item.status) for item in harvest_list]:
-            context["can_export"] = False
-        else:
-            context["can_export"] = True
+        # Can export if there is a WARC
+        context["can_export"] = Warc.objects.filter(harvest__harvest_type=self.object.harvest_type,
+                                                    harvest__historical_collection__id=self.object.id).exists()
         context["item_id"] = self.object.id
         context["model_name"] = "collection"
         return context
+
+
+def _add_duplicate_seed_warnings(collection, seed_warnings):
+    for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(count__gt=1):
+        for seed in Seed.objects.filter(token=result["token"]):
+            if seed.seed_id not in seed_warnings:
+                seed_warnings[seed.seed_id] = []
+            seed_warnings[seed.seed_id].append("Duplicate seeds exist with this token.")
+    for result in collection.seeds.exclude(uid__exact="").values("uid").annotate(count=Count("id")).filter(count__gt=1):
+        for seed in Seed.objects.filter(token=result["uid"]):
+            if seed.seed_id not in seed_warnings:
+                seed_warnings[seed.seed_id] = []
+            seed_warnings[seed.seed_id].append("Duplicate seeds exist with this uid.")
+
+
+def _get_seed_msg_map(msgs):
+    seed_msg_map = {}
+    for msg in msgs:
+        if "seed_id" in msg:
+            seed_id = msg["seed_id"]
+            if seed_id not in seed_msg_map:
+                seed_msg_map[seed_id] = []
+            seed_msg_map[seed_id].append(msg["message"])
+    return seed_msg_map
 
 
 def _get_collection_form_class(harvest_type):
@@ -200,7 +234,7 @@ def _get_credential_use_map(credentials, harvest_type):
                 else:
                     inactive_collections += 1
             if active_collections == 0 and inactive_collections == 0:
-                credential_use_map[credential.id] = ("info", "Credential is not used in any other collections.")
+                credential_use_map[credential.id] = ("","")
             else:
                 credential_use_map[credential.id] = ("warning",
                                                      "Credential is in use by {0} collections that are turned on and "
@@ -258,7 +292,7 @@ class CollectionUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissio
     def get_context_data(self, **kwargs):
         context = super(CollectionUpdateView, self).get_context_data(**kwargs)
         context["collection_set"] = self.object.collection_set
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token')
+        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         credentials = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
         context["credential_use_map"] = _get_credential_use_map(credentials, self.object.harvest_type)
@@ -338,6 +372,7 @@ class SeedCreateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin
     def get_form_kwargs(self):
         kwargs = super(SeedCreateView, self).get_form_kwargs()
         kwargs["collection"] = self.kwargs["collection_pk"]
+        kwargs["view_type"] = Seed.CREATE_VIEW
         return kwargs
 
     def get_form_class(self):
@@ -361,6 +396,8 @@ class SeedUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin
     def get_form_kwargs(self):
         kwargs = super(SeedUpdateView, self).get_form_kwargs()
         kwargs["collection"] = self.object.collection.pk
+        kwargs["view_type"] = Seed.UPDATE_VIEW
+        kwargs["entry"] = self.get_object()
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -610,8 +647,7 @@ class HarvestDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermi
         context["collection"] = self.object.collection
         # If status is running or requested and not a streaming and if this is the most recent harvest
         context["can_void"] = False
-        if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED) \
-                and not self.object.collection.is_streaming() \
+        if self.object.status in (Harvest.RUNNING, Harvest.REQUESTED, Harvest.STOP_REQUESTED, Harvest.PAUSED) \
                 and self.object == self.object.collection.last_harvest() \
                 and has_collection_set_based_permission(self.object, self.request.user):
             context["can_void"] = True
@@ -629,7 +665,7 @@ class HarvestVoidView(LoginRequiredMixin, RedirectView):
         # Check permissions to void
         check_collection_set_based_permission(harvest, self.request.user)
 
-        if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED):
+        if harvest.status in (Harvest.RUNNING, Harvest.REQUESTED, Harvest.STOP_REQUESTED, Harvest.PAUSED):
             log.debug("Voiding %s", harvest)
             harvest.status = Harvest.VOIDED
             harvest.save()

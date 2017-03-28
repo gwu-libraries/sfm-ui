@@ -50,6 +50,9 @@ and `Entities
 |                         | change over time.                                   |                                                  |
 |                         |                                                     |                                                  |
 +-------------------------+-----------------------------------------------------+--------------------------------------------------+
+| location                | The user's self-described location.                 | San Francisco, California                        |
+|                         |                                                     |                                                  |
++-------------------------+-----------------------------------------------------+--------------------------------------------------+
 | followers_count         | Number of followers this account had at the time    | 235                                              |
 |                         | the tweet was harvested.                            |                                                  |
 |                         |                                                     |                                                  |

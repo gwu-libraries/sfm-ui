@@ -290,6 +290,7 @@ class Collection(models.Model):
     TWITTER_SAMPLE = 'twitter_sample'
     FLICKR_USER = 'flickr_user'
     WEIBO_TIMELINE = 'weibo_timeline'
+    WEIBO_SEARCH = 'weibo_search'
     TUMBLR_BLOG_POSTS = 'tumblr_blog_posts'
     SCHEDULE_CHOICES = [
         (1, 'One time harvest'),
@@ -302,17 +303,27 @@ class Collection(models.Model):
         (60 * 24 * 7 * 4, 'Every 4 weeks')
     ]
     HARVEST_CHOICES = [
+        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SEARCH, 'Twitter search'),
         (TWITTER_FILTER, 'Twitter filter'),
-        (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SAMPLE, 'Twitter sample'),
+        (TUMBLR_BLOG_POSTS, 'Tumblr blog posts'),
         (FLICKR_USER, 'Flickr user'),
-        (WEIBO_TIMELINE, 'Weibo timeline'),
-        (TUMBLR_BLOG_POSTS, 'Tumblr blog posts')
+        (WEIBO_TIMELINE, 'Weibo timeline')
     ]
+    HARVEST_DESCRIPTION = {
+        TWITTER_SEARCH: 'Recent tweets matching a query',
+        TWITTER_FILTER: 'Tweets in real time matching filter criteria',
+        TWITTER_USER_TIMELINE: 'Tweets from specific accounts',
+        TWITTER_SAMPLE: 'A subset of all tweets in real time',
+        FLICKR_USER: 'Posts and photos from specific accounts',
+        WEIBO_TIMELINE: "Posts from a user and the user's friends",
+        TUMBLR_BLOG_POSTS: 'Blog posts from specific blogs'
+    }
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
         TWITTER_SEARCH: 1,
+        WEIBO_SEARCH: 1,
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }
@@ -323,6 +334,7 @@ class Collection(models.Model):
         TWITTER_SAMPLE: Credential.TWITTER,
         FLICKR_USER: Credential.FLICKR,
         WEIBO_TIMELINE: Credential.WEIBO,
+        WEIBO_SEARCH: Credential.WEIBO,
         TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
@@ -365,6 +377,9 @@ class Collection(models.Model):
         If None, then 1 or more is required.
         """
         return self.REQUIRED_SEED_COUNTS.get(str(self.harvest_type))
+
+    def seed_count(self):
+        return self.seeds.filter(collection=self).count()
 
     def active_seed_count(self):
         """
@@ -457,6 +472,8 @@ class SeedHistoryModel(models.Model):
 
 @python_2_unicode_compatible
 class Seed(models.Model):
+    UPDATE_VIEW = "updateView"
+    CREATE_VIEW = "createView"
     collection = models.ForeignKey(Collection, related_name='seeds')
     seed_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     token = models.TextField(blank=True)
@@ -472,7 +489,7 @@ class Seed(models.Model):
 
     class Meta:
         diff_fields = ("token", "uid", "is_active")
-        unique_together = ("collection" , "uid", "token")
+        unique_together = ("collection", "uid", "token")
 
     def social_url(self):
         twitter_user = 'twitter_user_timeline'
@@ -503,15 +520,16 @@ class Seed(models.Model):
             try:
                 j = json.loads(self.token)
                 for key, value in j.items():
-                    labels.append("{}: {}".format(key.title(), value))
-            except (ValueError, AttributeError):
-                labels.append("Token: {}".format(self.token))
+                    labels.append(u"{}: {}".format(key.title(), value))
+            except (AttributeError, ValueError):
+                labels.append(u"Token: {}".format(self.token))
         if self.uid:
-            labels.append("Uid: {}".format(self.uid))
-        return "; ".join(labels)
+            labels.append(u"Uid: {}".format(self.uid))
+        return u"; ".join(labels)
 
     def get_collection_set(self):
         return self.collection.collection_set
+
 
 class HarvestManager(models.Manager):
     def get_by_natural_key(self, harvest_id):

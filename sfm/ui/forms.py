@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from django import forms
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
@@ -32,15 +35,15 @@ DATETIME_WIDGET = DateTimeWidget(
     }
 )
 
-TWITTER_MEDIA_LABEL = "Media"
-TWITTER_MEDIA_HELP = "Perform web harvests of media (e.g., images) embedded in tweets."
-TWITTER_WEB_RESOURCES_LABEL = "Web resources"
-TWITTER_WEB_RESOURCES_HELP = "Perform web harvests of resources (e.g., web pages) linked in tweets."
-INCREMENTAL_LABEL = "Incremental"
-INCREMENTAL_HELP = "Only harvest new items."
-GROUP_HELP = "Group members will be able to view and edit this collection set."
-USER_PROFILE_LABEL = "User profile images"
-USER_PROFILE_HELP = "Perform web harvests of user profile images and user banner images"
+SCHEDULE_HELP = "How frequently you want data to be retrieved."
+TWITTER_MEDIA_LABEL = "Media (e.g., images) embedded in tweets."
+TWITTER_WEB_RESOURCES_LABEL = "Web pages referenced in tweets."
+INCREMENTAL_LABEL = "Incremental harvest"
+INCREMENTAL_HELP = "Only collect new items since the last data retrieval."
+GROUP_HELP = "Your default group is your username, unless the SFM team has added you to another group."
+USER_PROFILE_LABEL = "User profile images and user banner images."
+WEIBO_LABEL = "Perform web harvests of resources (e.g., web pages) linked in weibo texts."
+TUMBLR_LABEL = "Perform web harvests of resources (e.g., web pages) linked in Tumblr posts."
 
 
 class CollectionSetForm(forms.ModelForm):
@@ -115,7 +118,8 @@ class BaseCollectionForm(forms.ModelForm):
             'history_note': HISTORY_NOTE_LABEL
         }
         help_texts = {
-            'history_note': HISTORY_NOTE_HELP
+            'history_note': HISTORY_NOTE_HELP,
+            'schedule_minutes': SCHEDULE_HELP
         }
         error_messages = {}
 
@@ -165,13 +169,10 @@ class BaseCollectionForm(forms.ModelForm):
 
 
 class CollectionTwitterUserTimelineForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
-    user_images_option = forms.BooleanField(initial=False, required=False, help_text=USER_PROFILE_HELP,
-                                            label=USER_PROFILE_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
+    user_images_option = forms.BooleanField(initial=False, required=False, label=USER_PROFILE_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
@@ -203,11 +204,9 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
 
 class CollectionTwitterSearchForm(BaseCollectionForm):
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSearchForm, self).__init__(*args, **kwargs)
@@ -236,10 +235,8 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
 
 
 class CollectionTwitterSampleForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
@@ -268,17 +265,15 @@ class CollectionTwitterSampleForm(BaseCollectionForm):
 
 
 class CollectionTwitterFilterForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_MEDIA_HELP,
-                                      label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, help_text=TWITTER_WEB_RESOURCES_HELP,
-                                              label=TWITTER_WEB_RESOURCES_LABEL)
+    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('media_option', 'web_resources_option'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -311,7 +306,7 @@ class CollectionFlickrUserForm(BaseCollectionForm):
     )
     image_sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
                                             widget=forms.CheckboxSelectMultiple, label="Image sizes", )
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
@@ -342,14 +337,11 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         ("Medium", "Medium"),
         ("Large", "Large")
     )
-    incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
     image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
                                             help_text="For harvesting images, select the image sizes.",
                                             widget=forms.CheckboxSelectMultiple, label="Image sizes")
-    web_resources_option = forms.BooleanField(initial=False, required=False,
-                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
-                                                        "weibo texts.",
-                                              label="Web resources")
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=WEIBO_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
@@ -377,15 +369,53 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
         return m
 
 
-class CollectionTumblrBlogPostsForm(BaseCollectionForm):
+class CollectionWeiboSearchForm(BaseCollectionForm):
+    SIZE_OPTIONS = (
+        ("Thumbnail", "Thumbnail"),
+        ("Medium", "Medium"),
+        ("Large", "Large")
+    )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
+    image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
+                                            help_text="For harvesting images, select the image sizes.",
+                                            widget=forms.CheckboxSelectMultiple, label="Image sizes")
+    web_resources_option = forms.BooleanField(initial=False, required=False,
+                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
+                                                        "weibo texts.",
+                                              label="Web resources")
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+            if "image_sizes" in harvest_options:
+                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
+            if "web_resources" in harvest_options:
+                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
+
+    def save(self, commit=True):
+        m = super(CollectionWeiboSearchForm, self).save(commit=False)
+        m.harvest_type = Collection.WEIBO_SEARCH
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "image_sizes": self.cleaned_data["image_sizes"],
+            "web_resources": self.cleaned_data["web_resources_option"]
+        }
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
+        m.save()
+        return m
+
+
+class CollectionTumblrBlogPostsForm(BaseCollectionForm):
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
     media_option = forms.BooleanField(initial=False, required=False,
                                       help_text="Perform web harvests of images in photo type posts.",
                                       label="Images option")
-    web_resources_option = forms.BooleanField(initial=False, required=False,
-                                              help_text="Perform web harvests of resources (e.g., web pages) "
-                                                        "linked in Tumblr posts.",
-                                              label="Web resources")
+    web_resources_option = forms.BooleanField(initial=False, required=False, label=TUMBLR_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)
@@ -432,6 +462,10 @@ class BaseSeedForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.collection = kwargs.pop("collection", None)
+        # for createView and updateView
+        self.view_type = kwargs.pop("view_type", None)
+        # for updateView check the updates for the original token and  uid
+        self.entry = kwargs.pop("entry", None)
         super(BaseSeedForm, self).__init__(*args, **kwargs)
         cancel_url = reverse('collection_detail', args=[self.collection])
 
@@ -454,6 +488,56 @@ class BaseSeedForm(forms.ModelForm):
             )
         )
 
+    def clean_token(self):
+        token_val = self.cleaned_data.get("token")
+        return token_val.strip()
+
+    def clean_uid(self):
+        uid_val = self.cleaned_data.get("uid")
+        return uid_val.strip()
+
+    def clean(self):
+        fields = self._meta.fields
+        uid_val, token_val = '', ''
+        uid_label, token_label = '', ''
+        if "uid" in fields:
+            uid_val = self.cleaned_data.get("uid")
+            uid_label = self._meta.labels["uid"]
+        if "token" in fields:
+            token_val = self.cleaned_data.get("token")
+            token_label = self._meta.labels["token"]
+
+        # if has invalid error before, directly not check deep error
+        if self.errors:
+            return
+
+        # should not both empty if has token or uid fields, the twitter filter should deal with separately
+        if (uid_label or token_label) and (not uid_val and not token_val):
+            or_text = 'or' * (1 if uid_label and token_label else 0)
+            raise ValidationError(
+                u'One of the following fields is required :{} {} {}.'.format(token_label, or_text, uid_label))
+
+        # for the update view
+        if self.view_type == Seed.UPDATE_VIEW:
+            # check updated seeds exist in db if changes
+            # case insensitive match, and user can't add 'token:TeSt' or 'token:teSt', etc if 'token:test exist.',
+            # but can update to 'token:TeSt' or other.
+            if token_val.lower() != self.entry.token.lower() and \
+                    token_val and Seed.objects.filter(collection=self.collection,
+                                                      token__iexact=token_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+            # check updated uid whether exist in db if changes
+            if uid_val.lower() != self.entry.uid.lower() and \
+                    uid_val and Seed.objects.filter(collection=self.collection,
+                                                    uid__iexact=uid_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+        else:
+            if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+
+            if uid_val and Seed.objects.filter(collection=self.collection, uid__iexact=uid_val).exists():
+                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
@@ -470,8 +554,19 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
         super(SeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('token', 'uid'))
 
+    def clean_uid(self):
+        uid_val = self.cleaned_data.get("uid")
+        # check the format
+        if uid_val and not uid_val.isdigit():
+            raise ValidationError('Uid should be numeric.', code='invalid')
+        return uid_val
+
     def clean_token(self):
-        return clean_token(self.cleaned_data.get("token"))
+        token_val = clean_token(self.cleaned_data.get("token"))
+        # check the format
+        if token_val and token_val.isdigit():
+            raise ValidationError('Screen name may not be numeric.', code='invalid')
+        return token_val
 
 
 class SeedTwitterSearchForm(BaseSeedForm):
@@ -489,6 +584,24 @@ class SeedTwitterSearchForm(BaseSeedForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].append('token')
+
+
+class SeedWeiboSearchForm(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Query"
+        help_texts = dict(BaseSeedForm.Meta.help_texts)
+        help_texts["token"] = u'See <a href="http://open.weibo.com/wiki/2/search/topics" target="_blank">' \
+                              u'API documents</a> for writing a query. ' \
+                              u'Example: "科技".'
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.Textarea(attrs={'rows': 4})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedWeiboSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].append('token')
 
 
@@ -521,11 +634,51 @@ class SeedTwitterFilterForm(BaseSeedForm):
             if 'locations' in token:
                 self.fields['locations'].initial = token['locations']
 
+    def clean_track(self):
+        track_val = self.cleaned_data.get("track")
+        return track_val.strip()
+
+    def clean_locations(self):
+        locations_val = self.cleaned_data.get("locations")
+        return locations_val.strip()
+
     def clean_follow(self):
-        follow = self.cleaned_data["follow"]
-        if re.compile(r'[^0-9, ]').search(follow):
+        follow_val = self.cleaned_data.get("follow")
+        return follow_val.strip()
+
+    def clean(self):
+        # if do string strip in here, string ends an empty space, not sure why
+        track_val = self.cleaned_data.get("track")
+        follow_val = self.cleaned_data.get("follow")
+        locations_val = self.cleaned_data.get("locations")
+
+        # should not all be empty
+        if not track_val and not follow_val and not locations_val:
+            raise ValidationError(u'One of the following fields is required :track, follow, locations.')
+
+        # check follow should be number uid
+        if re.compile(r'[^0-9, ]').search(follow_val):
             raise ValidationError('Follow must be user ids', code='invalid_follow')
-        return follow
+
+        token_val = {}
+        if track_val:
+            token_val['track'] = track_val
+        if follow_val:
+            token_val['follow'] = follow_val
+        if locations_val:
+            token_val['locations'] = locations_val
+        token_val = json.dumps(token_val, ensure_ascii=False)
+        # for the update view
+        if self.view_type == Seed.UPDATE_VIEW:
+            # check updated seeds exist in db if changes
+            # case insensitive match, and user can update seed `tack:Test` to 'tack:test'
+            if token_val.lower() != self.entry.token.lower() and \
+                    token_val and Seed.objects.filter(collection=self.collection,
+                                                      token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
+        else:
+            if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
 
     def save(self, commit=True):
         m = super(SeedTwitterFilterForm, self).save(commit=False)
@@ -564,12 +717,13 @@ class SeedFlickrUserForm(BaseSeedForm):
 
 class SeedTumblrBlogPostsForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
-        fields = ['uid','token']
+        fields = ['uid']
         fields.extend(BaseSeedForm.Meta.fields)
         labels = dict(BaseSeedForm.Meta.labels)
         labels["uid"] = "Blog hostname"
         help_texts = dict(BaseSeedForm.Meta.help_texts)
         help_texts["uid"] = 'Please provide the standard blog hostname, eg. codingjester or codingjester.tumblr.com.' \
+                            'If blog hostname is codingjester.tumblr.com, it would be considered as codingjester. ' \
                             'To better understand standard blog hostname, See ' \
                             '<a target="_blank" href="https://www.tumblr.com/docs/en/api/v2#hostname">' \
                             'these instructions</a>.'

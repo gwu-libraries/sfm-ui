@@ -5,8 +5,19 @@
 
 Social Feed Manager (SFM) harvests social media data from multiple platforms' public APIs to help archivists,
 librarians, and researchers to build social media collections. [More information about the project itself.](http://gwu-libraries.github.io/sfm-ui)
+
+
+## Getting started
+
+* Documentation:  [http://sfm.readthedocs.org](http://sfm.readthedocs.org/en/latest/)
+* Installing SFM: http://sfm.readthedocs.io/en/latest/install.html
+* About the SFM project: [http://gwu-libraries.github.com/sfm-ui](http://gwu-libraries.github.com/sfm-ui)
+* Project updates: Follow [@SocialFeedMgr](https://twitter.com/SocialFeedMgr) on Twitter
+* Discussion:  [sfm-dev](https://groups.google.com/forum/#!forum/sfm-dev)
+* Tickets:  sfm-ui is used for [all ticketing](https://github.com/gwu-libraries/sfm-ui/issues).
+
 This is a re-architected version of an [earlier Social Feed Manager](https://github.com/gwu-libraries/social-feed-manager)
-which has been in use at GWU Libraries since 2012.
+which had been in use at GWU Libraries since 2012.
 
 ## Overview
 Social Feed Manager allows users to:
@@ -37,14 +48,6 @@ The full Social Feed Manager is made up of several component repositories:
 - Binds to `harvest.status.*(.*)` messages and creates a Harvest object (visible in the admin views) for each harvest status message received.  The message consumer is started via the `startconsumer` management command.
 
 Behind the scenes, SFM uses a set of carefully managed processes to harvest and and store this data, recording its actions in detail.
-
-## Getting started
-
-* Documentation:  [http://sfm.readthedocs.org](http://sfm.readthedocs.org/en/latest/)
-* Full project information: [http://gwu-libraries.github.com/sfm-ui](http://gwu-libraries.github.com/sfm-ui)
-* Project updates: Follow [@SocialFeedMgr](https://twitter.com/SocialFeedMgr) on Twitter
-* Discussion:  [sfm-dev](https://groups.google.com/forum/#!forum/sfm-dev)
-* Tickets:  sfm-ui is used for [all ticketing](https://github.com/gwu-libraries/sfm-ui/issues).
 
 Tickets / pull requests / discussion are welcome.
 
