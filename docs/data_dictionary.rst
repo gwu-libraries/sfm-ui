@@ -1,3 +1,5 @@
+.. _data-dictionaries:
+
 =========================================
  Data Dictionaries for CSV/Excel Exports
 =========================================
