@@ -276,11 +276,10 @@ For details on each collection type, see:
 Exporting your Data
 -------------------
 
-In order to access the data in a collection, you will need to export it.
-
-With normal exports, you are able to download your data in several formats,
-including Excel (.xlsx) and Comma Separated Value (.csv) files, which can be
-loaded into spreadsheet or data analytic software.
+In order to access the data in a collection, you will need to export it. You are able 
+to download your data in several formats,
+including Excel (.xlsx) and Comma Separated Values (.csv), which can be
+loaded into a spreadsheet or data analytic software.
 
 To export:
   * At the top of the individual collection, click *Export*.
@@ -288,7 +287,7 @@ To export:
   * Select the file type you want (.csv is recommended; .xlsx types will also be
     easily accessible).
 
-  * Select the export size you want, based on number of posts per file. Note that
+  * Select the export file size you want, based on number of posts per file. Note that
     larger file sizes will take longer to download.
 
   * Select Deduplicate if you only want one instance of every post. This will clean
@@ -304,9 +303,9 @@ To export:
     redirected to the export screen. When the export is complete, the files,
     along with a README file describing what was included in the export and the
     collection, will appear for you to click on and download. You will receive
-    an email as well when your export completes.
+    an email when your export completes.
 
-  * To help understand each category of meta-data in each export, see
+  * To help understand each metadata field in the export, see
     :ref:`data-dictionaries`.
 
 
