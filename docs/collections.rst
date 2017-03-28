@@ -34,13 +34,14 @@ Twitter user timeline collections collect the 3,200 most recent tweets from each
 a list of Twitter accounts using `Twitter's user_timeline API
 <https://dev.twitter.com/rest/reference/get/statuses/user_timeline>`_.
 
-**Seeds** for Twitter user yimelines are individual Twitter accounts.
+**Seeds** for Twitter user timelines are individual Twitter accounts.
 
 To identify a user timeline, you can provide a screen name
 (the string after @, like NASA for @NASA)
 or Twitter user ID (a numeric string which never changes, like 11348282 for
 @NASA). If you provide one identifier, the other will be looked up and displayed
-in SFM the first time the harvester runs.
+in SFM the first time the harvester runs. The user may change the screen name
+over time, and the seed will be updated accordingly. 
 
 The harvest schedule should depend on how prolific the Twitter users are.
 In general, the more frequent the tweeter, the more frequent you’ll want to
