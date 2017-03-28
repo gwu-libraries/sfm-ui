@@ -5,10 +5,12 @@ User Guide
 Welcome to Social Feed Manager!
 
 Social Feed Manager (SFM) is an open-source tool designed for researchers,
-archivists, and curious people to collect social media data from Twitter,
-Tumblr, Flickr, or Sina Weibo.
+archivists, and curious individuals to collect social media data from Twitter,
+Tumblr, Flickr, or Sina Weibo. See the `SFM Overview <https://gwu-libraries.github.io/sfm-ui/about/overview>`_
+for a quick look at SFM.
+
 If you want to learn more about what SFM can do, read :ref:`guide-uses`
-This guide is for users who have access to SFM to learn how to collect. If
+This guide is for users who have access to SFM and want to learn how to collect. If
 you're an administrator setting up SFM for your institution, see
 :ref:`admin-documentation`.
 
@@ -19,14 +21,14 @@ To get your first collection up and running:
     media platforms using credentials. See :ref:`guide-setting-up-credentials`.
   * **Create a collection set** and within it a collection, where you'll actually
     collect data. See :ref:`guide-creating-collections`.
-  * **Add Seeds**: Seeds are the criteria used to collect data. You'll add user
+  * **Add seeds**: Seeds are the criteria used to collect data. You'll add user
     accounts or search criteria. See :ref:`guide-adding-seeds`.
   * **Set your collections running!**
   * **Export your collections** when you want to see and work with your data, or
     adjust settings. See :ref:`guide-export-data`.
 
 You can always come back to this user guide for help by clicking *Documentation*
-at the bottom of the SFM page and selecting *User Guide*
+at the bottom of any SFM page and selecting *User Guide*.
 
 
 | `What is SFM used for?`_
@@ -50,16 +52,16 @@ What is SFM used for?
 ---------------------
 
 Social Feed Manager (SFM) collects individual posts--tweets,
-photos, blogs--from social media sites. These posts are collected in a raw data
-format called JOSN and can be exported in many formats, including spreadsheets.
+photos, blogs--from social media sites. These posts are collected in their native, raw data
+format called JSON and can be exported in many formats, including spreadsheets.
 Users can then use this collected data for research, analysis or archiving.
 
 Some ideas for how to use SFM:
   - **Collecting from individual accounts** such as the tweets of every U.S.
     Senator (:ref:`guide-twitter-user-timelines`).
   - **Gathering Flickr images for analysis** or archiving the photographs from
-    institutions like Smithsonian (:ref:`guide-flickr-user-timeline`).
-  - **Researching social media use** by getting a sample of all tweets
+    accounts donated to your organization (:ref:`guide-flickr-user-timeline`).
+  - **Researching social media use** by retrieving a sample of all tweets
     (:ref:`guide-twitter-sample`), or by filtering by specific search terms
     (:ref:`guide-twitter-filter`).
   - **Capturing a major event** by collecting tweets in a specific geographic
@@ -106,7 +108,7 @@ Once you've collected data, there are a few ways to use it:
     (:ref:`guide-export-data`), or load the format into analysis software such
     as Stata, SPSS, or Gephi.
   * You could use try :ref:`exploring`, a processor for data analysis (although
-    ELK requires coding ability, so ask your SFM admin for help if you need it).
+    ELK requires some technical knowledge, so ask your SFM admin for help if you need it).
   * You could set up an archive using the JSON files or Excel files.
 
 Privacy and platform policy considerations
