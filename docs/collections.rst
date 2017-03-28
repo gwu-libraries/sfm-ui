@@ -30,19 +30,19 @@ Collection types
 Twitter user timeline
 ---------------------
 
-Twitter user timeline collections collect the 3,200 most recent tweets from
+Twitter user timeline collections collect the 3,200 most recent tweets from each of
 a list of Twitter accounts using `Twitter's user_timeline API
 <https://dev.twitter.com/rest/reference/get/statuses/user_timeline>`_.
 
-**Seeds** for Twitter User Timelines are individual Twitter accounts.
+**Seeds** for Twitter user yimelines are individual Twitter accounts.
 
 To identify a user timeline, you can provide a screen name
-(the string after @, like NASA for @NASA, which the user can change)
+(the string after @, like NASA for @NASA)
 or Twitter user ID (a numeric string which never changes, like 11348282 for
 @NASA). If you provide one identifier, the other will be looked up and displayed
-in SFM UI the first time the harvester runs.
+in SFM the first time the harvester runs.
 
-Scheduling harvests should depend on how prolific the Twitter users are.
+The harvest schedule should depend on how prolific the Twitter users are.
 In general, the more frequent the tweeter, the more frequent you’ll want to
 schedule harvests.
 
@@ -64,10 +64,9 @@ Twitter search
 ---------------
 
 Twitter searches collect tweets from the last 7-9 days that match search
-queries, similar to a regular search made on Twitter, using
-the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_, similar
-to a regular search made on `Twitter <https://twitter.com/search-home>`_.
-Based on relevance, this is **not** a complete search of all tweets, limited
+queries, similar to a regular search done on Twitter, using
+the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_.
+This is **not** a complete search of all tweets; results are limited
 both by time and arbitrary relevance (determined by Twitter).
 
 Search queries must follow standard search term formulation; permitted queries
@@ -275,23 +274,21 @@ collect image or web resources.
 .. _guide-incremental-collecting:
 
 -------------------------------
-Choosing Incremental Collecting
+Incremental collecting
 -------------------------------
 
-The incremental option will collect tweets that haven't been harvested before,
-preventing duplicate tweets. When the incremental option is not selected, the
-3,200 most recent tweets will be collected. If a non-incremental harvest is
-performed multiple times, there will most likely be
-duplicates. However, you will may be able to track changes across time about a user's
-timeline, such as retweet and like counts, deletion of tweets, and follower
-counts.
+The incremental option is the default and will collect tweets or posts that have been published since the last harvest. 
+When the incremental option is not selected, the maximum number of tweets or posts will be harvested each 
+time the harvest runs. If a non-incremental harvest is performed multiple times, there will most likely be
+duplicates. However, with these duplicates, you may be able to track changes across time in a user's
+timeline, such as changes in retweet and like counts, deletion of tweets, and follower counts.
 
 .. _guide-web-resources:
 
 .. _Collecting web resources:
 
 ------------------------
-Collecting Web Resources
+Collecting web resources
 ------------------------
 
 Most collection types allow you to select an option to collect web resources
