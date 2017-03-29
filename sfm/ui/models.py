@@ -548,7 +548,7 @@ class Harvest(models.Model):
     STATUS_CHOICES = (
         (REQUESTED, "Requested"),
         (SUCCESS, "Success"),
-        (FAILURE, "Failure"),
+        (FAILURE, "Completed with errors"),
         (RUNNING, "Running"),
         (STOP_REQUESTED, "Stop requested"),
         (VOIDED, "Voided"),
