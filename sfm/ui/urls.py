@@ -38,6 +38,10 @@ urlpatterns = patterns('',
                            views.CollectionToggleActiveView.as_view(),
                            name="collection_toggle_active"),
 
+                       url(r'^collections/(?P<pk>\d+)/add_note/$',
+                           views.CollectionAddNoteView.as_view(),
+                           name="collection_add_note"),
+
                        url(r'^collections/(?P<pk>\d+)/$',
                            views.CollectionDetailView.as_view(),
                            name="collection_detail"),

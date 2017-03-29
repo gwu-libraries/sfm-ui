@@ -59,6 +59,10 @@ def history_save(self, *args, **kw):
             if getattr(orig, field) != getattr(self, field):
                 is_changed = True
                 break
+        # Handle history note specially
+        if getattr(orig, 'history_note') != getattr(self, 'history_note') and getattr(self, 'history_note'):
+            is_changed = True
+
     else:
         is_changed = True
 

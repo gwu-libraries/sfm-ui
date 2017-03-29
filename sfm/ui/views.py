@@ -3,6 +3,7 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+from django.http import HttpResponse
 from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView
 from django.core.exceptions import PermissionDenied
@@ -321,13 +322,29 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
         # Check permissions to toggle
         check_collection_set_based_permission(collection, self.request.user)
         collection.is_active = not collection.is_active
-        collection.history_note = ""
+        collection.history_note = self.request.POST.get("history_note", "")
         if collection.is_active:
             messages.info(self.request, "Harvesting is turned on.")
         else:
             messages.info(self.request, "Harvesting is turned off.")
         collection.save()
         return super(CollectionToggleActiveView, self).get_redirect_url(*args, **kwargs)
+
+
+class CollectionAddNoteView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "collection_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        collection = get_object_or_404(Collection, pk=kwargs['pk'])
+        # Check permissions to add note
+        check_collection_set_based_permission(collection, self.request.user)
+        collection.history_note = self.request.POST.get("history_note", "")
+        if collection.history_note:
+            log.debug("Adding note %s to %s", collection.history_note, collection)
+            collection.save()
+        return super(CollectionAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
 class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
