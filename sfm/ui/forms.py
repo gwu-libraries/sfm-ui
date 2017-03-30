@@ -446,7 +446,7 @@ class CollectionTumblrBlogPostsForm(BaseCollectionForm):
 class BaseSeedForm(forms.ModelForm):
     class Meta:
         model = Seed
-        fields = ['collection', 'is_active',
+        fields = ['collection',
                   'history_note']
         exclude = []
         widgets = {
@@ -478,7 +478,6 @@ class BaseSeedForm(forms.ModelForm):
             Fieldset(
                 '',
                 Div(),
-                'is_active',
                 'history_note'
             ),
             FormActions(
@@ -968,8 +967,7 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple,
-                            help_text="If no seeds are checked, all seeds will be exported.")
+    seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple)
 
     class Meta:
         model = Export

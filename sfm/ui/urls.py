@@ -66,6 +66,10 @@ urlpatterns = patterns('',
                            views.SeedDetailView.as_view(),
                            name="seed_detail"),
 
+                       url(r'^seeds/(?P<pk>\d+)/toggle/$',
+                           views.SeedToggleActiveView.as_view(),
+                           name="seed_toggle_active"),
+
                        url(r'^credentials/(?P<pk>\d+)/$',
                            views.CredentialDetailView.as_view(),
                            name="credential_detail"),

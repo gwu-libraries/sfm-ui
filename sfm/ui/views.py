@@ -179,6 +179,8 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
                                                     harvest__historical_collection__id=self.object.id).exists()
         context["item_id"] = self.object.id
         context["model_name"] = "collection"
+
+        context["status_choices"] = Harvest.STATUS_CHOICES
         return context
 
 
@@ -480,6 +482,25 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
         return render(request, self.template_name,
                       {'form': form, 'collection': collection, 'collection_set': collection.collection_set,
                        'harvest_type_name': _get_harvest_type_name(collection.harvest_type)})
+
+
+class SeedToggleActiveView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "seed_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        seed = get_object_or_404(Seed, pk=kwargs['pk'])
+        # Check permissions to toggle
+        check_collection_set_based_permission(seed.collection, self.request.user)
+        seed.is_active = not seed.is_active
+        seed.history_note = ""
+        if seed.is_active:
+            messages.info(self.request, "Seed undeleted.")
+        else:
+            messages.info(self.request, "Seed deleted.")
+        seed.save()
+        return super(SeedToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 
 class CredentialDetailView(LoginRequiredMixin, UserOrSuperuserOrStaffPermissionMixin, DetailView):

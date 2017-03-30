@@ -184,109 +184,73 @@
      </div>
 </div>
 
-<script>
-$(document).ready(function(){
-
-    var trs = $("#internalActivities tr");
-    var btnMore = $("#seeMoreRecords");
-    var btnLess = $("#seeLessRecords");
-    var trsLength = trs.length;
-    var currentIndex = 10;
-
-    trs.hide();
-    trs.slice(0, 10).show(); 
-    checkButton();
-
-    btnMore.click(function (e) { 
-        e.preventDefault();
-        $("#internalActivities tr").slice(currentIndex, currentIndex + 10).show();
-        currentIndex += 10;
-        checkButton();
-    });
-
-    btnLess.click(function (e) { 
-        e.preventDefault();
-        $("#internalActivities tr").slice(currentIndex - 10, currentIndex).hide();          
-        currentIndex -= 10;
-        checkButton();
-    });
-
-    function checkButton() {
-        var currentLength = $("#internalActivities tr:visible").length;
-
-        if (currentLength >= trsLength) {
-            btnMore.hide();            
-        } else {
-            btnMore.show();   
-        }
-
-        if (trsLength > 10 && currentLength > 10) {
-            btnLess.show();
-        } else {
-            btnLess.hide();
-        }
-    }
-});
-</script>
+{% block javascript %}
+<script src="{% static "ui/js/collection_detail.js" %}"></script>
+{% endblock %}
 
 {% if has_seeds_list %}
 <div class="row">
     <div class="col-md-12">
-    <div class="panel panel-default">
+      <div class="panel panel-default">
         <div class="panel-heading"><h4>Seeds ({{ collection.seed_count }})</h4></div>
-        <div class="panel-body">
-            <table class="table table-condensed" id="internalActivities">
+        <div class="input-group"> <span class="input-group-addon">Search</span>
+            <input id="filter" type="text" class="form-control">
+        </div>
+         <div class="panel-body">
+           <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active</a></li>
+                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted</a></li>
+           </ul>
+            <div class="tab-content">
+            <div class="tab-pane active" id="active" role="tabpanel">
+            <table class="table table-condensed table-list-search" id="ActiveTable">
                 <thead>
                 <tr>
                     <th class="col-md-1">Link</th>
-                    <th>Token
-                        <a href="#tokenModal" data-toggle="modal" role="button" ><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
-                    <!-- modal for i button -->
-                        <div class="modal fade" tabindex="-1" role="dialog" id="tokenModal">
-                           <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title">Token</h4>
-                                 </div>
-                                 <div class="modal-body">
-                                    <p>Twitter handle or blog name</p>
-                                 </div>
-                              </div><!-- /.modal-content -->
-                           </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
+                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
+                    <th>
+                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
+                                             Twitter accounts
+                                             {% endif %}
+                                             {% if 'twitter_filter' in collection.harvest_type %}
+                                             Filter criteria
+                                             {% endif %}
+                                             {% if 'twitter_search' in collection.harvest_type %}
+                                             Search Query
+                                             {% endif %}
+                                             {% if 'flickr_user' in collection.harvest_type %}
+                                             Flickr users
+                                             {% endif %}
+                                             {% if 'weibo_timeline' in collection.harvest_type %}
+                                             Weibo users
+                                             {% endif %}
                     </th>
-                    <th>Uid
-                        <a href="#uidModal" data-toggle="modal" role="button" ><span class="glyphicon glyphicon-info-sign" style="padding-top:7px; margin-left: 10px"></span></a>
-                    <!-- modal for i button -->
-                        <div class="modal fade" tabindex="-1" role="dialog" id="uidModal">
-                           <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title">Uid</h4>
-                                 </div>
-                                 <div class="modal-body">
-                                    <p>Unique user ID</p>
-                                 </div>
-                              </div><!-- /.modal-content -->
-                           </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
+                    {% endif %}
+                    <th>
+                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
+                                             User ID
+                                             {% endif %}
+                                             {% if 'tumblr_blog_posts' in collection.harvest_type %}
+                                             Blog name
+                                             {% endif %}
                     </th>
-                    <th class="col-md-1">Active</th>
+                    </th>
                     <th class="col-md-4">Messages</th>
                 </tr>
                 </thead>
                 {% for seed in seed_list %}
-                <tr>
+                  {% if seed.is_active %}
+                   <tbody class="searchable" id="seedsTable">
+                   <tr class="content">
                     {% if seed.social_url %}
                     <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
                     {% else %}
                     <td class="col-md-1"></td>
                     {% endif %}
+                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                    {% endif %}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                    <td class="col-md-1">{{ seed.is_active|yesno:"Yes,No" }}</td>
                     <td class="col-md-4">
                         <ul>
                             {% for msg in seed_infos|get_item:seed.seed_id %}
@@ -300,11 +264,86 @@ $(document).ready(function(){
                             {% endfor %}
                         </ul>
                     </td>
-				</tr>
-				{% endfor %}
-            </table>
-            <a href="#" id="seeMoreRecords">See all {{ collection.seed_count }} seeds<span class="caret"></span></a>
-            <a href="#" id="seeLessRecords">See fewer seeds</a> 
+	           </tr>
+                   </tbody>
+                  {% endif %}
+                 {% endfor %}
+                </table>
+                <a href="#" id="seeMoreActiveRecords">See all active seeds  <span class="caret"></span></a>
+                <a href="#" id="seeLessActiveRecords">See fewer active seeds  <span class="dropup"><span class="caret"></span></span>
+               </div>
+               <div class="tab-pane" id="deleted" role="tabpanel">
+                <table class="table table-condensed table-list-search" id="DeletedTable">
+                <thead>
+                <tr>
+                    <th class="col-md-1">Link</th>
+                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
+                    <th>
+                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
+                                             Twitter accounts
+                                             {% endif %}
+                                             {% if 'twitter_filter' in collection.harvest_type %}
+                                             Filter criteria
+                                             {% endif %}
+                                             {% if 'twitter_search' in collection.harvest_type %}
+                                             Search Query
+                                             {% endif %}
+                                             {% if 'flickr_user' in collection.harvest_type %}
+                                             Flickr users
+                                             {% endif %}
+                                             {% if 'weibo_timeline' in collection.harvest_type %}
+                                             Weibo users
+                                             {% endif %}
+                    </th>
+                    {% endif %}
+                    <th>
+                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
+                                             User ID
+                                             {% endif %}
+                                             {% if 'tumblr_blog_posts' in collection.harvest_type %}
+                                             Blog name
+                                             {% endif %}
+                    </th>
+                    <th class="col-md-4">Messages</th>
+                </tr>
+                </thead>
+                 {% for seed in seed_list %}
+                  {% if not seed.is_active %}
+                   <tbody class="searchable" id="seedsTable">
+                   <tr class="content">
+                    {% if seed.social_url %}
+                    <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
+                    {% else %}
+                    <td class="col-md-1"></td>
+                    {% endif %}
+                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                    {% endif %}
+                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
+                    <td class="col-md-4">
+                        <ul>
+                            {% for msg in seed_infos|get_item:seed.seed_id %}
+                                <li><p class="text-info">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_warnings|get_item:seed.seed_id %}
+                                <li><p class="text-warning">{{ msg }}</p></li>
+                            {% endfor %}
+                            {% for msg in seed_errors|get_item:seed.seed_id %}
+                                <li><p class="text-danger">{{ msg }}</p></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                   </tr>
+                   </tbody>
+                 {% endif %}
+                {% endfor %}
+                </table>
+                <a href="#" id="seeMoreDeletedRecords">See all deleted seeds  <span class="caret"></span></a>
+                <a href="#" id="seeLessDeletedRecords">See fewer deleted seeds  <span class="dropup"><span class="caret"></span></span></a>
+                </div>
+            <div>
+
+
             <div style="padding-top: 15px">
             <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
@@ -320,21 +359,32 @@ $(document).ready(function(){
 <div class="row">
   <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h4>Harvests</h4> (1-{{ harvests|length }} of {{ harvest_count }})</div>
+        <div class="panel-heading"><h4>Harvests ({{ harvest_count }})</h4></div>
+        <div class="input-group"> <span class="input-group-addon">Search harvest type</span>
+            <input id="filterHarvest" type="text" class="form-control">
+        </div>
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-list-search">
                 <thead>
                 <tr>
                     <th>Type</th>
                     <th>Requested</th>
                     <th>Updated/Completed</th>
-                    <th>Status</th>
+                    <th>Status      <select id='filterText' style='display:inline-block' onchange='filterText()'>
+                                    <option disabled selected>Select</option>
+                                    <option value='all'>All</option>
+                                    {% for status, description in status_choices %}
+                                        <option value='{{ description }}'>{{ description }}</option>
+                                    {% endfor %}
+                                </select>
+                    </th>
                     <th>Stats</th>
                     <th>Messages</th>
                 </tr>
                 </thead>
+                <tbody class="HarvestSearch">
                 {% for harvest in harvests %}
-                <tr>
+                <tr class="HarvestContent">
                     <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
                     <td>{{ harvest.date_requested }}</td>
                     <td>{% if harvest.status == "completed success" or harvest.status == "completed failure" %}
@@ -349,6 +399,7 @@ $(document).ready(function(){
                     <td>{% if harvest.message_count %}{{ harvest.message_count }} message{{harvest.message_count|pluralize}}{% endif %}</td>
                 </tr>
                 {% endfor %}
+                </tbody>
             </table>
         </div>
         {% if harvest_count > harvests|length %}
