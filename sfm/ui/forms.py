@@ -607,17 +607,17 @@ class SeedWeiboSearchForm(BaseSeedForm):
 
 class SeedTwitterFilterForm(BaseSeedForm):
     track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text='Keywords to track. Phrases of keywords are specified by a comma-separated list. '
-                                      'See <a '
-                                      'href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
+                            help_text='Separate keywords and phrases with commas. '
+                                      'See Twitter <a '
+                                      'target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
                                       'track</a> for more information.')
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                             help_text='A comma separated list of <i>user IDs</i> (not screen names), indicating the '
-                                       'users to return statuses for in the stream. See <a '
-                                       'href="https://dev.twitter.com/streaming/overview/request-parameters#follow">'
-                                       'follow</a> for more information.')
+                             help_text='Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose tweets, retweets, and replies will be collected. '
+                                       'See Twitter <a '
+                                       'target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#follow">'
+                                       'follow</a> documentation for a full list of what is returned.')
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                                help_text='Specifies a set of bounding boxes to track. See <a href='
+                                help_text='Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic bounding box. See Twitter <a target="blank" href='
                                           '"https://dev.twitter.com/streaming/overview/request-parameters#locations">'
                                           'locations</a> for more information.')
 
