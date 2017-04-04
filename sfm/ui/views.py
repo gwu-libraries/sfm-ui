@@ -344,6 +344,7 @@ class CollectionAddNoteView(LoginRequiredMixin, RedirectView):
         if collection.history_note:
             log.debug("Adding note %s to %s", collection.history_note, collection)
             collection.save()
+            messages.info(self.request, "Note added.")
         return super(CollectionAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
