@@ -360,9 +360,11 @@
   <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading"><h4>Harvests ({{ harvest_count }})</h4></div>
-        <div class="input-group"> <span class="input-group-addon">Search harvest type</span>
+        <!--
+            <div class="input-group"> <span class="input-group-addon">Search harvest type</span>
             <input id="filterHarvest" type="text" class="form-control">
         </div>
+        -->
         <div class="panel-body">
             <table class="table table-list-search">
                 <thead>
@@ -370,13 +372,13 @@
                     <th>Type</th>
                     <th>Requested</th>
                     <th>Updated/Completed</th>
-                    <th>Status      <select id='filterText' style='display:inline-block' onchange='filterText()'>
+                    <th>Status<!--      <select id='filterText' style='display:inline-block' onchange='filterText()'>
                                     <option disabled selected>Select</option>
                                     <option value='all'>All</option>
                                     {% for status, description in status_choices %}
                                         <option value='{{ description }}'>{{ description }}</option>
                                     {% endfor %}
-                                </select>
+                                </select>-->
                     </th>
                     <th>Stats</th>
                     <th>Messages</th>
