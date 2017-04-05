@@ -231,7 +231,7 @@ This may take several minutes.
 
 otherwise, replacing 1.7.0 with the correct version::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/1.7.0/master/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://github.com/gwu-libraries/sfm-docker/1.7.0 /example.prod.docker-compose.yml > docker-compose.yml
 
 4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
 in your new ``docker-compose.yml``.
