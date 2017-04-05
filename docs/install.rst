@@ -85,8 +85,8 @@ statements change *master* to the correct version, e.g., *1.7.0*::
      - mkdir /sfm-processing
      - cd /home/ubuntu
     # This brings up the latest production release. To bring up master, remove prod.
-     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.prod.docker-compose.yml > docker-compose.yml
-     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/master/example.env > .env
+     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
+     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.env > .env
     # Set config below by uncommenting.
     # Don't forget to escape $ as \$.
     # COMMON CONFIGURATION
@@ -187,7 +187,8 @@ Containers can then be brought back up with ``docker-compose up -d`` and the con
 
 To stop the containers gracefully::
 
-    docker-compose stop -t 180
+    docker-compose stop -t 180 twitterstreamharvester
+    docker-compose stop
 
 SFM can then be restarted with ``docker-compose up -d``.
 
@@ -211,7 +212,8 @@ see if any additional steps are required.
 
 1. Stop the containers gracefully::
 
-    docker-compose stop -t 180
+    docker-compose stop -t 180 twitterstreamharvester
+    docker-compose stop
 
 This may take several minutes.
 
@@ -234,7 +236,7 @@ otherwise, replacing 1.7.0 with the correct version::
 4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
 in your new ``docker-compose.yml``.
 
-5. Make any changes in your ``.env`` file prescribed by the release notes. This should include changing ``SFM_VERSION``.
+5. Make any changes in your ``.env`` file prescribed by the release notes.
 
 6. Bring up the containers::
 
