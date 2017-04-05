@@ -40,8 +40,8 @@ Installing locally requires Docker and Docker-Compose. See :ref:`docker-installi
 
 or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 1.7.0 with the correct version)::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
-    curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.env > .env
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.7.0/example.env > .env
 
 2. Update configuration in ``.env`` as described in :ref:`install-configuration`.
 
@@ -85,8 +85,8 @@ statements change *master* to the correct version, e.g., *1.7.0*::
      - mkdir /sfm-processing
      - cd /home/ubuntu
     # This brings up the latest production release. To bring up master, remove prod.
-     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
-     - curl -L https://github.com/gwu-libraries/sfm-docker/raw/1.7.0/example.env > .env
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.7.0/example.env > .env
     # Set config below by uncommenting.
     # Don't forget to escape $ as \$.
     # COMMON CONFIGURATION
@@ -231,7 +231,7 @@ This may take several minutes.
 
 otherwise, replacing 1.7.0 with the correct version::
 
-    curl -L https://github.com/gwu-libraries/sfm-docker/1.7.0 /example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.7.0/example.prod.docker-compose.yml > docker-compose.yml
 
 4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
 in your new ``docker-compose.yml``.
