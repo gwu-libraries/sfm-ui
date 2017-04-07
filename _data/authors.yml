@@ -1,8 +1,8 @@
 # Authors
 
 justin_littman:
-  name: Justin Littman 
-  email: justinlittman@gwu.edu 
+  name: Justin Littman
+  email: justinlittman@gwu.edu
   avatar: author_littman.png
   twitter: justin_littman
 
@@ -35,3 +35,9 @@ rachel_trent:
   email: racheltrent@gwu.edu
   avatar: author_trent.jpg
   twitter: reliztrent
+
+yonah_bromberg_gaber:
+  name: Yonah Bromberg Gaber
+  email: yonahbg@gwu.edu
+  avatar: author_bromberg_gaber.jpg
+  twitter: yonahbg
