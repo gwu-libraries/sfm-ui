@@ -192,14 +192,14 @@
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seeds ({{ collection.seed_count }})</h4></div>
+        <div class="panel-heading"><h4>Seeds</h4></div>
         <div class="input-group"> <span class="input-group-addon">Search</span>
             <input id="filter" type="text" class="form-control">
         </div>
          <div class="panel-body">
            <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active</a></li>
-                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted</a></li>
+                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span></a></li>
+                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span></a></li>
            </ul>
             <div class="tab-content">
             <div class="tab-pane active" id="active" role="tabpanel">
