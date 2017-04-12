@@ -1,6 +1,6 @@
 ---
 layout: article
-permalink: /posts/2017-04-07-geographic-collecting
+permalink: /posts/2017-04-12-geographic-collecting
 title: "Collecting by Geographic Location"
 author: yonah_bromberg_gaber
 excerpt: "SFM provides the opportunity to collect useful metadata about the geographic
