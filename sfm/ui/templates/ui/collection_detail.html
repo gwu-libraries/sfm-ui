@@ -198,12 +198,17 @@
         </div>
          <div class="panel-body">
            <ul class="nav nav-tabs" role="tablist">
-                  {% if collection.active_seed_count >= 1 %}
-                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span></a></li>
-                  {% endif %}
-                  {% if collection.deleted_seed_count >= 1 %}
-                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span></a></li>
-                  {% endif %}
+                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active 
+                     {% if collection.active_seed_count >= 1 %}
+                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span>
+                     {% endif %}
+                  </a></li>
+                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted 
+                     {% if collection.deleted_seed_count >= 1 %}
+                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span>
+                     {% endif %}
+                  </a></li>
+                     
            </ul>
             <div class="tab-content">
             <div class="tab-pane active" id="active" role="tabpanel">
