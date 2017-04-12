@@ -71,7 +71,7 @@ $(document).ready(function(){
                 <tr>
                   <th>Name</th>
                   <th>Harvest type</th>
-                  <th>Seeds</th>
+                  <th>Active seeds</th>
                   <th>On/off</th>
                 </tr>
               </thead>    
@@ -79,7 +79,7 @@ $(document).ready(function(){
                 <tr>
                     <td><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></td>
                     <td>{{ collection.get_harvest_type_display }}</td>
-                    <td>{{ collection.num_seeds }} seed{{ collection.num_seeds|pluralize }}</td>
+                    <td>{{ collection.active_seed_count }}</td>
                     <td>
                         {% if collection.is_active %}
                             <span class="text-success">On</span>

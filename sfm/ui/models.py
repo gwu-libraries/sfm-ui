@@ -385,6 +385,10 @@ class Collection(models.Model):
     def seed_count(self):
         return self.seeds.filter(collection=self).count()
 
+    def deleted_seed_count(self):
+        deleted_seed_count = self.seeds.filter(collection=self).count() - self.seeds.filter(is_active=True).count()
+        return deleted_seed_count
+
     def active_seed_count(self):
         """
         Returns the number of active seeds.
