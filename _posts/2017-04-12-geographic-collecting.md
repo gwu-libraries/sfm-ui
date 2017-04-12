@@ -6,9 +6,6 @@ author: yonah_bromberg_gaber
 excerpt: "SFM provides the opportunity to collect useful metadata about the geographic
 location of tweets provided by the Twitter API."
 ---
-
-# Collecting by Geographic Location
-
 Social Feed Manager collects useful metadata about the geographic location of tweets provided by
 the Twitter API. SFM also includes the functionality to collect posts based on
 the sole criteria of where they are located.
