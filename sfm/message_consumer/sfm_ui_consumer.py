@@ -224,7 +224,8 @@ class SfmUiConsumer(BaseConsumer):
             # Write README
             if os.path.exists(export.path):
                 readme_txt = create_readme_for_export(export)
-                readme_filepath = os.path.join(export.path, "README.txt")
+                readme_fname=self.message["id"]+"-README.txt"
+                readme_filepath = os.path.join(export.path, readme_fname)
                 log.debug("Writing export README to %s: %s", readme_filepath, readme_txt)
                 with codecs.open(readme_filepath, "w", encoding="utf-8") as f:
                     f.write(readme_txt)
