@@ -22,7 +22,7 @@ On Ubuntu:
 
 * If you have difficulties with the ``apt`` install, try the ``pip`` install.
 * The docker group is automatically created. `Adding your user to the docker
-  group <https://docs.docker.com/v1.8/installation/ubuntulinux/#create-a-docker-group>`_
+  group <https://docs.docker.com/engine/installation/linux/linux-postinstall/#manage-docker-as-a-non-root-user>`_
   avoids having to use sudo to run docker commands. Note that depending on how
   users/groups are set up, you may need to manually need to add your user to the
   group in ``/etc/group``.
@@ -45,9 +45,8 @@ SFM on those platforms.
 ``docker-compose pull``
     Pull the latest images for all of the containers specified in the docker-compose.yml file with the `image` field.
 
-``docker-compose build``
-    Build images for all of the containers specified in the docker-compose.yml file with the `build` field. Add ``--no-cache``
-    to re-build the entire image (which you might want to do if the image isn't building as expected).
+``docker-compose build``    Build images for all of the containers specified in the docker-compose.yml file with the `build` field. Add ``--no-cache``
+     to re-build the entire image (which you might want to do if the image isn't building as expected).
 
 ``docker ps``
     List running containers. Add ``-a`` to also list stopped containers.
