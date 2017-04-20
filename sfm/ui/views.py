@@ -108,6 +108,23 @@ class CollectionSetUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermis
         return reverse("collection_set_detail", args=(self.object.pk,))
 
 
+class CollectionSetAddNoteView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "collection_set_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        collection_set = get_object_or_404(CollectionSet, pk=kwargs['pk'])
+        # Check permissions to add note
+        check_collection_set_based_permission(collection_set, self.request.user)
+        collection_set.history_note = self.request.POST.get("history_note", "")
+        if collection_set.history_note:
+            log.debug("Adding note %s to %s", collection_set.history_note, collection_set)
+            collection_set.save()
+            messages.info(self.request, "Note added.")
+        return super(CollectionSetAddNoteView, self).get_redirect_url(*args, **kwargs)
+
+
 class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
@@ -501,6 +518,23 @@ class SeedToggleActiveView(LoginRequiredMixin, RedirectView):
             messages.info(self.request, "Seed deleted.")
         seed.save()
         return super(SeedToggleActiveView, self).get_redirect_url(*args, **kwargs)
+
+
+class SeedAddNoteView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "seed_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        seed = get_object_or_404(Seed, pk=kwargs['pk'])
+        # Check permissions to add note
+        check_collection_set_based_permission(seed, self.request.user)
+        seed.history_note = self.request.POST.get("history_note", "")
+        if seed.history_note:
+            log.debug("Adding note %s to %s", seed.history_note, seed)
+            seed.save()
+            messages.info(self.request, "Note added.")
+        return super(SeedAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
 class CredentialDetailView(LoginRequiredMixin, UserOrSuperuserOrStaffPermissionMixin, DetailView):

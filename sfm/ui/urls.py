@@ -26,6 +26,10 @@ urlpatterns = patterns('',
                            views.CollectionSetListView.as_view(),
                            name="collection_set_list"),
 
+                       url(r'^collection_sets/(?P<pk>\d+)/add_note/$',
+                           views.CollectionSetAddNoteView.as_view(),
+                           name="collection_set_add_note"),
+
                        url(r'^collections/(?P<collection_set_pk>\d+)/(?P<harvest_type>.+)/create/$',
                            views.CollectionCreateView.as_view(),
                            name="collection_create"),
@@ -69,6 +73,10 @@ urlpatterns = patterns('',
                        url(r'^seeds/(?P<pk>\d+)/toggle/$',
                            views.SeedToggleActiveView.as_view(),
                            name="seed_toggle_active"),
+
+                       url(r'^seeds/(?P<pk>\d+)/add_note/$',
+                           views.SeedAddNoteView.as_view(),
+                           name="seed_add_note"),
 
                        url(r'^credentials/(?P<pk>\d+)/$',
                            views.CredentialDetailView.as_view(),

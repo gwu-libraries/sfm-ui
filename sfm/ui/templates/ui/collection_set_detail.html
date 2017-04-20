@@ -133,6 +133,37 @@ $(document).ready(function(){
 <div class="row">
     <div class="col-md-12">
         <h4>Change log</h4>
+        <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_edit %} disabled {% endif %}>
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note
+        </button><br />
+        <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModal">
+            <div class="modal-dialog" role="document">
+                <form method="post" action={% url "collection_set_add_note" collection_set.pk %}>
+                    {% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="addNoteModalLabel">Add note</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id="div_id_add_note" class="form-group">
+                                <div class="controls ">
+                                    <textarea class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
+                                    <p id="hint_id_add_note" class="help-block">Provide a note to be added to the change log.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                Add note
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- modal-dialog -->
+        </div></p> <!-- modal -->
         {% include "ui/diff_snippet.html" with log_entries=collection_set.log_entries %}
     </div>
 </div>
