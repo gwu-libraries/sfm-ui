@@ -16,6 +16,29 @@
 </div>
 {% endblock %}
 {% block content %}
+{% if fileinfos %}
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Files</h4></div>
+        <div class="panel-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Filename</th>
+                  <th>Size</th>
+                </tr>
+              </thead>
+            {% for filename, bytes in fileinfos %}
+                <tr>
+                    <td><a href={% url "export_file" export.pk filename %}>{{ filename }}</a></td>
+                    <td>{{ bytes|filesizeformat }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="row">
     <div class="col-md-12">
     <p>
@@ -45,11 +68,11 @@
     <p><strong>Export type:</strong> {{ export.export_type }}</p>
     <p><strong>Format:</strong> {{ export.export_format }}</p>
     <p><strong>Export segment size:</strong> {{ export.get_export_segment_size_display }}</p>
-    <p><strong>Deduplicate:</strong> {{ export.dedupe }}</p>
-    <p><strong>Item start date:</strong> {{ export.item_date_start }}</p>
-    <p><strong>Item end date:</strong> {{ export.item_date_end }}</p>
-    <p><strong>Harvest start date:</strong> {{ export.harvest_date_start }}</p>
-    <p><strong>Harvest end date:</strong> {{ export.harvest_date_end }}</p>
+    <p><strong>Deduplicate:</strong> {{ export.dedupe|yesno }}</p>
+    <p><strong>Item start date:</strong>{% if export.item_date_start %} {{ export.item_date_start }} {% endif %} {% if not export.item_date_start %}No limit set{% endif %}</p>
+    <p><strong>Item end date:</strong>{% if export.item_date_end %} {{ export.item_date_end }} {% endif %} {% if not export.item_date_end %}No limit set{% endif %}</p>
+    <p><strong>Harvest start date:</strong>{% if export.harvest_date_start %} {{ export.harvest_date_start }} {% endif %} {% if not export.harvest_date_start %}No limit set{% endif %}</p>
+    <p><strong>Harvest end date:</strong>{% if export.harvest_date_end %} {{ export.harvest_date_end }} {% endif %} {% if not export.harvest_date_end %}No limit set{% endif %}</p>
     {% if export.infos %}
         <p><strong>Informational messages:</strong><ul>
             {% for msg in export.infos %}
@@ -71,32 +94,9 @@
             {% endfor %}
         </ul></p>
     {% endif %}
-
+    <p>More information about the data dictionary <a href="http://sfm.readthedocs.io/en/latest/data_dictionary.html" target="_blank">here.</a></p>
     </div>
 </div>
-{% if fileinfos %}
-<div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading"><h4>Files</h4></div>
-        <div class="panel-body">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Filename</th>
-                  <th>Size</th>
-                </tr>
-              </thead>
-            {% for filename, bytes in fileinfos %}
-                <tr>
-                    <td><a href={% url "export_file" export.pk filename %}>{{ filename }}</a></td>
-                    <td>{{ bytes|filesizeformat }}</td>
-                </tr>
-            {% endfor %}
-            </table>
-        </div>
-    </div>
-</div>
-{% endif %}
 <div class="row subsection">
     <div class="col-md-12">
         {% include "ui/terms_snippet.html" %}
