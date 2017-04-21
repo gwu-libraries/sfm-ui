@@ -93,11 +93,11 @@ def json_text(value, name=None):
         except ValueError:
             j = value
         if isinstance(j, dict):
-            rend = render_paragraphs_dict_text(j)
+            rend = render_dict_text(j)
         elif name:
-            rend = render_paragraphs_dict_text({name: j})
+            rend = render_dict_text({name: j})
         else:
-            rend = render_value(j)
+            rend = render_value_text(j)
     return mark_safe(rend)
 
 
@@ -114,21 +114,36 @@ def json_list_text(value, name=None):
         elif name:
             rend = render_dict_text({name: j})
         else:
-            rend = render_value(j)
+            rend = render_value_text(j)
     return rend
 
 
-def render_paragraphs_dict_text(value):
+def render_value_text(value):
+    if isinstance(value, dict):
+        return render_dict_text(value)
+    elif isinstance(value, list):
+        return render_list_text(value)
+    elif value is True:
+        return "Yes"
+    elif value is False:
+        return "No"
+    else:
+        return value
+
+
+def render_list_text(value):
     rend = u""
-    for k, v in value.items():
-        rend += u"{}: {}\n".format(render_key(k), render_value(v))
+    for v in value:
+        rend += u"* {}\n".format(render_value_text(v))
     return rend
 
 
 def render_dict_text(value):
     rend = u""
     for k, v in value.items():
-        rend += u"{}: {}\n".format(render_key(k), render_value(v))
+        rend += u"{}: {}{}\n".format(render_key(k),
+                                     "\n" if isinstance(v, (dict, list)) else "",
+                                     render_value_text(v))
     return rend
 
 
