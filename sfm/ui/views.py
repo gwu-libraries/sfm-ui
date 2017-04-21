@@ -602,7 +602,7 @@ class ExportCreateView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermis
     model = Export
     form_class = ExportForm
     template_name = 'ui/export_create.html'
-    success_message = "Export requested. Check back for the status or wait for an email."
+    success_message = "Export requested. Check the Exports section for the status of your export. Large datasets may take a substantial amount of time. You will receive an email when your export is ready."
 
     def get_initial(self):
         initial = super(ExportCreateView, self).get_initial()
