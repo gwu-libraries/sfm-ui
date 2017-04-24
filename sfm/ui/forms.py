@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
 from crispy_forms.bootstrap import FormActions
 from datetimewidget.widgets import DateTimeWidget
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
@@ -983,7 +983,11 @@ class ExportForm(forms.ModelForm):
             'harvest_date_end': DATETIME_WIDGET,
         }
         labels = {
-            'dedupe': "Deduplicate"
+            'dedupe': "Deduplicate",
+            'export_segment_size': "Maximum number of items per file"
+        }
+        help_texts = {
+            'dedupe': "Remove duplicate seeds"
         }
 
     def __init__(self, *args, **kwargs):
@@ -999,8 +1003,14 @@ class ExportForm(forms.ModelForm):
                 'export_format',
                 'export_segment_size',
                 'dedupe',
+                 HTML("""
+                     <h3>Range of dates for items collected</h3>
+                 """),
                 'item_date_start',
                 'item_date_end',
+                 HTML("""
+                     <h3>Range of dates for harvests of items</h3>
+                 """),
                 'harvest_date_start',
                 'harvest_date_end'
             ),
