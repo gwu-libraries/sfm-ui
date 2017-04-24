@@ -257,7 +257,7 @@
                     <td class="col-md-1"></td>
                     {% endif %}
                     {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                    <td style ="word-break:break-word;"><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     {% endif %}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
                     <td class="col-md-4">
@@ -326,7 +326,7 @@
                     <td class="col-md-1"></td>
                     {% endif %}
                     {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                    <td style ="word-break:break-word;"><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                     {% endif %}
                     <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
                     <td class="col-md-4">
