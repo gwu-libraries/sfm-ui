@@ -24,12 +24,12 @@
                 {% for item, item_stats in collection_info.stats.items %}
                     <tr>
                         <td>{{ item }}</td>
-                        <td>{{ item_stats.yesterday|intcomma }}</td>
-                        <td>{{ item_stats.prev_day|intcomma }}</td>
-                        <td>{{ item_stats.last_7|intcomma }}</td>
-                        <td>{{ item_stats.prev_7|intcomma }}</td>
-                        <td>{{ item_stats.last_30|intcomma }}</td>
-                        <td>{{ item_stats.prev_30|intcomma }}</td>
+                        <td>{% if item_stats.yesterday|intcomma == "0" %} N/A {% else %} {{ item_stats.yesterday|intcomma }} {% endif %}</td>
+                        <td>{% if item_stats.prev_day|intcomma == "0" %}  N/A {% else %} {{ item_stats.prev_day|intcomma }}  {% endif %}</td>
+                        <td>{% if item_stats.last_7|intcomma == "0" %}    N/A {% else %} {{ item_stats.last_7|intcomma }}    {% endif %}</td>
+                        <td>{% if item_stats.prev_7|intcomma == "0" %}    N/A {% else %} {{ item_stats.prev_7|intcomma }}    {% endif %}</td>
+                        <td>{% if item_stats.last_30|intcomma == "0" %}   N/A {% else %} {{ item_stats.last_30|intcomma }}   {% endif %}</td>
+                        <td>{% if item_stats.prev_30|intcomma == "0" %}   N/A {% else %} {{ item_stats.prev_30|intcomma }}   {% endif %}</td>
                     </tr>
                 {% endfor %}
                 </table></li>
