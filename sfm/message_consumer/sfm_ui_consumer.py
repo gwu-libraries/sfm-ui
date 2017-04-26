@@ -54,6 +54,8 @@ class SfmUiConsumer(BaseConsumer):
                       json.dumps(self.message, indent=4))
             return
 
+        current_harvest_status = harvest.status
+
         # And update harvest model object
         harvest.status = self.message["status"]
         harvest.infos = self.message.get("infos", [])
@@ -126,7 +128,7 @@ class SfmUiConsumer(BaseConsumer):
         # Send email if completed and failed or has messages
         if harvest.status == Harvest.FAILURE or (
                         harvest.status in (Harvest.SUCCESS, Harvest.PAUSED) and (
-                            harvest.infos or harvest.warnings or harvest.errors)):
+                                harvest.infos or harvest.warnings or harvest.errors)):
 
             # Get emails for group members
             receiver_emails = get_email_addresses_for_collection_set(harvest.collection.collection_set,
@@ -176,6 +178,17 @@ class SfmUiConsumer(BaseConsumer):
             else:
                 log.debug("No email addresses for %s", harvest.collection.collection_set.group)
 
+        # Handle rogue streams (i.e., that didn't turn off when they should have).
+        # It's possible an extra stop will be sent, but won't do any harm.
+        if harvest.collection.is_streaming() \
+                and current_harvest_status in (Harvest.STOP_REQUESTED, Harvest.VOIDED,
+                                               Harvest.SUCCESS, Harvest.FAILURE) \
+                and harvest.status == Harvest.RUNNING:
+            log.warn('Sending an extra stop request for harvest with id %s. This may be OK or a rogue harvest.',
+                     self.message["id"])
+            # Send stop message
+            collection_stop(harvest.collection.id)
+
     @staticmethod
     def format_messages_for_mail(messages, message_type):
         mail_message = ""
@@ -224,7 +237,7 @@ class SfmUiConsumer(BaseConsumer):
             # Write README
             if os.path.exists(export.path):
                 readme_txt = create_readme_for_export(export)
-                readme_fname=self.message["id"]+"-README.txt"
+                readme_fname = self.message["id"] + "-README.txt"
                 readme_filepath = os.path.join(export.path, readme_fname)
                 log.debug("Writing export README to %s: %s", readme_filepath, readme_txt)
                 with codecs.open(readme_filepath, "w", encoding="utf-8") as f:

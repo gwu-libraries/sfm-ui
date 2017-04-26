@@ -175,6 +175,32 @@ class ConsumerTest(TestCase):
 
         mock_collection_stop.assert_called_once_with(harvest.collection.id)
 
+    @patch("message_consumer.sfm_ui_consumer.collection_stop")
+    def test_rogue_harvest(self, mock_collection_stop):
+        self.consumer.routing_key = "harvest.status.twitter.twitter_sample"
+        self.consumer.message = {
+            "id": "test:3",
+            "status": Harvest.RUNNING,
+            "date_started": "2015-07-28T11:17:36.640044",
+            "date_ended": "2015-07-28T11:17:42.539470"
+        }
+        # Trigger on_message
+        self.consumer.on_message()
+
+        # Check updated harvest model object
+        harvest = Harvest.objects.get(harvest_id="test:3")
+        self.assertEqual(Harvest.RUNNING, harvest.status)
+        self.assertTrue(harvest.collection.is_active)
+
+        # Mark the harvest as already being completed.
+        harvest.status = Harvest.SUCCESS
+        harvest.save()
+
+        # Trigger on_message
+        self.consumer.on_message()
+
+        mock_collection_stop.assert_called_once_with(harvest.collection.id)
+
     def test_on_message_ignores_bad_routing_key(self):
         self.consumer.routing_key = "xharvest.status.test.test_search"
 
