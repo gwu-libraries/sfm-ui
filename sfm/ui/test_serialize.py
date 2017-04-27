@@ -94,8 +94,6 @@ class SerializeTests(TestCase):
                                                      is_active=True)
         self.collection2_path = get_collection_path(self.collection2, sfm_data_dir=self.data_dir)
 
-
-
     def tearDown(self):
         if os.path.exists(self.data_dir):
             shutil.rmtree(self.data_dir)
