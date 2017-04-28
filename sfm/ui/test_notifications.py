@@ -1,15 +1,17 @@
 from django.test import TestCase
 from .notifications import _should_send_email, _create_email, _create_context, _create_space_email, \
-    _should_send_space_email, get_warn_queue, _create_queue_warn_email
+    _should_send_space_email, get_warn_queue, _create_queue_warn_email, _was_harvest_in_range
 from .notifications import MonitorSpace
 from .models import User, Group, CollectionSet, Credential, Collection, Harvest, HarvestStat
 import datetime
 from collections import OrderedDict
 from mock import patch
+import pytz
 
 
 class NotificationTests(TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.group1 = Group.objects.create(name="test_group1")
         self.group2 = Group.objects.create(name="test_group2")
         self.user1 = User.objects.create_user(username="test_user", email="testuser1@gwu.edu")
@@ -37,56 +39,60 @@ class NotificationTests(TestCase):
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      name="test_collection5",
                                                      harvest_options='{}', is_active=False)
-        today = datetime.date.today()
-        yesterday = today + datetime.timedelta(days=-1)
-        prev_day = today + datetime.timedelta(days=-2)
-        historical_collection = self.collection2.history.all()[0]
-        historical_credential = historical_collection.credential.history.all()[0]
+        self.today = datetime.datetime.utcnow().date()
+        self.yesterday = self.today + datetime.timedelta(days=-1)
+        self.prev_day = self.today + datetime.timedelta(days=-2)
+        self.today_dt = datetime.datetime.now(pytz.utc)
+        self.yesterday_dt = self.today_dt + datetime.timedelta(days=-1)
+        self.prev_day_dt = self.today_dt + datetime.timedelta(days=-2)
+
+        self.historical_collection = self.collection2.history.all()[0]
+        self.historical_credential = self.historical_collection.credential.history.all()[0]
 
         self.harvest1 = Harvest.objects.create(harvest_id="test_harvest1",
                                                collection=self.collection2,
-                                               historical_collection=historical_collection,
-                                               historical_credential=historical_credential)
+                                               historical_collection=self.historical_collection,
+                                               historical_credential=self.historical_credential)
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=today,
+                                   harvest_date=self.today,
                                    item="test_type1",
                                    count=100)
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=yesterday,
+                                   harvest_date=self.yesterday,
                                    item="test_type1",
                                    count=1)
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=yesterday,
+                                   harvest_date=self.yesterday,
                                    item="test_type2",
                                    count=2)
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=prev_day,
+                                   harvest_date=self.prev_day,
                                    item="test_type1",
                                    count=11)
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=prev_day,
+                                   harvest_date=self.prev_day,
                                    item="test_type2",
                                    count=12)
         # Last week
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=today + datetime.timedelta(days=-8),
+                                   harvest_date=self.today + datetime.timedelta(days=-8),
                                    item="test_type1",
                                    count=111)
 
         # Prev week
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=today + datetime.timedelta(days=-15),
+                                   harvest_date=self.today + datetime.timedelta(days=-15),
                                    item="test_type1",
                                    count=1111)
 
         # Prev month
         HarvestStat.objects.create(harvest=self.harvest1,
-                                   harvest_date=today + datetime.timedelta(days=-35),
+                                   harvest_date=self.today + datetime.timedelta(days=-35),
                                    item="test_type1",
                                    count=11111)
 
     def test_should_send_email_no_email_address(self):
-        self.assertFalse(_should_send_email(self.user_no_email, date=datetime.date.today()))
+        self.assertFalse(_should_send_email(self.user_no_email, today=datetime.date.today()))
 
     def test_should_send_email_none(self):
         self.user1.email_frequency = User.NONE
@@ -99,17 +105,17 @@ class NotificationTests(TestCase):
     def test_should_send_email_weekly(self):
         self.user1.email_frequency = User.WEEKLY
         # If it is Sunday
-        self.assertTrue(_should_send_email(self.user1, date=datetime.date(2016, 9, 4)))
-        self.assertFalse(_should_send_email(self.user1, date=datetime.date(2016, 9, 5)))
+        self.assertTrue(_should_send_email(self.user1, today=datetime.date(2016, 9, 4)))
+        self.assertFalse(_should_send_email(self.user1, today=datetime.date(2016, 9, 5)))
 
     def test_should_send_email_monthly(self):
         self.user1.email_frequency = User.MONTHLY
         # If it is the 1st
-        self.assertTrue(_should_send_email(self.user1, date=datetime.date(2016, 9, 1)))
-        self.assertFalse(_should_send_email(self.user1, date=datetime.date(2016, 9, 5)))
+        self.assertTrue(_should_send_email(self.user1, today=datetime.date(2016, 9, 1)))
+        self.assertFalse(_should_send_email(self.user1, today=datetime.date(2016, 9, 5)))
 
     def test_should_send_email_no_active_collections(self):
-        self.assertFalse(_should_send_email(self.user2, date=datetime.date.today()))
+        self.assertFalse(_should_send_email(self.user2, today=datetime.date.today()))
 
     def test_create_context(self):
         self.assertEqual(
@@ -131,10 +137,10 @@ class NotificationTests(TestCase):
                              'stats': {
                                  u'test_type2': {
                                      'prev_day': 12,
-                                     'prev_30': 0,
+                                     'prev_30': 'N/A',
                                      'last_7': 14,
                                      'yesterday': 2,
-                                     'prev_7': 0,
+                                     'prev_7': 'N/A',
                                      'last_30': 14},
                                  u'test_type1': {
                                      'prev_day': 11,
@@ -154,6 +160,148 @@ class NotificationTests(TestCase):
         self.assertTrue(msg.body.startswith("Here's an update on your harvests from Social Feed Manager "
                                             "(http://example.com/ui/)."))
         self.assertEqual([self.user1.email], msg.to)
+
+    def test_was_harvest_in_range1(self):
+        # Starts before range and ends during range
+        self.assertFalse(_was_harvest_in_range(self.prev_day, self.yesterday, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.prev_day_dt + datetime.timedelta(hours=-12),
+                               date_ended=self.prev_day_dt + datetime.timedelta(hours=12))
+        self.assertTrue(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_was_harvest_in_range2(self):
+        # Starts during range and ends after range.
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.yesterday_dt + datetime.timedelta(hours=-12),
+                               date_ended=self.yesterday_dt + datetime.timedelta(hours=12))
+        self.assertTrue(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_was_harvest_in_range3(self):
+        # Starts and ends during range
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.yesterday_dt + datetime.timedelta(hours=-18),
+                               date_ended=self.yesterday_dt + datetime.timedelta(hours=-12))
+        self.assertTrue(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_was_harvest_in_range4(self):
+        # Starts before range and ends after range
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.prev_day_dt + datetime.timedelta(hours=-12),
+                               date_ended=self.yesterday_dt + datetime.timedelta(days=1))
+        self.assertTrue(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_was_harvest_in_range5(self):
+        # Running harvest
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.RUNNING,
+                               date_started=self.prev_day_dt + datetime.timedelta(hours=12))
+        self.assertTrue(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_web_harvest_was_not_in_range(self):
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="web",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.prev_day_dt + datetime.timedelta(hours=-12),
+                               date_ended=self.prev_day_dt + datetime.timedelta(hours=12))
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday, self.collection1))
+
+    def test_was_not_in_harvest_in_range_before(self):
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.prev_day_dt + datetime.timedelta(days=-1),
+                               date_ended=self.prev_day_dt + datetime.timedelta(hours=-12))
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_was_not_in_harvest_in_range_after(self):
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.SUCCESS,
+                               date_started=self.yesterday_dt + datetime.timedelta(days=1),
+                               date_ended=self.yesterday_dt + datetime.timedelta(days=2))
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_voided_harvest_was_not_in_range(self):
+        # Voided harvest
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.VOIDED,
+                               date_started=self.prev_day_dt + datetime.timedelta(hours=12))
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+    def test_running_after_harvest_was_not_in_range(self):
+        # Running harvest that started after range
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
+
+        # Started before range start and ended during range
+        Harvest.objects.create(harvest_id="test_harvest",
+                               harvest_type="user_timeline",
+                               collection=self.collection1,
+                               historical_collection=self.historical_collection,
+                               historical_credential=self.historical_credential,
+                               status=Harvest.RUNNING,
+                               date_started=self.yesterday + datetime.timedelta(days=1))
+        self.assertFalse(_was_harvest_in_range(self.prev_day_dt, self.yesterday_dt, self.collection1))
 
 
 class SpaceNotificationTests(TestCase):
