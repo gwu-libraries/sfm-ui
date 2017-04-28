@@ -299,7 +299,7 @@ To export:
   * Harvest start date/end date allow you to limit the export based on the
     harvest dates.
 
-  * When you have the settings you want, click *Save*. You will be
+  * When you have the settings you want, click *Export*. You will be
     redirected to the export screen. When the export is complete, the files,
     along with a README file describing what was included in the export and the
     collection, will appear for you to click on and download. You will receive

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
 from crispy_forms.bootstrap import FormActions
 from datetimewidget.widgets import DateTimeWidget
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
@@ -983,7 +983,8 @@ class ExportForm(forms.ModelForm):
             'harvest_date_end': DATETIME_WIDGET,
         }
         labels = {
-            'dedupe': "Deduplicate"
+            'dedupe': "Deduplicate (remove duplicate posts)",
+            'export_segment_size': "Maximum number of items per file"
         }
 
     def __init__(self, *args, **kwargs):
@@ -999,13 +1000,19 @@ class ExportForm(forms.ModelForm):
                 'export_format',
                 'export_segment_size',
                 'dedupe',
-                'item_date_start',
-                'item_date_end',
-                'harvest_date_start',
-                'harvest_date_end'
+                Div(
+                    HTML("""<h4>Limit by item date range</h4>"""),
+                    'item_date_start',
+                    'item_date_end',
+                    css_class="panel panel-default panel-body"),
+                Div(
+                    HTML("""<h4>Limit by harvest date range</h4>"""),
+                    'harvest_date_start',
+                    'harvest_date_end',
+                    css_class="panel panel-default panel-body"),
             ),
             FormActions(
-                Submit('submit', 'Save'),
+                Submit('submit', 'Export'),
                 Button('cancel', 'Cancel',
                        onclick="window.location.href='{0}'".format(cancel_url))
             )

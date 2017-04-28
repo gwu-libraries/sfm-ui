@@ -524,16 +524,28 @@ class Seed(models.Model):
 
     def label(self):
         labels = []
-        if self.token:
+        if self.token and not self.uid:
             try:
                 j = json.loads(self.token)
                 for key, value in j.items():
                     labels.append(u"{}: {}".format(key.title(), value))
             except (AttributeError, ValueError):
-                labels.append(u"Token: {}".format(self.token))
-        if self.uid:
-            labels.append(u"Uid: {}".format(self.uid))
-        return u"; ".join(labels)
+                labels.append(u"{}".format(self.token))
+                return u"".join(labels) 
+        if self.uid and not self.token:
+            labels.append(u"{}".format(self.uid))
+            return u"".join(labels)
+        if self.uid and self.token:
+            try:
+                j = json.loads(self.token)
+                for key, value in j.items():
+                    labels.append(u"{}: {}".format(key.title(), value))
+            except (AttributeError, ValueError):
+                labels.append(u"{}".format(self.token))
+            labels.append(" (")
+            labels.append(u"{}".format(self.uid))
+            labels.append(")")
+            return u"".join(labels)
 
     def get_collection_set(self):
         return self.collection.collection_set
@@ -697,12 +709,11 @@ class Export(models.Model):
         (FAILURE, "Failure")
     )
     FORMAT_CHOICES = (
+        ("xlsx", "Excel (XLSX)"),
         ("csv", "Comma separated values (CSV)"),
         ("tsv", "Tab separated values (TSV)"),
-        ("html", "HTML"),
-        ("xlsx", "Excel (XLSX)"),
-        ("json", "JSON of limited fields"),
         ("json_full", "Full JSON"),
+        ("json", "JSON of limited fields"),
         ("dehydrate", "Text file of identifiers (dehydrate)")
     )
     SEGMENT_CHOICES = [
@@ -717,9 +728,9 @@ class Export(models.Model):
     seeds = models.ManyToManyField(Seed, blank=True)
     export_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     export_type = models.CharField(max_length=255)
-    export_format = models.CharField(max_length=10, choices=FORMAT_CHOICES, default="csv")
+    export_format = models.CharField(max_length=10, choices=FORMAT_CHOICES, default="xlsx")
     export_segment_size = models.BigIntegerField(choices=SEGMENT_CHOICES, default=250000,
-                                                 help_text="Number of items per file.", null=True, blank=True)
+                                                 null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NOT_REQUESTED)
     path = models.TextField(blank=True)
     date_requested = models.DateTimeField(blank=True, null=True)
