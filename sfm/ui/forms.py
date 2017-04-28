@@ -983,11 +983,8 @@ class ExportForm(forms.ModelForm):
             'harvest_date_end': DATETIME_WIDGET,
         }
         labels = {
-            'dedupe': "Deduplicate",
+            'dedupe': "Deduplicate (remove duplicate posts)",
             'export_segment_size': "Maximum number of items per file"
-        }
-        help_texts = {
-            'dedupe': "Remove duplicate seeds"
         }
 
     def __init__(self, *args, **kwargs):
@@ -1003,19 +1000,11 @@ class ExportForm(forms.ModelForm):
                 'export_format',
                 'export_segment_size',
                 'dedupe',
-                 HTML("""
-                     <h3>Range of dates for items collected</h3>
-                 """),
-                'item_date_start',
-                'item_date_end',
-                 HTML("""
-                     <h3>Range of dates for harvests of items</h3>
-                 """),
-                'harvest_date_start',
-                'harvest_date_end'
+                 Div(HTML("""<h4>Limit by item date range</h4>"""), 'item_date_start', 'item_date_end', css_class="panel panel-default panel-body"),
+                 Div(HTML("""<h4>Limit by harvest date range</h4>"""), 'harvest_date_start', 'harvest_date_end', css_class="panel panel-default panel-body"),
             ),
             FormActions(
-                Submit('submit', 'Save'),
+                Submit('submit', 'Export'),
                 Button('cancel', 'Cancel',
                        onclick="window.location.href='{0}'".format(cancel_url))
             )
