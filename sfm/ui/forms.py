@@ -1000,8 +1000,16 @@ class ExportForm(forms.ModelForm):
                 'export_format',
                 'export_segment_size',
                 'dedupe',
-                 Div(HTML("""<h4>Limit by item date range</h4>"""), 'item_date_start', 'item_date_end', css_class="panel panel-default panel-body"),
-                 Div(HTML("""<h4>Limit by harvest date range</h4>"""), 'harvest_date_start', 'harvest_date_end', css_class="panel panel-default panel-body"),
+                Div(
+                    HTML("""<h4>Limit by item date range</h4>"""),
+                    'item_date_start',
+                    'item_date_end',
+                    css_class="panel panel-default panel-body"),
+                Div(
+                    HTML("""<h4>Limit by harvest date range</h4>"""),
+                    'harvest_date_start',
+                    'harvest_date_end',
+                    css_class="panel panel-default panel-body"),
             ),
             FormActions(
                 Submit('submit', 'Export'),
