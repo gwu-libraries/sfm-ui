@@ -511,7 +511,7 @@ class SeedToggleActiveView(LoginRequiredMixin, RedirectView):
         # Check permissions to toggle
         check_collection_set_based_permission(seed.collection, self.request.user)
         seed.is_active = not seed.is_active
-        seed.history_note = ""
+        seed.history_note = self.request.POST.get("history_note","")
         if seed.is_active:
             messages.info(self.request, "Seed undeleted.")
         else:
