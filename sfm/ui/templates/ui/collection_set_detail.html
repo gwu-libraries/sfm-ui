@@ -30,7 +30,7 @@
         {% if collection_set.description %}
             <p><strong>Description: </strong>{{ collection_set.description }}</p>
         {% endif %}
-        <p><strong>Data collected:</strong> {{ collection_set.warcs_count }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p> 
+        <p><strong>Data collected:</strong> {{ collection_set.warcs_count|intcomma }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
         {% if collection_set.stats %}
             <p><strong>Stats:</strong><ul>
             {% for item, count in collection_set.stats.items %}

@@ -1,4 +1,5 @@
 {% load ui_extras %}
+{% load humanize %}
 <table class="table">
     <tr>
         <th>Change to</th>
@@ -23,7 +24,7 @@
     {% endfor %}
     {% if diffs|length > 3 %}
     <tr><td colspan="4">
-            <a href="{% url 'change_log' model_name item_id %}">View all {{ diffs|length }} changes</a>
+            <a href="{% url 'change_log' model_name item_id %}">View all {{ diffs|length|intcomma }} changes</a>
     </td></tr>
     {% endif %}
 </table>
