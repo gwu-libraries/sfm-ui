@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content_header %}
+
 <div class="row">
   <div class="col-md-12">
       <ol class="breadcrumb">
@@ -192,7 +193,7 @@
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h4>Seeds</h4></div>
+        <div class="panel-heading"><h4>Seeds<a type="button" style="position: relative; top: -6px" class="pull-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
         <div class="input-group"> <span class="input-group-addon">Search</span>
             <input id="filter" type="text" class="form-control">
         </div>

@@ -132,5 +132,7 @@ urlpatterns = patterns('',
 
                        url(r'^monitor/$', views.MonitorView.as_view(), name="monitor"),
 
+                       url(r'download/(?P<pk>\d+)/$', views.download_seed_list, name='download'),
+
                        )
 
