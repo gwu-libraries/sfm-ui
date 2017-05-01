@@ -29,6 +29,7 @@ from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetO
 
 import os
 import logging
+import csv
 
 log = logging.getLogger(__name__)
 
@@ -198,6 +199,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["model_name"] = "collection"
 
         context["status_choices"] = Harvest.STATUS_CHOICES
+        context["harvest_fields"] = Collection.HARVEST_FIELDS
         return context
 
 

@@ -13,7 +13,7 @@
       <ol class="breadcrumb">
           <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
           <li><a href={% url "collection_set_detail" collection.collection_set.pk %}>{{ collection.collection_set.name }}</a></li>
-	  <li class="active">{{ collection.name }}</a></li>
+	  <li class="active">{{ collection.name }}</li>
       </ol>
   </div>
 </div>
@@ -198,165 +198,39 @@
         </div>
          <div class="panel-body">
            <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active 
-                     {% if collection.active_seed_count >= 1 %}
-                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span>
-                     {% endif %}
-                  </a></li>
-                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted 
-                     {% if collection.deleted_seed_count >= 1 %}
-                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span>
-                     {% endif %}
-                  </a></li>
-                     
+              <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active
+                 {% if collection.active_seed_count >= 1 %}
+                  <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span>
+                 {% endif %}
+              </a></li>
+              <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted
+                 {% if collection.deleted_seed_count >= 1 %}
+                  <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span>
+                 {% endif %}
+              </a></li>
+
            </ul>
             <div class="tab-content">
-            <div class="tab-pane active" id="active" role="tabpanel">
-            <table class="table table-condensed table-list-search" id="ActiveTable">
-                <thead>
-                <tr>
-                    <th class="col-md-1">Link</th>
-                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <th>
-                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
-                                             Twitter accounts
-                                             {% endif %}
-                                             {% if 'twitter_filter' in collection.harvest_type %}
-                                             Filter criteria
-                                             {% endif %}
-                                             {% if 'twitter_search' in collection.harvest_type %}
-                                             Search Query
-                                             {% endif %}
-                                             {% if 'flickr_user' in collection.harvest_type %}
-                                             Flickr users
-                                             {% endif %}
-                                             {% if 'weibo_timeline' in collection.harvest_type %}
-                                             Weibo users
-                                             {% endif %}
-                    </th>
-                    {% endif %}
-                    <th>
-                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
-                                             User ID
-                                             {% endif %}
-                                             {% if 'tumblr_blog_posts' in collection.harvest_type %}
-                                             Blog name
-                                             {% endif %}
-                    </th>
-                    </th>
-                    <th class="col-md-4">Messages</th>
-                </tr>
-                </thead>
-                {% for seed in seed_list %}
-                  {% if seed.is_active %}
-                   <tbody class="searchable" id="seedsTable">
-                   <tr class="content">
-                    {% if seed.social_url %}
-                    <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
-                    {% else %}
-                    <td class="col-md-1"></td>
-                    {% endif %}
-                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
-                    {% endif %}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                    <td class="col-md-4">
-                        <ul>
-                            {% for msg in seed_infos|get_item:seed.seed_id %}
-                                <li><p class="text-info">{{ msg }}</p></li>
-                            {% endfor %}
-                            {% for msg in seed_warnings|get_item:seed.seed_id %}
-                                <li><p class="text-warning">{{ msg }}</p></li>
-                            {% endfor %}
-                            {% for msg in seed_errors|get_item:seed.seed_id %}
-                                <li><p class="text-danger">{{ msg }}</p></li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-	           </tr>
-                   </tbody>
-                  {% endif %}
-                 {% endfor %}
-                </table>
-                <a href="#" id="seeMoreActiveRecords">See all active seeds  <span class="caret"></span></a>
-                <a href="#" id="seeLessActiveRecords">See fewer active seeds  <span class="dropup"><span class="caret"></span></span></a>
-               </div>
-               <div class="tab-pane" id="deleted" role="tabpanel">
-                <table class="table table-condensed table-list-search" id="DeletedTable">
-                <thead>
-                <tr>
-                    <th class="col-md-1">Link</th>
-                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <th>
-                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
-                                             Twitter accounts
-                                             {% endif %}
-                                             {% if 'twitter_filter' in collection.harvest_type %}
-                                             Filter criteria
-                                             {% endif %}
-                                             {% if 'twitter_search' in collection.harvest_type %}
-                                             Search Query
-                                             {% endif %}
-                                             {% if 'flickr_user' in collection.harvest_type %}
-                                             Flickr users
-                                             {% endif %}
-                                             {% if 'weibo_timeline' in collection.harvest_type %}
-                                             Weibo users
-                                             {% endif %}
-                    </th>
-                    {% endif %}
-                    <th>
-                                             {% if 'twitter_user_timeline' in collection.harvest_type %}
-                                             User ID
-                                             {% endif %}
-                                             {% if 'tumblr_blog_posts' in collection.harvest_type %}
-                                             Blog name
-                                             {% endif %}
-                    </th>
-                    <th class="col-md-4">Messages</th>
-                </tr>
-                </thead>
-                 {% for seed in seed_list %}
-                  {% if not seed.is_active %}
-                   <tbody class="searchable" id="seedsTable">
-                   <tr class="content">
-                    {% if seed.social_url %}
-                    <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
-                    {% else %}
-                    <td class="col-md-1"></td>
-                    {% endif %}
-                    {% if 'tumblr_blog_posts' not in collection.harvest_type%}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
-                    {% endif %}
-                    <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                    <td class="col-md-4">
-                        <ul>
-                            {% for msg in seed_infos|get_item:seed.seed_id %}
-                                <li><p class="text-info">{{ msg }}</p></li>
-                            {% endfor %}
-                            {% for msg in seed_warnings|get_item:seed.seed_id %}
-                                <li><p class="text-warning">{{ msg }}</p></li>
-                            {% endfor %}
-                            {% for msg in seed_errors|get_item:seed.seed_id %}
-                                <li><p class="text-danger">{{ msg }}</p></li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                   </tr>
-                   </tbody>
-                 {% endif %}
-                {% endfor %}
-                </table>
-                <a href="#" id="seeMoreDeletedRecords">See all deleted seeds  <span class="caret"></span></a>
-                <a href="#" id="seeLessDeletedRecords">See fewer deleted seeds  <span class="dropup"><span class="caret"></span></span></a>
+                <div class="tab-pane active" id="active" role="tabpanel">
+                    <table class="table table-condensed table-list-search" id="ActiveTable">
+                        {% include "ui/seeds_list_snippet.html" with active=True %}
+                    </table>
+                    <a href="#" id="seeMoreActiveRecords">See all active seeds  <span class="caret"></span></a>
+                    <a href="#" id="seeLessActiveRecords">See fewer active seeds  <span class="dropup"><span class="caret"></span></span></a>
                 </div>
-            <div>
-
+                <div class="tab-pane" id="deleted" role="tabpanel">
+                    <table class="table table-condensed table-list-search" id="DeletedTable">
+                        {% include "ui/seeds_list_snippet.html" with active=False %}
+                    </table>
+                    <a href="#" id="seeMoreDeletedRecords">See all deleted seeds  <span class="caret"></span></a>
+                    <a href="#" id="seeLessDeletedRecords">See fewer deleted seeds  <span class="dropup"><span class="caret"></span></span></a>
+                </div>
+            </div>
 
             <div style="padding-top: 15px">
-            <a class="btn btn-primary" value="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
+            <a class="btn btn-primary" id="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
-                <a class="btn btn-primary" value="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+                <a class="btn btn-primary" id="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_active or not can_edit %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
             {% endif %}
             </div>
         </div>
@@ -364,6 +238,7 @@
   </div>
 </div>
 {% endif %}
+
 {% if harvests %}
 <div class="row">
   <div class="col-md-12">
