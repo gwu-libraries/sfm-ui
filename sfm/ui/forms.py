@@ -591,13 +591,13 @@ class SeedWeiboSearchForm(BaseSeedForm):
         fields = ['token']
         fields.extend(BaseSeedForm.Meta.fields)
         labels = dict(BaseSeedForm.Meta.labels)
-        labels["token"] = "Query"
+        labels["token"] = "Topic"
         help_texts = dict(BaseSeedForm.Meta.help_texts)
         help_texts["token"] = u'See <a href="http://open.weibo.com/wiki/2/search/topics" target="_blank">' \
-                              u'API documents</a> for writing a query. ' \
+                              u'API documents</a> for query Weibo related on a topic. ' \
                               u'Example: "科技".'
         widgets = dict(BaseSeedForm.Meta.widgets)
-        widgets["token"] = forms.Textarea(attrs={'rows': 4})
+        widgets["token"] = forms.TextInput(attrs={'size': '40'})
 
     def __init__(self, *args, **kwargs):
         super(SeedWeiboSearchForm, self).__init__(*args, **kwargs)

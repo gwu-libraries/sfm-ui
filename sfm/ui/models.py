@@ -324,6 +324,15 @@ class Collection(models.Model):
         WEIBO_TIMELINE: "Posts from a user and the user's friends",
         TUMBLR_BLOG_POSTS: 'Blog posts from specific blogs'
     }
+    HARVEST_FIELDS = {
+        TWITTER_SEARCH: {"link": None, "token": "Search query", "uid": None},
+        TWITTER_FILTER: {"link": None, "token": "Filter criteria", "uid": None},
+        TWITTER_USER_TIMELINE: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
+        TWITTER_SAMPLE: None,
+        FLICKR_USER: {"link": "Link", "token": "Flickr users", "uid": "NSID"},
+        WEIBO_TIMELINE: None,
+        TUMBLR_BLOG_POSTS: {"link": "Link", "token": None, "uid": "Blog name"}
+    }
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
         TWITTER_SEARCH: 1,
@@ -500,18 +509,18 @@ class Seed(models.Model):
         unique_together = ("collection", "uid", "token")
 
     def social_url(self):
-        twitter_user = 'twitter_user_timeline'
-        flickr_user = 'flickr_user'
-        tumblr_blog = 'tumblr_blog_posts'
         twitter_user_url = "https://twitter.com/"
         flickr_user_url = 'https://www.flickr.com/photos/'
         tumblr_blog_url = '.tumblr.com'
-        if twitter_user in self.collection.harvest_type and self.token:
+        weibo_topic_url = 'http://huati.weibo.com/k/'
+        if self.collection.harvest_type == Collection.TWITTER_USER_TIMELINE and self.token:
             return twitter_user_url + self.token
-        if flickr_user in self.collection.harvest_type and self.token:
+        elif self.collection.harvest_type == Collection.FLICKR_USER and self.token:
             return flickr_user_url + self.token
-        if tumblr_blog in self.collection.harvest_type and self.uid:
+        elif self.collection.harvest_type == Collection.TUMBLR_BLOG_POSTS and self.uid:
             return 'https://' + self.uid + tumblr_blog_url
+        elif self.collection.harvest_type == Collection.WEIBO_SEARCH and self.token:
+            return weibo_topic_url + self.token
 
     def __str__(self):
         return '<Seed %s "%s">' % (self.id, self.token)

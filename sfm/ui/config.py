@@ -47,6 +47,7 @@ class UIConfig(AppConfig):
             log.debug("Adding weibo search collection")
             Collection.HARVEST_CHOICES.append(('weibo_search', 'Weibo search'))
             Collection.HARVEST_DESCRIPTION['weibo_search'] = 'Recent Weibo posts matching a query'
+            Collection.HARVEST_FIELDS['weibo_search'] = {"link": "Link", "token": "Topics", "uid": None}
 
         if settings.RUN_SCHEDULER:
             log.debug("Running scheduler")
