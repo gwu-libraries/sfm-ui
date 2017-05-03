@@ -21,50 +21,27 @@
            <h1>{{ seed.collection.get_harvest_type_display }}
                {% if not seed.is_active %}
                <span class="text-warning">(Deleted)</span>
-               {% endif %}
-               <a class="btn btn-primary btn-aligned" href="{% url "seed_update" seed.pk %}" {% if not can_edit %}disabled="disabled"{% endif %} >
-                   <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a></h1>
-       </div>
+               {% endif %} </h1>
+        </div>
    </div>
-{% endblock %}
-{% block content %}
-    <div class="row subsection">
-       <div class="col-md-8">
-            {{ seed.token|json:"Token" }}
-            {% if seed.uid %}
-                <p><strong>Uid:</strong> {{ seed.uid }}</p>
-            {% endif %}
-            {% if seed.social_url %}
-                <p><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
-            {% endif %}
-            <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
-            </p>
-       </div>
-       <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <p><strong>Id:</strong> {{ seed.seed_id }}</p>
-                    <p><strong>Added:</strong> {{ seed.date_added }}</p>
-                 </div>
-            </div>
-       </div>
-    </div>
-
-    <div class="row">
-     <div class="col-md-12">
-       <form method="post" id = "toggleForm" action={% url "seed_toggle_active" seed.pk %}>
-          {% csrf_token %}
-          {% if seed.is_active %}
-             <div class="btn-group">
-               <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                 </span>Delete <span class="caret"></span>
-               </button><br />
-             <ul class="dropdown-menu">
-               <li onclick="$('#toggleForm').submit();"> <a href="#">Delete</a></li>
-               <li data-toggle="modal" data-target="#addNoteDeleteModal"> <a href="#">Add note and delete</a></li>
-             </ul>
-           </div>
-           <div class="modal fade" id="addNoteDeleteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteDeleteModal">
+   <div class="row">
+       <div class="col-md-12">
+          <a class="btn btn-primary btn-aligned" href="{% url "seed_update" seed.pk %}" {% if not can_edit %}disabled="disabled"{% endif %} >
+             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a>
+          <div class="btn-group">
+             <form method="post" id = "toggleForm" action={% url "seed_toggle_active" seed.pk %}>
+               {% csrf_token %}
+               {% if seed.is_active %}
+                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   </span>Delete <span class="caret"></span>
+                 </button><br />
+                 <ul class="dropdown-menu">
+                   <li onclick="$('#toggleForm').submit();"> <a href="#">Delete</a></li>
+                   <li data-toggle="modal" data-target="#addNoteDeleteModal"> <a href="#">Add note and delete</a></li>
+                 </ul>
+             </form>
+          </div>
+          <div class="modal fade" id="addNoteDeleteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteDeleteModal">
              <div class="modal-dialog" role="document">
                  <form method="post" action={% url "seed_toggle_active" seed.pk %}>
                      {% csrf_token %}
@@ -94,13 +71,36 @@
                     </form>
                 </div>
              </div>
-             {% else %}
-             <button type="submit" class="btn btn-default">Undelete</button>
+          {% else %}
+             <button type="submit" class="btn btn-default">Undelete</button> 
+           </div>
           {% endif %}
-       </form>
-    </div>
+     </div>
    </div>
- 
+{% endblock %}
+{% block content %}
+    <div class="row subsection">
+       <div class="col-md-8">
+            {{ seed.token|json:"Token" }}
+            {% if seed.uid %}
+                <p><strong>Uid:</strong> {{ seed.uid }}</p>
+            {% endif %}
+            {% if seed.social_url %}
+                <p><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
+            {% endif %}
+            <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
+            </p>
+       </div>
+       <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p><strong>Id:</strong> {{ seed.seed_id }}</p>
+                    <p><strong>Added:</strong> {{ seed.date_added }}</p>
+                 </div>
+            </div>
+       </div>
+    </div>
+
    <div class="row">
        <div class="col-md-12">
           <h4>Change log</h4>

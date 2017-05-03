@@ -12,6 +12,10 @@ body {
     margin-bottom: 120px;
 }
 
+.alert {
+    margin-top: 10px;
+}
+
 .navbar-default .navbar-nav>li>a,p {
     color: #333;
 }
@@ -99,6 +103,10 @@ body {
 }
 .subsection {
     padding-top: 30px;
+}
+
+.text-warning {
+    color: #666;
 }
 .tooltip > .tooltip-inner {
     min-width: 200px;
