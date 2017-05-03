@@ -87,9 +87,13 @@
       {% block content_header %}
       {% endblock content_header %}
       {% if messages %}
-          {% for message in messages %}
-          <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
-          {% endfor %}
+          <div class="row">
+             <div class="col-md-12">
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %} 
+             </div>
+          </div>
       {% endif %}
       {% block content %}
         <p></p>
