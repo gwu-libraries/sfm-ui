@@ -214,7 +214,9 @@ class RecordSerializer:
     def _historical_seeds_iter(collection):
         for seed in collection.seeds.all():
             for historical_seed in seed.history.all():
-                yield historical_seed
+                # For undetermined reasons, sometimes get historical seeds that are not part of collection.
+                if historical_seed.instance.collection == collection:
+                    yield historical_seed
 
     def _serialize_harvests(self, collection, records_path):
         # Harvests
