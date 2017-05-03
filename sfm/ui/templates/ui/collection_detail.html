@@ -155,7 +155,7 @@
         {% if collection.description %}
             <p><strong>Description: </strong>{{ collection.description }}</p>
         {% endif %}
-        <p><strong>Data collected:</strong> {{ collection.warcs_count }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
+        <p><strong>Data collected:</strong> {{ collection.warcs_count|intcomma }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
            {% if collection.stats %}
               <p><strong>Stats:</strong><ul>
               {% for item, count in collection.stats.items %}
@@ -198,16 +198,16 @@
         </div>
          <div class="panel-body">
            <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active
-                 {% if collection.active_seed_count >= 1 %}
-                  <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count}}</span>
-                 {% endif %}
-              </a></li>
-              <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted
-                 {% if collection.deleted_seed_count >= 1 %}
-                  <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count }}</span>
-                 {% endif %}
-              </a></li>
+                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active 
+                     {% if collection.active_seed_count >= 1 %}
+                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count|intcomma }}</span>
+                     {% endif %}
+                  </a></li>
+                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted 
+                     {% if collection.deleted_seed_count >= 1 %}
+                      <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count|intcomma }}</span>
+                     {% endif %}
+                  </a></li>
 
            </ul>
             <div class="tab-content">
@@ -243,7 +243,7 @@
 <div class="row">
   <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h4>Harvests ({{ harvest_count }})</h4></div>
+        <div class="panel-heading"><h4>Harvests ({{ harvest_count|intcomma }})</h4></div>
         <!--
             <div class="input-group"> <span class="input-group-addon">Search harvest type</span>
             <input id="filterHarvest" type="text" class="form-control">
@@ -282,14 +282,14 @@
                     <td>{{ harvest.get_status_display }}</td>
                     {% join_stats harvest.stats harvest.status as joined_stats %}
                     <td>{{ joined_stats }}</td>
-                    <td>{% if harvest.message_count %}{{ harvest.message_count }} message{{harvest.message_count|pluralize}}{% endif %}</td>
+                    <td>{% if harvest.message_count %}{{ harvest.message_count|intcomma }} message{{harvest.message_count|pluralize}}{% endif %}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
         {% if harvest_count > harvests|length %}
-        <div class="panel-footer"><a href="{% url "collection_harvests" collection.pk %}">View all {{ harvest_count }} harvests</a></div>
+        <div class="panel-footer"><a href="{% url "collection_harvests" collection.pk %}">View all {{ harvest_count|intcomma }} harvests</a></div>
         {% endif %}
     </div>
   </div>
