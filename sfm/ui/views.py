@@ -30,6 +30,7 @@ from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetO
 import os
 import logging
 import csv
+import codecs
 
 log = logging.getLogger(__name__)
 
@@ -197,11 +198,29 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
                                                     harvest__historical_collection__id=self.object.id).exists()
         context["item_id"] = self.object.id
         context["model_name"] = "collection"
-
         context["status_choices"] = Harvest.STATUS_CHOICES
         context["harvest_fields"] = Collection.HARVEST_FIELDS
         return context
 
+def download_seed_list(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="seedlist.csv"'
+    response.write("\xEF\xBB\xBF")
+    writer = csv.writer(response, delimiter = ',')
+    writer.writerow([
+        u"Token",
+        u"Uid",
+        u"Link",
+    ])
+    for seed in collection.seeds.all():
+        if seed.is_active:
+            writer.writerow([
+                seed.token.encode("utf-8"),
+                seed.uid.encode("utf-8"),
+                u"".join(seed.social_url()).encode('utf-8'),
+            ])
+    return response
 
 def _add_duplicate_seed_warnings(collection, seed_warnings):
     for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(
