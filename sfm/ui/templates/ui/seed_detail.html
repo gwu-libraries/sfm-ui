@@ -80,8 +80,8 @@
 {% endblock %}
 {% block content %}
     <div class="row subsection">
-       <div class="col-md-8">
-            {{ seed.token|json:"Token" }}
+       <div class="col-md-8 longseed" >
+            <p>{{ seed.token|json:"Token" }}</p>
             {% if seed.uid %}
                 <p><strong>Uid:</strong> {{ seed.uid }}</p>
             {% endif %}
@@ -89,7 +89,6 @@
                 <p><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
             {% endif %}
             <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
-            </p>
        </div>
        <div class="col-md-4">
             <div class="panel panel-default">
