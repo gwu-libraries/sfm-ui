@@ -6,6 +6,7 @@ from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
 import django.db.models.options as options
 from django.conf import settings
+from django.db.models import F, Func, Value
 
 from .utils import collection_path as get_collection_path, collection_set_path as get_collection_set_path
 
@@ -458,6 +459,35 @@ def delete_collection_receiver(sender, **kwargs):
     if os.path.exists(collection_path):
         log.info("Deleting %s", collection_path)
         shutil.rmtree(collection_path)
+
+
+def move_collection_receiver(sender, **kwargs):
+    """
+    A post_save receiver that is triggered when Collection model objects are changed.
+    """
+    if kwargs["created"]:
+        return
+    collection = kwargs["instance"]
+    prev_collection = collection.history.all()[1]
+    if collection.collection_set != prev_collection.collection_set:
+        src_collection_path = get_collection_path(prev_collection)
+        dest_collection_path = get_collection_path(collection)
+        if not os.path.exists(src_collection_path):
+            log.warn("Not moving collection directory since %s does not exist", src_collection_path)
+            return
+        if os.path.exists(dest_collection_path):
+            log.error("Cannot move collection directory %s since %s already exists")
+            return
+        log.info("Moving %s to %s", src_collection_path, dest_collection_path)
+        shutil.move(src_collection_path, dest_collection_path)
+        # Update WARC model objects
+        Warc.objects.filter(harvest__collection=collection).update(
+            path=Func(
+                F('path'),
+                Value(src_collection_path), Value(dest_collection_path),
+                function='replace',
+            )
+        )
 
 
 def _item_counts_to_dict(item_counts):

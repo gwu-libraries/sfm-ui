@@ -19,7 +19,7 @@ class UIConfig(AppConfig):
         from notifications import send_user_harvest_emails, send_free_space_emails, send_queue_warn_emails
         from serialize import serialize_all
         from models import delete_collection_set_receiver, delete_collection_receiver, delete_warc_receiver, \
-            delete_export_receiver
+            delete_export_receiver, move_collection_receiver
 
         if settings.SCHEDULE_HARVESTS:
             log.debug("Setting receivers for collections.")
@@ -90,3 +90,7 @@ class UIConfig(AppConfig):
         post_delete.connect(delete_collection_receiver, sender=Collection)
         post_delete.connect(delete_warc_receiver, sender=Warc)
         post_delete.connect(delete_export_receiver, sender=Export)
+
+        # Moving collection sets
+        log.debug("Setting collection receivers")
+        post_save.connect(move_collection_receiver, sender=Collection)

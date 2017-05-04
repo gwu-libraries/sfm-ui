@@ -3,7 +3,6 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-from django.http import HttpResponse
 from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView
 from django.core.exceptions import PermissionDenied
@@ -13,6 +12,7 @@ from django.apps import apps
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 
@@ -204,7 +204,8 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
 
 
 def _add_duplicate_seed_warnings(collection, seed_warnings):
-    for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(count__gt=1):
+    for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(
+            count__gt=1):
         for seed in Seed.objects.filter(token=result["token"]):
             if seed.seed_id not in seed_warnings:
                 seed_warnings[seed.seed_id] = []
@@ -237,11 +238,13 @@ def _get_harvest_type_name(harvest_type):
             return harvest_type_name
 
 
-def _get_credential_list(collection_set_pk, harvest_type):
+def _get_credential_list(collection_set_pk, harvest_type, extra_credential=None):
     collection_set = CollectionSet.objects.get(pk=collection_set_pk)
     platform = Collection.HARVEST_TYPES_TO_PLATFORM[harvest_type]
-    return Credential.objects.filter(platform=platform, user=User.objects.filter(
-        groups=collection_set.group)).order_by('name')
+    q = Q(platform=platform, user=User.objects.filter(groups=collection_set.group))
+    if extra_credential:
+        q = q | Q(pk=extra_credential.pk)
+    return Credential.objects.filter(q).order_by('name')
 
 
 def _get_credential_use_map(credentials, harvest_type):
@@ -256,7 +259,7 @@ def _get_credential_use_map(credentials, harvest_type):
                 else:
                     inactive_collections += 1
             if active_collections == 0 and inactive_collections == 0:
-                credential_use_map[credential.id] = ("","")
+                credential_use_map[credential.id] = ("", "")
             else:
                 credential_use_map[credential.id] = ("warning",
                                                      "Credential is in use by {0} collections that are turned on and "
@@ -316,14 +319,16 @@ class CollectionUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissio
         context["collection_set"] = self.object.collection_set
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
-        credentials = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
+        credentials = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type,
+                                           self.object.credential)
         context["credential_use_map"] = _get_credential_use_map(credentials, self.object.harvest_type)
         return context
 
     def get_form_kwargs(self):
         kwargs = super(CollectionUpdateView, self).get_form_kwargs()
         kwargs["coll"] = self.object.collection_set.pk
-        kwargs['credential_list'] = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type)
+        kwargs['credential_list'] = _get_credential_list(self.object.collection_set.pk, self.object.harvest_type,
+                                                         self.object.credential)
         return kwargs
 
     def get_form_class(self):
