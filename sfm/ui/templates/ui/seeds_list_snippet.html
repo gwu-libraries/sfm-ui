@@ -24,7 +24,7 @@
                 <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
                 {% endif %}
                 {% if field.token %}
-                <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
+                <td class="longname"><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
                 {% endif %}
                 {% if field.uid %}
                 <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
