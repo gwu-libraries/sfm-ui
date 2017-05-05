@@ -602,6 +602,7 @@ class Harvest(models.Model):
     RUNNING = "running"
     VOIDED = "voided"
     STOP_REQUESTED = "stop requested"
+    STOPPING = "stopping"
     SKIPPED = "skipped"
     PAUSED = "paused"
     STATUS_CHOICES = (
@@ -610,6 +611,7 @@ class Harvest(models.Model):
         (FAILURE, "Completed with errors"),
         (RUNNING, "Running"),
         (STOP_REQUESTED, "Stop requested"),
+        (STOPPING, "Stopping"),
         (VOIDED, "Voided"),
         (SKIPPED, "Skipped"),
         (PAUSED, "Paused")
