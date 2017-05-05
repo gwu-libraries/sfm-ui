@@ -68,10 +68,10 @@ Change Log
             </tr>
             {% for diff in diffs_page %}
             <tr>
-                <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
-                <td>{{ diff.date }}</td>
+                <td style ="word-wrap: break-word;min-width: 400px;max-width: 400px;">{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
+                <td style ="word-wrap: break-word;min-width: 150px;max-width: 150px;">{{ diff.date }}</td>
                 <td>{{ diff.user|default_if_none:"system" }}</td>
-                <td>
+                <td style ="word-wrap: break-word;min-width: 400px;max-width: 400px;">
                     {% for key, values in diff.fields.iteritems %}
                     {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}" <br/>
                     {% endfor %}
