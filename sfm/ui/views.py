@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse
+from django.http import StreamingHttpResponse, Http404, HttpResponseRedirect, JsonResponse, HttpResponse
 from django.views.generic import TemplateView
 from django.core.exceptions import PermissionDenied
 from django.views.generic.base import RedirectView, View
