@@ -12,7 +12,7 @@
         <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
         <td>{{ diff.date }}</td>
         <td>{{ diff.user|default_if_none:"system" }}</td>
-        <td>
+        <td class="longname">
             {% for key, values in diff.fields.iteritems %}
                 {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}" <br/>
             {% endfor %}
