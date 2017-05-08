@@ -1,18 +1,19 @@
 import logging
-import datetime
+from datetime import date, datetime, timedelta, time
 from collections import OrderedDict
 from smtplib import SMTPException
 from subprocess import check_output, CalledProcessError
+import pytz
 
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
-from .models import User, CollectionSet, Collection, HarvestStat
+from .models import User, CollectionSet, Collection, HarvestStat, Harvest
 from .sched import next_run_time
 from .utils import get_admin_email_addresses
 import ui.monitoring
@@ -238,18 +239,18 @@ def send_user_harvest_emails(users=None):
             log.debug("Not sending email to %s", user.username)
 
 
-def _should_send_email(user, date=None):
-    if date is None:
-        date = datetime.date.today()
+def _should_send_email(user, today=None):
+    if today is None:
+        today = date.today()
     send_email = False
     has_active_collections = Collection.objects.filter(collection_set__group__in=user.groups.all(),
                                                        is_active=True).exists()
     if user.email and has_active_collections:
         if user.email_frequency == User.DAILY:
             send_email = True
-        elif user.email_frequency == User.MONTHLY and date.day == 1:
+        elif user.email_frequency == User.MONTHLY and today.day == 1:
             send_email = True
-        elif user.email_frequency == User.WEEKLY and date.weekday() == 6:
+        elif user.email_frequency == User.WEEKLY and today.weekday() == 6:
             send_email = True
     return send_email
 
@@ -265,19 +266,40 @@ def _create_email(user, collection_set_cache):
 
 
 def _create_context(user, collection_set_cache):
-    today = datetime.date.today()
-    yesterday = today + datetime.timedelta(days=-1)
-    prev_day = today + datetime.timedelta(days=-2)
-    # Greater than this date
-    last_7_start = yesterday + datetime.timedelta(days=-7)
-    prev_7_start = yesterday + datetime.timedelta(days=-14)
-    last_30_start = yesterday + datetime.timedelta(days=-30)
-    prev_30_start = yesterday + datetime.timedelta(days=-60)
-    # Less than or equal to this date
-    last_7_end = yesterday
-    prev_7_end = last_7_start
-    last_30_end = yesterday
-    prev_30_end = last_30_start
+    # Start and end are datetimes. The range is inclusive.
+    today = datetime.utcnow().date()
+
+    # Yesterday
+    yesterday = today + timedelta(days=-1)
+    yesterday_start = datetime.combine(yesterday,
+                                       time(time.min.hour, time.min.minute, time.min.second, tzinfo=pytz.utc))
+    yesterday_end = datetime.combine(yesterday, time(time.max.hour, time.max.minute, time.max.second, tzinfo=pytz.utc))
+
+    # Previous day
+    prev_day_start = yesterday_start + timedelta(days=-1)
+    prev_day_end = yesterday_end + timedelta(days=-1)
+
+    last_7_start = yesterday_start + timedelta(days=-6)
+    last_7_end = yesterday_end
+
+    prev_7_start = last_7_start + timedelta(days=-7)
+    prev_7_end = yesterday_end + timedelta(days=-7)
+
+    last_30_start = yesterday_start + timedelta(days=-29)
+    last_30_end = yesterday_end
+
+    prev_30_start = last_30_start + timedelta(days=-30)
+    prev_30_end = last_30_end + timedelta(days=-30)
+
+    time_ranges = (
+        ('yesterday', yesterday_start, yesterday_end),
+        ('prev_day', prev_day_start, prev_day_end),
+        ('last_7', last_7_start, last_7_end),
+        ('prev_7', prev_7_start, prev_7_end),
+        ('last_30', last_30_start, last_30_end),
+        ('prev_30', prev_30_start, prev_30_end)
+    )
+
     c = {
         "url": _create_url(reverse('home'))
     }
@@ -296,34 +318,11 @@ def _create_context(user, collection_set_cache):
                 if collection.is_active:
                     collection_info['next_run_time'] = next_run_time(collection.id)
                     stats = {}
-                    # Yesterday
-                    _add_stats(stats, 'yesterday', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                              harvest_date=yesterday).values(
-                        'item').annotate(count=Sum('count')))
-                    # Prev day
-                    _add_stats(stats, 'prev_day', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                             harvest_date=prev_day).values(
-                        'item').annotate(count=Sum('count')))
-                    # Last 7
-                    _add_stats(stats, 'last_7', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                           harvest_date__gt=last_7_start,
-                                                                           harvest_date__lte=last_7_end).values(
-                        'item').annotate(count=Sum('count')))
-                    # Prev 7
-                    _add_stats(stats, 'prev_7', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                           harvest_date__gt=prev_7_start,
-                                                                           harvest_date__lte=prev_7_end).values(
-                        'item').annotate(count=Sum('count')))
-                    # Last 30
-                    _add_stats(stats, 'last_30', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                            harvest_date__gt=last_30_start,
-                                                                            harvest_date__lte=last_30_end).values(
-                        'item').annotate(count=Sum('count')))
-                    # Prev 7
-                    _add_stats(stats, 'prev_30', HarvestStat.objects.filter(harvest__collection=collection,
-                                                                            harvest_date__gt=prev_30_start,
-                                                                            harvest_date__lte=prev_30_end).values(
-                        'item').annotate(count=Sum('count')))
+                    for name, range_start, range_end in time_ranges:
+                        _add_stats(stats, name, collection, range_start, range_end)
+                    for name, range_start, range_end in time_ranges:
+                        _update_stats_for_na(stats, name, collection, range_start, range_end)
+
                     collection_info['stats'] = stats
                 collections[collection] = collection_info
 
@@ -337,7 +336,11 @@ def _create_context(user, collection_set_cache):
     return c
 
 
-def _add_stats(stats, name, result_set):
+def _add_stats(stats, name, collection, range_start, range_end):
+    result_set = HarvestStat.objects.filter(harvest__collection=collection,
+                                            harvest_date__gte=range_start.date(),
+                                            harvest_date__lte=range_end.date()).values(
+        'item').annotate(count=Sum('count'))
     for result in result_set:
         item = result['item']
         if item not in stats:
@@ -350,6 +353,35 @@ def _add_stats(stats, name, result_set):
                 'prev_30': 0
             }
         stats[item][name] = result['count']
+
+
+def _update_stats_for_na(stats, name, collection, range_start, range_end):
+    for item, item_stats in stats.items():
+        if item != "web resource" and item_stats[name] == 0 and not _was_harvest_in_range(range_start, range_end,
+                                                                                          collection):
+            item_stats[name] = "N/A"
+
+
+def _was_harvest_in_range(range_start, range_end, collection):
+    # Harvests that have start and end (i.e., completed)
+    if Harvest.objects.filter(Q(collection=collection)
+                                      & Q(date_started__isnull=False)
+                                      & Q(date_ended__isnull=False)
+                                      & (Q(date_started__range=(range_start, range_end))
+                                             | Q(date_ended__range=(range_start, range_end))
+                                             | (Q(date_started__lt=range_start) & Q(date_ended__gt=range_end)))
+                                      & ~Q(harvest_type='web')).exists():
+        return True
+    # Harvests that are still running
+    # Using status=RUNNING to try to filter out some
+    if Harvest.objects.filter(Q(collection=collection)
+                                      & Q(status=Harvest.RUNNING)
+                                      & Q(date_started__isnull=False)
+                                      & Q(date_ended__isnull=True)
+                                      & Q(date_started__range=(range_start, range_end))
+                                      & ~Q(harvest_type='web')).exists():
+        return True
+    return False
 
 
 def _create_url(path):

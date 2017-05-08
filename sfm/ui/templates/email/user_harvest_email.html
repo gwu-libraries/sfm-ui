@@ -8,8 +8,8 @@
     {% for collection, collection_info in collection_set_info.collections.items %}
         <p><a href="{{ collection_info.url }}">{{ collection.name }}</a>: {% if collection.is_active %}Turned on{% else %}Turned off{% endif %}
         <ul>
-            {% if collection_info.next_run_time %}<li>Next harvest: {{ collection_info.next_run_time }}</li>{% endif %}
-            {% if collection.last_harvest %}<li>Last harvest: {{ collection.last_harvest.date_requested }}</li>{% endif %}
+            {% if collection_info.next_run_time %}<li>Next harvest: {{ collection_info.next_run_time }} ({{ collection_info.next_run_time|naturaltime }})</li>{% endif %}
+            {% if collection.last_harvest %}<li>Last harvest: {{ collection.last_harvest.date_requested }} ({{ collection.last_harvest.date_requested|naturaltime }})</li>{% endif %}
             {% if collection_info.stats %}<li>Stats:
                 <table>
                     <tr>
