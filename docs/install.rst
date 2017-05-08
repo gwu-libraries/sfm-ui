@@ -93,8 +93,8 @@ statements change *master* to the correct version, e.g., *1.7.0*::
     # - echo TZ=America/New_York >> .env
     # VOLUME CONFIGURATION
     # Don't change these.
-     - echo DATA_VOLUME=/sfm-data:/sfm-data
-     - echo PROCESSING_VOLUME=/sfm-processing:/sfm-processing
+     - echo DATA_VOLUME=/sfm-data:/sfm-data >> .env
+     - echo PROCESSING_VOLUME=/sfm-processing:/sfm-processing >> .env
     # SFM UI CONFIGURATION
     # Don't change this.
      - echo SFM_HOSTNAME=`curl http://169.254.169.254/latest/meta-data/public-hostname` >> .env
