@@ -253,7 +253,7 @@ Weibo search
 --------------
 
 Collects recent weibos that match a search query using the `Weibo
-search_topics API<http://open.weibo.com/wiki/2/search/topics>`_.
+search_topics API <http://open.weibo.com/wiki/2/search/topics>`_.
 The Weibo API does not return a complete search of all Weibo posts. 
 It only returns the most recent 200 posts matching a single keyword
 when found between pairs of '#' in Weibo posts (for example: `#keyword#` or
