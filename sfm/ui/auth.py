@@ -58,7 +58,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         form.instance.user = request.user
         try:
             credential = form.save()
-        except IntegrityError:
+        except (IntegrityError, ValueError):
             messages.warning(request, "Credential already exists.")
             raise ImmediateHttpResponse(HttpResponseRedirect(reverse('credential_list')))
 

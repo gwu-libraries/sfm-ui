@@ -822,6 +822,11 @@ class BaseCredentialForm(forms.ModelForm):
         error_messages = {}
 
     def __init__(self, *args, **kwargs):
+        # for createView and updateView
+        self.view_type = kwargs.pop("view_type", None)
+        # for updateView check the updates for the original token
+        self.entry = kwargs.pop("entry", None)
+
         super(BaseCredentialForm, self).__init__(*args, **kwargs)
 
         # check whether it's a create view and offer different help text
@@ -847,8 +852,14 @@ class BaseCredentialForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(BaseCredentialForm, self).clean()
         token = json.dumps(self.to_token())
-        if Credential.objects.filter(token=token).exists():
-            raise ValidationError('This is a duplicate of an existing credential')
+        # for the update view
+        if self.view_type == Credential.UPDATE_VIEW:
+            # check updated Credential exist in db if changes
+            if token != self.entry.token and Credential.objects.filter(token=token).exists():
+                raise ValidationError(u'This is a duplicate of an existing credential!')
+        else:
+            if Credential.objects.filter(token=token).exists():
+                raise ValidationError(u'This is a duplicate of an existing credential!')
         return cleaned_data
 
 

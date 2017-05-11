@@ -103,6 +103,8 @@ class CredentialHistoryModel(models.Model):
 
 
 class Credential(models.Model):
+    UPDATE_VIEW = "updateView"
+    CREATE_VIEW = "createView"
     TWITTER = "twitter"
     FLICKR = "flickr"
     WEIBO = "weibo"
