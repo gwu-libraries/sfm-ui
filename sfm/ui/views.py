@@ -202,12 +202,15 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["harvest_fields"] = Collection.HARVEST_FIELDS
         return context
 
+
 def download_seed_list(request, pk):
     collection = get_object_or_404(Collection, pk=pk)
+    # Check permissions to download
+    check_collection_set_based_permission(collection, request.user, allow_staff=True)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="seedlist.csv"'
     response.write("\xEF\xBB\xBF")
-    writer = csv.writer(response, delimiter = ',')
+    writer = csv.writer(response, delimiter=',')
     writer.writerow([
         u"Token",
         u"Uid",
@@ -221,6 +224,7 @@ def download_seed_list(request, pk):
                 u"".join(seed.social_url()).encode('utf-8'),
             ])
     return response
+
 
 def _add_duplicate_seed_warnings(collection, seed_warnings):
     for result in collection.seeds.exclude(token__exact="").values("token").annotate(count=Count("id")).filter(
@@ -537,7 +541,7 @@ class SeedToggleActiveView(LoginRequiredMixin, RedirectView):
         # Check permissions to toggle
         check_collection_set_based_permission(seed.collection, self.request.user)
         seed.is_active = not seed.is_active
-        seed.history_note = self.request.POST.get("history_note","")
+        seed.history_note = self.request.POST.get("history_note", "")
         if seed.is_active:
             messages.info(self.request, "Seed undeleted.")
         else:
