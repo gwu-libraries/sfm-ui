@@ -93,6 +93,11 @@ def collection_harvest(collection_pk):
 
         routing_key = "harvest.start.{}.{}".format(historical_credential.platform,
                                                    harvest_type)
+        # Determine if .priority should be appended
+        if collection.harvest_type in settings.PRIORITY_HARVEST_TYPES \
+                and collection.schedule_minutes \
+                and collection.schedule_minutes <= settings.PRIORITY_SCHEDULE_MINUTES:
+            routing_key += ".priority"
 
         # Skip this harvest if last harvest not completed or voided
         last_harvest = collection.last_harvest()
@@ -174,7 +179,7 @@ def collection_stop(collection_id):
     routing_key = "harvest.stop.{}.{}".format(harvest.historical_credential.platform, harvest.harvest_type)
 
     log.info("Sending %s stop message to %s with id %s for collection %s", harvest.harvest_type, routing_key,
-              harvest.harvest_id, collection_id)
+             harvest.harvest_id, collection_id)
 
     # Publish message to queue via rabbit worker
     RabbitWorker().send_message(message, routing_key)
