@@ -38,7 +38,7 @@ class UserAdmin(AuthUserAdmin):
     fieldsets = AuthUserAdmin.fieldsets + (
         (None, {'fields': ('email_frequency', 'harvest_notifications',)}),
     )
-
+    list_display=['username','email','first_name','last_name','date_joined','is_staff']
 
 class Credential(a.ModelAdmin):
     fields = ('credential_id', 'user', 'platform', 'name', 'token', 'is_active', 'date_added',
