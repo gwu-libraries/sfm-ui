@@ -3,10 +3,10 @@ layout: article
 permalink: /posts/2017-05-18-twitter-policy-change
 title: "Implications of changes in Twitter’s Developer Policy"
 author: justin_littman 
-excerpt: "On June 18, Twitter made changes to its Developer Policy that has significant impacts for researchers and archivists. The goal of this blog post is to describe the change and its implications."
+excerpt: "On May 18, Twitter made changes to its Developer Policy that has significant impacts for researchers and archivists. The goal of this blog post is to describe the change and its implications."
 ---
 
-Because of the prominent role that Twitter plays in the social, political, and cultural discourse of contemporary society, activity on Twitter has increasingly become the subject of research across a wide array of disciplines and the focus of collecting by archival organizations concerned with preserving the historical record. On June 17 Twitter announced a changed in their [Developer Policy](https://dev.twitter.com/overview/terms/agreement-and-policy) to go in effect the next day that significantly impacts both of those activities. The goal of this blog post is to describe the change and its implications.
+Because of the prominent role that Twitter plays in the social, political, and cultural discourse of contemporary society, activity on Twitter has increasingly become the subject of research across a wide array of disciplines and the focus of collecting by archival organizations concerned with preserving the historical record. On May 17 Twitter announced a changed in their [Developer Policy](https://dev.twitter.com/overview/terms/agreement-and-policy) to go in effect the next day that significantly impacts both of those activities. The goal of this blog post is to describe the change and its implications.
 
 For both research and archival purposes, the primary mechanism for collecting Twitter data are [Twitter’s APIs]( https://dev.twitter.com/overview/api). Twitter’s APIs support the efficient collection of large numbers of tweets in a format that is amenable to computational analysis and archiving. Collecting Twitter data is governed by the technical affordances of the API and the Developer Policy.
 
@@ -22,7 +22,7 @@ Overall, this collection contains 280 million tweets. As has been noted elsewher
 
 The implications of the technical affordances of Twitter’s APIs is that both archival organizations and researchers have the need to share Twitter datasets. For archival organizations it is the only mechanism to acquire a Twitter datasets that it didn’t originally collect, to complete a collecting with "holes," or to compare collections. (Collecting Twitter data by archival organizations is an emerging activity. See the [DocNow catalog](http://www.docnow.io/catalog/). Similarly, for quality research, that research must be reproducible. In addition to documenting the research methodology and sharing any code used for analysis, reproducible research requires access to the dataset, which means that dataset must be shared between researchers.
 
-Ideally, researchers and archivists would just be able to exchange Twitter datasets. However, Twitter’s Developer Policy limits the sharing of Twitter datasets. Prior to June 18, in section F (Be a Good Partner to Twitter), this policy stated:
+Ideally, researchers and archivists would just be able to exchange Twitter datasets. However, Twitter’s Developer Policy limits the sharing of Twitter datasets. Prior to May 18, in section F (Be a Good Partner to Twitter), this policy stated:
 
 > 2. If you provide Content to third parties, including downloadable datasets of Content or an API that returns Content, you will only distribute or allow download of Tweet IDs and/or User IDs.
 
@@ -34,7 +34,7 @@ Thus, researchers and archivists were required to share datasets of tweet ids, r
 
 In conformance with this policy, researchers and archivists posted datasets of tweet ids on data repositories and Github. Here’s our [Women’s March collection]( https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/5ZVMOR) on Harvard’s Dataverse and the [tweet ids]( http://dfreelon.org/2017/01/03/beyond-the-hashtags-twitter-data/) that support the seminal research paper, "[Beyond the Hashtags: #Ferguson, #Blacklivesmatter, and the Online Struggle for Offline Justice](http://cmsimpact.org/resource/beyond-hashtags-ferguson-blacklivesmatter-online-struggle-offline-justice/)".
 
-The policy that went into effect on June 18 significantly limits this:
+The policy that went into effect on May 18 significantly limits this:
 
 > 2. If you provide Content to third parties, including downloadable datasets of Content or an API that returns Content, you will only distribute or allow download of Tweet IDs, Direct Message IDs, and/or User IDs.
 
