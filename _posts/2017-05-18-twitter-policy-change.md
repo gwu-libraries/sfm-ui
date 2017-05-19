@@ -6,6 +6,8 @@ author: justin_littman
 excerpt: "On May 18, Twitter announced changes to its Developer Policy that has significant impacts for researchers and archivists. The goal of this blog post is to describe the change and its implications."
 ---
 
+**Clarification**: I'm terrible with dates. Earlier versions of this post had incorrect information on when this was announced and when it goes into effect. This version is correct.
+
 Because of the prominent role that Twitter plays in the social, political, and cultural discourse of contemporary society, activity on Twitter has increasingly become the subject of research across a wide array of disciplines and the focus of collecting by archival organizations concerned with preserving the historical record. On May 17 Twitter announced a changed in their [Developer Policy](https://dev.twitter.com/overview/terms/agreement-and-policy) to go in effect on June 18 that significantly impacts both of those activities. The goal of this blog post is to describe the change and its implications.
 
 For both research and archival purposes, the primary mechanism for collecting Twitter data are [Twitter’s APIs]( https://dev.twitter.com/overview/api). Twitter’s APIs support the efficient collection of large numbers of tweets in a format that is amenable to computational analysis and archiving. Collecting Twitter data is governed by the technical affordances of the API and the Developer Policy.
