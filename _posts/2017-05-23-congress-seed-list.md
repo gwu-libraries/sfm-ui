@@ -46,4 +46,4 @@ There are also four seats in the House of Representatives that are vacant at the
 
 Notably, many members of congress have additional Twitter handles that are not posted on the website, such as an account that is controlled directly by the member rather than by the member’s staff, or accounts that are run by the member’s campaign.
 
-If you find any corrections or have any thoughts on this collection, [contact]() or [tweet]() us.
+If you find any corrections or have any thoughts on this collection, [contact](https://gwu-libraries.github.io/sfm-ui/contact) or [tweet](http://twitter.com/SocialFeedMgr) us.
