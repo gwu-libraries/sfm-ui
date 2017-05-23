@@ -45,7 +45,7 @@ class SerializeTests(TestCase):
                                                      name="test_collection1",
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      credential=credential1,
-                                                     is_active=True)
+                                                     is_on=True)
         # Now change to credential2
         self.collection1.credential = self.credential2
         self.collection1.save()
@@ -91,7 +91,7 @@ class SerializeTests(TestCase):
                                                      name="test_collection2",
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      credential=credential1,
-                                                     is_active=True)
+                                                     is_on=True)
         self.collection2_path = get_collection_path(self.collection2, sfm_data_dir=self.data_dir)
 
     def tearDown(self):
@@ -99,7 +99,7 @@ class SerializeTests(TestCase):
             shutil.rmtree(self.data_dir)
 
     def test_serialize(self):
-        self.assertTrue(self.collection1.is_active)
+        self.assertTrue(self.collection1.is_on)
 
         serializer = serialize.RecordSerializer(data_dir=self.data_dir)
         serializer.serialize_collection_set(self.collection_set)
@@ -239,7 +239,7 @@ class SerializeTests(TestCase):
 
         # Collection turned off
         collection = Collection.objects.get_by_natural_key(self.collection1.collection_id)
-        self.assertFalse(collection.is_active)
+        self.assertFalse(collection.is_on)
 
         # User2 is inactive
         self.assertFalse(User.objects.get(username="test_user2").is_active)

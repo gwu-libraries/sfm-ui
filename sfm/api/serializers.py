@@ -11,4 +11,4 @@ class WarcSerializer(HyperlinkedModelSerializer):
 class CollectionSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Collection
-        fields = ('collection_id', 'harvest_type', 'name', 'is_active')
+        fields = ('collection_id', 'harvest_type', 'name', 'is_on')

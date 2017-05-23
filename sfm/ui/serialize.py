@@ -450,9 +450,9 @@ class RecordDeserializer:
 
             # Turn off collection
             collection = Collection.objects.get_by_natural_key(collection_id)
-            if collection.is_active:
+            if collection.is_on:
                 log.debug("Turning off collection")
-                collection.is_active = False
+                collection.is_on = False
                 collection.history_note = "Turned off as part of import of this collection."
                 collection.save()
             # Add history note for import

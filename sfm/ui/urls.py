@@ -38,7 +38,11 @@ urlpatterns = patterns('',
                            views.CollectionUpdateView.as_view(),
                            name="collection_update"),
 
-                       url(r'^collections/(?P<pk>\d+)/toggle/$',
+                       url(r'^collections/(?P<pk>\d+)/toggle_on/$',
+                           views.CollectionToggleOnView.as_view(),
+                           name="collection_toggle_on"),
+
+                       url(r'^collections/(?P<pk>\d+)/toggle_active/$',
                            views.CollectionToggleActiveView.as_view(),
                            name="collection_toggle_active"),
 

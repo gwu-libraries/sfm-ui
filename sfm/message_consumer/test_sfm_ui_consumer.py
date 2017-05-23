@@ -23,8 +23,8 @@ class ConsumerTest(TestCase):
                                                harvest_options=json.dumps({}))
         stream_collection = Collection.objects.create(collection_set=collection_set, credential=credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_stream_collection",
-                                               harvest_options=json.dumps({}), is_active=True)
-        self.assertTrue(stream_collection.is_active)
+                                               harvest_options=json.dumps({}), is_on=True)
+        self.assertTrue(stream_collection.is_on)
         Seed.objects.create(collection=collection, uid="131866249@N02", seed_id='1')
         Seed.objects.create(collection=collection, token="library_of_congress", seed_id='2')
 
@@ -171,7 +171,7 @@ class ConsumerTest(TestCase):
         # Check updated harvest model object
         harvest = Harvest.objects.get(harvest_id="test:3")
         self.assertEqual(Harvest.FAILURE, harvest.status)
-        self.assertFalse(harvest.collection.is_active)
+        self.assertFalse(harvest.collection.is_on)
 
         mock_collection_stop.assert_called_once_with(harvest.collection.id)
 
@@ -190,7 +190,7 @@ class ConsumerTest(TestCase):
         # Check updated harvest model object
         harvest = Harvest.objects.get(harvest_id="test:3")
         self.assertEqual(Harvest.RUNNING, harvest.status)
-        self.assertTrue(harvest.collection.is_active)
+        self.assertTrue(harvest.collection.is_on)
 
         # Mark the harvest as already being completed.
         harvest.status = Harvest.SUCCESS

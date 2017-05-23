@@ -254,6 +254,12 @@ class CollectionSet(models.Model):
     def get_collection_set(self):
         return self
 
+    def is_active(self):
+        """
+        Returns True is has any active collections
+        """
+        return Collection.objects.filter(collection_set=self).filter(is_active=True).exists()
+
 
 def delete_collection_set_receiver(sender, **kwargs):
     """
@@ -359,7 +365,8 @@ class Collection(models.Model):
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255, verbose_name='Collection name')
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=False)
+    is_on = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule", null=True)
     harvest_options = models.TextField(blank=True)
@@ -375,8 +382,8 @@ class Collection(models.Model):
 
     class Meta:
         diff_fields = (
-            "collection_set", "credential", "harvest_type", "name", "description", "is_active", "schedule_minutes",
-            "harvest_options", "end_date")
+            "collection_set", "credential", "harvest_type", "name", "description", "is_on", "is_active",
+            "schedule_minutes", "harvest_options", "end_date")
 
     def __str__(self):
         return '<Collection %s "%s">' % (self.id, self.name)

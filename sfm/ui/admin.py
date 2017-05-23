@@ -80,23 +80,23 @@ class HistoricalCollectionSet(a.ModelAdmin):
 
 class Collection(a.ModelAdmin):
     fields = ('collection_id', 'collection_set', 'credential', 'harvest_type',
-              'name', 'description', 'is_active', 'schedule_minutes',
+              'name', 'description', 'is_on', 'is_active', 'schedule_minutes',
               'harvest_options', 'date_added', 'end_date', 'history_note')
     list_display = ['id', 'collection_id', 'name', 'collection_set', 'harvest_type',
-                    'is_active', 'date_added']
+                    'is_on', 'is_active', 'date_added']
     list_filter = ['collection_set__name', 'credential', 'harvest_type',
-                   'is_active', 'date_added']
+                   'is_on', 'is_active', 'date_added']
     search_fields = ['collection_id', 'name']
 
 
 class HistoricalCollection(a.ModelAdmin):
     fields = ('history_user', 'history_date', 'history_note', 'collection_set',
-              'credential', 'harvest_type', 'name', 'description', 'is_active',
+              'credential', 'harvest_type', 'name', 'description', 'is_on', 'is_active',
               'schedule_minutes', 'harvest_options', 'date_added', 'end_date')
     list_display = ['collection_id', 'name', 'collection_set', 'harvest_type',
-                    'description', 'is_active', 'date_added']
+                    'description', 'is_on', 'is_active', 'date_added']
     list_filter = ['collection_set__name', 'credential', 'harvest_type',
-                   'is_active', 'date_added']
+                   'is_on', 'is_active', 'date_added']
     search_fields = ['collection_id', 'name']
 
 

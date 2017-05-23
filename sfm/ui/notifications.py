@@ -244,7 +244,7 @@ def _should_send_email(user, today=None):
         today = date.today()
     send_email = False
     has_active_collections = Collection.objects.filter(collection_set__group__in=user.groups.all(),
-                                                       is_active=True).exists()
+                                                       is_on=True).exists()
     if user.email and has_active_collections:
         if user.email_frequency == User.DAILY:
             send_email = True
@@ -305,17 +305,19 @@ def _create_context(user, collection_set_cache):
     }
     # Ordered list of collection sets
     collection_sets = OrderedDict()
-    for collection_set in CollectionSet.objects.filter(group__in=user.groups.all()).order_by('name'):
+    for collection_set in CollectionSet.objects.filter(group__in=user.groups.all()).filter(
+            collections__is_active=True).order_by('name'):
         # Using a cache to avoid regenerating the data repeatedly.
         if collection_set in collection_set_cache:
             collections = collection_set_cache[collection_set]
         else:
             collections = OrderedDict()
-            for collection in Collection.objects.filter(collection_set=collection_set).order_by('name'):
+            for collection in Collection.objects.filter(collection_set=collection_set).filter(is_active=True).order_by(
+                    'name'):
                 collection_info = {
                     "url": _create_url(reverse('collection_detail', args=(collection.id,)))
                 }
-                if collection.is_active:
+                if collection.is_on:
                     collection_info['next_run_time'] = next_run_time(collection.id)
                     stats = {}
                     for name, range_start, range_end in time_ranges:
