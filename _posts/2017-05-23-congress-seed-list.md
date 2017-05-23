@@ -1,6 +1,6 @@
 ---
 layout: article
-permalink: /posts/2017-05-17-congress-seed-list
+permalink: /posts/2017-05-23-congress-seed-list
 title: "A List of Twitter Handles for Members of Congress"
 author: yonah_bromberg_gaber
 excerpt: "We collect tweets from almost every member of Congress, and we provide the list of handles here."
