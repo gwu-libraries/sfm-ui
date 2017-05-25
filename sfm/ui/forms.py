@@ -562,6 +562,7 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
 
     def clean_token(self):
         token_val = clean_token(self.cleaned_data.get("token"))
+        token_val=token_val.split(" ")[0]
         # check the format
         if token_val and token_val.isdigit():
             raise ValidationError('Screen name may not be numeric.', code='invalid')
