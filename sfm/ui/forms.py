@@ -388,6 +388,7 @@ class CollectionWeiboSearchForm(BaseCollectionForm):
         super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
 
+
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
@@ -562,7 +563,7 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
 
     def clean_token(self):
         token_val = clean_token(self.cleaned_data.get("token"))
-        token_val=token_val.split(" ")[0]
+        token_val = token_val.split(" ")[0]
         # check the format
         if token_val and token_val.isdigit():
             raise ValidationError('Screen name may not be numeric.', code='invalid')
@@ -777,20 +778,22 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
         seed_type = self.cleaned_data.get("seeds_type")
         tokens = self.cleaned_data.get("tokens")
         splittoken = ''.join(tokens).splitlines()
-        numtoken, strtoken = [], []
+        numtoken, strtoken, finaltokens = [], [], []
         for t in splittoken:
             clean_t = clean_token(t)
+            clean_t = clean_t.split(" ")[0]
             if clean_t and clean_t.isdigit():
                 numtoken.append(clean_t)
             elif clean_t and not clean_t.isdigit():
                 strtoken.append(clean_t)
+            finaltokens.append(clean_t+"\n")
         if seed_type == 'token' and numtoken:
             raise ValidationError(
                 'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')
         elif seed_type == 'uid' and strtoken:
             raise ValidationError(
                 'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
-        return tokens
+        return ''.join(finaltokens)
 
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
