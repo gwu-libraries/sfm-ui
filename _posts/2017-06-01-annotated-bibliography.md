@@ -14,7 +14,7 @@ considered before collecting or providing access to collections of social media.
 Seemantani Sharma, a recent graduate of George Washington University's Law
 School, conducted legal and policy research as background for this project.
 
-This resource, ["Legal and Ethical Issues of Social Media Collecting: Annotated Bibliography"](/resources/annotated-bibliography), represents a part of her work with the Social Feed Manager project
+This resource, ["Legal and Ethical Issues of Social Media Collecting: Annotated Bibliography"]({{ site.github.url }}/resources/annotated-bibliography), represents a part of her work with the Social Feed Manager project
 team. This bibliography provides a resource for those interested in using social
 media as a research tool or for cultural heritage institutions interested in
 creating collections of social media for use by future researchers. The aim of
