@@ -16,6 +16,7 @@ Guidelines and Resources on Social Media Archiving
 * [API-based Social Media Collecting as a Form of Web Archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf): Article in International Journal on Digital Libraries, Special Issue on Web Archiving 
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
 * [Using Social Media Data: Articles and resources on ethics]({{ site.github.url }}/resources/ethics)
+* [Legal and Ethical Issues of Social Media Collecting: Annotated Bibliography]({{ site.github.url }}/resources/annotated-bibliography)
 
 Presentations
 --------------------
