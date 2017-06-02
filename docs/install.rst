@@ -149,6 +149,34 @@ Note the following:
 * To learn more about configuring EC2 instances with user data, see the `AWS user guide <http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html>`_.
 
 
+.. _laptop-local-installation:
+
+-------------------------------------
+ Laptop or desktop local installation
+-------------------------------------
+
+Installing locally on a laptop or desktop is only recommended for experimentation and not for any sustained usage. 
+
+1. Installing locally requires Docker. See :ref:`docker-installing`.
+
+2. Launch the Docker software. Once it is running, you will see a little whale icon in your task or applications bar. 
+
+3. If it is not already installed on your computer, install git from https://git-scm.com/. Be sure to download the version appropriate to your operating system.
+
+4. Create a dedicated folder on your computer for the Social Feed Manager software.
+
+5. Open a Terminal session (in Linux/Mac) or the command prompt in Windows. Follow step 1 in the local installation instructions above.
+
+6. Set configuration variables by editing the file ``.env``, using a text editor of your choice. These variables are described at :ref:`install-configuration`. Key variables that must be set for the application to be usable include the following:
+* ``SFM_HOSTNAME`` and ``SFM_PORT``. By setting these to "localhost" and "8080" respectively, the user interface will be available at http://localhost/ on your computer.
+* ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``. Once the email variables are set correctly, SFM will email your reminders and password resets, as well as other notifications. If you are running SFM locally, you may use the credentials for a gmail or other account, but it is recommended that you create an account just for this applications, not use your personal settings since anyone with access to the server will be able to read your password in clear text.
+* ``DATA_VOLUME`` and ``PROCESSING_VOLUME``. SFM's default settings will save data inside the docker containers, where it is not accessible to you via the usual file system. If you would like direct access to the data, it can be saved on the usual file system by using a host volume as described in :ref:`install-configuration`. For example: ``DATA_VOLUME=/sfm-data:/sfm-data`` will set the storage location to the folder ``\sfm-data`` on the root of your local file system, whereas ``DATA_VOLUME=/sfm-data`` will set the sfm-data folder inside the docker containers, where it is accessible only through the docker commands for managing data in containers.
+
+7. Launch the application using the command ``docker-compose up -d``.
+
+One the application is running, it will be available at http://localhost/ at whatever port is specified in the configuration (.env) file.  So long as Docker and the application remain running and an internet connection is live, the application will run harvests as scheduled in the user interface and will be available at localhost. The application can be stopped gracefully from the terminal at any time, with the command ``docker-compose stop``.
+
+
 .. _install-configuration:
 
 ---------------
