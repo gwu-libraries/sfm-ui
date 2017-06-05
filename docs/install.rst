@@ -168,8 +168,10 @@ Installing locally on a laptop or desktop is only recommended for experimentatio
 5. Open a Terminal session (in Linux/Mac) or the command prompt in Windows. Follow step 1 in the local installation instructions above.
 
 6. Set configuration variables by editing the file ``.env``, using a text editor of your choice. These variables are described at :ref:`install-configuration`. Key variables that must be set for the application to be usable include the following:
+
 * ``SFM_HOSTNAME`` and ``SFM_PORT``. By setting these to "localhost" and "8080" respectively, the user interface will be available at http://localhost/ on your computer.
-* ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``. Once the email variables are set correctly, SFM will email your reminders and password resets, as well as other notifications. If you are running SFM locally, you may use the credentials for a gmail or other account, but it is recommended that you create an account just for this applications, not use your personal settings since anyone with access to the server will be able to read your password in clear text.
+
+* ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``. Once the email variables are set correctly, SFM will email your reminders and password resets, as well as other notifications. Although you may use the credentials for a gmail or other account, it is recommended that you create an account just for this application. Do not use your personal settings since anyone with access to the server will be able to read your password in clear text.
 * ``DATA_VOLUME`` and ``PROCESSING_VOLUME``. SFM's default settings will save data inside the docker containers, where it is not accessible to you via the usual file system. If you would like direct access to the data, it can be saved on the usual file system by using a host volume as described in :ref:`install-configuration`. For example: ``DATA_VOLUME=/sfm-data:/sfm-data`` will set the storage location to the folder ``\sfm-data`` on the root of your local file system, whereas ``DATA_VOLUME=/sfm-data`` will set the sfm-data folder inside the docker containers, where it is accessible only through the docker commands for managing data in containers.
 
 7. Launch the application using the command ``docker-compose up -d``.
