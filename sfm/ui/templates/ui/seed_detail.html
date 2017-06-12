@@ -12,33 +12,35 @@
                 <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
                 <li><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></li>
                 <li><a href={% url "collection_detail" seed.collection.pk %}>{{ seed.collection.name }}</a></li>
-                <li class="active">{{ seed.collection.get_harvest_type_display }} seed</a></li>
+                <li class="active">{{ seed.collection.get_harvest_type_display }} seed</li>
             </ol>
         </div>
     </div>
    <div class="row">
        <div class="col-md-12">
            <h1>{{ seed.collection.get_harvest_type_display }}
-               {% if not seed.is_active %}
-               <span class="text-warning">(Deleted)</span>
-               {% endif %} </h1>
+               {% if not seed.is_active %}<span class="text-warning">(Deleted)</span>{% endif %}
+           </h1>
         </div>
    </div>
    <div class="row">
        <div class="col-md-12">
-          <a class="btn btn-primary btn-aligned" href="{% url "seed_update" seed.pk %}" {% if not can_edit %}disabled="disabled"{% endif %} >
+          <a class="btn btn-primary" href="{% url "seed_update" seed.pk %}" {% if not can_edit %}disabled="disabled"{% endif %} >
              <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a>
           <div class="btn-group">
              <form method="post" id = "toggleForm" action={% url "seed_toggle_active" seed.pk %}>
                {% csrf_token %}
                {% if seed.is_active %}
-                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                   </span>Delete <span class="caret"></span>
+                 <button {% if not can_edit %}disabled="disabled"{% endif %} type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   Delete <span class="caret"></span>
                  </button><br />
                  <ul class="dropdown-menu">
                    <li onclick="$('#toggleForm').submit();"> <a href="#">Delete</a></li>
                    <li data-toggle="modal" data-target="#addNoteDeleteModal"> <a href="#">Add note and delete</a></li>
                  </ul>
+               {% else %}
+                   <button {% if not can_edit %}disabled="disabled"{% endif %} type="submit" class="btn btn-default">Undelete</button>
+               {% endif %}
              </form>
           </div>
           <div class="modal fade" id="addNoteDeleteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteDeleteModal">
@@ -52,29 +54,26 @@
                              <h4 class="modal-title" id="addNoteDeleteModalLabel">Add note and delete</h4>
                          </div>
                          <div class="modal-body">
-                             <div id="div_id_history_note" class="form-group"><label for="id_history_note" class="control-label ">
+                             <div id="div_id_history_note" class="form-group">
+                                 <label for="id_history_note" class="control-label ">
                                  Change Note
-                             </label>
+                                </label>
                                 <div class="controls ">
                                     <textarea class="textarea form-control" cols="40" id="id_history_note" name="history_note" rows="4"></textarea>
                                     <p id="hint_id_history_note" class="help-block">Explain why you are deleting the seed.</p>
                                 </div>
                              </div>
-                          </div>
-                          <div class="modal-footer">
+                         </div>
+                         <div class="modal-footer">
                              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                              <button type="submit" class="btn btn-danger">
                                  <span aria-hidden="true"></span> Delete
                              </button>
-                          </div>
-                        </div>
-                    </form>
-                </div>
+                         </div>
+                     </div>
+                 </form>
              </div>
-          {% else %}
-             <button type="submit" class="btn btn-default">Undelete</button> 
-           </div>
-          {% endif %}
+          </div>
      </div>
    </div>
 {% endblock %}
@@ -86,10 +85,9 @@
                 <p><strong>Uid:</strong> {{ seed.uid }}</p>
             {% endif %}
             {% if seed.social_url %}
-                <p><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
+                <p title="{{ seed.social_url }}"><strong>Link:</strong><a target="_blank" href="{{ seed.social_url }}"> {{ seed.social_url }}</a></p>
             {% endif %}
             <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
-            </p>
        </div>
        <div class="col-md-4">
             <div class="panel panel-default">

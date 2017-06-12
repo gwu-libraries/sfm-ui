@@ -116,16 +116,11 @@ body {
     top: 35%;
 }
 
-
-.longname{
-    word-wrap: break-word;
-    min-width: 400px;
-    max-width: 400px;
-}
-
 .longseed{
     word-wrap: break-word;
-    min-width: 770px;
-    max-width: 770px;
 }
 
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
