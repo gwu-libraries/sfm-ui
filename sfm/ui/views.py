@@ -617,6 +617,11 @@ class CredentialCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'ui/credential_create.html'
     success_message = "New credential added."
 
+    def get_form_kwargs(self):
+        kwargs = super(CredentialCreateView, self).get_form_kwargs()
+        kwargs["view_type"] = Credential.CREATE_VIEW
+        return kwargs
+
     def get_form_class(self):
         class_name = "Credential{}Form".format(self.kwargs["platform"].title())
         return getattr(forms, class_name)
@@ -661,6 +666,12 @@ class CredentialUpdateView(LoginRequiredMixin, UserOrSuperuserPermissionMixin, U
     model = Credential
     template_name = 'ui/credential_update.html'
     initial = {'history_note': ''}
+
+    def get_form_kwargs(self):
+        kwargs = super(CredentialUpdateView, self).get_form_kwargs()
+        kwargs["view_type"] = Credential.UPDATE_VIEW
+        kwargs["entry"] = self.get_object()
+        return kwargs
 
     def get_form_class(self):
         class_name = "Credential{}Form".format(self.object.platform.title())
