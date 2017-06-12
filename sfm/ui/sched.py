@@ -57,18 +57,18 @@ def toggle_collection_inactive(collection_id):
         log.error("Toggling collection %s to inactive failed because collection does not exist", collection_id)
         return
     log.debug("Toggling collection %s to inactive and clearing end date.", collection_id)
-    collection.is_active = False
+    collection.is_on = False
     collection.end_date = None
     collection.history_note = "Turning off since reached end date or one-time harvest."
     collection.save()
 
 
-def schedule_harvest(collection_pk, is_active, schedule_minutes, start_date=None, end_date=None):
+def schedule_harvest(collection_pk, is_on, schedule_minutes, start_date=None, end_date=None):
     assert schedule_minutes
 
     unschedule_harvest(collection_pk)
-    log.debug("Collection %s is active = %s", collection_pk, is_active)
-    if is_active:
+    log.debug("Collection %s is on = %s", collection_pk, is_on)
+    if is_on:
         name = "Harvest ({}) for collection {}".format(schedule_minutes, collection_pk)
         log.debug("Scheduling job %s", name)
         sched.add_job(collection_harvest,
@@ -93,11 +93,11 @@ def schedule_harvest(collection_pk, is_active, schedule_minutes, start_date=None
                           run_date=end_date)
 
 
-def schedule_stream_harvest(collection_pk, is_active, start_date=None, end_date=None, last_harvest_status=None):
+def schedule_stream_harvest(collection_pk, is_on, start_date=None, end_date=None, last_harvest_status=None):
     unschedule_harvest(collection_pk)
 
-    log.debug("Collection %s is active = %s", collection_pk, is_active)
-    if is_active:
+    log.debug("Collection %s is active = %s", collection_pk, is_on)
+    if is_on:
         name = "Harvest for collection {}".format(collection_pk)
         log.debug("Scheduling job %s", name)
         sched.add_job(collection_harvest,
@@ -128,12 +128,12 @@ def schedule_harvest_receiver(sender, **kwargs):
     if diff_field_changed(collection):
         if collection.is_streaming():
             last_harvest = collection.last_harvest()
-            schedule_stream_harvest(collection.id, collection.is_active,
+            schedule_stream_harvest(collection.id, collection.is_on,
                                     start_date=datetime.datetime.now() + datetime.timedelta(seconds=15),
                                     end_date=collection.end_date or None,
                                     last_harvest_status=last_harvest.status if last_harvest else None)
         else:
-            schedule_harvest(collection.id, collection.is_active, collection.schedule_minutes,
+            schedule_harvest(collection.id, collection.is_on, collection.schedule_minutes,
                              start_date=datetime.datetime.now() + datetime.timedelta(seconds=15),
                              end_date=collection.end_date or None)
     else:

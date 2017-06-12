@@ -22,23 +22,28 @@ class NotificationTests(TestCase):
         self.collection_set1 = CollectionSet.objects.create(group=self.group1, name="ztest_collection_set1")
         self.collection_set2 = CollectionSet.objects.create(group=self.group1, name="atest_collection_set2")
         self.collection_set4 = CollectionSet.objects.create(group=self.group2, name="test_collection_set4")
+        self.collection_set5 = CollectionSet.objects.create(group=self.group1, name="test_collection_set5")
         self.credential = Credential.objects.create(user=self.user1, platform="test_platform", token='{}')
         self.collection1 = Collection.objects.create(collection_set=self.collection_set1, credential=self.credential,
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      name="ztest_collection1",
-                                                     harvest_options='{}', is_active=False)
+                                                     harvest_options='{}', is_on=False)
         self.collection2 = Collection.objects.create(collection_set=self.collection_set1, credential=self.credential,
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      name="atest_collection2",
-                                                     harvest_options='{}', is_active=True)
+                                                     harvest_options='{}', is_on=True)
         self.collection3 = Collection.objects.create(collection_set=self.collection_set2, credential=self.credential,
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      name="test_collection3",
-                                                     harvest_options='{}', is_active=True)
+                                                     harvest_options='{}', is_on=True)
         self.collection4 = Collection.objects.create(collection_set=self.collection_set4, credential=self.credential,
                                                      harvest_type=Collection.TWITTER_USER_TIMELINE,
                                                      name="test_collection5",
-                                                     harvest_options='{}', is_active=False)
+                                                     harvest_options='{}', is_on=False)
+        self.collection5 = Collection.objects.create(collection_set=self.collection_set5, credential=self.credential,
+                                                     harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                     name="test_collection5",
+                                                     harvest_options='{}', is_on=False, is_active=False)
         self.today = datetime.datetime.utcnow().date()
         self.yesterday = self.today + datetime.timedelta(days=-1)
         self.prev_day = self.today + datetime.timedelta(days=-2)

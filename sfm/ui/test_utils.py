@@ -55,7 +55,7 @@ class DiffTests(TestCase):
 
     def test_diff_field_changed(self):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                         harvest_type="test_type", name="test_collection", is_active=True,
+                                         harvest_type="test_type", name="test_collection", is_on=True,
                                          schedule_minutes=60)
         self.assertTrue(diff_field_changed(collection))
         collection.harvest_type = "foo"

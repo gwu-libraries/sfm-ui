@@ -30,7 +30,6 @@ from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetO
 import os
 import logging
 import csv
-import codecs
 
 log = logging.getLogger(__name__)
 
@@ -45,14 +44,25 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(CollectionSetListView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser or self.request.user.is_staff:
-            context['collection_set_list_n'] = CollectionSet.objects.exclude(
-                group__in=self.request.user.groups.all()).annotate(
-                num_collections=Count('collections')).order_by('name')
+            context['other_active_collection_sets'], context['other_inactive_collection_sets'] = split_collection_sets(
+                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
+                    num_collections=Count('collections')).order_by('name'))
 
-        context['collection_set_list'] = CollectionSet.objects.filter(
-            group__in=self.request.user.groups.all()).annotate(
-            num_collections=Count('collections')).order_by('name')
+        context['active_collection_sets'], context['inactive_collection_sets'] = split_collection_sets(
+            CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
+                num_collections=Count('collections')).order_by('name'))
         return context
+
+
+def split_collection_sets(collection_sets):
+    active_collection_sets = []
+    inactive_collection_sets = []
+    for collection_set in collection_sets:
+        if collection_set.is_active():
+            active_collection_sets.append(collection_set)
+        else:
+            inactive_collection_sets.append(collection_set)
+    return active_collection_sets, inactive_collection_sets
 
 
 class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
@@ -149,8 +159,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
-        context["can_edit"] = not self.object.is_active and has_perms
-        context["can_toggle"] = has_perms
+        context["can_edit"] = not self.object.is_on and self.object.is_active and has_perms
+        context["can_toggle_on"] = has_perms
+        context["can_toggle_active"] = not self.object.is_on and has_perms
         # If last harvest is stopping
         context["stream_stopping"] = self.object.last_harvest().status == Harvest.STOP_REQUESTED \
             if self.object.last_harvest() else False
@@ -185,7 +196,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         if self.object.harvest_type in Collection.STREAMING_HARVEST_TYPES:
             credential_used_col_object = Collection.objects.filter(credential=self.object.credential.pk,
                                                                    harvest_type__in=Collection.STREAMING_HARVEST_TYPES,
-                                                                   is_active=True)
+                                                                   is_on=True)
             if len(credential_used_col_object) != 0:
                 credential_used_col = credential_used_col_object[0]
         context["credential_used_col"] = credential_used_col
@@ -277,7 +288,7 @@ def _get_credential_use_map(credentials, harvest_type):
             active_collections = 0
             inactive_collections = 0
             for collection in credential.collections.all():
-                if collection.is_active:
+                if collection.is_on:
                     active_collections += 1
                 else:
                     inactive_collections += 1
@@ -361,6 +372,25 @@ class CollectionUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissio
         return reverse("collection_detail", args=(self.object.pk,))
 
 
+class CollectionToggleOnView(LoginRequiredMixin, RedirectView):
+    permanent = False
+    pattern_name = "collection_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        collection = get_object_or_404(Collection, pk=kwargs['pk'])
+        # Check permissions to toggle
+        check_collection_set_based_permission(collection, self.request.user)
+        collection.is_on = not collection.is_on
+        collection.history_note = self.request.POST.get("history_note", "")
+        if collection.is_on:
+            messages.info(self.request, "Harvesting is turned on.")
+        else:
+            messages.info(self.request, "Harvesting is turned off.")
+        collection.save()
+        return super(CollectionToggleOnView, self).get_redirect_url(*args, **kwargs)
+
+
 class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
     permanent = False
     pattern_name = "collection_detail"
@@ -373,9 +403,9 @@ class CollectionToggleActiveView(LoginRequiredMixin, RedirectView):
         collection.is_active = not collection.is_active
         collection.history_note = self.request.POST.get("history_note", "")
         if collection.is_active:
-            messages.info(self.request, "Harvesting is turned on.")
+            messages.info(self.request, "Collection is turned active.")
         else:
-            messages.info(self.request, "Harvesting is turned off.")
+            messages.info(self.request, "Collection is turned inactive.")
         collection.save()
         return super(CollectionToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
@@ -408,7 +438,7 @@ class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissi
         context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
-        context["can_edit"] = not self.object.collection.is_active \
+        context["can_edit"] = not self.object.collection.is_on \
                               and has_collection_set_based_permission(self.object, self.request.user)
         return context
 
@@ -858,7 +888,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['collection_set_list'] = CollectionSet.objects.filter(
-            group__in=self.request.user.groups.all()).order_by('name')
+            group__in=self.request.user.groups.all()).filter(collections__is_active=True).order_by('name')
         context['space_data'] = get_free_space()
         context['queue_data'] = get_queue_data()
         return context

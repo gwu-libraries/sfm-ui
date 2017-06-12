@@ -30,8 +30,8 @@ def collection_harvest(collection_pk):
             log.error("Harvesting collection %s failed because collection does not exist", collection_pk)
             return
 
-        if not collection.is_active:
-            log.debug("Ignoring Harvest for collection as collection %s is inactive", collection_pk)
+        if not collection.is_on:
+            log.debug("Ignoring Harvest for collection as collection %s is off", collection_pk)
             return
 
         historical_collection = collection.history.all()[0]

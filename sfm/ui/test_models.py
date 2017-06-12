@@ -291,6 +291,13 @@ class CollectionSetTest(TestCase):
         # Verify that collection set path deleted
         self.assertFalse(os.path.exists(self.collection_set_path))
 
+    def test_isactive(self):
+        self.assertTrue(self.collection_set.is_active())
+        for collection in self.collection_set.collections.all():
+            collection.is_active = False
+            collection.save()
+        self.assertFalse(self.collection_set.is_active())
+
 
 class HarvestTest(TestCase):
     def setUp(self):

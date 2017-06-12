@@ -30,7 +30,7 @@ class ScheduleTests(TestCase):
         mock_scheduler.get_job.side_effect = [None, None, True, True]
         end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                               harvest_type="test_type", name="test_collection", is_active=True,
+                                               harvest_type="test_type", name="test_collection", is_on=True,
                                                schedule_minutes=60, end_date=end_date)
         collection_id = collection.id
 
@@ -82,7 +82,7 @@ class ScheduleTests(TestCase):
         # Add collection
         mock_scheduler.get_job.side_effect = [None, None, True, None]
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                         harvest_type="test_type", name="test_collection", is_active=True,
+                                         harvest_type="test_type", name="test_collection", is_on=True,
                                          schedule_minutes=60)
         collection_id = collection.id
         mock_scheduler.get_job.assert_has_calls([call(str(collection_id)), call("end_{}".format(collection_id))])
@@ -97,7 +97,7 @@ class ScheduleTests(TestCase):
                                                        minutes=60)
 
         # Modify collection - inactive collection
-        collection.is_active = False
+        collection.is_on = False
         mock_scheduler.reset_mock()
         collection.save()
         mock_scheduler.get_job.assert_has_calls([call(str(collection_id)), call("end_{}".format(collection_id))])
@@ -110,7 +110,7 @@ class ScheduleTests(TestCase):
         # Add collection
         mock_scheduler.get_job.side_effect = [None, None, True, None]
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                               harvest_type="test_type", name="test_collection", is_active=True,
+                                               harvest_type="test_type", name="test_collection", is_on=True,
                                                schedule_minutes=60)
         collection_id = collection.id
         mock_scheduler.get_job.assert_has_calls([call(str(collection_id)), call("end_{}".format(collection_id))])
@@ -138,7 +138,7 @@ class ScheduleTests(TestCase):
         end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                               is_active=True,
+                                               is_on=True,
                                                end_date=end_date)
         collection_id = collection.id
 
@@ -165,7 +165,7 @@ class ScheduleTests(TestCase):
                                historical_credential=historical_credential)
         # Modify collection
         collection.end_date = None
-        collection.is_active = False
+        collection.is_on = False
         mock_scheduler.reset_mock()
         collection.save()
 

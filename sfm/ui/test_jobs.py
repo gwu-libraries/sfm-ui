@@ -22,7 +22,7 @@ class StartJobsTests(TestCase):
     def test_collection_harvest(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_USER_TIMELINE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
         Seed.objects.create(collection=collection, token="test_token1", seed_id="1")
         Seed.objects.create(collection=collection, uid="test_uid2", seed_id="2")
         Seed.objects.create(collection=collection, token="test_token3", uid="test_uid3", seed_id="3")
@@ -90,7 +90,7 @@ class StartJobsTests(TestCase):
     def test_collection_without_seeds_harvest(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
 
         mock_rabbit_worker = MagicMock(spec=RabbitWorker)
         mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
@@ -122,7 +122,7 @@ class StartJobsTests(TestCase):
     def test_skip_send(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
 
         Harvest.objects.create(collection=collection,
                                historical_collection=collection.history.all()[0],
@@ -145,7 +145,7 @@ class StartJobsTests(TestCase):
     def test_skip_send_after_void(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
 
         Harvest.objects.create(collection=collection,
                                historical_collection=collection.history.all()[0],
@@ -174,7 +174,7 @@ class StartJobsTests(TestCase):
     def test_missing_seeds(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_USER_TIMELINE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
 
         mock_rabbit_worker = MagicMock(spec=RabbitWorker)
         mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
@@ -187,7 +187,7 @@ class StartJobsTests(TestCase):
     def test_wrong_number_of_seeds(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True)
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True)
         Seed.objects.create(collection=collection, token="test_token1")
 
         mock_rabbit_worker = MagicMock(spec=RabbitWorker)
@@ -209,7 +209,7 @@ class StopJobsTests(TestCase):
                                                     token=json.dumps(self.credential_token))
         self.collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                     harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
-                                                    is_active=True)
+                                                    is_on=True)
 
         self.historical_collection = self.collection.history.all()[0]
         self.historical_credential = self.historical_collection.credential.history.all()[0]

@@ -46,7 +46,7 @@
                     <td>{{ collection.harvest_type }}</td>
                     <td>{{ collection.num_seeds }} seed{{ collection.num_seeds|pluralize }}</td>
                     <!-- <td>date of most recent harvest among collections</td> -->
-                    <td>{{ collection.is_active|yesno:"Yes,No" }}</td>
+                    <td>{{ collection.is_on|yesno:"Yes,No" }}</td>
                 </tr>
             {% endfor %}
             </table>

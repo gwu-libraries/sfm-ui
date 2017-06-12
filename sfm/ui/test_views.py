@@ -40,7 +40,7 @@ class CollectionSetListViewTests(TestCase):
         request = self.factory.get('/ui/collection_sets/')
         request.user = self.user
         response = CollectionSetListView.as_view()(request)
-        collection_set_list = response.context_data["collection_set_list"]
+        collection_set_list = response.context_data["active_collection_sets"]
         self.assertEqual(1, len(collection_set_list))
         self.assertEqual(self.collection_set1, collection_set_list[0])
         self.assertEqual(1, collection_set_list[0].num_collections)
