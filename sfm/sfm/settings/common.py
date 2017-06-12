@@ -248,3 +248,9 @@ SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
 SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
 
 SFM_UI_VERSION = "1.8.0"
+
+# If a collection is schedules for <= PRIORITY_SCHEDULE_MINUTES,
+# the routing key will have .priority appended.
+PRIORITY_SCHEDULE_MINUTES = 60
+# Harvest types that support priority queues.
+PRIORITY_HARVEST_TYPES = ['twitter_search', 'twitter_user_timeline']

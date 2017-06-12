@@ -53,7 +53,7 @@ It may take several minutes for the images to be downloaded and the containers t
 
 4. It is also recommended that you scale up the Twitter REST Harvester container::
 
-    docker-compose scale twitterrestharvester=2
+    docker-compose scale twitterrestharvester=2 twitterpriorityrestharvester=2
 
 Notes:
 

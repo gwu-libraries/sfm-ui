@@ -38,7 +38,7 @@ class QueueAPI(AdminAPI):
         ui_queues = {}
         for queue in self._api_get("/api/queues"):
             queue_name = queue["name"].replace("_", " ").title()
-            if queue_name.endswith("Harvester"):
+            if queue_name.endswith("Harvester") or queue_name.endswith("Priority"):
                 harvester_queues[queue_name] = queue["messages"]
             elif queue_name.endswith("Exporter"):
                 exporter_queues[queue_name] = queue["messages"]

@@ -60,6 +60,24 @@ class StartJobsTests(TestCase):
         self.assertEqual(Collection.TWITTER_USER_TIMELINE, harvest.harvest_type)
 
     @patch("ui.jobs.RabbitWorker", autospec=True)
+    def test_priority_collection_harvest(self, mock_rabbit_worker_class):
+        collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
+                                               harvest_type=Collection.TWITTER_USER_TIMELINE, name="test_collection",
+                                               harvest_options=json.dumps(self.harvest_options), is_active=True,
+                                               schedule_minutes=30)
+        Seed.objects.create(collection=collection, token="test_token1", seed_id="1")
+
+        mock_rabbit_worker = MagicMock(spec=RabbitWorker)
+        mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
+
+        collection_harvest(collection.id)
+
+        # Harvest start message sent
+        name, args, kwargs = mock_rabbit_worker.mock_calls[0]
+        self.assertEqual("send_message", name)
+        self.assertEqual("harvest.start.test_platform.twitter_user_timeline.priority", args[1])
+
+    @patch("ui.jobs.RabbitWorker", autospec=True)
     def test_missing_collection_harvest(self, mock_rabbit_worker_class):
         mock_rabbit_worker = MagicMock(spec=RabbitWorker)
         mock_rabbit_worker_class.side_effect = [mock_rabbit_worker]
