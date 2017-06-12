@@ -63,7 +63,7 @@ class StartJobsTests(TestCase):
     def test_priority_collection_harvest(self, mock_rabbit_worker_class):
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
                                                harvest_type=Collection.TWITTER_USER_TIMELINE, name="test_collection",
-                                               harvest_options=json.dumps(self.harvest_options), is_active=True,
+                                               harvest_options=json.dumps(self.harvest_options), is_on=True,
                                                schedule_minutes=30)
         Seed.objects.create(collection=collection, token="test_token1", seed_id="1")
 
