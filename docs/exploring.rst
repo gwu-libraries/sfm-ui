@@ -68,8 +68,9 @@ java memory. For best practices, assign enough memory (e.g. 6GB) for ElasticSear
 Kibana
 ======
 
-* Kibana waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completelyt. By
-  default, a large wait time has been set but you may find it necessary to make it even larger. TODO: HOW TO DO THIS
+* Kibana waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completely. By
+  default, a large wait time has been set but you may find it necessary to make it even larger. To set the wait time, please
+  check the ``docker-compose.yml`` file and set the corresponding value to ``WAIT_SECS``.
 * For production use, set ``LOGGING_QUIET`` to true to suppress all logging output other than error messages. For
   development purpose, you can set the log level based on the following table:
 
@@ -101,8 +102,9 @@ To do this, go to the ``Dev Tools`` tab on Kibana and run following code::
 
 Logstash
 ========
-* Logstash waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completelyt. By
-  default, a large wait time has been set but you may find it necessary to make it even larger. TODO: HOW TO DO THIS
+* Logstash waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completely. By
+  default, a large wait time has been set but you may find it necessary to make it even larger. To set the wait time, please
+  check the ``docker-compose.yml`` file and set the corresponding value to ``WAIT_SECS``.
 * Limit to a single collection set by providing the collection set id.
 
 X-Pack monitoring
