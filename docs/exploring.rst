@@ -22,20 +22,98 @@ which is the exploration interface.
 --------------
 ELK is not available by default; it must be enabled as described here.
 
-You can enable one or more ELK Docker containers. Each container can be configured to be loaded with all social
-media data or the social media data for a single collection set.
+An ELK instance is composed of 3 containers: an ElasticSearch container, a Logstash container, and a Kibana container.
+Each instance can be configured to be loaded with all social media data or the social media data for a single collection set.
 
-To enable an ELK Docker container it must be added to your ``docker-compose.yml`` and then started by::
+To enable an ELK instance it must be added to your ``docker-compose.yml`` and then started by::
 
-    docker-compose up -d
+  docker-compose up -d
 
-An example container is provided in ``example.docker-compose.yml`` and ``example.prod.docker-compose.yml``. These examples
+An example is provided in ``example.docker-compose.yml`` and ``example.prod.docker-compose.yml``. These examples
 also show how to limit to a single collection set by providing the collection set id.
 
-By default, Kibana is available at `http://<your hostname>:5601/app/kibana <http://localhost:5601/app/kibana>`_. (Also,
+By default, Kibana is available at `http://your_hostname:5601/app/kibana <http://localhost:5601/app/kibana>`_. (Also,
 by default Elasticsearch is available on port 9200 and Logstash is available on port 5000.)
 
-If enabling multiple ELK containers, add multiple containers to your ``docker-compose.yml``. Make sure to give each container a unique name and a unique ``hostname:`` value, and make sure that each container maps to different ports.
+If enabling multiple ELK instances, add additional containers to your ``docker-compose.yml``. Make sure to give each
+container a unique name (e.g., "elasticsearch2"), ``hostname:`` value (e.g., "sfm_es_2"), ports, ``cluster.name``
+and ``node.name``.
+
+------------------
+ ELK requirements
+------------------
+For the host server:
+
+* Docker >= 1.12 is required.
+* The ``vm_max_map_count`` kernel setting needs to be set to at least 262144 for production use. For detail setting, please see the `ElasticSearch documentation <https://www.elastic.co/guide/en/elasticsearch/reference/5.x/docker.html#docker-cli-run-prod-mode>`_.
+  If not, you will see an error like::
+
+        ERROR: bootstrap checks failed
+        max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+* At the time of writing, there are problems running the ElasticSearch Docker container on OS X.
+
+-----------------
+ Configuring ELK
+-----------------
+For production use, there are a number of best practices for configuration to be aware of.
+
+Elasticsearch
+=============
+For a discussion of recommended configuration settings, see the `ElasticSearch Docker documentation <https://www.elastic.co/guide/en/elasticsearch/reference/5.3/docker.html>`_.
+
+Use the `ES_JAVA_OPTS` environment variable to set heap size, e.g. to use 2GB use ``ES_JAVA_OPTS="-Xms2g -Xmx2g"``. It
+is also recommended to set a memory limit (``mem_limit``) for the container that should be equal to or great than the
+java memory. For best practices, assign enough memory (e.g. 6GB) for ElasticSearch.
+
+Kibana
+======
+
+* Kibana waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completelyt. By
+  default, a large wait time has been set but you may find it necessary to make it even larger. TODO: HOW TO DO THIS
+* For production use, set ``LOGGING_QUIET`` to true to suppress all logging output other than error messages. For
+  development purpose, you can set the log level based on the following table:
+
++-----------------+----------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| setting         | desc                                                           | effect                                                                                                                                    |
++-----------------+----------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| logging.silent  | bool                                                           | Set the value of this setting to true to suppress all logging output.                                                                                         |
++-----------------+----------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| logging.quiet   | bool                                                           | Set the value of this setting to true to suppress all logging output other than error messages.                                                           |
++-----------------+----------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| logging.verbose | bool                                                           | Set the value of this setting to true to log all events, including system usage information and all requests.                                                            |
++-----------------+----------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+
+* In large dataset, you might encounter an error with a query with a large time interval, e.g. 3 years or 5 years. By
+  default ElasticSearch rejects search requests that would query more than 1000 shards. The error would be like:
+
+.. image:: images/exploring/query_over_limit.png
+
+To bypass this limit, update the ``action.search.shard_count.limit`` cluster setting to a greater value like 2000 or more.
+To do this, go to the ``Dev Tools`` tab on Kibana and run following code::
+
+    PUT _cluster/settings
+    {
+      "persistent": {
+        "action.search.shard_count.limit":2000
+      }
+    }
+
+
+Logstash
+========
+* Logstash waits for ElasticSearch to start. However, it may take a long time for ElasticSearch to start completelyt. By
+  default, a large wait time has been set but you may find it necessary to make it even larger. TODO: HOW TO DO THIS
+* Limit to a single collection set by providing the collection set id.
+
+X-Pack monitoring
+=================
+To enable `X-Pack <https://www.elastic.co/guide/en/x-pack/5.3/index.html>`_ monitoring, you will need to change the
+X-Pack environment variables to `true` in the configuration for the ElasticSearch and Kibana containers in `docker-compose.yml`.
+
+The default value is `false` since it involves license management even though the monitoring feature is free for the
+`basic license <https://www.elastic.co/subscriptions>`_. The basic license will expire in one month.
+
+To update your license, please follow `these instructions <https://www.elastic.co/guide/en/x-pack/5.0/installing-license.html>`_.
 
 
 --------------
@@ -70,7 +148,7 @@ twitter_user_timeline, twitter_sample, and weibo_timeline.
 
 This shows loading the data limited to a collection set::
 
-    docker exec docker_sfmuiapp_1 python sfm/manage.py resendwarccreatedmsgs --collection-set b438a62cbcf74ad0adc09be3b07f039e elk_loader_myproject_elk.warc_created
+    docker exec sfm_ui_1 python sfm/manage.py resendwarccreatedmsgs --collection-set b438a62cbcf74ad0adc09be3b07f039e elk_loader_myproject_elk.warc_created
 
 
 --------------------
@@ -101,7 +179,7 @@ The Discover tab allows you to query the social media data.
 .. image:: images/exploring/discover.png
 
 By default, all social media types are queried. By limit to a single type (e.g., tweets),
-click the folder icon and select the appropriate filter.
+click the `Open` and select the appropriate filter.
 
 .. image:: images/exploring/filter.png
 
@@ -136,9 +214,14 @@ The types of visualizations that are supported include:
 
 * Area chart
 * Data table
+* Heatmap chart
 * Line chart
+* Markdown widget
+* Metric
 * Pie chart
-* Map
+* Tag cloud
+* Title Map
+* Timeseries
 * Vertical bar chart
 
 Describing how to create visualizations is beyond the scope of this overview.
@@ -153,7 +236,7 @@ For example, here is the Top 10 hashtags visualization:
 Dashboard
 =========
 
-The Dashboard tab provides a summary view of data, bringing together multiple visualizations
+The Dashboard tab provides summary view of data, bringing together multiple visualizations
 and searches on a single page.
 
 .. image:: images/exploring/dashboard.png
@@ -163,10 +246,9 @@ click the folder icon and select the appropriate dashboard.
 
 .. image:: images/exploring/pick_dashboard.png
 
-For example, here is the top of the Twitter dashboard:
+For example, the Kibana default dashboard is Twitter, here is the top of the Twitter dashboard:
 
 .. image:: images/exploring/twitter_dashboard.png
-
 
 ---------
  Caveats
@@ -175,3 +257,4 @@ For example, here is the top of the Twitter dashboard:
   the future.
 * Approaches for administering and scaling ELK have not been considered.
 * No security or access restrictions have been put in place around ELK.
+* Including the X-Pack security and account management may be considered in the future.
