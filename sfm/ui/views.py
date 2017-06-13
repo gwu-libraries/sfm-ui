@@ -535,9 +535,10 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
 
             for token in cleaned_data:
                 if token:
-                    param = {'uid': token} if seeds_type == 'uid' else {'token': token}
+                    param = {'uid': token} if seeds_type == 'uid' else {'token__iexact': token}
                     if not Seed.objects.filter(collection=collection, **param).exists():
                         log.debug("Creating seed %s for collection %s", token, collection.pk)
+                        param = {'uid': token} if seeds_type == 'uid' else {'token': token}
                         Seed.objects.create(collection=collection,
                                             history_note=form.cleaned_data['history_note'], **param)
                         seed_count += 1
