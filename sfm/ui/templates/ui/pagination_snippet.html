@@ -1,0 +1,17 @@
+<nav>
+  <ul class="pager">
+      {% if page_obj.has_previous %}
+          <li><a href="?page{{ pagesuffix }}=1">&laquo;</a></li>
+          <li><a href="?page{{ pagesuffix }}={{ page_obj.previous_page_number }}"> Previous</a></li>
+      {% endif %}
+
+      <li class="active">
+          {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </li>
+
+      {% if page_obj.has_next %}
+          <li><a href="?page{{ pagesuffix }}={{ page_obj.next_page_number }}">Next </a></li>
+          <li><a href="?page{{ pagesuffix }}={{ page_obj.paginator.num_pages }}"> &raquo;</a></li>
+      {% endif %}
+  </ul>
+</nav>

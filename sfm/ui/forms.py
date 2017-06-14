@@ -1007,7 +1007,7 @@ class ExportForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'seeds',
+                Div('seeds', css_class="longseed"),
                 'export_format',
                 'export_segment_size',
                 'dedupe',

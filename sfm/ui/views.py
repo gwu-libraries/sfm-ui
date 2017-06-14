@@ -37,20 +37,26 @@ log = logging.getLogger(__name__)
 class CollectionSetListView(LoginRequiredMixin, ListView):
     model = CollectionSet
     template_name = 'ui/collection_set_list.html'
-    paginate_by = 20
     allow_empty = True
     paginate_orphans = 0
 
     def get_context_data(self, **kwargs):
         context = super(CollectionSetListView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser or self.request.user.is_staff:
-            context['other_active_collection_sets'], context['other_inactive_collection_sets'] = split_collection_sets(
-                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
-                    num_collections=Count('collections')).order_by('name'))
-
-        context['active_collection_sets'], context['inactive_collection_sets'] = split_collection_sets(
+        # collection set identity, collection set type Name, collection set data
+        collection_sets_lists = []
+        active_collection_sets, inactive_collection_sets = split_collection_sets(
             CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
                 num_collections=Count('collections')).order_by('name'))
+        collection_sets_lists.append(('acs', "Active Collection Sets", active_collection_sets))
+        collection_sets_lists.append(('iacs', "Inactive Collection Sets", inactive_collection_sets))
+
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            other_active_collection_sets, other_inactive_collection_sets = split_collection_sets(
+                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
+                    num_collections=Count('collections')).order_by('name'))
+            collection_sets_lists.append(('oacs', "Other Active Collection Sets", other_active_collection_sets))
+            collection_sets_lists.append(('oics', "Other Inactive Collection Sets", other_inactive_collection_sets))
+        context['collection_sets_lists'] = collection_sets_lists
         return context
 
 
@@ -156,7 +162,16 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
         context["diffs"] = diff_collection_and_seeds_history(self.object)
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
+
+        # pagination seeds
+        # active status, seeds
+        seed_lists = {}
+        for active in ('active', 'deleted'):
+            seed_list = Seed.objects.filter(collection=self.object.pk,
+                                            is_active=active == 'active').order_by('token', 'uid')
+            seed_lists[active] = seed_list
+        context["seed_lists"] = seed_lists
+
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_on and self.object.is_active and has_perms
@@ -649,10 +664,14 @@ class CredentialListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CredentialListView, self).get_context_data(**kwargs)
-        context['credential_list'] = Credential.objects.filter(user=self.request.user).order_by('name')
-        context["can_connect_twitter"] = self._can_connect_credential(Credential.TWITTER)
-        context["can_connect_weibo"] = self._can_connect_credential(Credential.WEIBO)
-        context["can_connect_tumblr"] = self._can_connect_credential(Credential.TUMBLR)
+        # (type, credential_list, can_connect_app)
+        credentials = []
+        for social_type, _ in Credential.PLATFORM_CHOICES:
+            credential_objs = Credential.objects.filter(user=self.request.user,
+                                                        platform=social_type).order_by('name')
+            credentials.append((social_type, credential_objs, self._can_connect_credential(social_type)))
+
+        context["credentials_lists"] = credentials
         return context
 
     @staticmethod
@@ -870,12 +889,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
             diffs = diff_collection_and_seeds_history(item)
         else:
             diffs = diff_object_history(item)
-        paginator = Paginator(diffs, 15)
-        # if no page in URL, show first
-        page = self.request.GET.get("page", 1)
-        diffs_page = paginator.page(page)
-        context["paginator"] = paginator
-        context["diffs_page"] = diffs_page
+        context["diffs_page"] = diffs
         context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name

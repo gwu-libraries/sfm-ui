@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load humanize %}
+{% load ui_extras %}
 {% block title %}
     Exports
 {% endblock %}
@@ -14,11 +16,13 @@
 <div class="row">
   <div class="col-md-12">
   {% if export_list %}
-    <table class="table">
+    <table class="datatable table">
       <thead>
+        <tr>
         <th>Export from</th>
         <th>Status</th>
         <th>Date Requested</th>
+        <tr>
       </thead>
      {% for collection_set, collection, export in export_list %}
        <tr>
@@ -28,9 +32,10 @@
        </tr>
        {% endfor %}
      </table>
-  {% else %} 
+  {% else %}
   <p>To request an export, go to one of your <a href={% url 'collection_set_list' %}>Collection Sets</a> and choose a Collection to export.</p>
   {% endif %}
  </div>
 </div>
+
 {% endblock %}
