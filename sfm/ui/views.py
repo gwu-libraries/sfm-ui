@@ -15,6 +15,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core import serializers
 
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
@@ -69,6 +71,16 @@ def split_collection_sets(collection_sets):
         else:
             inactive_collection_sets.append(collection_set)
     return active_collection_sets, inactive_collection_sets
+
+
+def paginator_type(t_paginator, t_page):
+    try:
+        page_obj = t_paginator.page(t_page)
+    except PageNotAnInteger:
+        page_obj = t_paginator.page(1)
+    except EmptyPage:
+        page_obj = t_paginator.page(t_paginator.num_pages)
+    return page_obj
 
 
 class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
@@ -660,6 +672,7 @@ class CredentialCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 class CredentialListView(LoginRequiredMixin, ListView):
     model = Credential
     template_name = 'ui/credential_list.html'
+    paginate_by = 10
     allow_empty = True
 
     def get_context_data(self, **kwargs):
@@ -669,7 +682,9 @@ class CredentialListView(LoginRequiredMixin, ListView):
         for social_type, _ in Credential.PLATFORM_CHOICES:
             credential_objs = Credential.objects.filter(user=self.request.user,
                                                         platform=social_type).order_by('name')
-            credentials.append((social_type, credential_objs, self._can_connect_credential(social_type)))
+            social_type_lists = paginator_type(Paginator(credential_objs, self.paginate_by),
+                                               self.request.GET.get('page' + social_type))
+            credentials.append((social_type, social_type_lists, self._can_connect_credential(social_type)))
 
         context["credentials_lists"] = credentials
         return context
@@ -704,7 +719,7 @@ class CredentialUpdateView(LoginRequiredMixin, UserOrSuperuserPermissionMixin, U
 class ExportListView(LoginRequiredMixin, ListView):
     model = Export
     template_name = 'ui/export_list.html'
-    paginate_by = 20
+    paginate_by = 15
     allow_empty = True
     paginate_orphans = 0
 
@@ -713,8 +728,10 @@ class ExportListView(LoginRequiredMixin, ListView):
         exports = Export.objects.filter(
             user=self.request.user).order_by(
             '-date_requested')
+        paginator = Paginator(exports, self.paginate_by)
+        page = self.request.GET.get('page')
         export_list = []
-        for export in exports:
+        for export in paginator_type(paginator, page):
             seeds = list(export.seeds.all())
             collection = seeds[0].collection if seeds else export.collection
             export_list.append((collection.collection_set, collection, export))
@@ -889,7 +906,7 @@ class ChangeLogView(LoginRequiredMixin, TemplateView):
             diffs = diff_collection_and_seeds_history(item)
         else:
             diffs = diff_object_history(item)
-        context["diffs_page"] = diffs
+        context["diffs_page"] = paginator_type(Paginator(diffs, 15), self.request.GET.get("page"))
         context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name

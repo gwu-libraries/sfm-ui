@@ -38,8 +38,12 @@ Change Log
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <br>
-        <table class="table datatable">
+        {% include "ui/pagination_snippet.html" with page_obj=diffs_page %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
         <thead>
             <tr>
                 <th>Change to</th>
@@ -47,8 +51,7 @@ Change Log
                 <th>User</th>
                 <th>Fields</th>
             </tr>
-        <thead>
-        <tbody>
+        </thead>
             {% for diff in diffs_page %}
             <tr>
                 <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
@@ -62,7 +65,6 @@ Change Log
                 </td>
             </tr>
             {% endfor %}
-        <tbody>
         </table>
     </div>
 </div>

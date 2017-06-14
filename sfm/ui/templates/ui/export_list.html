@@ -16,7 +16,7 @@
 <div class="row">
   <div class="col-md-12">
   {% if export_list %}
-    <table class="datatable table">
+    <table class="table">
       <thead>
         <tr>
         <th>Export from</th>
@@ -32,6 +32,7 @@
        </tr>
        {% endfor %}
      </table>
+      {% include "ui/pagination_snippet.html" %}
   {% else %}
   <p>To request an export, go to one of your <a href={% url 'collection_set_list' %}>Collection Sets</a> and choose a Collection to export.</p>
   {% endif %}
