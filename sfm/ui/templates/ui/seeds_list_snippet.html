@@ -4,7 +4,7 @@
 {% with field=harvest_fields|get_item:collection.harvest_type %}
     <br>
     {% if  seed_list %}
-    <table class="table datatable table-striped">
+    <table class="datatable table table-striped">
     <thead>
         <tr>
             {% if field.link %}
@@ -46,4 +46,7 @@
        </tr>
     {% endfor %}
     </table>
+    {% else %}
+        <p>No corresponding seeds.</p>
+    {% endif %}
 {% endwith %}
