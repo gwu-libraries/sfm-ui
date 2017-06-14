@@ -16,7 +16,7 @@ from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core import serializers
+
 
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
@@ -682,9 +682,7 @@ class CredentialListView(LoginRequiredMixin, ListView):
         for social_type, _ in Credential.PLATFORM_CHOICES:
             credential_objs = Credential.objects.filter(user=self.request.user,
                                                         platform=social_type).order_by('name')
-            social_type_lists = paginator_type(Paginator(credential_objs, self.paginate_by),
-                                               self.request.GET.get('page' + social_type))
-            credentials.append((social_type, social_type_lists, self._can_connect_credential(social_type)))
+            credentials.append((social_type, credential_objs, self._can_connect_credential(social_type)))
 
         context["credentials_lists"] = credentials
         return context
