@@ -33,7 +33,7 @@
        </tr>
        {% endfor %}
      </table>
-      {% sfm_paginator export_list %}
+      {% sfm_paginator page_obj %}
   {% else %}
   <p>To request an export, go to one of your <a href={% url 'collection_set_list' %}>Collection Sets</a> and choose a Collection to export.</p>
   {% endif %}

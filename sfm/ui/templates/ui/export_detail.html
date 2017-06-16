@@ -48,7 +48,7 @@
     <p><strong>Format:</strong> {{ export.export_format }}</p>
     {% if not export.collection %}
         <p><strong>Selected seeds:</strong></p>
-        <ul>
+        <ul class="ul_nav">
         {% for seed in export.seeds.all %}
             <li class="longseed">{{ seed.label }}</li>
         {% endfor %}

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML, Field
 from crispy_forms.bootstrap import FormActions
 from datetimewidget.widgets import DateTimeWidget
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
@@ -978,7 +978,7 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple)
+    seeds = SeedChoiceField(None, required=False, widget=forms.SelectMultiple)
 
     class Meta:
         model = Export
@@ -991,7 +991,7 @@ class ExportForm(forms.ModelForm):
             'item_date_start': DATETIME_WIDGET,
             'item_date_end': DATETIME_WIDGET,
             'harvest_date_start': DATETIME_WIDGET,
-            'harvest_date_end': DATETIME_WIDGET,
+            'harvest_date_end': DATETIME_WIDGET
         }
         labels = {
             'dedupe': "Deduplicate (remove duplicate posts)",

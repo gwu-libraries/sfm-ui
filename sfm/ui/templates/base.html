@@ -26,6 +26,9 @@
 	<!-- This file store project specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
 
+    <!-- multiselect css -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+
     {% block css %}
 
     {% endblock %}
@@ -35,7 +38,9 @@
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 	{% block javascript %}
 
     {% endblock %}
@@ -150,6 +155,13 @@
 				var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
 				length_sel.addClass('form-control input-sm');
 			});
+            $('#id_seeds').multiselect({
+               includeSelectAllOption: true,
+               enableFiltering:true,
+               maxHeight: 350,
+               buttonWidth: 200
+
+            });
 		});
 		</script>
 
