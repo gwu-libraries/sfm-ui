@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load ui_extras %}
+{% load paginator %}
 {% block title %}
     Harvests
 {% endblock %}
@@ -18,7 +19,7 @@
 </div>
 {% endblock %}
 {% block content %}
-{% include "ui/pagination_snippet.html" %}
+{% sfm_paginator harvest_list %}
 <div class="row">
 	<table class="table">
 		<thead>

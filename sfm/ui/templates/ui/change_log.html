@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load ui_extras %}
+{% load paginator %}
 {% block title %}
 Change Log
 {% endblock %}
@@ -38,7 +39,7 @@ Change Log
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        {% include "ui/pagination_snippet.html" with page_obj=diffs_page %}
+        {% sfm_paginator diffs_page %}
     </div>
 </div>
 <div class="row">

@@ -1,17 +1,44 @@
-<nav>
-  <ul class="pager">
-      {% if page_obj.has_previous %}
-          <li><a href="?page{{ pagesuffix }}=1">&laquo;</a></li>
-          <li><a href="?page{{ pagesuffix }}={{ page_obj.previous_page_number }}"> Previous</a></li>
-      {% endif %}
+{% load i18n %}
+<div class="row">
+  <div class="col-xs-12">
+    <section class="paginator text-center">
+      <nav>
+        <ul class="pagination">
+            {% if page.has_previous %}
+              <li><a href="?page{{ suffix }}={{ page.previous_page_number }}" aria-label="Previous">
+                <span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Prev</a>
+              <li>
+            {% else %}
+               <li class="disabled"><a href="#" aria-label="Previous">
+                <span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Prev</a>
+              <li>
+            {% endif %}
 
-      <li class="active">
-          {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-      </li>
+            {% for page_num in page_range %}
+            {% ifequal page.number page_num %}
+                <li class="active">
+                  <a href="?page{{ suffix }}={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% else %}
+                <li>
+                  <a href="?page{{ suffix }}={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% endifequal %}
+            {% endfor %}
 
-      {% if page_obj.has_next %}
-          <li><a href="?page{{ pagesuffix }}={{ page_obj.next_page_number }}">Next </a></li>
-          <li><a href="?page{{ pagesuffix }}={{ page_obj.paginator.num_pages }}"> &raquo;</a></li>
-      {% endif %}
-  </ul>
-</nav>
+            {% if page.has_next %}
+              <li><a href="?page{{ suffix }}={{ page.next_page_number }}" aria-label="Next">
+                Next&nbsp;<span class="glyphicon glyphicon-chevron-right"></span>
+              </a>
+              <li>
+            {% else %}
+               <li class="disabled"><a href="#" aria-label="Next">
+                Next&nbsp;<span class="glyphicon glyphicon-chevron-right"></span>
+              </a>
+              <li>
+            {% endif %}
+        </ul>
+      </nav>
+    </section>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load ui_extras %}
+{% load paginator %}
 {% block title %}
     Exports
 {% endblock %}
@@ -32,7 +33,7 @@
        </tr>
        {% endfor %}
      </table>
-      {% include "ui/pagination_snippet.html" %}
+      {% sfm_paginator export_list %}
   {% else %}
   <p>To request an export, go to one of your <a href={% url 'collection_set_list' %}>Collection Sets</a> and choose a Collection to export.</p>
   {% endif %}
