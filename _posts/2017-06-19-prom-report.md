@@ -1,7 +1,7 @@
 ---
 layout: article
 permalink: /posts/2017-06-19-prom-report
-title: 'Announcing "Social Feed Manager: Testing and Implementation Guide"'
+title: "Announcing Social Feed Manager: Guide for Building Social Media Archives"
 author: laura_wrubel 
 excerpt: "We're pleased to share this report by Christopher Prom of University of Illinois,
 which assesses Social Feed Manager,
@@ -15,8 +15,7 @@ recommendations for how it can support archivists building social media
 archives. Christopher Prom, Assistant University Archivist at University of
 Illinois, began working with us last fall and we have greatly benefitted from
 his insights into how to improve SFM. We are pleased to share his final report,
-[Social Feed Manager: Testing Report and Implementation Guide]
-({{ site.github.url }}/resources/SFMReportProm2017.pdf). 
+[Social Feed Manager: Guide for Building Social Media Archives]({{ site.github.url }}/resources/SFMReportProm2017.pdf).
 
 Chris's report walks through how an archivist might use SFM, understanding both
 its advantages and limitations. In addition to helping archivists build
