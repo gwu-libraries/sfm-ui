@@ -572,28 +572,16 @@ class Seed(models.Model):
 
     def label(self):
         labels = []
-        if self.token and not self.uid:
+        if self.token:
             try:
                 j = json.loads(self.token)
                 for key, value in j.items():
                     labels.append(u"{}: {}".format(key.title(), value))
             except (AttributeError, ValueError):
                 labels.append(u"{}".format(self.token))
-                return u"".join(labels) 
-        if self.uid and not self.token:
+        if self.uid:
             labels.append(u"{}".format(self.uid))
-            return u"".join(labels)
-        if self.uid and self.token:
-            try:
-                j = json.loads(self.token)
-                for key, value in j.items():
-                    labels.append(u"{}: {}".format(key.title(), value))
-            except (AttributeError, ValueError):
-                labels.append(u"{}".format(self.token))
-            labels.append(" (")
-            labels.append(u"{}".format(self.uid))
-            labels.append(")")
-            return u"".join(labels)
+        return u", ".join(labels)
 
     def get_collection_set(self):
         return self.collection.collection_set
