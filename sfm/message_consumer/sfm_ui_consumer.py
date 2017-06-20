@@ -28,20 +28,23 @@ class SfmUiConsumer(BaseConsumer):
     """
 
     def on_message(self):
-        # This is the worst ever, but it avoids a race condition.
-        # It is possible for the harvester/exporter to respond before the commit occurs.
-        time.sleep(1)
-
-        if self.routing_key.startswith("harvest.status."):
-            self._on_harvest_status_message()
-        elif self.routing_key == "warc_created":
-            self._on_warc_created_message()
-        elif self.routing_key.startswith("export.status."):
-            self._on_export_status_message()
-        elif self.routing_key == "harvest.start.web":
-            self._on_web_harvest_start_message()
-        else:
-            log.warn("Unexpected message with routing key %s: %s", self.routing_key, json.dumps(self.message, indent=4))
+        try:
+            # This is the worst ever, but it avoids a race condition.
+            # It is possible for the harvester/exporter to respond before the commit occurs.
+            time.sleep(1)
+            if self.routing_key.startswith("harvest.status."):
+                self._on_harvest_status_message()
+            elif self.routing_key == "warc_created":
+                self._on_warc_created_message()
+            elif self.routing_key.startswith("export.status."):
+                self._on_export_status_message()
+            elif self.routing_key == "harvest.start.web":
+                self._on_web_harvest_start_message()
+            else:
+                log.warn("Unexpected message with routing key %s: %s", self.routing_key, json.dumps(self.message, indent=4))
+        except Exception, e:
+            log.exception(e)
+            raise e
 
     def _on_harvest_status_message(self):
         try:

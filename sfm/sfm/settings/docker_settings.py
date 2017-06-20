@@ -26,7 +26,7 @@ SITE_OBJECTS_INFO_DICT = {
 SITE_ID = 1
 
 if 'SFM_SITE_ADMIN_EMAIL' in env:
-    ADMINS = [(env.get('SFM_SITE_ADMIN_NAME', 'sfmadmin'), env.get('SFM_SITE_ADMIN_EMAIL'))]
+    ADMINS = ((env.get('SFM_SITE_ADMIN_NAME', 'sfmadmin'), env.get('SFM_SITE_ADMIN_EMAIL')),)
 
 STATIC_ROOT = "/opt/sfm-static"
 
@@ -43,6 +43,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+            'filters': ['require_debug_false'],
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }
     },
     'loggers': {
         'django': {
@@ -51,7 +62,7 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins'],
             'level': env.get('SFM_DJANGO_REQUEST_LOG', 'INFO'),
             'propagate': True,
         },
@@ -61,12 +72,12 @@ LOGGING = {
             'propagate': True,
         },
         'ui': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins'],
             'level': env.get('SFM_UI_LOG', 'INFO'),
             'propagate': True,
         },
         'message_consumer': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins'],
             'level': env.get('SFM_UI_LOG', 'INFO'),
             'propagate': True,
         },
