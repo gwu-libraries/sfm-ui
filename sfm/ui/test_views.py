@@ -253,7 +253,7 @@ class SeedTestsMixin:
                                                     name='Test collection one',
                                                     )
         self.seed = Seed.objects.create(collection=self.collection,
-                                        token="test token",
+                                        token="test",
                                         uid="123",
                                         )
         self.factory = RequestFactory()
@@ -300,13 +300,13 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
 
         response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
                                     {'seeds_type': 'token', 'tokens': """
-        test token
+        test
 
-        test token2
-          @test token3
+        test2
+          @test3
         """})
         self.assertEqual(3, Seed.objects.filter(collection=self.collection).count())
-        self.assertTrue(Seed.objects.filter(collection=self.collection, token='test token3').exists())
+        self.assertTrue(Seed.objects.filter(collection=self.collection, token='test3').exists())
         self.assertTrue(response.url.endswith('/ui/collections/1/'))
 
     def test_post_uid(self):
