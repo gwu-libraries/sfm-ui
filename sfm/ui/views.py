@@ -900,7 +900,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['collection_set_list'] = CollectionSet.objects.filter(
-            group__in=self.request.user.groups.all()).filter(collections__is_active=True).order_by('name')
+            group__in=self.request.user.groups.all(), collections__is_active=True).distinct().order_by('name')
         context['space_data'] = get_free_space()
         context['queue_data'] = get_queue_data()
         return context
