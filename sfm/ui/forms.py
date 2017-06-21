@@ -569,21 +569,57 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
 
 
 class SeedTwitterSearchForm(BaseSeedForm):
-    class Meta(BaseSeedForm.Meta):
-        fields = ['token']
-        fields.extend(BaseSeedForm.Meta.fields)
-        labels = dict(BaseSeedForm.Meta.labels)
-        labels["token"] = "Query"
-        help_texts = dict(BaseSeedForm.Meta.help_texts)
-        help_texts["token"] = 'See <a href="https://dev.twitter.com/rest/public/search" target="_blank">' \
+    query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text='See <a href="https://dev.twitter.com/rest/public/search" target="_blank">' \
                               'these instructions</a> for writing a query. ' \
-                              'Example: firefly OR "lightning bug"'
-        widgets = dict(BaseSeedForm.Meta.widgets)
-        widgets["token"] = forms.Textarea(attrs={'rows': 4})
+                              'Example: firefly OR "lightning bug"')
+    geocode = forms.CharField(required=False,
+                            help_text='Geocode in the format latitude,longitude,radius. ' \
+                              'Example: 38.899434,-77.036449,50mi')
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].append('token')
+        self.helper.layout[0][0].extend(('query', 'geocode'))
+
+        if self.instance and self.instance.token:
+            try:
+                token = json.loads(self.instance.token)
+            # This except handling is for converting over old query tokens
+            except ValueError:
+                token = { 'query': self.instance.token }
+            if 'query' in token:
+                self.fields['query'].initial = token['query']
+            if 'geocode' in token:
+                self.fields['geocode'].initial = token['geocode']
+
+    def clean_query(self):
+        query_val = self.cleaned_data.get("query")
+        return query_val.strip()
+
+    def clean_geocode(self):
+        geocode_val = self.cleaned_data.get("geocode")
+        return geocode_val.strip()
+
+    def clean(self):
+        # if do string strip in here, string ends an empty space, not sure why
+        query_val = self.cleaned_data.get("query")
+        geocode_val = self.cleaned_data.get("geocode")
+
+        # should not all be empty
+        if not query_val and not geocode_val:
+            raise ValidationError(u'One of the following fields is required: query, geocode.')
+
+    def save(self, commit=True):
+        m = super(SeedTwitterSearchForm, self).save(commit=False)
+        token = dict()
+        if self.cleaned_data['query']:
+            token['query'] = self.cleaned_data['query']
+        if self.cleaned_data['geocode']:
+            token['geocode'] = self.cleaned_data['geocode']
+        m.token = json.dumps(token, ensure_ascii=False)
+        m.save()
+        return m
+
 
 
 class SeedWeiboSearchForm(BaseSeedForm):
@@ -653,7 +689,7 @@ class SeedTwitterFilterForm(BaseSeedForm):
 
         # should not all be empty
         if not track_val and not follow_val and not locations_val:
-            raise ValidationError(u'One of the following fields is required :track, follow, locations.')
+            raise ValidationError(u'One of the following fields is required: track, follow, locations.')
 
         # check follow should be number uid
         if re.compile(r'[^0-9, ]').search(follow_val):
