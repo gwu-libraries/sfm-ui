@@ -1,7 +1,7 @@
 ---
 layout: article
 permalink: /posts/2017-06-19-iranian-election
-title: "Announcing SFM Version 1.8"
+title: "Iranian Election 2017"
 author: amanda_steinberg 
 excerpt: "Middle East & North Africa Librarian Amanda Hannoosh Steinberg shares her experiences creating curated research collections for Middle East Studies, including the recent Iranian election."
 ---
