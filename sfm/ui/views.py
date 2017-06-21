@@ -16,7 +16,8 @@ from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
@@ -153,6 +154,57 @@ class CollectionSetAddNoteView(LoginRequiredMixin, RedirectView):
             collection_set.save()
             messages.info(self.request, "Note added.")
         return super(CollectionSetAddNoteView, self).get_redirect_url(*args, **kwargs)
+
+
+class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
+    columns = ['link', 'token', 'uid', 'messages']
+    # need to define the order columns, also need to match the Datatables setting in columnDefs
+    order_columns = ['', 'token', 'uid', '']
+    seed_infos = {}
+    seed_warnings = {}
+    seed_errors = {}
+    last_harvest = None
+    collection = None
+    # set max limit of records returned, this is used to protect our site if someone tries to attack our site
+    # and make it return huge amount of data
+    # max_display_length = 1200
+
+    def get_initial_queryset(self):
+        # return queryset used as base for futher sorting/filtering
+        # these are simply objects displayed in datatable
+        # You should not filter data returned here by any filter values entered by user. This is because
+        # we need some base queryset to count total number of records.
+        self.collection = Collection.objects.get(pk=self.kwargs['pk'])
+        self.last_harvest = self.collection.last_harvest()
+        self.seed_infos = _get_seed_msg_map(self.last_harvest.infos) if self.last_harvest else {}
+        seed_warnings = _get_seed_msg_map(self.last_harvest.warnings) if self.last_harvest else {}
+        _add_duplicate_seed_warnings(self.collection, self.seed_warnings)
+        self.seed_warnings = seed_warnings
+        self.seed_errors = _get_seed_msg_map(self.last_harvest.errors) if self.last_harvest else {}
+
+        return Seed.objects.filter(collection=self.kwargs['pk'], is_active=True).order_by('token', 'uid')
+
+    def filter_queryset(self, qs):
+        # use request parameters to filter queryset
+
+        # simple example:
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(token__istartswith=search)
+        return qs
+
+    def render_column(self, row, column):
+        # We want to render user as a custom column
+        if column == 'link':
+            return '<a target="_blank" href="{0}">' \
+                   '<img src="{1}" ' \
+                   'height=35 width=35/></a>'.format(row.social_url(), static('ui/img/twitter_logo.png'))
+        elif column == 'messages':
+            return '{0} {1}'.format('msg1', 'msg2')
+        elif column == 'uid':
+            return '{0}'.format(row.uid)
+        elif column == 'token':
+            return '{0}'.format(row.token)
 
 
 class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):

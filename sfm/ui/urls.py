@@ -138,5 +138,7 @@ urlpatterns = patterns('',
 
                        url(r'download/(?P<pk>\d+)/$', views.download_seed_list, name='download'),
 
+                       url(r'seedsJSONAPI/(?P<pk>\d+)/$', views.SeedsJSONAPIView.as_view(), name='seedsJSONAPI'),
+
                        )
 
