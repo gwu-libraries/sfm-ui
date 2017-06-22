@@ -32,7 +32,7 @@ Credentials page.
 Adding credentials
 ^^^^^^^^^^^^^^^^^^
 For this approach, a user gets the application and/or user credential from the
-social media platform and provide them to SFM by completing a form. More
+social media platform and provides them to SFM by completing a form. More
 information on getting credentials is below.
 
 Connecting credentials
