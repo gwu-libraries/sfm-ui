@@ -140,7 +140,7 @@ table.datatable thead .sorting {
 table.datatable thead .sorting_asc {
     background: url('../img/sort_asc.png') no-repeat center right;
 }
-table.datatable thead .sorting_desc {
+table.datatable  thead .sorting_desc {
     background: url('../img/sort_desc.png') no-repeat center right;
 }
 
@@ -173,4 +173,8 @@ table.datatable thead .sorting_desc_disabled {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.input-group-btn.input-space {
+  padding-left: 15px;
 }

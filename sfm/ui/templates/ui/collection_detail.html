@@ -245,8 +245,9 @@
     <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading"><h4>Seeds<a type="button" style="position: relative; top: -6px" class="pull-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
-         <div class="panel-body">
-           <ul class="nav nav-tabs">
+          <div class="panel-body">
+
+           <ul id="seed_tab" class="nav nav-tabs">
                   <li class="active"><a data-toggle="tab" href="#active_seed">Active
                      {% if collection.active_seed_count >= 1 %}
                       <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count|intcomma }}</span>
@@ -261,13 +262,12 @@
            </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="active_seed">
-                        {% include "ui/seeds_list_snippet.html" with seed_type="activeseed" seed_list=seed_lists.active %}
+                        {% include "ui/seeds_list_snippet.html" with table=table.active filter=filter.active %}
                 </div>
                 <div class="tab-pane" id="deleted_seed">
-                        {% include "ui/seeds_list_snippet.html" with seed_type="deletedseed" seed_list=seed_lists.deleted %}
+                        {% include "ui/seeds_list_snippet.html" with table=table.deleted filter=filter.deleted %}
                 </div>
             </div>
-
             <div style="padding-top: 15px">
             <a class="btn btn-primary" id="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_on or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
@@ -278,6 +278,25 @@
     </div>
   </div>
 </div>
+
+{% block extend_script %}
+<script type="text/javascript">
+   $(function() {
+        // for bootstrap 3 use 'shown.bs.tab'
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            // save the latest tab; use cookies if you like 'em better:
+            localStorage.setItem('lastTab', $(this).attr('href'));
+        });
+
+        // go to the latest tab, if it exists:
+        var lastTab = localStorage.getItem('lastTab');
+        if (lastTab) {
+            $('[href="' + lastTab + '"]').tab('show');
+        }
+    });
+</script>
+{% endblock extend_script %}
+
 {% endif %}
 
 {% if harvests %}

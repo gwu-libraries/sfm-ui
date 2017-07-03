@@ -334,13 +334,13 @@ class Collection(models.Model):
         TUMBLR_BLOG_POSTS: 'Blog posts from specific blogs'
     }
     HARVEST_FIELDS = {
-        TWITTER_SEARCH: {"link": None, "token": "Search query", "uid": None},
-        TWITTER_FILTER: {"link": None, "token": "Filter criteria", "uid": None},
-        TWITTER_USER_TIMELINE: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
+        TWITTER_SEARCH: {"link": None, "token": "Search Query", "uid": None},
+        TWITTER_FILTER: {"link": None, "token": "Filter Criteria", "uid": None},
+        TWITTER_USER_TIMELINE: {"link": "Link", "token": "Twitter Accounts", "uid": "User ID"},
         TWITTER_SAMPLE: None,
-        FLICKR_USER: {"link": "Link", "token": "Flickr users", "uid": "NSID"},
+        FLICKR_USER: {"link": "Link", "token": "Flickr Users", "uid": "NSID"},
         WEIBO_TIMELINE: None,
-        TUMBLR_BLOG_POSTS: {"link": "Link", "token": None, "uid": "Blog name"}
+        TUMBLR_BLOG_POSTS: {"link": "Link", "token": None, "uid": "Blog Name"}
     }
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
@@ -547,6 +547,7 @@ class Seed(models.Model):
         diff_fields = ("token", "uid", "is_active")
         unique_together = ("collection", "uid", "token")
 
+    @property
     def social_url(self):
         twitter_user_url = "https://twitter.com/"
         flickr_user_url = 'https://www.flickr.com/photos/'

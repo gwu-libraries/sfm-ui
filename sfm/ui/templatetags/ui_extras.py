@@ -187,3 +187,28 @@ def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=Fa
 def get_item(items, key):
     return items.get(key)
 
+
+@register.filter
+def paginator_range(page, page_mid_range=5):
+    """
+    return pagination middle range part
+    Usage::
+        {% paginator_range the_obj_to_paginate %}
+    Example::
+        {% paginator_range harvest_list %}
+        :param page: page object needs to pagination
+        :param page_mid_range: how many page show in the mid parts
+    """
+    # Get the index of the current page
+    index = page.number - 1
+    # This value is maximum index of your pages, so the last page - 1
+    max_index = len(page.paginator.page_range)
+    page_diff = page_mid_range / 2
+    page_addition = 1 if page_mid_range % 2 == 1 else 0
+    start_index = index - page_diff if index >= page_diff else 0
+    if start_index < page_diff:
+        end_index = min(max_index, start_index + page_mid_range)
+    else:
+        end_index = index + page_diff + page_addition if index <= max_index - page_diff - page_addition else max_index
+    # My new page range
+    return page.paginator.page_range[start_index:end_index]

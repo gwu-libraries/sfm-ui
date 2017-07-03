@@ -55,6 +55,31 @@ def diff_object_history(obj):
     return diffs
 
 
+def merge_two_diffs(diffs1, diffs2):
+    diffs = []
+    t = 0
+    while diffs1 and diffs2:
+        if diffs1.date > diffs2.date:
+            diffs[t] = diffs1
+            next(diffs1)
+        else:
+            diffs[t] = diffs2
+            next(diffs2)
+        t += 1
+
+    while diffs1:
+        diffs[t] = diffs1
+        next(diffs1)
+        t += 1
+
+    while diffs2:
+        diffs[t] = diffs2
+        next(diffs2)
+        t += 1
+
+    return diffs
+
+
 def diff_collection_and_seeds_history(collection):
     """
     Performs a diff on a collection and its seeds historical objects

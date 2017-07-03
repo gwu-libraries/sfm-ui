@@ -19,6 +19,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
+from django_tables2 import RequestConfig
+from .filters import SeedFilter
+from .tables import SeedTable
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
 import forms
@@ -165,6 +168,7 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
     seed_errors = {}
     last_harvest = None
     collection = None
+
     # set max limit of records returned, this is used to protect our site if someone tries to attack our site
     # and make it return huge amount of data
     # max_display_length = 1200
@@ -225,18 +229,45 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         _add_duplicate_seed_warnings(self.object, seed_warnings)
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
-        context["diffs"] = diff_collection_and_seeds_history(self.object)
-
-        # pagination seeds
-        # active status, seeds
-        seed_lists = {}
-        for active in ('active', 'deleted'):
-            seed_list = Seed.objects.filter(collection=self.object.pk,
-                                            is_active=active == 'active').order_by('token', 'uid')
-            seed_lists[active] = seed_list
-        context["seed_lists"] = seed_lists
-
+        #context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
+
+        seed_msgs = {'info': context["seed_infos"], 'warn': context["seed_warnings"], 'error': context["seed_errors"]}
+
+        # deal with seed tables
+        if context["has_seeds_list"]:
+            seed_tables = {}
+            seed_filter = {}
+            harvest_type = self.object.harvest_type
+            # whether to exclude link and uid column
+            exclude_fields = []
+            if not Collection.HARVEST_FIELDS[harvest_type]['link']:
+                exclude_fields.append('link')
+            if not Collection.HARVEST_FIELDS[harvest_type]['uid']:
+                exclude_fields.append('uid')
+            if not Collection.HARVEST_FIELDS[harvest_type]['token']:
+                exclude_fields.append('token')
+
+            # get the two seed table
+            for status in ('active', 'deleted'):
+                qs_active_seeds = Seed.objects.filter(collection=self.object.pk,
+                                                      is_active=status == 'active').order_by('token', 'uid')
+                filter = SeedFilter(self.request.GET, queryset=qs_active_seeds, prefix=status)
+
+                active_seeds = SeedTable(filter.qs,
+                                         prefix=status,
+                                         token_name=Collection.HARVEST_FIELDS[harvest_type]['token'],
+                                         uid_name=Collection.HARVEST_FIELDS[harvest_type]['uid'],
+                                         exclude=exclude_fields,
+                                         platform=harvest_type.split('_')[0],
+                                         msg=seed_msgs)
+                RequestConfig(self.request, paginate={'per_page': 10}).configure(active_seeds)
+                # active_seeds.paginate(page=self.request.GET.get('page', 1), per_page=10)
+                seed_tables[status] = active_seeds
+                seed_filter[status] = filter
+            context['filter'] = seed_filter
+            context["table"] = seed_tables
+
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_on and self.object.is_active and has_perms
         context["can_toggle_on"] = has_perms
