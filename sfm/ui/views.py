@@ -202,7 +202,7 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
         if column == 'link':
             return '<a target="_blank" href="{0}">' \
                    '<img src="{1}" ' \
-                   'height=35 width=35/></a>'.format(row.social_url(), static('ui/img/twitter_logo.png'))
+                   'height=35 width=35/></a>'.format(row.social_url, static('ui/img/twitter_logo.png'))
         elif column == 'messages':
             return '{0} {1}'.format('msg1', 'msg2')
         elif column == 'uid':
@@ -229,7 +229,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         _add_duplicate_seed_warnings(self.object, seed_warnings)
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
-        #context["diffs"] = diff_collection_and_seeds_history(self.object)
+        context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
 
         seed_msgs = {'info': context["seed_infos"], 'warn': context["seed_warnings"], 'error': context["seed_errors"]}
