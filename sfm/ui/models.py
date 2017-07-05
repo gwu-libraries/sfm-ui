@@ -390,6 +390,16 @@ class Collection(models.Model):
     def __str__(self):
         return '<Collection %s "%s">' % (self.id, self.name)
 
+    @property
+    def status(self):
+        if self.is_on:
+            status_str = "On"
+        elif self.is_active:
+            status_str = "Off"
+        else:
+            status_str = "Inactive"
+        return status_str
+
     def natural_key(self):
         return self.collection_id,
 

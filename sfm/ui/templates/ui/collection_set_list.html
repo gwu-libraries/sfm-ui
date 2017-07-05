@@ -18,20 +18,20 @@
 <div class="row">
     <div class="col-md-12">
         <ul id="collection_set_tabs" class="nav nav-tabs">
-            {% for colletion_set_key, colletion_set_name, collection_sets_lists in collection_sets_lists %}
+            {% for t in tables %}
                 {% if forloop.first %}
-                    <li class="active"><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                    <li class="active"><a  href="#{{ t.id }}" data-toggle="tab">{{ t.name }}</a></li>
                 {% else %}
-                        {% if collection_sets_lists %}
-                            <li><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                        {% if t %}
+                            <li><a  href="#{{ t.id }}" data-toggle="tab">{{ t.name }}</a></li>
                         {% endif %}
                 {% endif %}
             {% endfor %}
         </ul>
         <div class="tab-content ">
-            {% for colletion_set_key, colletion_set_name, collection_set_list in collection_sets_lists %}
-                 <div class="tab-pane {% if forloop.first %} active{% endif %}" id="{{ colletion_set_key }}">
-                    {% include "ui/collection_set_list_snippet.html" with collection_type=colletion_set_key collection_sets_input=collection_set_list %}
+            {% for t in tables  %}
+                 <div class="tab-pane {% if forloop.first %} active{% endif %}" id="{{ t.id }}">
+                    {% include "ui/seeds_list_snippet.html" with table=t.table filter=t.filter %}
                 </div>
             {% endfor %}
         </div>

@@ -12,16 +12,14 @@ from django.apps import apps
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, IntegerField
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from django_tables2 import RequestConfig
-from .filters import SeedFilter
-from .tables import SeedTable
+from .filters import SeedFilter, CollectionFilter, CollectionSetFilter
+from .tables import SeedTable, CollectionTable, CollectionSetTable
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
 import forms
@@ -49,20 +47,39 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(CollectionSetListView, self).get_context_data(**kwargs)
         # collection set identity, collection set type Name, collection set data
-        collection_sets_lists = []
+        collection_set_tables = []
         active_collection_sets, inactive_collection_sets = split_collection_sets(
-            CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
-                num_collections=Count('collections')).order_by('name'))
-        collection_sets_lists.append(('acs', "Active Collection Sets", active_collection_sets))
-        collection_sets_lists.append(('iacs', "Inactive Collection Sets", inactive_collection_sets))
+            CollectionSet.objects.filter(group__in=self.request.user.groups.all()))
+        for status in ['acs', 'iacs']:
+            collection_sets = active_collection_sets if status == 'acs' else inactive_collection_sets
+            if not collection_sets: continue
+            query_collection_sets = CollectionSet.objects.filter(
+                collection_set_id__in=[colsets.collection_set_id for colsets in collection_sets]).annotate(
+                num_collections=Count('collections')).order_by('name')
+            filter = CollectionSetFilter(self.request.GET, queryset=query_collection_sets, prefix=status)
+            collection_sets_table = CollectionSetTable(filter.qs, prefix=status)
+            RequestConfig(self.request, paginate={'per_page': 10}).configure(collection_sets_table)
+            collection_set_tables.append(
+                {'id': status, 'name': ('Active' if status == 'acs' else 'Inactive') + ' Collection Sets',
+                 'table': collection_sets_table, 'filter': filter})
 
         if self.request.user.is_superuser or self.request.user.is_staff:
             other_active_collection_sets, other_inactive_collection_sets = split_collection_sets(
-                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
-                    num_collections=Count('collections')).order_by('name'))
-            collection_sets_lists.append(('oacs', "Other Active Collection Sets", other_active_collection_sets))
-            collection_sets_lists.append(('oics', "Other Inactive Collection Sets", other_inactive_collection_sets))
-        context['collection_sets_lists'] = collection_sets_lists
+                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()))
+            for status in ['oacs', 'oiacs']:
+                collection_sets = other_active_collection_sets if status == 'oacs' else other_inactive_collection_sets
+                if not collection_sets: continue
+                query_collection_sets = CollectionSet.objects.filter(
+                    collection_set_id__in=[colsets.collection_set_id for colsets in collection_sets]).annotate(
+                    num_collections=Count('collections')).order_by('name')
+                filter = CollectionSetFilter(self.request.GET, queryset=query_collection_sets, prefix=status)
+                collection_sets_table = CollectionSetTable(filter.qs, prefix=status)
+                RequestConfig(self.request, paginate={'per_page': 10}).configure(collection_sets_table)
+                collection_set_tables.append(
+                    {'id': status, 'name': ('Other Active' if status == 'oacs' else 'Other Inactive') + ' Collection Sets',
+                     'table': collection_sets_table, 'filter': filter})
+
+        context["tables"] = collection_set_tables
         return context
 
 
@@ -94,8 +111,16 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
 
     def get_context_data(self, **kwargs):
         context = super(CollectionSetDetailView, self).get_context_data(**kwargs)
-        context['collection_list'] = Collection.objects.filter(
+
+        # deal with collection table
+        qs_collection = Collection.objects.filter(
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
+        collection_filter = CollectionFilter(self.request.GET, queryset=qs_collection)
+        collection_table = CollectionTable(collection_filter.qs)
+        RequestConfig(self.request, paginate={'per_page': 10}).configure(collection_table)
+
+        context['filter'] = collection_filter
+        context["table"] = collection_table
         context["diffs"] = diff_object_history(self.object)
         context["harvest_types"] = Collection.HARVEST_CHOICES
         context["harvest_description"] = Collection.HARVEST_DESCRIPTION
@@ -159,58 +184,6 @@ class CollectionSetAddNoteView(LoginRequiredMixin, RedirectView):
         return super(CollectionSetAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
-class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
-    columns = ['link', 'token', 'uid', 'messages']
-    # need to define the order columns, also need to match the Datatables setting in columnDefs
-    order_columns = ['', 'token', 'uid', '']
-    seed_infos = {}
-    seed_warnings = {}
-    seed_errors = {}
-    last_harvest = None
-    collection = None
-
-    # set max limit of records returned, this is used to protect our site if someone tries to attack our site
-    # and make it return huge amount of data
-    # max_display_length = 1200
-
-    def get_initial_queryset(self):
-        # return queryset used as base for futher sorting/filtering
-        # these are simply objects displayed in datatable
-        # You should not filter data returned here by any filter values entered by user. This is because
-        # we need some base queryset to count total number of records.
-        self.collection = Collection.objects.get(pk=self.kwargs['pk'])
-        self.last_harvest = self.collection.last_harvest()
-        self.seed_infos = _get_seed_msg_map(self.last_harvest.infos) if self.last_harvest else {}
-        seed_warnings = _get_seed_msg_map(self.last_harvest.warnings) if self.last_harvest else {}
-        _add_duplicate_seed_warnings(self.collection, self.seed_warnings)
-        self.seed_warnings = seed_warnings
-        self.seed_errors = _get_seed_msg_map(self.last_harvest.errors) if self.last_harvest else {}
-
-        return Seed.objects.filter(collection=self.kwargs['pk'], is_active=True).order_by('token', 'uid')
-
-    def filter_queryset(self, qs):
-        # use request parameters to filter queryset
-
-        # simple example:
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            qs = qs.filter(token__istartswith=search)
-        return qs
-
-    def render_column(self, row, column):
-        # We want to render user as a custom column
-        if column == 'link':
-            return '<a target="_blank" href="{0}">' \
-                   '<img src="{1}" ' \
-                   'height=35 width=35/></a>'.format(row.social_url, static('ui/img/twitter_logo.png'))
-        elif column == 'messages':
-            return '{0} {1}'.format('msg1', 'msg2')
-        elif column == 'uid':
-            return '{0}'.format(row.uid)
-        elif column == 'token':
-            return '{0}'.format(row.token)
-
-
 class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
@@ -229,7 +202,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         _add_duplicate_seed_warnings(self.object, seed_warnings)
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
-        context["diffs"] = diff_collection_and_seeds_history(self.object)
+        # context["diffs"] = diff_collection_and_seeds_history(self.object)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
 
         seed_msgs = {'info': context["seed_infos"], 'warn': context["seed_warnings"], 'error': context["seed_errors"]}

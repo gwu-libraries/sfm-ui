@@ -2,7 +2,7 @@ from django.conf import settings
 
 import os
 from itertools import chain
-
+from heapq import merge
 
 class Diff:
     def __init__(self):
@@ -52,31 +52,6 @@ def diff_object_history(obj):
     for i, historical_object in enumerate(historical_objects):
         diffs.append(diff_historical_object(historical_objects[i + 1] if i < len(historical_objects) - 1 else None,
                                             historical_object))
-    return diffs
-
-
-def merge_two_diffs(diffs1, diffs2):
-    diffs = []
-    t = 0
-    while diffs1 and diffs2:
-        if diffs1.date > diffs2.date:
-            diffs[t] = diffs1
-            next(diffs1)
-        else:
-            diffs[t] = diffs2
-            next(diffs2)
-        t += 1
-
-    while diffs1:
-        diffs[t] = diffs1
-        next(diffs1)
-        t += 1
-
-    while diffs2:
-        diffs[t] = diffs2
-        next(diffs2)
-        t += 1
-
     return diffs
 
 

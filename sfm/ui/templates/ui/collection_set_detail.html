@@ -67,33 +67,8 @@ $(document).ready(function(){
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Collections</h4></div>
         <div class="panel-body">
-            {% if collection_list %}
-            <table class="table datatable table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Harvest type</th>
-                  <th>Active seeds</th>
-                  <th>On/off/inactive</th>
-                </tr>
-              </thead>    
-            {% for collection in collection_list %}
-                <tr>
-                    <td><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></td>
-                    <td>{{ collection.get_harvest_type_display }}</td>
-                    <td>{{ collection.active_seed_count }}</td>
-                    <td>
-                        {% if collection.is_on %}
-                            <span class="text-success">On</span>
-                        {% elif collection.is_active %}
-                            Off
-                        {% else %}
-                            Inactive
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
+            {% if table %}
+                 {% include "ui/seeds_list_snippet.html" %}
             {% else %}
                 <p>No corresponding collections.</p>
             {% endif %}

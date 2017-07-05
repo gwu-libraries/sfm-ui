@@ -45,23 +45,23 @@
 
     {% endblock %}
 
-    {% block extra_head %}
-        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-		<script src="{% static 'ui/js/data_tables.js' %}"></script>
-        <script src="{% static 'ui/js/common_tables.js' %}"></script>
-		<script type="text/javascript">
-           var oPaginationType = "bs_normal";
-           var oLanguages = {
-                "lengthMenu": "Display _MENU_ records per page",
-                "info": "Showing page _PAGE_ of _PAGES_",
-                "infoEmpty": "No records available",
-                "infoFiltered": "(filtered from _MAX_ total records)",
-                "paginate": {
-                  "previous": "Prev"
-                }
-            };
-        </script>
-    {% endblock %}
+    {% block extend_script %}
+    <script type="text/javascript">
+       $(function() {
+            // for bootstrap 3 use 'shown.bs.tab'
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                // save the latest tab; use cookies if you like 'em better:
+                localStorage.setItem('lastTab', $(this).attr('href'));
+            });
+
+            // go to the latest tab, if it exists:
+            var lastTab = localStorage.getItem('lastTab');
+            if (lastTab) {
+                $('[href="' + lastTab + '"]').tab('show');
+            }
+        });
+    </script>
+    {% endblock extend_script %}
   </head>
 
   <body>

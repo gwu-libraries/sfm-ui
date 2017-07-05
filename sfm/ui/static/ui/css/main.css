@@ -125,33 +125,6 @@ table {
     word-wrap: break-word;
 }
 
-table.datatable thead .sorting,
-table.datatable thead .sorting_asc,
-table.datatable thead .sorting_desc,
-table.datatable thead .sorting_asc_disabled,
-table.datatable thead .sorting_desc_disabled {
-	cursor: pointer;
-	*cursor: hand;
-}
-
-table.datatable thead .sorting {
-    background: url('../img/sort_both.png') no-repeat center right;
-}
-table.datatable thead .sorting_asc {
-    background: url('../img/sort_asc.png') no-repeat center right;
-}
-table.datatable  thead .sorting_desc {
-    background: url('../img/sort_desc.png') no-repeat center right;
-}
-
-table.datatable thead .sorting_asc_disabled {
-    background: url('../img/sort_asc_disabled.png') no-repeat center right;
-}
-table.datatable thead .sorting_desc_disabled {
-    background: url('../img/sort_desc_disabled.png') no-repeat center right;
-}
-
-
 .ul_nav{
     max-height:200px;
     overflow:hidden;
@@ -173,8 +146,4 @@ table.datatable thead .sorting_desc_disabled {
     display: block;
     margin-left: auto;
     margin-right: auto;
-}
-
-.input-group-btn.input-space {
-  padding-left: 15px;
 }
