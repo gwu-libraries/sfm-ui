@@ -1,120 +1,34 @@
 {% load ui_extras %}
 {% load static %}
-{% load django_tables2 crispy_forms_tags bootstrap3 %}
 
+{% block extra_head %}
+    <script src="{% static 'ui/js/seed_tables.js' %}"></script>
+    <script type="text/javascript">
+       var SEED_LIST_JSON_URL ='{% url "seedsJSONAPI" collection.pk %}';
+    </script>
+{% endblock %}
 
-{% block content %}
-
-{% block filter %}
+{% with field=harvest_fields|get_item:collection.harvest_type %}
     <br>
-    <form action="" method="get" class="form form-inline pull-left">
-        <div class="input-group">
-            {% bootstrap_field filter.form.search show_label=False  show_help=False bound_css_class=''%}
-            <span class="input-group-btn">{% bootstrap_button 'search' %}</span>
-            </div>
-    </form>
-    <br>
-{% endblock filter %}
-
-
-<div class="table-container">
-
-{% block table %}
-<table{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
-    {% block table.thead %}
-    {% if table.show_header %}
+    {% if  seed_list %}
+    <table class="seed-dt table table-striped">
     <thead>
         <tr>
-        {% for column in table.columns %}
-            {% if column.orderable %}
-            <th {{ column.attrs.th.as_html }}><a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a></th>
-            {% else %}
-            <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+            {% if field.link %}
+                <th>{{ field.link }}</th>
             {% endif %}
-        {% endfor %}
+            {% if field.token %}
+                <th>{{ field.token }}</th>
+            {% endif %}
+            {% if field.uid %}
+                <th>{{ field.uid }}</th>
+            {% endif %}
+            <th>Messages</th>
         </tr>
     </thead>
+    <tbody></tbody>
+    </table>
+    {% else %}
+        <p>No corresponding seeds.</p>
     {% endif %}
-    {% endblock table.thead %}
-    {% block table.tbody %}
-    <tbody>
-        {% for row in table.page.object_list|default:table.rows %} {# support pagination #}
-        {% block table.tbody.row %}
-        <tr {{ row.attrs.as_html }}>
-            {% for column, cell in row.items %}
-                <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td>
-            {% endfor %}
-        </tr>
-        {% endblock table.tbody.row %}
-        {% empty %}
-        {% if table.empty_text %}
-        {% block table.tbody.empty_text %}
-        <tr><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
-        {% endblock table.tbody.empty_text %}
-        {% endif %}
-        {% endfor %}
-    </tbody>
-    {% endblock table.tbody %}
-    {% block table.tfoot %}
-    {% if table.has_footer %}
-    <tfoot>
-        <tr>
-        {% for column in table.columns %}
-            <td>{{ column.footer }}</td>
-        {% endfor %}
-        </tr>
-    </tfoot>
-    {% endif %}
-    {% endblock table.tfoot %}
-</table>
-{% endblock table %}
-
-{% if table.page %}
-    {% block pagination %}
-        <div class="row">
-          <div class="col-xs-12">
-            <section class="paginator text-center">
-              <nav>
-                <ul class="pagination">
-                    {% if table.page.has_previous %}
-                      <li><a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" aria-label="Previous">
-                        <span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Prev</a>
-                      <li>
-                    {% else %}
-                       <li class="disabled"><a href="#" aria-label="Previous">
-                        <span class="glyphicon glyphicon-chevron-left"></span>&nbsp;Prev</a>
-                      <li>
-                    {% endif %}
-                    {% for page_num in table.page|paginator_range %}
-                    {% ifequal table.page.number page_num %}
-                        <li class="active">
-                          <a href="{% querystring table.prefixed_page_field=page_num %}">{{ page_num }}</a>
-                        </li>
-                    {% else %}
-                        <li>
-                          <a href="{% querystring table.prefixed_page_field=page_num %}">{{ page_num }}</a>
-                        </li>
-                    {% endifequal %}
-                    {% endfor %}
-
-                    {% if table.page.has_next %}
-                      <li><a href="{%  querystring table.prefixed_page_field=table.page.next_page_number %}" aria-label="Next">
-                        Next&nbsp;<span class="glyphicon glyphicon-chevron-right"></span>
-                      </a>
-                      <li>
-                    {% else %}
-                       <li class="disabled"><a href="#" aria-label="Next">
-                        Next&nbsp;<span class="glyphicon glyphicon-chevron-right"></span>
-                      </a>
-                      <li>
-                    {% endif %}
-                </ul>
-              </nav>
-            </section>
-          </div>
-        </div>
-    {% endblock pagination %}
-{% endif %}
-
-</div>
-{% endblock content %}
+{% endwith %}
