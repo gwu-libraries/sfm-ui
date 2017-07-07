@@ -3,7 +3,7 @@ layout: article
 permalink: /posts/2017-07-06-prom-report-2
 title: "SFM for Archivists: Shaping Local Services"
 author: chris_prom
-excerpt: "In the second post in the SFM for Archivists series, Chris Prom discusses strateging for shaping local collections."   
+excerpt: "In the second post in the SFM for Archivists series, Chris Prom discusses strategies for shaping local collections."   
 ---
 
 *Editor’s note: In June, we published the report [Social Feed Manager: Guide for Building Social Media Archives]({{ site.github.url }}/resources/SFMReportProm2017.pdf), written by Christopher Prom of the University of Illinois with support from our grant from NHPRC. To highlight this work and the insights it provides to the community, we’re sharing excerpts of the report as blog posts. This is the second in a series of posts we’re calling “SFM for Archivists”.*
