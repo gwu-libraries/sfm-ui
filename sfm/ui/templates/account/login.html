@@ -4,48 +4,5 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-<div class="col-md-12">
-    <h1>Log In</h1>
-</div>
-<div class="col-md-6">
-
-<p>If you have not created an account yet, then please <a href="{{ signup_url }}">sign up</a> first.</p>
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="form-group">
-        {{ form.login.errors }}
-        <label for="id_login">Username</label>
-        <input type="text" class="form-control" id="id_login" name="login" placeholder="Username">
-    </div>
-    <div class="form-group">
-        {{ form.password.errors }}
-        <label for="id_password">Password</label>
-        <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
-    </div>
-    <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
-    <div class="checkbox">
-    <label>
-      <input type="checkbox" id="id_remember" name="remember"> Remember me
-    </label>
-  </div>
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <button class="btn btn-primary" type="submit">Log in</button>
-</form>
-</div>
-
-<div class="col-md-5 col-md-offset-1" style="text-align: justify">
-<p>Social Feed Manager empowers researchers and archivists to create collections of social media data from Twitter, Tumblr, Flickr, and Sina Weibo. Read more about Social Feed Manager <a href="http://sfm.readthedocs.io/en/latest/">here</a>.</p>
-</div>
-
-</div>
-<div class="row">
-    <div class="col-md-12 subsection">
-        {% include "ui/terms_snippet.html" %}
-    </div>
-</div>
+{% include "account/login_snippet.html" %}
 {% endblock %}

@@ -8,7 +8,7 @@
 <h1>Sign Up</h1>
 </div>
 <div class="col-md-6">
-<p>Already have an account? Then please <a href="{{ login_url }}">log in</a>.</p>
+<p>Already have an account? Then please <a href={% url 'account_login' %}>log in</a>.</p>
 <form method="post" action="{% url 'account_signup' %}">
     {% csrf_token %}
     {{ form.non_field_errors }}
