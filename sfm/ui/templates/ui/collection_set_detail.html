@@ -16,7 +16,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <h1>{{ collection_set.name }} 
+        <h1>{{ collection_set.name }}
             <a class="btn btn-primary btn-aligned" href="{% url "collection_set_update" collection_set.pk %}"  {% if not can_edit %} disabled {% endif %}>
             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit
         </a>
@@ -32,11 +32,12 @@
         {% endif %}
         <p><strong>Data collected:</strong> {{ collection_set.warcs_count|intcomma }} file{{ collection_set.warcs_count|pluralize }} ({{ collection_set.warcs_bytes|filesizeformat }})</p>
         {% if collection_set.stats %}
-            <p><strong>Stats:</strong><ul>
+            <p><strong>Stats:</strong></p>
+            <ul>
             {% for item, count in collection_set.stats.items %}
               <li>{{ item }}: {{ count|intcomma }}</li>
             {% endfor %}
-            </ul></p>
+            </ul>
         {% endif %}
     </div>
 </div>
@@ -57,7 +58,7 @@
 
 <script>
 $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
+    $('[data-toggle="tooltip"]').tooltip();
 });
 </script>
 
@@ -66,7 +67,8 @@ $(document).ready(function(){
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Collections</h4></div>
         <div class="panel-body">
-            <table class="table">
+            {% if collection_list %}
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -74,7 +76,7 @@ $(document).ready(function(){
                   <th>Active seeds</th>
                   <th>On/off/inactive</th>
                 </tr>
-              </thead>    
+              </thead>
             {% for collection in collection_list %}
                 <tr>
                     <td><a href={% url "collection_detail" collection.pk %}>{{ collection.name }}</a></td>
@@ -92,6 +94,9 @@ $(document).ready(function(){
                 </tr>
             {% endfor %}
             </table>
+            {% else %}
+                <p>No collections yet.</p>
+            {% endif %}
             <!-- Single button -->
             <div class="btn-group">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  {% if not can_edit %} disabled {% endif %}>
@@ -108,26 +113,25 @@ $(document).ready(function(){
                               <h4 class="modal-title">Collection Types</h4>
                          </div>
                          <div class="modal-body">
-                           <p>Collections connect to a social media platform's APIs, which are methods for retrieving data. Understanding 
-                           what each collection type provides is important to ensure you collect what you need and are aware of any limitations. 
+                           <p>Collections connect to a social media platform's APIs, which are methods for retrieving data. Understanding
+                           what each collection type provides is important to ensure you collect what you need and are aware of any limitations.
                            <a href="http://sfm.readthedocs.io/en/latest/collections.html" target="_blank">More details.</a></p>
                          </div>
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal --> 
-             
-             
-                  <ul class="dropdown-menu">
-                          {% for harvest_type, harvest_label in harvest_types %}
-                          <li><a  href="{% url "collection_create" collection_set.id harvest_type %}" class="flex-column align-items">
-                              <p><strong>Add {{ harvest_label }}</strong><br/>
-                                           {{ harvest_description|get_item:harvest_type }}
-                               </p>
-                          </a></li>
-                          {% endfor %}
-                     </ul>
+                </div><!-- /.modal -->
+
+                <ul class="dropdown-menu">
+                    {% for harvest_type, harvest_label in harvest_types %}
+                        <li>
+                            <a class="flex-column align-items" href="{% url "collection_create" collection_set.id harvest_type %}">
+                            <p><strong>Add {{ harvest_label }}</strong><br/>{{ harvest_description|get_item:harvest_type }}</p>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
-               <br/>
+            <br>
         </div>
     </div>
   </div>
@@ -136,8 +140,9 @@ $(document).ready(function(){
     <div class="col-md-12">
         <h4>Change log</h4>
         <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_edit %} disabled {% endif %}>
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note
-        </button><br />
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note</button>
+            <br>
+        </p>
         <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModal">
             <div class="modal-dialog" role="document">
                 <form method="post" action={% url "collection_set_add_note" collection_set.pk %}>
@@ -151,7 +156,7 @@ $(document).ready(function(){
                         <div class="modal-body">
                             <div id="div_id_add_note" class="form-group">
                                 <div class="controls ">
-                                    <textarea class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
+                                    <textarea title="change_note" class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
                                     <p id="hint_id_add_note" class="help-block">Provide a note to be added to the change log.</p>
                                 </div>
                             </div>
@@ -165,7 +170,7 @@ $(document).ready(function(){
                     </div>
                 </form>
             </div><!-- modal-dialog -->
-        </div></p> <!-- modal -->
+        </div> <!-- modal -->
         {% include "ui/diff_snippet.html" with log_entries=collection_set.log_entries %}
     </div>
 </div>
