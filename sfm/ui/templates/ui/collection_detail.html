@@ -169,7 +169,7 @@
 {% if last_harvest.infos %}
     <div class="alert alert-info" role="alert">
         Information messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
-        <ul>
+        <ul class="ul_nav">
             {% for msg in last_harvest.infos %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
@@ -179,7 +179,7 @@
 {% if last_harvest.warnings %}
     <div class="alert alert-warning" role="alert">
         Warning messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
-        <ul>
+        <ul class="ul_nav">
             {% for msg in last_harvest.warnings %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
@@ -189,7 +189,7 @@
 {% if last_harvest.errors %}
     <div class="alert alert-danger" role="alert">
         Error messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
-        <ul>
+        <ul class="ul_nav">
             {% for msg in last_harvest.errors %}
                 <li>{{ msg.message }}</li>
             {% endfor %}

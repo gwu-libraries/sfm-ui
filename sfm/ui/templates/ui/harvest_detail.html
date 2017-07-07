@@ -34,32 +34,36 @@
     {% endif %}
     <p><strong>Harvest type:</strong> {{ harvest.harvest_type }}</p>
     {% if harvest.stats %}
-        <p><strong>Stats:</strong><ul>
+        <p><strong>Stats:</strong></p>
+        <ul>
             {% for item, count in harvest.stats.items %}
                 <li>{{ item }}: {{ count|intcomma }}</li>
             {% endfor %}
-        </ul></p>
+        </ul>
     {% endif %}
     {% if harvest.infos %}
-        <p><strong>Informational messages:</strong><ul>
+        <p><strong>Informational messages:</strong></p>
+        <ul class="ul_nav">
             {% for msg in harvest.infos %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
-        </ul></p>
+        </ul>
     {% endif %}
     {% if harvest.warnings %}
-        <p><strong>Warning messages:</strong><ul>
-            {% for msg in harvest.warnings %}
-                <li>{{ msg.message }}</li>
-            {% endfor %}
-        </ul></p>
+        <p><strong>Warning messages:</strong></p>
+        <ul class="ul_nav">
+                {% for msg in harvest.warnings %}
+                    <li>{{ msg.message }}</li>
+                {% endfor %}
+        </ul>
     {% endif %}
     {% if harvest.errors %}
-        <p><strong>Error messages:</strong><ul>
+        <p><strong>Error messages:</strong></p>
+        <ul class="ul_nav">
             {% for msg in harvest.errors %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
-        </ul></p>
+        </ul>
     {% endif %}
     {% if harvest.warcs_count %}
         <p><strong>WARCs:</strong> {{ harvest.warcs_count }} file{{ harvest.warcs_count|pluralize }} ({{ harvest.warcs_bytes|filesizeformat }})</p>
@@ -69,13 +73,12 @@
         <p><strong>This harvest requested by:</strong> <a href="{% url "harvest_detail" harvest.parent_harvest.pk %}">{{ harvest.parent_harvest.get_harvest_type_display }} harvest</a> ({{ harvest.parent_harvest.date_requested }})</p>
     {% endif %}
     {% if harvest.child_harvests.count %}
-        <p><strong>This harvest requested:</strong>
-            <ul>
-            {% for child_harvest in harvest.child_harvests.all %}
-                <li><a href="{% url "harvest_detail" child_harvest.pk %}">{{ child_harvest.get_harvest_type_display }} harvest</a> ({{ child_harvest.date_requested }})</li>
-            {% endfor %}
-            </ul>
-        </p>
+        <p><strong>This harvest requested:</strong></p>
+        <ul>
+        {% for child_harvest in harvest.child_harvests.all %}
+            <li><a href="{% url "harvest_detail" child_harvest.pk %}">{{ child_harvest.get_harvest_type_display }} harvest</a> ({{ child_harvest.date_requested }})</li>
+        {% endfor %}
+        </ul>
     {% endif %}
 
 </div>
