@@ -228,17 +228,18 @@ to the next section.
 This section focuses on using the Weibo advanced API. If you haven't read through the previous sections describing how to access and use the basic API, please do so first.
 
 Advanced API calls are marked with `高(Advanced)` on the [Weibo API](http://open.weibo.com/wiki/%E5%BE%AE%E5%8D%9AAPI) page. 
-Example include [timeline_batch](http://open.weibo.com/wiki/2/statuses/timeline_batch) and [search/topics](http://open.weibo.com/wiki/2/search/topics).
+Examples include [timeline_batch](http://open.weibo.com/wiki/2/statuses/timeline_batch) and [search/topics](http://open.weibo.com/wiki/2/search/topics).
 
 ### 5.1 How to Apply for Weibo Advanced API Access
 
 If you want to get access to these APIs, there are some basic rules as described in the [official guide](http://open.weibo.com/wiki/%E9%AB%98%E7%BA%A7%E6%8E%A5%E5%8F%A3%E7%94%B3%E8%AF%B7):
 
 * You must have an approved app on Weibo open platform.
-* You must agree to Follow the platform policy and agreement.
+* You must agree to follow the platform policy and agreement.
 * Your app must have no records of illegal activity.
 
-In addition to these basic rules, I highly recommend that you increase the number of registered users of your app. The number of users depends on which API level you are trying to apply for.
+In addition to these basic rules, I highly recommend that you increase the
+number of registered users of your app. The number of users needed depends on which API level you are trying to apply for.
 Next, follow the section of `How to apply` in the official guide. Weibo will generally respond to your application in one or two business days.
 If approved, follow [this section](#3-get-access-token) to re-generate your access token. 
 
