@@ -277,14 +277,20 @@ update your token when it expires.
 Suppose your temporary access token already expired. Go to the SFM credential
 page, where you can view the list of credentials:
 ![weibo credential]({{ site.github.url }}/images/weibo/weibo_credential.png)
+
+
 Update the name of the Weibo credential you created earlier in [Section
 6.1](#61-get-temporary-access-token) (by clicking on it and editing its details) to more easily identify it as expired.
 For example, you might update its name to `Victor's weibo credential expired`.
 ![weibo credential expired]({{ site.github.url }}/images/weibo/weibo_credential_expired.png)
+
+
 Click the `Connect Weibo Account` button and follow the [Section
 6.1](#61-get-temporary-access-token) get a new credential; you may wish to name it in a way
 that easily identifies it as the current valid credential.
 ![weibo credential new]({{ site.github.url }}/images/weibo/weibo_credential_new.png)
+
+
 Finally, edit the Weibo search collection and update its credential to use the
 new credential instead of the expired credential.
 ![update collection credential]({{ site.github.url }}/images/weibo/update_collection_credential.png)
