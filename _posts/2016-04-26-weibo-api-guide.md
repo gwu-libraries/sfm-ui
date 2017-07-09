@@ -194,7 +194,8 @@ Now, you have completed all the necessary steps. For a demo of the API, please s
 If you get any unexpected errors in above two steps, request new `Authentication Code` and try again!
 
 ## 4. Basic API Examples
-In this section, I'll help you understand the Basic API with examples.
+In this section, I'll help you understand the Basic API's Public Timeline and
+Friendship Timeline methods, with examples.
 
 [Public Timeline](http://open.weibo.com/wiki/2/statuses/public_timeline): Returns the latest public Weibos.
 It will return the latest Weibos with limited count based on all the Weibo users' posts. Usually, it returns 50 Weibo posts in one page ordering by timestamp. For example, if `User A` posts 10 Weibos and `User B` posts 5 Weibos, the result would pop 5 latest weibo among the total 15 Weibos.
@@ -241,7 +242,7 @@ If you want to get access to these APIs, there are some basic rules as described
 In addition to these basic rules, I highly recommend that you increase the
 number of registered users of your app. The number of users needed depends on which API level you are trying to apply for.
 Next, follow the section of `How to apply` in the official guide. Weibo will generally respond to your application in one or two business days.
-If approved, follow [this section](#3-get-access-token) to re-generate your access token. 
+If approved, go back to [the section that describes how to get an access token](#3-get-access-token) to re-generate your access token. 
 
 ## 6. Accessing Weibo Search in SFM
 [Social Feed Manager]({{ site.github.url }}) includes a collection type that uses the Weibo Search API. As stated in Weibo's API documentation, it only returns the recent 200 Weibos matching a topic search.
@@ -249,34 +250,48 @@ If approved, follow [this section](#3-get-access-token) to re-generate your acce
 Building a Weibo search collection in SFM is much like using Twitter search in SFM; more information can be found in the [SFM documentation](http://sfm.readthedocs.io/en/latest/collections.html#weibo-search). This post focuses on the issue of acquiring Weibo credentials to use the Weibo search API.
 
 ### 6.1 Get Temporary Access Token
-Usually, SFM will provide an instance including Weibo search at GW Libraries network. It supports authorization work to the approved SFM APP at open Weibo platform. 
-You can get a temporary access token which last for 30 days when you complete giving authorization work to SFM. Here shows how it work.
+If your SFM instance is configured to enable Weibo search collections, then it
+will allow you to authorize credentials with the approved SFM app on the open Weibo platform. 
+You can get a temporary access token which will be valid for 30 days when you
+authorize through SFM, by following these steps:
 
 Go to SFM credential page and click `Connect Weibo Account`.
 ![weibo connect btn]({{ site.github.url }}/images/weibo/weibo_connect.png)
 
-Next page would be like this:
+Next you will be directed to enter your Weibo credentials on the Weibo site's
+authentication page:
 ![weibo auth login]({{ site.github.url }}/images/weibo/weibo_auth_login.png)
 
-Giving your username and password, click red `登录(Login)` button and then click the red `授权(Authorize)` button in next page.
-Finally, you will be redirect to the access token page.
+Enter your username and password, click the red `登录(Login)` button and then
+click the red `授权(Authorize)` button on the next page.
+
+
+Finally, you will be redirected back to SFM, to the access token page:
 ![weibo sfm access]({{ site.github.url }}/images/weibo/weibo_sfm_token.png)
 
-With above access token, you can build your own Weibo search collection. This access token will expire in 30 days.  To update your token, it's simple to do in SFM-UI.
+With the above access token, you can build your own Weibo search collection.
+This access token will expire in 30 days.  The next section describes how to
+update your token when it expires.
 
 ### 6.2 Update Temporary Access Token
-Suppose your temporary access token already expired. Go to the SFM-UI credential page, you can see the credential list like this:
+Suppose your temporary access token already expired. Go to the SFM credential
+page, where you can view the list of credentials:
 ![weibo credential]({{ site.github.url }}/images/weibo/weibo_credential.png)
-Update the name of the Weibo credential created by [6.1 section](#61-get-temporary-access-token) with anything meaningful to you, such as `Victor's weibo credential expired`.
+Update the name of the Weibo credential you created earlier in [Section
+6.1](#61-get-temporary-access-token) (by clicking on it and editing its details) to more easily identify it as expired.
+For example, you might update its name to `Victor's weibo credential expired`.
 ![weibo credential expired]({{ site.github.url }}/images/weibo/weibo_credential_expired.png)
-Click the `Connect Weibo Account` and follow the [6.1 section](#61-get-temporary-access-token) get a new credential. The new credential would be the same name as your previous one.
+Click the `Connect Weibo Account` button and follow the [Section
+6.1](#61-get-temporary-access-token) get a new credential; you may wish to name it in a way
+that easily identifies it as the current valid credential.
 ![weibo credential new]({{ site.github.url }}/images/weibo/weibo_credential_new.png)
-Finally update the credential for your collection with the new one.
+Finally, edit the Weibo search collection and update its credential to use the
+new credential instead of the expired credential.
 ![update collection credential]({{ site.github.url }}/images/weibo/update_collection_credential.png)
 
 Congratulations! You have completed all the sections. I hope this guide will be helpful to you in the future! If you have any questions, please feel free to contact me: [Yecheng Tan](http://library.gwu.edu/users/ychtan).
 
-## 7. Reference
+## 7. References
 
 * [Practical guide for using Sina Weibo's API](https://www.cs.cmu.edu/~lingwang/weiboguide/)
 * [Weibo Documentation](http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5)
