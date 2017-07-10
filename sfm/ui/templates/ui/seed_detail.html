@@ -104,7 +104,8 @@
           <h4>Change log</h4>
             <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_edit %} disabled {% endif %}>
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note
-            </button><br />
+            </button><br>
+            </p>
             <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModal">
                 <div class="modal-dialog" role="document">
                     <form method="post" action={% url "seed_add_note" seed.pk %}>
@@ -118,7 +119,7 @@
                             <div class="modal-body">
                                 <div id="div_id_add_note" class="form-group">
                                     <div class="controls ">
-                                        <textarea class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
+                                        <textarea title="add_delete_seed_note" class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
                                         <p id="hint_id_add_note" class="help-block">Provide a note to be added to the change log.</p>
                                     </div>
                                 </div>
@@ -132,7 +133,7 @@
                         </div>
                     </form>
                 </div><!-- modal-dialog -->
-            </div></p> <!-- modal -->
+            </div><!-- modal -->
           {% include "ui/diff_snippet.html" with log_entries=seed.log_entries %}
        </div>
    </div>

@@ -208,11 +208,12 @@
         {% endif %}
         <p><strong>Data collected:</strong> {{ collection.warcs_count|intcomma }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
            {% if collection.stats %}
-              <p><strong>Stats:</strong><ul>
+              <p><strong>Stats:</strong></p>
+               <ul>
               {% for item, count in collection.stats.items %}
                 <li>{{ item }}: {{ count|intcomma }}</li>
               {% endfor %}
-              </ul></p>
+              </ul>
            {% endif %}
     </div>
     {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
@@ -245,7 +246,7 @@
       <div class="panel panel-default">
         <div class="panel-heading"><h4>Seeds<a type="button" style="position: relative; top: -6px" class="pull-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
         <div class="input-group"> <span class="input-group-addon">Search</span>
-            <input id="filter" type="text" class="form-control">
+            <input title='seed-filter' id="filter" type="text" class="form-control">
         </div>
          <div class="panel-body">
            <ul class="nav nav-tabs" role="tablist">
@@ -295,11 +296,6 @@
   <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading"><h4>Harvests ({{ harvest_count|intcomma }})</h4></div>
-        <!--
-            <div class="input-group"> <span class="input-group-addon">Search harvest type</span>
-            <input id="filterHarvest" type="text" class="form-control">
-        </div>
-        -->
         <div class="panel-body">
             <table class="table table-list-search">
                 <thead>
@@ -307,14 +303,7 @@
                     <th>Type</th>
                     <th>Requested</th>
                     <th>Updated/Completed</th>
-                    <th>Status<!--      <select id='filterText' style='display:inline-block' onchange='filterText()'>
-                                    <option disabled selected>Select</option>
-                                    <option value='all'>All</option>
-                                    {% for status, description in status_choices %}
-                                        <option value='{{ description }}'>{{ description }}</option>
-                                    {% endfor %}
-                                </select>-->
-                    </th>
+                    <th>Status</th>
                     <th>Stats</th>
                     <th>Messages</th>
                 </tr>
@@ -351,8 +340,8 @@
     <div class="col-md-12">
         <h4>Change log</h4>
         <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_toggle_on %} disabled {% endif %}>
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note
-        </button><br />
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note</button><br/>
+        </p>
         <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModal">
             <div class="modal-dialog" role="document">
                 <form method="post" action={% url "collection_add_note" collection.pk %}>
@@ -366,7 +355,7 @@
                         <div class="modal-body">
                             <div id="div_id_add_note" class="form-group">
                                 <div class="controls ">
-                                    <textarea class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
+                                    <textarea title="add_change_log" class="textarea form-control" cols="40" id="id_add_note" name="history_note" rows="4"></textarea>
                                     <p id="hint_id_add_note" class="help-block">Provide a note to be added to the change log.</p>
                                 </div>
                             </div>
@@ -380,10 +369,10 @@
                     </div>
                 </form>
             </div><!-- modal-dialog -->
-        </div></p> <!-- modal -->
+        </div> <!-- modal -->
    </div>
 </div>
-<div class="row"> 
+<div class="row">
     <div class="col-md-12">
         {% include "ui/diff_snippet.html" with log_entries=collection.log_entries %}
     </div>
