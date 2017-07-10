@@ -18,6 +18,7 @@
 {% block content %}
 {% if fileinfos %}
 <div class="row">
+    <div class="col-md-12">
     <div class="panel panel-default">
         <div class="panel-heading"><h4>Export files for {{ collection.name }}</h4></div>
         <div class="panel-body">
@@ -37,27 +38,26 @@
             </table>
         </div>
     </div>
+    </div>
 </div>
 {% endif %}
 <div class="row">
     <div class="col-md-12">
     <p>See the <a href="http://sfm.readthedocs.io/en/latest/data_dictionary.html" target="_blank">data dictionary</a> for more information about the fields in the export.</p>
     <p><strong>Status:</strong> {{ export.get_status_display }}</p>
-    <p><strong>Format:</strong> {{ export.export_format }}</p> 
-    <p>
-        {% if not export.collection %}
-            <p><strong>Selected seeds:</strong>
-            <ul>
-            {% for seed in export.seeds.all %}
-                <li>{{ seed.label }}</li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            {% if export.collection.seeds.all %}
-                <p><strong>Selected seeds:</strong> All seeds</p>
-            {% endif %}
+    <p><strong>Format:</strong> {{ export.export_format }}</p>
+    {% if not export.collection %}
+        <p><strong>Selected seeds:</strong></p>
+        <ul class="ul_nav">
+        {% for seed in export.seeds.all %}
+            <li class="longseed">{{ seed.label }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        {% if export.collection.seeds.all %}
+            <p><strong>Selected seeds:</strong> All seeds</p>
         {% endif %}
-    </p>
+    {% endif %}
     </div>
 </div>
 <div class="row">
@@ -83,32 +83,35 @@
                 {% endif %}
                 <p><strong>Id:</strong> {{ export.export_id }}</p>
              </div>
-          </div>    
+          </div>
       </div>
 </div>
 <div class="row">
    <div class="col-md-12">
        {% if export.infos %}
-         <p><strong>Informational messages:</strong><ul>
+           <p><strong>Informational messages:</strong></p>
+           <ul class="ul_nav">
             {% for msg in export.infos %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
-         </ul></p>
+           </ul>
        {% endif %}
        {% if export.warnings %}
-         <p><strong>Warning messages:</strong><ul>
+           <p><strong>Warning messages:</strong></p>
+           <ul class="ul_nav">
             {% for msg in export.warnings %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
-          </ul></p>
-        {% endif %}
-        {% if export.errors %}
-           <p><strong>Error messages:</strong><ul>
+           </ul>
+       {% endif %}
+       {% if export.errors %}
+            <p><strong>Error messages:</strong></p>
+            <ul class="ul_nav">
             {% for msg in export.errors %}
                 <li>{{ msg.message }}</li>
             {% endfor %}
-           </ul></p>
-         {% endif %}
+            </ul>
+       {% endif %}
     </div>
 </div>
 <div class="row subsection">

@@ -140,3 +140,10 @@ table {
     margin-left: auto;
     margin-right: auto;
 }
+
+.ul_nav{
+    max-height:200px;
+    overflow:hidden;
+    word-wrap: break-word;
+    overflow-y:auto;
+}
