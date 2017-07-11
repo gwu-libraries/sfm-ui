@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import CollectionSet, Credential, Group, User, Collection
-from .utils import diff_historical_object, diff_object_history, diff_field_changed
+from .utils import diff_historical_objects, diff_object_history, diff_field_changed
 
 
 class DiffTests(TestCase):
@@ -25,7 +25,7 @@ class DiffTests(TestCase):
         historical_credential = self.historical_credentials[0]
         historical_credential.history_user = self.user
 
-        diff = diff_historical_object(self.historical_credentials[1], historical_credential)
+        diff = diff_historical_objects(self.historical_credentials[1], historical_credential)
         self.assertDictEqual({"token": (self.original_credential_token, self.changed_credential_token)}, diff.fields)
         self.assertEqual(self.user, diff.user)
         self.assertEqual(historical_credential.history_date, diff.date)
@@ -35,7 +35,7 @@ class DiffTests(TestCase):
         historical_credential = self.historical_credentials[1]
         historical_credential.history_user = self.user
 
-        diff = diff_historical_object(None, historical_credential)
+        diff = diff_historical_objects(None, historical_credential)
         self.assertDictEqual(
             {"name": (None, "test_credential"), "platform": (None, "test_platform"), "token": (None, "original token"),
              "is_active": (None, True)},

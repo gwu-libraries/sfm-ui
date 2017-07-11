@@ -21,7 +21,7 @@ from .forms import CollectionSetForm, ExportForm
 import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
-from .utils import diff_object_history, diff_collection_and_seeds_history, clean_token, clean_blogname
+from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
@@ -74,7 +74,7 @@ class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaf
         context = super(CollectionSetDetailView, self).get_context_data(**kwargs)
         context['collection_list'] = Collection.objects.filter(
             collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
-        context["diffs"] = diff_object_history(self.object)
+        context["diffs"], context["diffs_len"] = top_object_diffs(self.object)
         context["harvest_types"] = Collection.HARVEST_CHOICES
         context["harvest_description"] = Collection.HARVEST_DESCRIPTION
         context["item_id"] = self.object.id
@@ -155,7 +155,15 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         _add_duplicate_seed_warnings(self.object, seed_warnings)
         context["seed_warnings"] = seed_warnings
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
-        context["diffs"] = diff_collection_and_seeds_history(self.object)
+        diffs = []
+        collection_history_iter = CollectionHistoryIter(self.object.history.all(),
+                              Seed.history.filter(collection=self.object).order_by(
+                                  "-history_date"))
+        for historical_obj in collection_history_iter[0:3]:
+            diffs.append(diff_historical_object(historical_obj))
+        context["diffs"] = diffs
+        context["diffs_len"] = len(collection_history_iter)
+
         context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
@@ -434,7 +442,7 @@ class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissi
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(SeedDetailView, self).get_context_data(**kwargs)
-        context["diffs"] = diff_object_history(self.object)
+        context["diffs"], context["diffs_len"] = top_object_diffs(self.object)
         context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
@@ -445,6 +453,13 @@ class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissi
 
 def _get_seed_form_class(harvest_type):
     return "Seed{}Form".format(harvest_type.replace("_", " ").title().replace(" ", ""))
+
+
+def top_object_diffs(obj):
+    diffs = []
+    for historical_obj in obj.history.all()[0:3]:
+        diffs.append(diff_historical_object(historical_obj))
+    return diffs, obj.history.all().count()
 
 
 class SeedCreateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin, SuccessMessageMixin, CreateView):
@@ -605,7 +620,7 @@ class CredentialDetailView(LoginRequiredMixin, UserOrSuperuserOrStaffPermissionM
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CredentialDetailView, self).get_context_data(**kwargs)
-        context["diffs"] = diff_object_history(self.object)
+        context["diffs"], context["diffs_len"] = top_object_diffs(self.object)
         context["can_edit"] = self.request.user.is_superuser or self.object.user == self.request.user
         context["item_id"] = self.object.id
         context["model_name"] = "credential"
@@ -708,7 +723,8 @@ class ExportCreateView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermis
     model = Export
     form_class = ExportForm
     template_name = 'ui/export_create.html'
-    success_message = "Export requested. Check the Exports section for the status of your export. Large datasets may take a substantial amount of time. You will receive an email when your export is ready."
+    success_message = "Export requested. Check the Exports section for the status of your export. Large datasets may " \
+                      "take a substantial amount of time. You will receive an email when your export is ready."
 
     def get_initial(self):
         initial = super(ExportCreateView, self).get_initial()
@@ -852,35 +868,72 @@ def export_file(request, pk, file_name):
         raise PermissionDenied
 
 
-class ChangeLogView(LoginRequiredMixin, TemplateView):
+class CollectionChangeLogView(LoginRequiredMixin, TemplateView):
     template_name = "ui/change_log.html"
 
     def get_context_data(self, **kwargs):
+        context = super(CollectionChangeLogView, self).get_context_data(**kwargs)
+        collection_id = self.kwargs["item_id"]
+        collection = Collection.objects.get(pk=collection_id)
+
+        # Check permissions to view
+        check_collection_set_based_permission(collection, self.request.user, allow_staff=True)
+
+        context["item"] = collection
+
+        paginator = Paginator(CollectionHistoryIter(collection.history.all(),
+                                                    Seed.history.filter(collection=collection).order_by(
+                                                        "-history_date")), 15)
+        # if no page in URL, show first
+        page = self.request.GET.get("page", 1)
+        diffs_page = paginator.page(page)
+        context["paginator"] = paginator
+        context["page_obj"] = diffs_page
+        diff_list = list()
+        for historical_obj in diffs_page:
+            diff_list.append(diff_historical_object(historical_obj))
+        context['diff_list'] = diff_list
+
+        context["model_name"] = "collection"
+        context["name"] = collection.name
+        return context
+
+
+class ChangeLogView(LoginRequiredMixin, ListView):
+    context_object_name = "history_list"
+    template_name = "ui/change_log.html"
+    paginate_by = 15
+
+    def get_queryset(self):
+        item_id = self.kwargs["item_id"]
+        model_name = self.kwargs["model"].replace("_", "")
+        ModelName = apps.get_model(app_label="ui", model_name=model_name)
+        item = ModelName.objects.get(pk=item_id)
+        # Check permissions
+        check_collection_set_based_permission(item, self.request.user, allow_staff=True)
+        return item.history.all()
+
+    def get_context_data(self, **kwargs):
         context = super(ChangeLogView, self).get_context_data(**kwargs)
+
         item_id = self.kwargs["item_id"]
         model_name = self.kwargs["model"].replace("_", "")
         ModelName = apps.get_model(app_label="ui", model_name=model_name)
         item = ModelName.objects.get(pk=item_id)
 
-        # Check permissions to view
-        check_collection_set_based_permission(item, self.request.user, allow_staff=True)
-
         context["item"] = item
-        if model_name == 'collection':
-            diffs = diff_collection_and_seeds_history(item)
-        else:
-            diffs = diff_object_history(item)
-        paginator = Paginator(diffs, 15)
-        # if no page in URL, show first
-        page = self.request.GET.get("page", 1)
-        diffs_page = paginator.page(page)
-        context["paginator"] = paginator
-        context["diffs_page"] = diffs_page
         context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name
         except:
             context["name"] = item.token
+
+        # context["collection_set"] = self.collection.collection_set
+        # context['collection'] = self.collection
+        diff_list = list()
+        for historical_obj in context['history_list']:
+            diff_list.append(diff_historical_object(historical_obj))
+        context['diff_list'] = diff_list
         return context
 
 

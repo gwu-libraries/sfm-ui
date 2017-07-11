@@ -122,6 +122,10 @@ urlpatterns = patterns('',
                            views.HarvestVoidView.as_view(),
                            name="harvest_void"),
 
+                       url(r'^collection/(?P<item_id>\d+)/changes/$',
+                           views.CollectionChangeLogView.as_view(),
+                           name="collection_change_log"),
+
                        url(r'^(?P<model>\w+)/(?P<item_id>\d+)/changes/$',
                            views.ChangeLogView.as_view(),
                            name="change_log"),

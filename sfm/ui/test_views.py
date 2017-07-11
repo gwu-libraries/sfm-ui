@@ -475,7 +475,7 @@ class ChangeLogTests(TestCase):
         request = self.factory.get(reverse("change_log", args=("collection_set", self.collection_set.id)))
         request.user = self.user
         response = ChangeLogView.as_view()(request, model="CollectionSet", item_id=self.collection_set.id)
-        self.assertEqual(self.collection_set.id, response.context_data["item_id"])
+        self.assertEqual(self.collection_set, response.context_data["item"])
         self.assertEqual(2, response.context_data["paginator"].count)
         self.assertEqual("CollectionSet", response.context_data["model_name"])
         self.assertEqual("changed collection_set name", response.context_data["name"])

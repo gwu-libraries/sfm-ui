@@ -1,7 +1,11 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 import os
-from itertools import chain
+from itertools import islice, chain
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class Diff:
@@ -13,7 +17,7 @@ class Diff:
         self.fields = {}
 
 
-def diff_historical_object(original_historical_object, changed_historical_object):
+def diff_historical_objects(original_historical_object, changed_historical_object):
     """
     Performs a diff between two historical objects to determine which fields have changed.
 
@@ -41,6 +45,65 @@ def diff_historical_object(original_historical_object, changed_historical_object
     return diff
 
 
+def diff_historical_object(historical_object):
+    try:
+        prev_historical_object = historical_object.get_previous_by_history_date(id=historical_object.id)
+    except ObjectDoesNotExist:
+        prev_historical_object = None
+    return diff_historical_objects(prev_historical_object, historical_object)
+
+
+class CollectionHistoryIter(object):
+    def __init__(self, collection_historical_objs, seed_historical_objs):
+        self.collection_historical_objs = collection_historical_objs
+        self.seed_historical_objs = seed_historical_objs
+        self.iter = self._merge_history_objs(collection_historical_objs.iterator(), seed_historical_objs.iterator())
+        self.len = len(collection_historical_objs) + len(seed_historical_objs)
+
+    def __len__(self):
+        return self.len
+
+    def __getitem__(self, given):
+        if isinstance(given, slice):
+            # do your handling for a slice object:
+            return list(islice(self.iter, given.start, given.stop, given.step))
+        else:
+            return list(islice(self.iter, given, given + 1))[0]
+
+    @staticmethod
+    def _merge_history_objs(collection_historical_objs, seed_historical_objs):
+        next_collection_historical_obj = CollectionHistoryIter._next_historical_obj(collection_historical_objs)
+        next_seed_historical_obj = CollectionHistoryIter._next_historical_obj(seed_historical_objs)
+        while next_collection_historical_obj is not None or next_seed_historical_obj is not None:
+            if next_collection_historical_obj is not None and next_seed_historical_obj is not None:
+                if next_collection_historical_obj.history_date > next_seed_historical_obj.history_date:
+                    ret_historical_obj = next_collection_historical_obj
+                    next_collection_historical_obj = CollectionHistoryIter._next_historical_obj(
+                        collection_historical_objs)
+                    yield ret_historical_obj
+                else:
+                    ret_historical_obj = next_seed_historical_obj
+                    next_seed_historical_obj = CollectionHistoryIter._next_historical_obj(seed_historical_objs)
+                    yield ret_historical_obj
+            elif next_collection_historical_obj is None:
+                ret_historical_obj = next_seed_historical_obj
+                next_seed_historical_obj = CollectionHistoryIter._next_historical_obj(seed_historical_objs)
+                yield ret_historical_obj
+            else:
+                ret_historical_obj = next_collection_historical_obj
+                next_collection_historical_obj = CollectionHistoryIter._next_historical_obj(collection_historical_objs)
+                yield ret_historical_obj
+
+    @staticmethod
+    def _next_historical_obj(objs):
+        if objs is None:
+            return None
+        try:
+            return next(objs)
+        except StopIteration:
+            return None
+
+
 def diff_object_history(obj):
     """
     Performs a diff on all of an object's historical objects.
@@ -50,8 +113,8 @@ def diff_object_history(obj):
     diffs = []
     historical_objects = list(obj.history.all())
     for i, historical_object in enumerate(historical_objects):
-        diffs.append(diff_historical_object(historical_objects[i + 1] if i < len(historical_objects) - 1 else None,
-                                            historical_object))
+        diffs.append(diff_historical_objects(historical_objects[i + 1] if i < len(historical_objects) - 1 else None,
+                                             historical_object))
     return diffs
 
 
@@ -64,7 +127,8 @@ def diff_collection_and_seeds_history(collection):
     diffs = [diff_object_history(collection)]
     for seed in collection.seeds.all():
         diffs.append(diff_object_history(seed))
-    return sorted(chain(*diffs), key=lambda diff: diff.date, reverse=True)
+    ret = sorted(chain(*diffs), key=lambda diff: diff.date, reverse=True)
+    return ret
 
 
 def diff_field_changed(obj):
