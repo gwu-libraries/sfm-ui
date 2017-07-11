@@ -1,0 +1,27 @@
+{% if  collection_sets_input%}
+<div class="row">
+    <div class="col-md-12">
+        <br>
+      <table class="datatable table table-striped">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Collections</th>
+          <th>Date Added</th>
+          <th>Groups</th>
+        </tr>
+        </thead>
+       {% for collection_set in collection_sets_input %}
+        <tr>
+            <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
+            <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize}}</td>
+            <td>{{ collection_set.date_added }}</td>
+            <td>{{ collection_set.group }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+</div>
+{% else %}
+    <br><p>No corresponding collection sets.</p>
+{% endif %}

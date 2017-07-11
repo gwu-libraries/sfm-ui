@@ -7,116 +7,40 @@
 <div class="row">
     <div class="col-md-12">
         <h1>Collection Sets</h1>
-        <p>A collection set is a group of collections around a particular topic or theme. An active collection set contains
-            active collections. An inactive collection set contains inactive collections, which are not currently being
-            using for harvesting.</p>
+        <p>A collection set is a group of collections around a particular topic or theme.
+            Collections sets are active when there is at least one active collection within them.
+            Collection sets are inactive when all collections have been deactivated and are no longer harvesting.</p>
     </div>
 </div>
 {% endblock %}
 {% block content %}
-{% if active_collection_sets %}
-  <div class="row">
-    <div class="col-md-12">
-      <h2>Active Collection Sets</h2>
-      <table class="table">
-        <thead>
-          <th>Name</th>
-          <th>Collections</th>
-          <th>Date Added</th>
-          <th>Groups</th>
-        </thead>
-       {% for collection_set in active_collection_sets %}
-        <tr>
-            <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
-            <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize}}</td>
-            <td>{{ collection_set.date_added }}</td>
-            <td>{{ collection_set.group }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </div>
-{% else %}
-  <div class="row">
-     <div class="col-md-12">
-         <p>No active collection sets.</p>
-     </div>
-  </div>
-{% endif %} 
-{% if inactive_collection_sets %}
-  <div class="row">
-    <div class="col-md-12">
-      <h2>Inactive Collection Sets</h2>
-      <table class="table">
-        <thead>
-          <th>Name</th>
-          <th>Collections</th>
-          <th>Date Added</th>
-          <th>Groups</th>
-        </thead>
-       {% for collection_set in inactive_collection_sets %}
-        <tr>
-            <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
-            <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize}}</td>
-            <td>{{ collection_set.date_added }}</td>
-            <td>{{ collection_set.group }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </div>
-{% endif %}
-{% if other_active_collection_sets %}
+<br>
 <div class="row">
-  <div class="col-md-12">
-    <h2>Other Active Collection Sets</h2>
-    <table class="table">
-      <thead>
-        <th>Name</th>
-        <th>Collections</th>
-        <th>Date Added</th>
-        <th>Groups</th>
-      </thead>
-      {% for collection_set in other_active_collection_sets %}
-       <tr>
-         <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
-     <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize }}</td>
-     <td>{{ collection_set.date_added }}</td>
-         <td>{{ collection_set.group }}</td>
-       </tr>
-      {% endfor %}
-    </table>
-  </div>
- </div>
-{% endif %}
-{% if other_inactive_collection_sets %}
-<div class="row">
-  <div class="col-md-12">
-    <h2>Other Inactive Collection Sets</h2>
-    <table class="table">
-      <thead>
-        <th>Name</th>
-        <th>Collections</th>
-        <th>Date Added</th>
-        <th>Groups</th>
-      </thead>
-      {% for collection_set in other_inactive_collection_sets %}
-       <tr>
-         <td><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></td>
-     <td>{{ collection_set.num_collections }} collection{{ collection_set.num_collections|pluralize }}</td>
-     <td>{{ collection_set.date_added }}</td>
-         <td>{{ collection_set.group }}</td>
-       </tr>
-      {% endfor %}
-    </table>
-  </div>
- </div>
-{% endif %}
-
+    <div class="col-md-12">
+        <ul id="collection_set_tabs" class="nav nav-tabs">
+            {% for colletion_set_key, colletion_set_name, collection_sets_lists in collection_sets_lists %}
+                {% if forloop.first %}
+                    <li class="active"><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                {% else %}
+                        {% if collection_sets_lists %}
+                            <li><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                        {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <div class="tab-content ">
+            {% for colletion_set_key, colletion_set_name, collection_set_list in collection_sets_lists %}
+                 <div class="tab-pane {% if forloop.first %} active{% endif %}" id="{{ colletion_set_key }}">
+                    {% include "ui/collection_set_list_snippet.html" with collection_type=colletion_set_key collection_sets_input=collection_set_list %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
         <div class="btn-toolbar" style="padding-top: 15px">
-          <a href={% url "collection_set_create" %} class="btn btn-primary">Add Collection Set</a>
+          <a class="btn btn-primary" href={% url "collection_set_create" %}>Add Collection Set</a>
         </div>
     </div>
 </div>

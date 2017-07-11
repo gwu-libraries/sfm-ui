@@ -43,14 +43,21 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CollectionSetListView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser or self.request.user.is_staff:
-            context['other_active_collection_sets'], context['other_inactive_collection_sets'] = split_collection_sets(
-                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
-                    num_collections=Count('collections')).order_by('name'))
-
-        context['active_collection_sets'], context['inactive_collection_sets'] = split_collection_sets(
+        # collection set identity, collection set type Name, collection set data
+        collection_sets_lists = []
+        active_collection_sets, inactive_collection_sets = split_collection_sets(
             CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
                 num_collections=Count('collections')).order_by('name'))
+        collection_sets_lists.append(('acs', "Active Collection Sets", active_collection_sets))
+        collection_sets_lists.append(('iacs', "Inactive Collection Sets", inactive_collection_sets))
+
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            other_active_collection_sets, other_inactive_collection_sets = split_collection_sets(
+                CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
+                    num_collections=Count('collections')).order_by('name'))
+            collection_sets_lists.append(('oacs', "Other Active Collection Sets", other_active_collection_sets))
+            collection_sets_lists.append(('oics', "Other Inactive Collection Sets", other_inactive_collection_sets))
+        context['collection_sets_lists'] = collection_sets_lists
         return context
 
 
