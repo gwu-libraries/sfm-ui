@@ -656,10 +656,14 @@ class CredentialListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CredentialListView, self).get_context_data(**kwargs)
-        context['credential_list'] = Credential.objects.filter(user=self.request.user).order_by('name')
-        context["can_connect_twitter"] = self._can_connect_credential(Credential.TWITTER)
-        context["can_connect_weibo"] = self._can_connect_credential(Credential.WEIBO)
-        context["can_connect_tumblr"] = self._can_connect_credential(Credential.TUMBLR)
+        # (type, credential_list, can_connect_app)
+        credentials = []
+        for social_type, _ in Credential.PLATFORM_CHOICES:
+            credential_objs = Credential.objects.filter(user=self.request.user,
+                                                        platform=social_type).order_by('name')
+            credentials.append((social_type, credential_objs, self._can_connect_credential(social_type)))
+
+        context["credentials_lists"] = credentials
         return context
 
     @staticmethod
