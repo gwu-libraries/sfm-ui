@@ -1018,7 +1018,7 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple)
+    seeds = SeedChoiceField(None, required=False, widget=forms.SelectMultiple)
 
     class Meta:
         model = Export
@@ -1047,7 +1047,7 @@ class ExportForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'seeds',
+                Div('seeds', css_class="longseed"),
                 'export_format',
                 'export_segment_size',
                 'dedupe',

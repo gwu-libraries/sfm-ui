@@ -20,6 +20,9 @@
     <!-- Optional theme -->
 	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 
+    <!-- multiselect css -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+
 	<!-- Your stuff: Third-party css libraries go here -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
 
@@ -35,7 +38,13 @@
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        
+
+    <!-- multiselect javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+
+    <script src="{% static 'ui/js/seed_multiselect.js' %}"></script>
+
 	{% block javascript %}
 
     {% endblock %}
@@ -121,8 +130,7 @@
             {% endif %}
         </div>
         <div class="footer-lower">
-                <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
-            </p>
+            <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
         </div>
     </footer>
 
