@@ -1019,10 +1019,11 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 class ExportForm(forms.ModelForm):
     seeds = SeedChoiceField(None, required=False, widget=forms.CheckboxSelectMultiple)
+    active_seeds = forms.BooleanField(required=False)
 
     class Meta:
         model = Export
-        fields = ['seeds', 'export_format', 'export_segment_size', 'dedupe',
+        fields = ['seeds', 'active_seeds', 'export_format', 'export_segment_size', 'dedupe',
                   'item_date_start', 'item_date_end',
                   'harvest_date_start', 'harvest_date_end']
         localized_fields = None
@@ -1041,12 +1042,14 @@ class ExportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.collection = Collection.objects.get(pk=kwargs.pop("collection"))
         super(ExportForm, self).__init__(*args, **kwargs)
+        self.fields["active_seeds"].quesryset = self.collection.seeds.filter(is_active=True)
         self.fields["seeds"].queryset = self.collection.seeds.all()
         cancel_url = reverse('collection_detail', args=[self.collection.pk])
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                'active_seeds',
                 'seeds',
                 'export_format',
                 'export_segment_size',
@@ -1071,6 +1074,8 @@ class ExportForm(forms.ModelForm):
         if len(self.fields["seeds"].queryset) < 2:
             del self.fields["seeds"]
             self.helper.layout[0].pop(0)
+        if self.fields["active_seeds"] is True:
+            del self.fields["seeds"]
 
     def save(self, commit=True):
         m = super(ExportForm, self).save(commit=False)
