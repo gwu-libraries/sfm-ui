@@ -9,14 +9,14 @@ tags: [weibo, API, guide, sfm]
 	
 This is a guide for programmers and researchers who intend to use Weibo's API. Since the current [official documentation](http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5) hasn't been updated for a long time, I am writing this guide to support using [Social Feed Manager](http://go.gwu.edu/sfm) with Weibo's API. 
 
-I highly recommend you ask someone with a Chinese language background if you feel stuck when following this guide. Also make sure you can access to Weibo's websites without any problem--some organizations' firewalls block access to weibo.com. Otherwise, it will be hard to complete all the sections.
+I highly recommend you ask someone with a Chinese language background if you feel stuck when following this guide. Also make sure you can access Weibo's websites without any problem, as some organizations' firewalls block access to weibo.com. Otherwise, it will be hard to complete all the sections.
 
 
 ## 1. Sign Up for a Weibo Account
-The goal of this section is to get a `username` and `password` for a weibo account. If you already have one, please go to the next [section](#set-up-a-web-application).
+The goal of this section is to get a `username` and `password` for a weibo account. If you already have one, please go to the next [section](#2-set-up-a-web-application).
 
 ### 1.1 Access to [weibo.com](http://www.weibo.com/)
-In the United States, [weibo.com](http://www.weibo.com/) will be redirected to us.weibo.com. The page is as follows:
+In the United States, [weibo.com](http://www.weibo.com/) will be redirected to [us.weibo.com](http://us.weibo.com/). The page is as follows:
 
 ![weibo index]({{ site.github.url }}/images/weibo/weibo_index.png)
 
@@ -57,7 +57,7 @@ The goal of this section is to obtain the following three items:
 * App Secret
 * Redirect URI
 
-If you already have all of them, please go to the next [section](#get-access-token).
+If you already have all of them, please skip to [Get Access Token](#3-get-access-token).
 
 ### 2.1 Go to [http://open.weibo.com](http://open.weibo.com/)
 Assuming you have no problem with your firewall blocking weibo.com, please go to [http://open.weibo.com](http://open.weibo.com/) and you will see the following page:
@@ -193,8 +193,9 @@ Now, you have completed all the necessary steps. For a demo of the API, please s
 
 If you get any unexpected errors in above two steps, request new `Authentication Code` and try again!
 
-## 4. API Examples
-In this section, I'll help you understand the API with examples.
+## 4. Basic API Examples
+In this section, I'll help you understand the Basic API's Public Timeline and
+Friendship Timeline methods, with examples.
 
 [Public Timeline](http://open.weibo.com/wiki/2/statuses/public_timeline): Returns the latest public Weibos.
 It will return the latest Weibos with limited count based on all the Weibo users' posts. Usually, it returns 50 Weibo posts in one page ordering by timestamp. For example, if `User A` posts 10 Weibos and `User B` posts 5 Weibos, the result would pop 5 latest weibo among the total 15 Weibos.
@@ -221,11 +222,85 @@ Enter the `Access Token` from the previous section, and click the Submit button.
 </form>
 
 
-Congratulations! Now, you are a qualified Weibo API programmer. I hope this guide will be helpful to you in the future! If you have any questions, please feel free to contact me: [Yecheng Tan](http://library.gwu.edu/users/ychtan).
+Now, you are a qualified Weibo API programmer. To learn more about the advanced API, please continue
+to the next section.
 
-## 5. Reference
+## 5. Weibo Advanced API
+This section focuses on using the Weibo advanced API. If you haven't read through the previous sections describing how to access and use the basic API, please do so first.
+
+Advanced API calls are marked with `高(Advanced)` on the [Weibo API](http://open.weibo.com/wiki/%E5%BE%AE%E5%8D%9AAPI) page. 
+Examples include [timeline_batch](http://open.weibo.com/wiki/2/statuses/timeline_batch) and [search/topics](http://open.weibo.com/wiki/2/search/topics).
+
+### 5.1 How to Apply for Weibo Advanced API Access
+
+If you want to get access to these APIs, there are some basic rules as described in the [official guide](http://open.weibo.com/wiki/%E9%AB%98%E7%BA%A7%E6%8E%A5%E5%8F%A3%E7%94%B3%E8%AF%B7):
+
+* You must have an approved app on Weibo open platform.
+* You must agree to follow the platform policy and agreement.
+* Your app must have no records of illegal activity.
+
+In addition to these basic rules, I highly recommend that you increase the
+number of registered users of your app. The number of users needed depends on which API level you are trying to apply for.
+Next, follow the section of `How to apply` in the official guide. Weibo will generally respond to your application in one or two business days.
+If approved, go back to [the section that describes how to get an access token](#3-get-access-token) to re-generate your access token. 
+
+## 6. Accessing Weibo Search in SFM
+[Social Feed Manager]({{ site.github.url }}) includes a collection type that uses the Weibo Search API. As stated in Weibo's API documentation, it only returns the recent 200 Weibos matching a topic search.
+
+Building a Weibo search collection in SFM is much like using Twitter search in SFM; more information can be found in the [SFM documentation](http://sfm.readthedocs.io/en/latest/collections.html#weibo-search). This post focuses on the issue of acquiring Weibo credentials to use the Weibo search API.
+
+### 6.1 Get Temporary Access Token
+If your SFM instance is configured to enable Weibo search collections, then it
+will allow you to authorize credentials with the approved SFM app on the open Weibo platform. 
+You can get a temporary access token which will be valid for 30 days when you
+authorize through SFM, by following these steps:
+
+Go to SFM credential page and click `Connect Weibo Account`.
+![weibo connect btn]({{ site.github.url }}/images/weibo/weibo_connect.png)
+
+Next you will be directed to enter your Weibo credentials on the Weibo site's
+authentication page:
+![weibo auth login]({{ site.github.url }}/images/weibo/weibo_auth_login.png)
+
+Enter your username and password, click the red `登录(Login)` button and then
+click the red `授权(Authorize)` button on the next page.
+
+
+Finally, you will be redirected back to SFM, to the access token page:
+![weibo sfm access]({{ site.github.url }}/images/weibo/weibo_sfm_token.png)
+
+With the above access token, you can build your own Weibo search collection.
+This access token will expire in 30 days.  The next section describes how to
+update your token when it expires.
+
+### 6.2 Update Temporary Access Token
+Suppose your temporary access token already expired. Go to the SFM credential
+page, where you can view the list of credentials:
+![weibo credential]({{ site.github.url }}/images/weibo/weibo_credential.png)
+
+
+Update the name of the Weibo credential you created earlier in [Section
+6.1](#61-get-temporary-access-token) (by clicking on it and editing its details) to more easily identify it as expired.
+For example, you might update its name to `Victor's weibo credential expired`.
+![weibo credential expired]({{ site.github.url }}/images/weibo/weibo_credential_expired.png)
+
+
+Click the `Connect Weibo Account` button and follow the [Section
+6.1](#61-get-temporary-access-token) get a new credential; you may wish to name it in a way
+that easily identifies it as the current valid credential.
+![weibo credential new]({{ site.github.url }}/images/weibo/weibo_credential_new.png)
+
+
+Finally, edit the Weibo search collection and update its credential to use the
+new credential instead of the expired credential.
+![update collection credential]({{ site.github.url }}/images/weibo/update_collection_credential.png)
+
+Congratulations! You have completed all the sections. I hope this guide will be helpful to you in the future! If you have any questions, please feel free to contact me: [Yecheng Tan](http://library.gwu.edu/users/ychtan).
+
+## 7. References
 
 * [Practical guide for using Sina Weibo's API](https://www.cs.cmu.edu/~lingwang/weiboguide/)
 * [Weibo Documentation](http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5)
 * [Weibo OAuth2.0](http://open.weibo.com/wiki/%E6%8E%88%E6%9D%83%E6%9C%BA%E5%88%B6%E8%AF%B4%E6%98%8E)
 * [Weibo API](http://open.weibo.com/wiki/%E5%BE%AE%E5%8D%9AAPI)
+* [Weibo Advance API Apply](http://open.weibo.com/wiki/%E9%AB%98%E7%BA%A7%E6%8E%A5%E5%8F%A3%E7%94%B3%E8%AF%B7)
