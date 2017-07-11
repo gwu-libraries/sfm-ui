@@ -15,6 +15,9 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
+from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.utils.html import mark_safe
 
 from notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
@@ -26,6 +29,7 @@ from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
     has_collection_set_based_permission
+from ui.templatetags import ui_extras
 
 import os
 import logging
@@ -144,6 +148,84 @@ class CollectionSetAddNoteView(LoginRequiredMixin, RedirectView):
         return super(CollectionSetAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
+class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
+    columns = ['link', 'token', 'uid', 'messages']
+    # need to define the order columns, also need to match the Datatables setting in columnDefs
+    order_columns = ['', 'token', 'uid', '']
+    seed_infos = {}
+    seed_warnings = {}
+    seed_errors = {}
+    last_harvest = None
+    collection = None
+    status = None
+
+    # set max limit of records returned, this is used to protect our site if someone tries to attack our site
+    # and make it return huge amount of data
+    # max_display_length = 1200
+
+    def get_initial_queryset(self):
+        # return queryset used as base for futher sorting/filtering
+        # these are simply objects displayed in datatable
+        # You should not filter data returned here by any filter values entered by user. This is because
+        # we need some base queryset to count total number of records.
+        self.collection = get_object_or_404(Collection, pk=self.kwargs['pk'])
+        # Check permissions to download
+        check_collection_set_based_permission(self.collection, self.request.user, allow_staff=True)
+        self.status = self.kwargs['status']
+        self.last_harvest = self.collection.last_harvest()
+        self.seed_infos = _get_seed_msg_map(self.last_harvest.infos) if self.last_harvest else {}
+        seed_warnings = _get_seed_msg_map(self.last_harvest.warnings) if self.last_harvest else {}
+        _add_duplicate_seed_warnings(self.collection, self.seed_warnings)
+        self.seed_warnings = seed_warnings
+        self.seed_errors = _get_seed_msg_map(self.last_harvest.errors) if self.last_harvest else {}
+
+        # get rid of the exclude field
+        self.columns = ['link', 'token', 'uid', 'messages']
+        exclude_fields = []
+        if not Collection.HARVEST_FIELDS[self.collection.harvest_type]['link']:
+            exclude_fields.append('link')
+        if not Collection.HARVEST_FIELDS[self.collection.harvest_type]['uid']:
+            exclude_fields.append('uid')
+        if not Collection.HARVEST_FIELDS[self.collection.harvest_type]['token']:
+            exclude_fields.append('token')
+
+        for exclusion in exclude_fields:
+            if exclusion in self.columns:
+                self.columns.remove(exclusion)
+
+        return Seed.objects.filter(collection=self.kwargs['pk'], is_active=self.status == 'active').order_by('token',
+                                                                                                             'uid')
+
+    def filter_queryset(self, qs):
+        # use request parameters to filter queryset
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            qs = qs.filter(Q(token__icontains=search) | Q(uid__icontains=search))
+        return qs
+
+    def render_column(self, row, column):
+        # We want to render user as a custom column
+        if column == 'link':
+            return mark_safe(u'<a target="_blank" href="{0}"> <img src="{1}" height=35 width=35/></a>'.format(
+                row.social_url(), static('ui/img/{}_logo.png'.format(self.collection.harvest_type.split('_')[0]))))
+        elif column == 'messages':
+            msg_seed = ""
+            for msg in self.seed_infos.get(row.seed_id, []):
+                msg_seed += u'<li><p class="text-info">{}</p></li>'.format(msg)
+            for msg in self.seed_warnings.get(row.seed_id, []):
+                msg_seed += u'<li><p class="text-warning">{}</p></li>'.format(msg)
+            for msg in self.seed_errors.get(row.seed_id, []):
+                msg_seed += u'<li><p class="text-danger">{}</p></li>'.format(msg)
+            return mark_safe(u'<ul>{}</ul>'.format(msg_seed)) if msg_seed else ""
+
+        elif column == 'uid':
+            return mark_safe(u'<a href="{}">{}</a>'.format(reverse('seed_detail', args=[row.pk]),
+                                                            row.uid)) if row.uid else ""
+        elif column == 'token':
+            return mark_safe(u'<a href="{}">{}</a>'.format(reverse('seed_detail', args=[row.pk]),
+                                                            ui_extras.json_list(row.token))) if row.token else ""
+
+
 class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
@@ -170,8 +252,6 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
             diffs.append(diff_historical_object(historical_obj))
         context["diffs"] = diffs
         context["diffs_len"] = len(collection_history_iter)
-
-        context["seed_list"] = Seed.objects.filter(collection=self.object.pk).order_by('token', 'uid')
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
         context["can_edit"] = not self.object.is_on and self.object.is_active and has_perms

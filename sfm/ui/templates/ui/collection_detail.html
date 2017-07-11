@@ -238,6 +238,10 @@
 
 {% block javascript %}
 <script src="{% static "ui/js/collection_detail.js" %}"></script>
+<script src="{% static 'ui/js/seed_table.js' %}"></script>
+<script type="text/javascript">
+   var SEED_LIST_JSON_URL ='{% url "seedsJSONAPI" collection.pk 'active' %}';
+</script>
 {% endblock %}
 
 {% if has_seeds_list %}
@@ -245,17 +249,14 @@
     <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading"><h4>Seeds<a type="button" style="position: relative; top: -6px" class="pull-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
-        <div class="input-group"> <span class="input-group-addon">Search</span>
-            <input title='seed-filter' id="filter" type="text" class="form-control">
-        </div>
          <div class="panel-body">
-           <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item active"><a class="nav-link active" data-toggle="tab" role="tab" href="#active">Active 
+           <ul id='seed_tab' class="nav nav-tabs">
+                  <li class="active"><a id="active" data-toggle="tab" href="#active_seed">Active
                      {% if collection.active_seed_count >= 1 %}
                       <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.active_seed_count|intcomma }}</span>
                      {% endif %}
                   </a></li>
-                  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#deleted">Deleted 
+                  <li><a id="deleted" data-toggle="tab"  href="#deleted_seed">Deleted
                      {% if collection.deleted_seed_count >= 1 %}
                       <span class="badge" style="position: relative; top: -2px; left: 4px;">{{ collection.deleted_seed_count|intcomma }}</span>
                      {% endif %}
@@ -263,19 +264,11 @@
 
            </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="active" role="tabpanel">
-                    <table class="table table-condensed table-list-search" id="ActiveTable">
-                        {% include "ui/seeds_list_snippet.html" with active=True %}
-                    </table>
-                    <a href="#" id="seeMoreActiveRecords">See all active seeds  <span class="caret"></span></a>
-                    <a href="#" id="seeLessActiveRecords">See fewer active seeds  <span class="dropup"><span class="caret"></span></span></a>
+                <div class="tab-pane active" id="active_seed" >
+                        {% include "ui/seeds_list_snippet.html" %}
                 </div>
-                <div class="tab-pane" id="deleted" role="tabpanel">
-                    <table class="table table-condensed table-list-search" id="DeletedTable">
-                        {% include "ui/seeds_list_snippet.html" with active=False %}
-                    </table>
-                    <a href="#" id="seeMoreDeletedRecords">See all deleted seeds  <span class="caret"></span></a>
-                    <a href="#" id="seeLessDeletedRecords">See fewer deleted seeds  <span class="dropup"><span class="caret"></span></span></a>
+                <div class="tab-pane" id="deleted_seed">
+                        {% include "ui/seeds_list_snippet.html" %}
                 </div>
             </div>
 
