@@ -29,7 +29,7 @@ reasonable guidance on how to accomplish this.
 
 Installing locally requires Docker and Docker-Compose. See :ref:`docker-installing`.
 
-1. Either clone the sfm-docker repository and copy the example configuration files::
+1. Either `git <https://git-scm.com/>`_ clone the sfm-docker repository and copy the example configuration files::
 
     git clone https://github.com/gwu-libraries/sfm-docker.git
     cd sfm-docker
@@ -45,11 +45,12 @@ or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replac
 
 2. Update configuration in ``.env`` as described in :ref:`install-configuration`.
 
-3. Bring up the containers::
+3. Download containers and start SFM::
 
     docker-compose up -d
 
-It may take several minutes for the images to be downloaded and the containers to start.
+It may take several minutes for the images to be downloaded and the containers to start. These images are large (roughly 12GB)
+so make sure you have enough disk space and a high-speed connection is recommended.
 
 4. It is also recommended that you scale up the Twitter REST Harvester container::
 
@@ -61,6 +62,7 @@ Notes:
 * For instructions on how to make configuration changes *after* the containers have been brought up, see :ref:`install-configuration`.
 * To learn more about scaling , see :ref:`docker-scaling`.
 * For suggestions on sizing your SFM server, see :ref:`server-sizing`.
+* For help with other Docker commands (e.g., to stop SFM) see :ref:`docker-helpful`.
 
 -------------------------
  Amazon EC2 installation
@@ -132,7 +134,7 @@ statements change *master* to the correct version, e.g., *1.9.0*::
     # - echo HERITRIX_ADMIN_PORT=8443 >> .env
     # - echo HERITRIX_CONTACT_URL=http://library.myschool.edu >> .env
      - docker-compose up -d
-     - docker-compose scale twitterrestharvester=2
+     - docker-compose scale twitterrestharvester=2 twitterpriorityrestharvester=2
 
 When the instance is launched, SFM will be installed and started.
 
