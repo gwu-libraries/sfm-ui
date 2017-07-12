@@ -98,7 +98,15 @@ To do this, go to the ``Dev Tools`` tab on Kibana and run following code::
         "action.search.shard_count.limit":2000
       }
     }
+* Occasionally, you might encounter the following field error when opening a Kibana dashboard.
 
+.. image:: images/exploring/saved_field_error.png
+
+To solve this problem, you click the ``Management`` tab and then go to the ``Index Patterns`` page. Refresh the field list.
+
+.. image:: images/exploring/refresh_field_list.png
+
+For details, see this `discussion page <https://github.com/elastic/kibana/issues/9571#issuecomment-304896282>`_.
 
 Logstash
 ========
