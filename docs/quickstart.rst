@@ -20,7 +20,8 @@ An SFM account
 You can sign up for an account by clicking the *Sign Up* link from within SFM.
 
 If you'd like to set up shared collecting at your institution, you'll need to have your
-systems administrator set up groups in SFM.
+systems administrator set up groups in SFM. When a group owns a collection, all of the
+group's members can view and update the collection.
 
 API credentials
 ^^^^^^^^^^^^^^^
