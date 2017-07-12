@@ -7,7 +7,7 @@
         <th>User</th>
         <th>Fields</th>
     </tr>
-    {% for diff in diffs|slice:"3" %}
+    {% for diff in diffs %}
     <tr>
         <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
         <td>{{ diff.date }}</td>
@@ -22,9 +22,9 @@
     {% empty %}
     <tr><td colspan="4">No changes yet.</td></tr>
     {% endfor %}
-    {% if diffs|length > 3 %}
+    {% if diffs_len > 3 %}
     <tr><td colspan="4">
-            <a href="{% url 'change_log' model_name item_id %}">View all {{ diffs|length|intcomma }} changes</a>
+            <a href="{% url 'change_log' model_name item_id %}">View all {{ diffs_len|intcomma }} changes</a>
     </td></tr>
     {% endif %}
 </table>

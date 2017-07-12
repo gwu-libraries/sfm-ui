@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% load ui_extras %}
 {% block title %}
-Change Log
+    Change Log
 {% endblock %}
 
 {% block content_header %}
@@ -36,50 +37,46 @@ Change Log
 </div>
 {% endblock %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <nav>
-            <ul class="pager">
-                {% if diffs_page.has_previous %}
-                <li><a href="?page=1">&laquo;</a></li>
-                <li><a href="?page={{ diffs_page.previous_page_number }}"> Previous</a></li>
-                {% endif %}
+<nav>
+  <ul class="pager">
+      {% if page_obj.has_previous %}
+          <li><a href="?page=1">&laquo;</a></li>
+          <li><a href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
+      {% endif %}
 
-                <li class="active">
-                    {{ diffs_page.number }} of {{ paginator.num_pages }}
-                </li>
+      <li class="active">
+          {{ page_obj.number }} of {{ paginator.num_pages }}
+      </li>
 
-                {% if diffs_page.has_next %}
-                <li><a href="?page={{ diffs_page.next_page_number }}">Next </a></li>
-                <li><a href="?page={{ paginator.num_pages }}">  &raquo;</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</div>
+      {% if page_obj.has_next %}
+          <li><a href="?page={{ page_obj.next_page_number }}">Next </a></li>
+          <li><a href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
+      {% endif %}
+  </ul>
+</nav>
 <div class="row">
-    <div class="col-md-12">
-        <table class="table">
+	<table class="table">
+		<thead>
             <tr>
                 <th>Change to</th>
                 <th>Date</th>
                 <th>User</th>
                 <th>Fields</th>
             </tr>
-            {% for diff in diffs_page %}
-            <tr>
-                <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
-                <td>{{ diff.date }}</td>
-                <td>{{ diff.user|default_if_none:"system" }}</td>
-                <td>
-                    {% for key, values in diff.fields.iteritems %}
-                    {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}" <br/>
-                    {% endfor %}
-                    {% if diff.note %}<strong>Note:</strong> {{ diff.note}}{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</div>
+		</thead>
+			{% for diff in diff_list %}
+                <tr>
+                    <td>{{ diff.obj | name }} ({{ diff.obj|verbose_name }})</td>
+                    <td>{{ diff.date }}</td>
+                    <td>{{ diff.user|default_if_none:"system" }}</td>
+                    <td>
+                        {% for key, values in diff.fields.iteritems %}
+                            {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}" <br/>
+                        {% endfor %}
+                        {% if diff.note %}<strong>Note:</strong> {{ diff.note}}{% endif %}
+                    </td>
+                </tr>
+			{% endfor %}
+	</table>
+        </div>
 {% endblock %}
