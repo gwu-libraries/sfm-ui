@@ -194,7 +194,7 @@ class SfmUiConsumer(BaseConsumer):
 
     @staticmethod
     def format_messages_for_mail(messages, message_type):
-        mail_message = ""
+        mail_message = u""
         if messages:
             mail_message += u"\n\n{} messages:\n".format(message_type.title())
             for msg in messages:
