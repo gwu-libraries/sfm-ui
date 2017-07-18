@@ -1018,11 +1018,15 @@ class SeedChoiceField(forms.ModelMultipleChoiceField):
 
 
 class ExportForm(forms.ModelForm):
-    seeds = SeedChoiceField(None, required=False, widget=forms.SelectMultiple)
+    seeds = SeedChoiceField(None, required=False, widget=forms.SelectMultiple, label="")
+    seed_choice = forms.ChoiceField(choices=(('ALL', 'All seeds'), ('ACTIVE', 'Active seeds only'),
+                                             ('SELECTED', 'Selected seeds only'),),
+                                    initial='ALL',
+                                    widget=forms.RadioSelect)
 
     class Meta:
         model = Export
-        fields = ['seeds', 'export_format', 'export_segment_size', 'dedupe',
+        fields = ['seeds', 'seed_choice', 'export_format', 'export_segment_size', 'dedupe',
                   'item_date_start', 'item_date_end',
                   'harvest_date_start', 'harvest_date_end']
         localized_fields = None
@@ -1031,7 +1035,7 @@ class ExportForm(forms.ModelForm):
             'item_date_start': DATETIME_WIDGET,
             'item_date_end': DATETIME_WIDGET,
             'harvest_date_start': DATETIME_WIDGET,
-            'harvest_date_end': DATETIME_WIDGET,
+            'harvest_date_end': DATETIME_WIDGET
         }
         labels = {
             'dedupe': "Deduplicate (remove duplicate posts)",
@@ -1047,6 +1051,7 @@ class ExportForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                'seed_choice',
                 Div('seeds', css_class="longseed"),
                 'export_format',
                 'export_segment_size',
@@ -1070,17 +1075,32 @@ class ExportForm(forms.ModelForm):
         )
         if len(self.fields["seeds"].queryset) < 2:
             del self.fields["seeds"]
+            del self.fields["seed_choice"]
             self.helper.layout[0].pop(0)
+            self.helper.layout[0].pop(0)
+
+    def clean_seeds(self):
+        seeds = self.cleaned_data["seeds"]
+        if self.data.get("seed_choice") == "SELECTED" and not seeds:
+            raise ValidationError("At least one seed must be selected")
+
+        if self.data.get("seed_choice", "ALL") == "ALL":
+            seeds = []
+        elif self.data["seed_choice"] == "ACTIVE":
+            seeds = list(self.collection.seeds.filter(is_active=True))
+        return seeds
 
     def save(self, commit=True):
         m = super(ExportForm, self).save(commit=False)
-        # This may need to change.
+
         m.export_type = self.collection.harvest_type
-        # If seeds is none
-        if not self.cleaned_data.get("seeds"):
+
+        if self.cleaned_data.get("seed_choice", "ALL") == "ALL":
             m.collection = self.collection
+
         m.save()
         self.save_m2m()
+
         return m
 
 
