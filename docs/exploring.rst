@@ -160,6 +160,26 @@ This shows loading the data limited to a collection set::
 
     docker exec sfm_ui_1 python sfm/manage.py resendwarccreatedmsgs --collection-set b438a62cbcf74ad0adc09be3b07f039e elk_loader_myproject_elk.warc_created
 
+Another option for loading data from line-oriented JSON files or WARC files is to use a warc iterator. Warc iterators
+are commandline tools that can be used to prepare data for loading into ELK.
+
+The corresponding harvester warc iterator has two options::
+
+    usage: twitter_rest_warc_iter.py [-h] [--pretty] [--dedupe]
+                                     [--print-item-type] [--debug [DEBUG]]
+                                     [--elkwarc [ELKWARC]] [--elkjson [ELKJSON]]
+                                     filepaths [filepaths ...]
+
+The elkwarc and elkjson options help you load data from WARC and JSON files directly into ELK. Here is a simple Twitter
+example:
+
+Loading warc::
+
+    twitter_rest_warc_iter.py --elkwarc=true <your_warc_files> | /usr/share/logstash/bin/logstash -f stdin.conf
+
+Loading json::
+
+    twitter_rest_warc_iter.py --elkjson=true <your_json_files> | /usr/share/logstash/bin/logstash -f stdin.conf
 
 --------------------
  Overview of Kibana
