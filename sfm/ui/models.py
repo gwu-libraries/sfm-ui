@@ -477,7 +477,10 @@ def move_collection_receiver(sender, **kwargs):
     if kwargs["created"]:
         return
     collection = kwargs["instance"]
-    prev_collection = collection.history.all()[1]
+    try:
+        prev_collection = collection.history.all()[1]
+    except IndexError:
+        return
     if collection.collection_set != prev_collection.collection_set:
         src_collection_path = get_collection_path(prev_collection)
         dest_collection_path = get_collection_path(collection)
