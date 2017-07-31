@@ -165,7 +165,7 @@ class SfmUiConsumer(BaseConsumer):
                         mail_message = u"The harvest for {} ({}) failed.".format(harvest.collection.name,
                                                                                  harvest_url)
                     if turned_collection_off:
-                        mail_message += "\n\nThis collection has been turned off."
+                        mail_message += u"\n\nThis collection has been turned off."
                     mail_message += self.format_messages_for_mail(harvest.infos, "informational")
                     mail_message += self.format_messages_for_mail(harvest.warnings, "warning")
                     mail_message += self.format_messages_for_mail(harvest.errors, "error")
@@ -194,11 +194,11 @@ class SfmUiConsumer(BaseConsumer):
 
     @staticmethod
     def format_messages_for_mail(messages, message_type):
-        mail_message = ""
+        mail_message = u""
         if messages:
-            mail_message += "\n\n{} messages:\n".format(message_type.title())
+            mail_message += u"\n\n{} messages:\n".format(message_type.title())
             for msg in messages:
-                mail_message += "- {}\n".format(msg["message"])
+                mail_message += u"- {}\n".format(msg["message"])
         return mail_message
 
     def _on_warc_created_message(self):
