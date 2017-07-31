@@ -247,7 +247,7 @@ def download_seed_list(request, pk):
             writer.writerow([
                 seed.token.encode("utf-8"),
                 seed.uid.encode("utf-8"),
-                u"".join(seed.social_url()).encode('utf-8'),
+                (seed.social_url() or "").encode("utf-8")
             ])
     return response
 

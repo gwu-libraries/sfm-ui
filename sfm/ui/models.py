@@ -560,6 +560,7 @@ class Seed(models.Model):
             return 'https://' + self.uid + tumblr_blog_url
         elif self.collection.harvest_type == Collection.WEIBO_SEARCH and self.token:
             return weibo_topic_url + self.token
+        return None
 
     def __str__(self):
         return '<Seed %s "%s">' % (self.id, self.token)
