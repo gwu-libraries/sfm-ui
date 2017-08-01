@@ -643,7 +643,7 @@ class SeedWeiboSearchForm(BaseSeedForm):
 
 
 class SeedTwitterFilterForm(BaseSeedForm):
-    track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+    track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'maxlength': '400'}),
                             help_text='Separate keywords and phrases with commas. '
                                       'See Twitter <a '
                                       'target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
