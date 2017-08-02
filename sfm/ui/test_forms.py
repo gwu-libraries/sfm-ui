@@ -281,7 +281,8 @@ class TestExportForm(TestCase):
                             collection=self.collection)
         self.data = {
             "export_format": "csv",
-            "seeds": ()
+            "seeds": (),
+            "seed_choice": "ALL"
         }
 
     def test_valid_collection_form(self):
@@ -296,6 +297,7 @@ class TestExportForm(TestCase):
     def test_valid_seeds_form(self):
         data = dict(self.data)
         data["seeds"] = (self.seed.pk,)
+        data["seed_choice"] = "SELECTED"
         form = ExportForm(data, collection=self.collection.pk)
         form.instance.user = self.user
         self.assertTrue(form.is_valid())
