@@ -644,19 +644,20 @@ class SeedWeiboSearchForm(BaseSeedForm):
 
 class SeedTwitterFilterForm(BaseSeedForm):
     track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text='Separate keywords and phrases with commas. '
-                                      'See Twitter <a '
-                                      'target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#track">'
-                                      'track</a> for more information.')
+                            help_text="""Separate keywords and phrases with commas. See Twitter <a 
+                            target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#track">
+                            track</a> for more information.""")
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                             help_text='Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose tweets, retweets, and replies will be collected. '
-                                       'See Twitter <a '
-                                       'target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#follow">'
-                                       'follow</a> documentation for a full list of what is returned.')
+                             help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose 
+                             tweets, retweets, and replies will be collected. See Twitter <a 
+                             target="_blank" 
+                             href="https://dev.twitter.com/streaming/overview/request-parameters#follow"> follow</a> 
+                             documentation for a full list of what is returned.""")
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                                help_text='Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic bounding box. See Twitter <a target="blank" href='
-                                          '"https://dev.twitter.com/streaming/overview/request-parameters#locations">'
-                                          'locations</a> for more information.')
+                                help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic 
+                                bounding box. See Twitter <a target="blank" 
+                                href="https://dev.twitter.com/streaming/overview/request-parameters#locations">
+                                locations</a> for more information.""")
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterFilterForm, self).__init__(*args, **kwargs)
@@ -672,16 +673,19 @@ class SeedTwitterFilterForm(BaseSeedForm):
                 self.fields['locations'].initial = token['locations']
 
     def clean_track(self):
-        track_val = self.cleaned_data.get("track")
-        return track_val.strip()
+        track_val = self.cleaned_data.get("track").strip()
+        if len(track_val.split(",")) > 400:
+            raise ValidationError("Can only track 400 keywords.")
+        return track_val
 
     def clean_locations(self):
-        locations_val = self.cleaned_data.get("locations")
-        return locations_val.strip()
+        return self.cleaned_data.get("locations").strip()
 
     def clean_follow(self):
-        follow_val = self.cleaned_data.get("follow")
-        return follow_val.strip()
+        follow_val = self.cleaned_data.get("follow").strip()
+        if len(follow_val.split(",")) > 5000:
+            raise ValidationError("Can only follow 5000 users.")
+        return follow_val
 
     def clean(self):
         # if do string strip in here, string ends an empty space, not sure why
@@ -1008,9 +1012,6 @@ class CredentialWeiboForm(BaseCredentialForm):
         m.save()
         return m
 
-
-# sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
-#                                   widget=forms.CheckboxSelectMultiple, label="Image sizes", )
 
 class SeedChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
