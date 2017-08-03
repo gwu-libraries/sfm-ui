@@ -7,7 +7,7 @@ from django.core.exceptions import PermissionDenied
 from .models import CollectionSet, User, Credential, Seed, Collection, Export
 from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, CollectionCreateView, \
     CollectionDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
-    ChangeLogView, UserProfileDetailView
+    ChangeLogView, UserProfileDetailView, SeedsJSONAPIView
 
 import os
 import shutil
@@ -86,7 +86,6 @@ class CollectionSetTestsMixin:
 
 
 class CollectionSetDetailViewTests(CollectionSetTestsMixin, TestCase):
-
     def test_collection_visible(self):
         """
         collection list should only show collections belonging to the collection_set
@@ -151,7 +150,7 @@ class CollectionCreateViewTests(TestCase):
         simple test that collection form loads with collection_set
         """
         request = self.factory.get(reverse('collection_create',
-                                   args=[self.collection_set.pk, Collection.TWITTER_FILTER]))
+                                           args=[self.collection_set.pk, Collection.TWITTER_FILTER]))
         request.user = self.user
         response = CollectionCreateView.as_view()(request, collection_set_pk=self.collection_set.pk,
                                                   harvest_type=Collection.TWITTER_FILTER)
@@ -163,7 +162,7 @@ class CollectionCreateViewTests(TestCase):
         test that credential list for platform is empty
         """
         request = self.factory.get(reverse('collection_create',
-                                   args=[self.collection_set.pk, Collection.WEIBO_TIMELINE]))
+                                           args=[self.collection_set.pk, Collection.WEIBO_TIMELINE]))
         request.user = self.user
         response = CollectionCreateView.as_view()(request, collection_set_pk=self.collection_set.pk,
                                                   harvest_type=Collection.WEIBO_TIMELINE)
@@ -191,16 +190,14 @@ class CollectionDetailViewTests(TestCase):
         self.seed = Seed.objects.create(collection=self.collection, token='{}')
 
     def test_seeds_list_visible(self):
-        request = self.factory.get("ui/collections/{}".format(self.collection.id))
+        request = self.factory.get(reverse("seedsJSONAPI", args=[self.collection.id, 'active']),
+                                   content_type='application/json', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         request.user = self.user1
-        response = CollectionDetailView.as_view()(request, pk=self.collection.id)
-        seed_list = response.context_data["seed_list"]
-        self.assertEqual(1, len(seed_list))
-        self.assertEqual(self.seed, seed_list[0])
+        response = SeedsJSONAPIView.as_view()(request, pk=self.collection.id, status='active')
+        self.assertEqual(200, response.status_code)
 
 
 class SeedCreateViewTests(TestCase):
-
     def setUp(self):
         self.group = Group.objects.create(name='testgroup1')
         self.user = User.objects.create_user('testuser', 'testuser@example.com',
@@ -261,7 +258,6 @@ class SeedTestsMixin:
 
 
 class SeedUpdateViewTests(SeedTestsMixin, TestCase):
-
     def test_seed_update_collection_set(self):
         """
         test that collection_set loaded into seed update view
@@ -273,7 +269,6 @@ class SeedUpdateViewTests(SeedTestsMixin, TestCase):
 
 
 class SeedDetailViewTests(SeedTestsMixin, TestCase):
-
     def test_seed_detail_collection_set(self):
         """
         test that collection_set loaded into seed detail view
@@ -298,7 +293,6 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
         self.assertEqual("Twitter user timeline", response.context["harvest_type_name"])
 
     def test_post(self):
-
         response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
                                     {'seeds_type': 'token', 'tokens': """
         test
@@ -311,7 +305,6 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
         self.assertTrue(response.url.endswith('/ui/collections/1/'))
 
     def test_post_uid(self):
-
         response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
                                     {'seeds_type': 'uid', 'tokens': """
         123
@@ -495,7 +488,6 @@ class UserProfileTestsUnit:
 
 
 class UserProfileDetailViewTests(UserProfileTestsUnit, TestCase):
-
     def test_seed_detail_collection_set(self):
         """
         test that collection_set loaded into seed detail view
@@ -503,4 +495,4 @@ class UserProfileDetailViewTests(UserProfileTestsUnit, TestCase):
         request = self.factory.get(reverse("user_profile_detail"))
         request.user = self.user
         response = UserProfileDetailView.as_view()(request)
-        self.assertEqual('mailto:'+self.superuser.email, response.context_data["email_info"])
+        self.assertEqual('mailto:' + self.superuser.email, response.context_data["email_info"])

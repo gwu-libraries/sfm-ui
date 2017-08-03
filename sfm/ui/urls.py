@@ -2,7 +2,6 @@ from django.conf.urls import patterns, url
 
 from . import views
 
-
 urlpatterns = patterns('',
                        url(r'^$', views.HomeView.as_view(), name="home"),
 
@@ -142,5 +141,6 @@ urlpatterns = patterns('',
 
                        url(r'download/(?P<pk>\d+)/$', views.download_seed_list, name='download'),
 
+                       url(r'seedsJSONAPI/(?P<pk>\d+)/(?P<status>active|deleted)/$', views.SeedsJSONAPIView.as_view(),
+                           name='seedsJSONAPI'),
                        )
-

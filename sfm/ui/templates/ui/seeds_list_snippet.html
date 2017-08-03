@@ -2,48 +2,22 @@
 {% load static %}
 
 {% with field=harvest_fields|get_item:collection.harvest_type %}
+    <br>
+    <table class="seed-dt table table-striped">
     <thead>
-    <tr>
-        {% if field.link %}
-            <th class="col-md-1">{{ field.link }}</th>
-        {% endif %}
-        {% if field.token %}
-            <th>{{ field.token }}</th>
-        {% endif %}
-        {% if field.uid %}
-            <th>{{ field.uid }}</th>
-        {% endif %}
-        <th class="col-md-4">Messages</th>
-    </tr>
+        <tr>
+            {% if field.link %}
+                <th>{{ field.link }}</th>
+            {% endif %}
+            {% if field.token %}
+                <th>{{ field.token }}</th>
+            {% endif %}
+            {% if field.uid %}
+                <th>{{ field.uid }}</th>
+            {% endif %}
+            <th>Messages</th>
+        </tr>
     </thead>
-    <tbody class="searchable" id="seedsTable">
-        {% for seed in seed_list %}
-           {% if seed.is_active == active %}
-           <tr class="content">
-                {% if field.link %}
-                <td class="col-md-1"><a target="_blank" href="{{ seed.social_url }}"><img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=35 width=35/></a></td>
-                {% endif %}
-                {% if field.token %}
-                <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.token|json_list }}</a></td>
-                {% endif %}
-                {% if field.uid %}
-                <td><a href="{% url "seed_detail" seed.pk %}">{{ seed.uid }}</a></td>
-                {% endif %}
-                <td class="col-md-4">
-                    <ul>
-                        {% for msg in seed_infos|get_item:seed.seed_id %}
-                            <li><p class="text-info">{{ msg }}</p></li>
-                        {% endfor %}
-                        {% for msg in seed_warnings|get_item:seed.seed_id %}
-                            <li><p class="text-warning">{{ msg }}</p></li>
-                        {% endfor %}
-                        {% for msg in seed_errors|get_item:seed.seed_id %}
-                            <li><p class="text-danger">{{ msg }}</p></li>
-                        {% endfor %}
-                    </ul>
-                </td>
-           </tr>
-          {% endif %}
-        {% endfor %}
-    </tbody>
+    <tbody></tbody>
+    </table>
 {% endwith %}

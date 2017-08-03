@@ -25,6 +25,8 @@
 
 	<!-- Your stuff: Third-party css libraries go here -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
+    <!--<link href='https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css' rel='stylesheet' type='text/css'>-->
+
 
 	<!-- This file store project specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
@@ -40,13 +42,33 @@
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
     <!-- multiselect javascript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 
     <script src="{% static 'ui/js/seed_multiselect.js' %}"></script>
 
 	{% block javascript %}
 
+    {% endblock %}
+
+    {% block extra_head %}
+        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+        <!--<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>-->
+		<script src="{% static 'ui/js/data_tables.js' %}"></script>
+		<script type="text/javascript">
+           var oPaginationType = "bs_normal";
+           var oLanguages = {
+                "lengthMenu": "Display _MENU_ records per page",
+                "info": "",
+                "infoEmpty": "",
+                "emptyTable": "",
+                "zeroRecords": "",
+                "infoFiltered": "(filtered from _MAX_ total records)",
+                "paginate": {
+                  "previous": "Previous"
+                }
+            };
+        </script>
     {% endblock %}
 
   </head>
