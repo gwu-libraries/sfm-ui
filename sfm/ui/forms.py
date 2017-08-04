@@ -922,8 +922,8 @@ class CredentialFlickrForm(BaseCredentialForm):
 
     def to_token(self):
         return {
-            "key": self.cleaned_data["key"].strip(),
-            "secret": self.cleaned_data["secret"].strip(),
+            "key": self.cleaned_data.get("key", "").strip(),
+            "secret": self.cleaned_data.get("secret", "").strip(),
         }
 
     def save(self, commit=True):
@@ -952,10 +952,10 @@ class CredentialTwitterForm(BaseCredentialForm):
 
     def to_token(self):
         return {
-            "consumer_key": self.cleaned_data["consumer_key"].strip(),
-            "consumer_secret": self.cleaned_data["consumer_secret"].strip(),
-            "access_token": self.cleaned_data["access_token"].strip(),
-            "access_token_secret": self.cleaned_data["access_token_secret"].strip(),
+            "consumer_key": self.cleaned_data.get("consumer_key", "").strip(),
+            "consumer_secret": self.cleaned_data.get("consumer_secret", "").strip(),
+            "access_token": self.cleaned_data.get("access_token", "").strip(),
+            "access_token_secret": self.cleaned_data.get("access_token_secret", "").strip(),
         }
 
     def save(self, commit=True):
@@ -978,7 +978,7 @@ class CredentialTumblrForm(BaseCredentialForm):
 
     def to_token(self):
         return {
-            "api_key": self.cleaned_data["api_key"].strip(),
+            "api_key": self.cleaned_data.get("api_key", "").strip(),
         }
 
     def save(self, commit=True):
@@ -1002,7 +1002,7 @@ class CredentialWeiboForm(BaseCredentialForm):
 
     def to_token(self):
         return {
-            "access_token": self.cleaned_data["access_token"].strip(),
+            "access_token": self.cleaned_data.get("access_token", "").strip(),
         }
 
     def save(self, commit=True):
