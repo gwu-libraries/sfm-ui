@@ -3,7 +3,7 @@ from sfmutils.consumer import BaseConsumer
 from sfmutils.harvester import CODE_UNKNOWN_ERROR
 from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
-from ui.utils import get_email_addresses_for_collection_set
+from ui.utils import get_email_addresses_for_collection_set, get_site_url
 from ui.export import create_readme_for_export
 
 import json
@@ -11,7 +11,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from django.contrib.sites.models import Site
 import iso8601
 import time
 from smtplib import SMTPException
@@ -148,8 +147,7 @@ class SfmUiConsumer(BaseConsumer):
                     break
 
             if receiver_emails:
-                harvest_url = 'http://{}{}'.format(Site.objects.get_current().domain,
-                                                   reverse('harvest_detail', args=(harvest.id,)))
+                harvest_url = get_site_url() + reverse('harvest_detail', args=(harvest.id,))
 
                 # Send Status mail
                 if settings.PERFORM_EMAILS:
@@ -253,8 +251,7 @@ class SfmUiConsumer(BaseConsumer):
                 # Get receiver's email address
                 receiver_email = export.user.email
                 if receiver_email:
-                    export_url = 'http://{}{}'.format(Site.objects.get_current().domain,
-                                                      reverse('export_detail', args=(export.id,)))
+                    export_url = get_site_url() + reverse('export_detail', args=(export.id,))
 
                     # Send Status mail
                     if settings.PERFORM_EMAILS:

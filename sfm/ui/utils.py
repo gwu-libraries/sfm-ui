@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.sites.models import Site
 
 import os
+from os import environ as env
 from itertools import islice, chain
 import logging
 
@@ -211,3 +213,8 @@ def get_admin_email_addresses():
     for _, email_address in settings.ADMINS:
         email_addresses.append(email_address)
     return email_addresses
+
+
+def get_site_url():
+    return '{}://{}'.format("https" if env.get('SFM_USE_HTTPS', 'False').lower() == 'true' else "http",
+                            Site.objects.get_current().domain)

@@ -10,12 +10,11 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Sum, Q
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
 from .models import User, CollectionSet, Collection, HarvestStat, Harvest
 from .sched import next_run_time
-from .utils import get_admin_email_addresses
+from .utils import get_admin_email_addresses, get_site_url
 import ui.monitoring
 
 log = logging.getLogger(__name__)
@@ -387,4 +386,4 @@ def _was_harvest_in_range(range_start, range_end, collection):
 
 
 def _create_url(path):
-    return 'http://{}{}'.format(Site.objects.get_current().domain, path)
+    return get_site_url() + path

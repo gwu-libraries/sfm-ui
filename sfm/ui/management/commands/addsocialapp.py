@@ -18,10 +18,9 @@ class Command(BaseCommand):
                                                       client_id=options['client_id'],
                                                       secret=options['secret'],
                                                       name=options['provider'])
-                site = Site.objects.all()[0]
-                assert site
-                social_app.sites.add(site)
-                site.save()
+                for site in Site.objects.all():
+                    social_app.sites.add(site)
+                    site.save()
                 self.stdout.write('Created {} social app.'.format(options['provider']))
             else:
                 self.stdout.write(

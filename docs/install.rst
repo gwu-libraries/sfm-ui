@@ -183,6 +183,22 @@ the change only applies to a single container, then you can stop the container w
 the change applies to multiple containers (or you're not sure), you can stop all containers with ``docker-compose stop``.
 Containers can then be brought back up with ``docker-compose up -d`` and the configuration change will take effect.
 
+-------
+ HTTPS
+-------
+To run SFM with HTTPS:
+
+1. Create or acquire a valid certificate and private key.
+2. In ``docker-compose.yml`` uncomment the nginx-proxy container and set the paths under ``volumes`` to point to your certificate and key.
+3. In ``.env`` change ``USE_HTTPS`` to True and ``SFM_PORT`` to 8080. Make sure that ``SFM_HOSTNAME`` matches your certificate.
+4. Start up SFM.
+
+Note:
+
+* HTTPS will run on 443. Port 80 will redirect to 443.
+* For more information on nginx-proxy, including advanced configuration see https://github.com/jwilder/nginx-proxy.
+* If you receive a 502 (bad gateway), wait until SFM UI has completely started. If the 502 continues, troubleshoot SFM UI.
+
 ----------
  Stopping
 ----------
