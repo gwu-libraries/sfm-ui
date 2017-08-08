@@ -34,10 +34,16 @@ def diff_historical_objects(original_historical_object, changed_historical_objec
     diff.user = changed_historical_object.history_user
     diff.note = changed_historical_object.history_note
     for field in changed_historical_object.history_object._meta.diff_fields:
-        value = getattr(changed_historical_object, field)
+        try:
+            value = getattr(changed_historical_object, field)
+        except ObjectDoesNotExist:
+            value = "Deleted"
         if value == "":
             value = None
-        original_value = getattr(original_historical_object, field) if original_historical_object else None
+        try:
+            original_value = getattr(original_historical_object, field) if original_historical_object else None
+        except ObjectDoesNotExist:
+            original_value = "Deleted"
         if original_value == "":
             original_value = None
         if value != original_value:
