@@ -17,6 +17,21 @@ To allow for multiple users to control a collection set:
 3. Assign the collection set to the group. This is done from the collection set detail page or from the collection
    set admin page.
 
+------------------------
+Deactivating collections
+------------------------
+Deactivating a collection indicates that you have completed collecting data for that collection. Deactivated collections
+will be removed from some of the lists in SFM UI and will not appear in the harvest status emails.
+
+Collections can be deactivated using the "Deactivate" button on the collection detail page.
+
+Note:
+
+* A deactivated collection can be re-activated from the collection detail page. A deactivated collection must be
+  re-activated before it can be edited or turned on.
+* A collection set is considered deactivated when it has no active collections. It will also be removed from some of the
+  lists in SFM UI and not appear in harvest status emails.
+
 --------------
 Deleting items
 --------------
