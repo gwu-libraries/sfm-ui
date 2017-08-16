@@ -16,7 +16,7 @@ ads: false
 Social Feed Manager (SFM) empowers social media researchers, students, and cultural heritage institutions 
 to define and collect datasets from social media services. Its development is led by a [project team]({{ site.github.url }}/about/project-team) at [George Washington University Libraries](http://library.gwu.edu), made up of software developers, archivists, and librarians. 
 
-In 2015, we re-evaluated the services and function we had been offering for several years with the [earlier version of SFM](http://social-feed-manager.readthedocs.org) and are focusing our efforts on reshaping the app to meet the needs of use cases we've experienced and anticipate in the future. We are currently re-architecting SFM to support multiple social media platforms and allow users to build collections without the mediation of a librarian or archivist.                                                                                                       
+In 2015, we evaluated the services and function we had been offering for several years with the [earlier version of SFM](http://social-feed-manager.readthedocs.org) and have focused our efforts on reshaping the app to meet the needs of use cases we've experienced and anticipate in the future. We have re-architected SFM to support multiple social media platforms and allow users to build collections without the mediation of a librarian or archivist.                                                                                                       
 
 [Overview of Social Feed Manager]({{ site.github.url }}/about/overview)
 
@@ -25,8 +25,6 @@ In 2015, we re-evaluated the services and function we had been offering for seve
 [User Stories]({{ site.github.url }}/about/user-stories)
 
 [Development Roadmap]({{ site.github.url }}/about/roadmap)
-
-[1.0 Release description]({{ site.github.url }}/about/1-0-release)
 
 [Project Team]({{ site.github.url }}/about/project-team)
 
