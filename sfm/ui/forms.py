@@ -107,7 +107,7 @@ class BaseCollectionForm(forms.ModelForm):
 
     class Meta:
         model = Collection
-        fields = ['name', 'description', 'collection_set',
+        fields = ['name', 'description', 'collection_set', 'visibility',
                   'schedule_minutes', 'credential', 'end_date',
                   'history_note']
         exclude = []
@@ -150,6 +150,7 @@ class BaseCollectionForm(forms.ModelForm):
                 'schedule_minutes',
                 'end_date',
                 'collection_set',
+                'visibility',
                 'history_note'
             ),
             FormActions(

@@ -40,6 +40,7 @@ class UserAdmin(AuthUserAdmin):
     )
     list_display=['username','email','first_name','last_name','date_joined','is_staff']
 
+
 class Credential(a.ModelAdmin):
     fields = ('credential_id', 'user', 'platform', 'name', 'token', 'is_active', 'date_added',
               'history_note')
@@ -80,7 +81,7 @@ class HistoricalCollectionSet(a.ModelAdmin):
 
 class Collection(a.ModelAdmin):
     fields = ('collection_id', 'collection_set', 'credential', 'harvest_type',
-              'name', 'description', 'is_on', 'is_active', 'schedule_minutes',
+              'name', 'description', 'is_on', 'is_active', 'visibility', 'schedule_minutes',
               'harvest_options', 'date_added', 'end_date', 'history_note')
     list_display = ['id', 'collection_id', 'name', 'collection_set', 'harvest_type',
                     'is_on', 'is_active', 'date_added']
@@ -91,7 +92,7 @@ class Collection(a.ModelAdmin):
 
 class HistoricalCollection(a.ModelAdmin):
     fields = ('history_user', 'history_date', 'history_note', 'collection_set',
-              'credential', 'harvest_type', 'name', 'description', 'is_on', 'is_active',
+              'credential', 'harvest_type', 'name', 'description', 'is_on', 'is_active', 'visibility',
               'schedule_minutes', 'harvest_options', 'date_added', 'end_date')
     list_display = ['collection_id', 'name', 'collection_set', 'harvest_type',
                     'description', 'is_on', 'is_active', 'date_added']
