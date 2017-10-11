@@ -52,17 +52,17 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
         active_collection_sets, inactive_collection_sets = split_collection_sets(
             CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
                 num_collections=Count('collections')).order_by('name'))
-        collection_sets_lists.append(('acs', "Active Sets", active_collection_sets))
-        collection_sets_lists.append(('iacs', "Inactive Sets", inactive_collection_sets))
-        collection_sets_lists.append(('scs', "Shared Sets", list(
+        collection_sets_lists.append(('acs', "Active", active_collection_sets))
+        collection_sets_lists.append(('iacs', "Inactive", inactive_collection_sets))
+        collection_sets_lists.append(('scs', "Shared", list(
             CollectionSet.objects.filter(collections__visibility=Collection.LOCAL_VISIBILITY).annotate(
                 num_collections=Count('collections')).order_by('name'))))
         if self.request.user.is_superuser or self.request.user.is_staff:
             other_active_collection_sets, other_inactive_collection_sets = split_collection_sets(
                 CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
                     num_collections=Count('collections')).order_by('name'))
-            collection_sets_lists.append(('oacs', "Other Collection Sets", other_active_collection_sets))
-            collection_sets_lists.append(('oics', "Other Inactive Sets", other_inactive_collection_sets))
+            collection_sets_lists.append(('oacs', "Other Active", other_active_collection_sets))
+            collection_sets_lists.append(('oics', "Other Inactive", other_inactive_collection_sets))
         context['collection_sets_lists'] = collection_sets_lists
         return context
 
@@ -71,7 +71,8 @@ def split_collection_sets(collection_sets):
     active_collection_sets = []
     inactive_collection_sets = []
     for collection_set in collection_sets:
-        if collection_set.is_active():
+        # Treating collection sets with no collections as active.
+        if collection_set.is_active() or len(collection_set.collections.all()) == 0:
             active_collection_sets.append(collection_set)
         else:
             inactive_collection_sets.append(collection_set)

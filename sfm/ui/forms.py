@@ -115,7 +115,8 @@ class BaseCollectionForm(forms.ModelForm):
                    'history_note': HISTORY_NOTE_WIDGET,
                    'end_date': DATETIME_WIDGET}
         labels = {
-            'history_note': HISTORY_NOTE_LABEL
+            'history_note': HISTORY_NOTE_LABEL,
+            'visibility': 'Sharing'
         }
         help_texts = {
             'history_note': HISTORY_NOTE_HELP,

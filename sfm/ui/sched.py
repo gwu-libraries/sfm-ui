@@ -25,7 +25,7 @@ def start_sched():
 def next_run_time(collection_pk):
     job_id = _job_id(collection_pk)
     job = sched.get_job(job_id)
-    if job:
+    if job and hasattr(job, 'next_run_time'):
         return job.next_run_time
     else:
         return None

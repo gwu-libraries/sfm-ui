@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='collection',
             name='visibility',
-            field=models.CharField(default=b'default', help_text=b'Who else can view and export from this collection. Select "Other users" to share with other users.', max_length=255, choices=[(b'default', b'Default'), (b'local', b'Other users')]),
+            field=models.CharField(default=b'default', help_text=b'Who else can view and export from this collection. Select "All other users" to share with all Social Feed Manager users.', max_length=255, choices=[(b'default', b'Group only'), (b'local', b'All other users')]),
         ),
         migrations.AddField(
             model_name='historicalcollection',
             name='visibility',
-            field=models.CharField(default=b'default', help_text=b'Who else can view and export from this collection. Select "Other users" to share with other users.', max_length=255, choices=[(b'default', b'Default'), (b'local', b'Other users')]),
+            field=models.CharField(default=b'default', help_text=b'Who else can view and export from this collection. Select "All other users" to share with all Social Feed Manager users.', max_length=255, choices=[(b'default', b'Group only'), (b'local', b'All other users')]),
         ),
     ]

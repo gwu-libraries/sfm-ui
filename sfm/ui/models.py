@@ -364,9 +364,9 @@ class Collection(models.Model):
     DEFAULT_VISIBILITY = 'default'
     LOCAL_VISIBILITY = 'local'
     VISIBILITY_CHOICES = [
-        (DEFAULT_VISIBILITY, 'Default'),
+        (DEFAULT_VISIBILITY, 'Group only'),
         # That is, with other SFM users.
-        (LOCAL_VISIBILITY, 'Other users')
+        (LOCAL_VISIBILITY, 'All other users')
         # This can be expanded with additional options
     ]
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
@@ -378,8 +378,8 @@ class Collection(models.Model):
     is_on = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     visibility = models.CharField(max_length=255, choices=VISIBILITY_CHOICES, default=DEFAULT_VISIBILITY,
-                                  help_text='Who else can view and export from this collection. Select "Other users" '
-                                            'to share with other users.')
+                                  help_text='Who else can view and export from this collection. Select "All other '
+                                            'users" to share with all Social Feed Manager users.')
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule", null=True)
     harvest_options = models.TextField(blank=True)
