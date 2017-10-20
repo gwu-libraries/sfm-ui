@@ -32,7 +32,7 @@ Twitter user timeline
 
 Twitter user timeline collections collect the 3,200 most recent tweets from each of
 a list of Twitter accounts using `Twitter's user_timeline API
-<https://dev.twitter.com/rest/reference/get/statuses/user_timeline>`_.
+<https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html>`_.
 
 **Seeds** for Twitter user timelines are individual Twitter accounts.
 
@@ -66,13 +66,14 @@ Twitter search
 
 Twitter searches collect tweets from the last 7-9 days that match search
 queries, similar to a regular search done on Twitter, using
-the `Twitter Search API <https://dev.twitter.com/rest/public/search>`_.
+the `Twitter Search API <https://developer.twitter.com/en/docs/tweets/search/overview/basic-search>`_.
 This is **not** a complete search of all tweets; results are limited
 both by time and arbitrary relevance (determined by Twitter).
 
 Search queries must follow standard search term formulation; permitted queries
 are listed in the documentation for the `Twitter Search API
-<https://dev.twitter.com/rest/public/search>`_, or you can construct a query
+<https://developer.twitter.com/en/docs/tweets/search/overview/operator_descriptions>`_,
+or you can construct a query
 using the `Twitter Advanced Search query builder
 <https://twitter.com/search-advanced>`_.
 
@@ -99,7 +100,7 @@ Twitter sample
 
 Twitter samples are a random collection of approximately 0.5--1% of public
 tweets, using the `Twitter sample stream
-<https://dev.twitter.com/streaming/reference/get/statuses/sample>`_, useful for
+<https://developer.twitter.com/en/docs/tweets/sample-realtime/overview/GET_statuse_sample>`_, useful for
 capturing a sample of what people are talking about on Twitter.
 The Twitter sample stream returns approximately 0.5-1% of public tweets,
 which is approximately 3GB a day (compressed).
@@ -125,7 +126,7 @@ Twitter filter
 Twitter Filter collections harvest a live selection of public tweets from
 criteria matching keywords, locations, or users, based on the
 `Twitter filter streaming API
-<https://dev.twitter.com/streaming/reference/post/statuses/filter>`_. Because
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/overview/statuses-filter>`_. Because
 tweets are collected live, tweets from the past are not included. (Use a
 :ref:`Twitter search` collection to find tweets from the recent past.)
 
@@ -135,14 +136,14 @@ location.
 **Track** collects tweets based on a keyword search. A space between words
 is treated as 'AND' and a comma is treated as 'OR'. Note that exact phrase
 matching is not supported. See the `track parameter documentation
-<https://dev.twitter.com/streaming/overview/request-parameters#track>`_ for more
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track>`_ for more
 information.
 
 **Follow** collects tweets that are posted by or about a user (not including
 mentions) from a comma separated list of user IDs (the numeric identifier for
 a user account). Tweets collected will include those made by the user, retweeting
 the user, or replying to the user. See the `follow parameter documentation
-<https://dev.twitter.com/streaming/overview/request-parameters#follow>`_ for
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#follow>`_ for
 more information.
 
 - Note: The Twitter website does not provide a way to look up the user ID for a user account. You can use `https://tweeterid.com <https://tweeterid.com/>`_ for this purpose.
@@ -151,7 +152,7 @@ more information.
 **Location** collects tweets that were geolocated within specific parameters,
 based on a bounding box made using the southwest and northeast corner
 coordinates. See the `location parameter documentation
-<https://dev.twitter.com/streaming/overview/request-parameters#location>`_ for
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#location>`_ for
 more information.
 
 Twitter will return a limited number of tweets, so filters that return many
