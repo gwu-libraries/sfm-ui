@@ -254,7 +254,11 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["diffs_len"] = len(collection_history_iter)
         context["has_seeds_list"] = self.object.required_seed_count() != 0
         has_perms = has_collection_set_based_permission(self.object, self.request.user)
-        context["can_edit"] = not self.object.is_on and self.object.is_active and has_perms
+        # Edit button should be enabled.
+        can_edit = not self.object.is_on and self.object.is_active and has_perms
+        context["can_edit"] = can_edit
+        # Seed add buttons should be enabled.
+        context["can_edit_seeds"] = can_edit if self.object.is_streaming() else self.object.is_active and has_perms
         context["can_toggle_on"] = has_perms
         context["can_toggle_active"] = not self.object.is_on and has_perms
         # If last harvest is stopping
@@ -533,8 +537,10 @@ class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissi
         context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
-        context["can_edit"] = not self.object.collection.is_on \
-                              and has_collection_set_based_permission(self.object, self.request.user)
+        can_edit = has_collection_set_based_permission(self.object, self.request.user) and self.object.collection.is_active
+        if self.object.collection.is_streaming():
+            can_edit = can_edit and not self.object.collection.is_on
+        context["can_edit"] = can_edit
         return context
 
 

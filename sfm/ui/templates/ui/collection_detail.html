@@ -273,9 +273,12 @@
             </div>
 
             <div style="padding-top: 15px">
-            <a class="btn btn-primary" id="Add Seed" href="{% url "seed_create" collection.id %}" {% if collection.is_on or not can_edit %}disabled="disabled"{% endif %} >Add Seed</a>
+            <a class="btn btn-primary" id="Add Seed" href="{% url "seed_create" collection.id %}" {% if not can_edit_seeds %}disabled="disabled"{% endif %} >Add Seed</a>
             {% if can_add_bulk_seeds %}
-                <a class="btn btn-primary" id="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if collection.is_on or not can_edit %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+                <a class="btn btn-primary" id="Bulk Add Seed" href="{% url "bulk_seed_create" collection.id %}" {% if not can_edit_seeds %}disabled="disabled"{% endif %} >Bulk Add Seeds</a>
+            {% endif %}
+            {% if can_edit_seeds and collection.is_on %}
+                <p class="help-block">Seeds changes will go into effect with next scheduled harvest.</p>
             {% endif %}
             </div>
         </div>
