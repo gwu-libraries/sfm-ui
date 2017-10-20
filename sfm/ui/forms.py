@@ -572,7 +572,7 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
 
 class SeedTwitterSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text='See <a href="https://dev.twitter.com/rest/public/search" target="_blank">' \
+                            help_text='See <a href="https://developer.twitter.com/en/docs/tweets/search/overview/operator_descriptions" target="_blank">' \
                               'these instructions</a> for writing a query. ' \
                               'Example: firefly OR "lightning bug"')
     geocode = forms.CharField(required=False,
@@ -645,18 +645,19 @@ class SeedWeiboSearchForm(BaseSeedForm):
 class SeedTwitterFilterForm(BaseSeedForm):
     track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="""Separate keywords and phrases with commas. See Twitter <a 
-                            target="_blank" href="https://dev.twitter.com/streaming/overview/request-parameters#track">
+                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track">
                             track</a> for more information.""")
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                              help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose 
                              tweets, retweets, and replies will be collected. See Twitter <a 
                              target="_blank" 
-                             href="https://dev.twitter.com/streaming/overview/request-parameters#follow"> follow</a> 
-                             documentation for a full list of what is returned.""")
+                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#follow"> follow</a> 
+                             documentation for a full list of what is returned. User <a target="_blank" 
+                             href="https://tweeterid.com/">TweeterID</a> to get the user ID for a screen name.""")
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                                 help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic 
                                 bounding box. See Twitter <a target="blank" 
-                                href="https://dev.twitter.com/streaming/overview/request-parameters#locations">
+                                href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations">
                                 locations</a> for more information.""")
 
     def __init__(self, *args, **kwargs):
