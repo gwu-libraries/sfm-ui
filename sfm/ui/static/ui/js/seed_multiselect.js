@@ -1,8 +1,9 @@
 $(document).ready(function() {
         // seed multiselect
         $('#id_seeds').multiselect({
-           includeSelectAllOption: true,
-           enableFiltering:true,
+           includeSelectAllOption: false,
+           enableFiltering: true,
+           enableCaseInsensitiveFiltering: true,
            maxHeight: 350,
            buttonWidth: 200
 
