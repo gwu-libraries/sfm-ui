@@ -12,7 +12,7 @@ from django.core.exceptions import PermissionDenied
 import logging
 
 from .forms import CredentialTwitterForm, CredentialWeiboForm, CredentialTumblrForm
-from .models import Credential, CollectionSet
+from .models import Credential, CollectionSet, Collection
 
 log = logging.getLogger(__name__)
 
@@ -67,9 +67,12 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         raise ImmediateHttpResponse(HttpResponseRedirect(reverse('credential_detail', args=(credential.pk,))))
 
 
-def has_collection_set_based_permission(obj, user, allow_superuser=True, allow_staff=False):
+def has_collection_set_based_permission(obj, user, allow_superuser=True, allow_staff=False,
+                                        allow_collection_visibility=False):
     """
     Based on obj.get_collection_set(), checks if user is in the collection set's group.
+
+    Based on obj.get_collection(), checks if collection has visibility=local
 
     Accounts for superusers and staff.
     """
@@ -82,11 +85,23 @@ def has_collection_set_based_permission(obj, user, allow_superuser=True, allow_s
                     or (allow_superuser and user.is_superuser) \
                     or collection_set.group in user.groups.all():
                 return True
+    if allow_collection_visibility:
+        if isinstance(obj, CollectionSet):
+            for collection in obj.collections.all():
+                if collection.visibility == Collection.LOCAL_VISIBILITY:
+                    return True
+        elif hasattr(obj, "get_collection"):
+            collection = obj.get_collection()
+            if collection.visibility == Collection.LOCAL_VISIBILITY:
+                return True
+
     return False
 
 
-def check_collection_set_based_permission(obj, user, allow_superuser=True, allow_staff=False):
-    if not has_collection_set_based_permission(obj, user, allow_superuser=allow_superuser, allow_staff=allow_staff):
+def check_collection_set_based_permission(obj, user, allow_superuser=True, allow_staff=False,
+                                          allow_collection_visibility=False):
+    if not has_collection_set_based_permission(obj, user, allow_superuser=allow_superuser, allow_staff=allow_staff,
+                                               allow_collection_visibility=allow_collection_visibility):
         log.warning("Permission denied for %s", user)
         raise PermissionDenied()
 
@@ -159,6 +174,35 @@ class CollectionSetOrSuperuserOrStaffPermissionMixin(object):
         form = super(CollectionSetOrSuperuserOrStaffPermissionMixin, self).get_form(form_class=form_class)
         if "collection_set" in form.initial:
             check_collection_set_based_permission(form.initial["collection_set"], self.request.user, allow_staff=True)
+        return form
+
+
+class CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin(object):
+    def get_object(self, queryset=None):
+        """
+        Overrides get_object from SingleObjectMixin to check model object.
+
+        Model object must provide a get_collection_set and get_collection method.
+        """
+        obj = super(CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin, self.__class__).get_object(
+            self, queryset)
+        check_collection_set_based_permission(obj, self.request.user, allow_staff=True,
+                                              allow_collection_visibility=True)
+        return obj
+
+    def get_form(self, form_class=None):
+        """
+        Overrides get_form (from FormMixin) to check when rendering or submitting a form.
+
+        View must provide collection_set as initial data.
+        """
+        form = super(CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin, self).get_form(
+            form_class=form_class)
+        # if "collection_set" in form.initial:
+        #     check_collection_set_based_permission(form.initial["collection_set"], self.request.user, allow_staff=True)
+        if "collection" in form.initial:
+            check_collection_set_based_permission(form.initial["collection_set"], self.request.user, allow_staff=True,
+                                                  allow_collection_visibility=True)
         return form
 
 

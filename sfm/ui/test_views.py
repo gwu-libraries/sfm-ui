@@ -96,7 +96,6 @@ class CollectionSetDetailViewTests(CollectionSetTestsMixin, TestCase):
         collection_list = response.context_data["collection_list"]
         self.assertEqual(1, len(collection_list))
         self.assertEqual(self.collection, collection_list[0])
-        self.assertEqual(1, collection_list[0].num_seeds)
 
     def test_change_log_model_name_id(self):
         """

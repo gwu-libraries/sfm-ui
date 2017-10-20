@@ -32,6 +32,17 @@ Note:
 * A collection set is considered deactivated when it has no active collections. It will also be removed from some of the
   lists in SFM UI and not appear in harvest status emails.
 
+-------------------
+Sharing collections
+-------------------
+Changing the visibility of a collection to "Other users" will allow the collection to be viewed by all SFM users.
+
+The visibility of a collection can be changed by editing the collection.
+
+Note:
+* A collection set is shared when it has a shared collection.
+* Shared collection sets will be listed on a separate tab of the collection set list page.
+
 --------------
 Deleting items
 --------------

@@ -18,12 +18,12 @@
 <div class="row">
     <div class="col-md-12">
         <ul id="collection_set_tabs" class="nav nav-tabs">
-            {% for colletion_set_key, colletion_set_name, collection_sets_lists in collection_sets_lists %}
+            {% for collection_set_key, collection_set_name, collection_set_list in collection_sets_lists %}
                 {% if forloop.first %}
-                    <li class="active"><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                    <li class="active"><a  href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge">{{ collection_set_list | length }}</span></a></li>
                 {% else %}
-                        {% if collection_sets_lists %}
-                            <li><a  href="#{{ colletion_set_key }}" data-toggle="tab">{{ colletion_set_name }}</a></li>
+                        {% if collection_set_list %}
+                            <li><a  href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge">{{ collection_set_list | length }}</span></a></li>
                         {% endif %}
                 {% endif %}
             {% endfor %}

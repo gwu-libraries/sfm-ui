@@ -361,6 +361,14 @@ class Collection(models.Model):
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
     RATE_LIMITED_HARVEST_TYPES = (TWITTER_USER_TIMELINE, TWITTER_SEARCH)
+    DEFAULT_VISIBILITY = 'default'
+    LOCAL_VISIBILITY = 'local'
+    VISIBILITY_CHOICES = [
+        (DEFAULT_VISIBILITY, 'Group only'),
+        # That is, with other SFM users.
+        (LOCAL_VISIBILITY, 'All other users')
+        # This can be expanded with additional options
+    ]
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     collection_set = models.ForeignKey(CollectionSet, related_name='collections')
     credential = models.ForeignKey(Credential, related_name='collections')
@@ -369,6 +377,9 @@ class Collection(models.Model):
     description = models.TextField(blank=True)
     is_on = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    visibility = models.CharField(max_length=255, choices=VISIBILITY_CHOICES, default=DEFAULT_VISIBILITY,
+                                  help_text='Who else can view and export from this collection. Select "All other '
+                                            'users" to share with all Social Feed Manager users.')
     schedule_minutes = models.PositiveIntegerField(default=60 * 24 * 7, choices=SCHEDULE_CHOICES,
                                                    verbose_name="schedule", null=True)
     harvest_options = models.TextField(blank=True)
@@ -384,7 +395,7 @@ class Collection(models.Model):
 
     class Meta:
         diff_fields = (
-            "collection_set", "credential", "harvest_type", "name", "description", "is_on", "is_active",
+            "collection_set", "credential", "harvest_type", "name", "description", "is_on", "is_active", "visibility",
             "schedule_minutes", "harvest_options", "end_date")
 
     def __str__(self):
@@ -456,6 +467,9 @@ class Collection(models.Model):
 
     def get_collection_set(self):
         return self.collection_set
+
+    def get_collection(self):
+        return self
 
 
 def delete_collection_receiver(sender, **kwargs):
@@ -590,6 +604,9 @@ class Seed(models.Model):
     def get_collection_set(self):
         return self.collection.collection_set
 
+    def get_collection(self):
+        return self.collection
+
 
 class HarvestManager(models.Manager):
     def get_by_natural_key(self, harvest_id):
@@ -666,6 +683,9 @@ class Harvest(models.Model):
 
     def get_collection_set(self):
         return self.collection.collection_set
+
+    def get_collection(self):
+        return self.collection
 
 
 class HarvestStatManager(models.Manager):
@@ -807,6 +827,15 @@ class Export(models.Model):
         seed = self.seeds.first()
         if seed:
             return seed.get_collection_set()
+        return None
+
+    def get_collection(self):
+        # Export can have a collection or seeds
+        if self.collection:
+            return self.collection
+        seed = self.seeds.first()
+        if seed:
+            return seed.get_collection()
         return None
 
 

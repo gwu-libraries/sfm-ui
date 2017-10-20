@@ -231,6 +231,7 @@
                      <p><strong>Id:</strong> {{ collection.collection_id }}</p>
                      <p><strong>Created:</strong> {{ collection.date_added|date }}</p>
                      <p><strong>End date: </strong> {{ collection.end_date|date }}</p>
+                     <p><strong>Sharing: </strong> {{ collection.get_visibility_display }}</p>
             </div>
          </div>
      </div>

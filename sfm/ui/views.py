@@ -28,7 +28,7 @@ from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_hist
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
-    has_collection_set_based_permission
+    has_collection_set_based_permission, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin
 from ui.templatetags import ui_extras
 
 import os
@@ -52,15 +52,17 @@ class CollectionSetListView(LoginRequiredMixin, ListView):
         active_collection_sets, inactive_collection_sets = split_collection_sets(
             CollectionSet.objects.filter(group__in=self.request.user.groups.all()).annotate(
                 num_collections=Count('collections')).order_by('name'))
-        collection_sets_lists.append(('acs', "Active Collection Sets", active_collection_sets))
-        collection_sets_lists.append(('iacs', "Inactive Collection Sets", inactive_collection_sets))
-
+        collection_sets_lists.append(('acs', "Active", active_collection_sets))
+        collection_sets_lists.append(('iacs', "Inactive", inactive_collection_sets))
+        collection_sets_lists.append(('scs', "Shared", list(
+            CollectionSet.objects.filter(collections__visibility=Collection.LOCAL_VISIBILITY).annotate(
+                num_collections=Count('collections')).order_by('name'))))
         if self.request.user.is_superuser or self.request.user.is_staff:
             other_active_collection_sets, other_inactive_collection_sets = split_collection_sets(
                 CollectionSet.objects.exclude(group__in=self.request.user.groups.all()).annotate(
                     num_collections=Count('collections')).order_by('name'))
-            collection_sets_lists.append(('oacs', "Other Active Collection Sets", other_active_collection_sets))
-            collection_sets_lists.append(('oics', "Other Inactive Collection Sets", other_inactive_collection_sets))
+            collection_sets_lists.append(('oacs', "Other Active", other_active_collection_sets))
+            collection_sets_lists.append(('oics', "Other Inactive", other_inactive_collection_sets))
         context['collection_sets_lists'] = collection_sets_lists
         return context
 
@@ -69,22 +71,29 @@ def split_collection_sets(collection_sets):
     active_collection_sets = []
     inactive_collection_sets = []
     for collection_set in collection_sets:
-        if collection_set.is_active():
+        # Treating collection sets with no collections as active.
+        if collection_set.is_active() or len(collection_set.collections.all()) == 0:
             active_collection_sets.append(collection_set)
         else:
             inactive_collection_sets.append(collection_set)
     return active_collection_sets, inactive_collection_sets
 
 
-class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
+class CollectionSetDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                              DetailView):
     model = CollectionSet
     template_name = 'ui/collection_set_detail.html'
     context_object_name = 'collection_set'
 
     def get_context_data(self, **kwargs):
         context = super(CollectionSetDetailView, self).get_context_data(**kwargs)
-        context['collection_list'] = Collection.objects.filter(
-            collection_set=self.object.pk).annotate(num_seeds=Count('seeds')).order_by('name')
+        collections = []
+        for collection in self.object.collections.all():
+            if has_collection_set_based_permission(collection, self.request.user, allow_superuser=True,
+                                                   allow_staff=True,
+                                                   allow_collection_visibility=True):
+                collections.append(collection)
+        context['collection_list'] = collections
         context["diffs"], context["diffs_len"] = top_object_diffs(self.object)
         context["harvest_types"] = Collection.HARVEST_CHOICES
         context["harvest_description"] = Collection.HARVEST_DESCRIPTION
@@ -170,7 +179,8 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
         # we need some base queryset to count total number of records.
         self.collection = get_object_or_404(Collection, pk=self.kwargs['pk'])
         # Check permissions to download
-        check_collection_set_based_permission(self.collection, self.request.user, allow_staff=True)
+        check_collection_set_based_permission(self.collection, self.request.user, allow_staff=True,
+                                              allow_collection_visibility=True)
         self.status = self.kwargs['status']
         self.last_harvest = self.collection.last_harvest()
         self.seed_infos = _get_seed_msg_map(self.last_harvest.infos) if self.last_harvest else {}
@@ -220,13 +230,14 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
 
         elif column == 'uid':
             return mark_safe(u'<a href="{}">{}</a>'.format(reverse('seed_detail', args=[row.pk]),
-                                                            row.uid)) if row.uid else ""
+                                                           row.uid)) if row.uid else ""
         elif column == 'token':
             return mark_safe(u'<a href="{}">{}</a>'.format(reverse('seed_detail', args=[row.pk]),
-                                                            ui_extras.json_list(row.token))) if row.token else ""
+                                                           ui_extras.json_list(row.token))) if row.token else ""
 
 
-class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
+class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                           DetailView):
     model = Collection
     template_name = 'ui/collection_detail.html'
 
@@ -246,8 +257,8 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
         context["seed_errors"] = _get_seed_msg_map(last_harvest.errors) if last_harvest else {}
         diffs = []
         collection_history_iter = CollectionHistoryIter(self.object.history.all(),
-                              Seed.history.filter(collection=self.object).order_by(
-                                  "-history_date"))
+                                                        Seed.history.filter(collection=self.object).order_by(
+                                                            "-history_date"))
         for historical_obj in collection_history_iter[0:3]:
             diffs.append(diff_historical_object(historical_obj))
         context["diffs"] = diffs
@@ -316,7 +327,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPe
 def download_seed_list(request, pk):
     collection = get_object_or_404(Collection, pk=pk)
     # Check permissions to download
-    check_collection_set_based_permission(collection, request.user, allow_staff=True)
+    check_collection_set_based_permission(collection, request.user, allow_staff=True, allow_collection_visibility=True)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="seedlist.csv"'
     response.write("\xEF\xBB\xBF")
@@ -526,7 +537,8 @@ class CollectionAddNoteView(LoginRequiredMixin, RedirectView):
         return super(CollectionAddNoteView, self).get_redirect_url(*args, **kwargs)
 
 
-class SeedDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
+class SeedDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                     DetailView):
     model = Seed
     template_name = 'ui/seed_detail.html'
 
@@ -815,8 +827,8 @@ class ExportListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ExportCreateView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, SuccessMessageMixin,
-                       CreateView):
+class ExportCreateView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                       SuccessMessageMixin, CreateView):
     model = Export
     form_class = ExportForm
     template_name = 'ui/export_create.html'
@@ -863,7 +875,8 @@ def _get_fileinfos(path):
     return sorted(fileinfos)
 
 
-class ExportDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
+class ExportDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                       DetailView):
     model = Export
     template_name = 'ui/export_detail.html'
 
@@ -895,7 +908,8 @@ class HarvestListView(LoginRequiredMixin, ListView):
         return context
 
 
-class HarvestDetailView(LoginRequiredMixin, CollectionSetOrSuperuserOrStaffPermissionMixin, DetailView):
+class HarvestDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin,
+                        DetailView):
     model = Harvest
     template_name = 'ui/harvest_detail.html'
 
@@ -974,7 +988,8 @@ class CollectionChangeLogView(LoginRequiredMixin, TemplateView):
         collection = Collection.objects.get(pk=collection_id)
 
         # Check permissions to view
-        check_collection_set_based_permission(collection, self.request.user, allow_staff=True)
+        check_collection_set_based_permission(collection, self.request.user, allow_staff=True,
+                                              allow_collection_visibility=True)
 
         context["item"] = collection
 

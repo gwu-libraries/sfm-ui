@@ -1,6 +1,6 @@
 from django.test import TestCase
 import json
-from .models import CollectionSet, Credential, Group, User
+from .models import CollectionSet, Credential, Group, User, Collection
 from .auth import has_collection_set_based_permission, has_user_based_permission
 
 
@@ -22,9 +22,13 @@ class AuthTests(TestCase):
                                                        password="test_password")
 
         self.collection_set = CollectionSet.objects.create(group=self.group1, name="test_collection_set")
-
         self.credential = Credential.objects.create(user=self.user1, platform="test_platform",
                                                     token=json.dumps({"key": "test_key"}))
+        self.collection = Collection.objects.create(collection_set=self.collection_set,
+                                                    credential=self.credential,
+                                                    harvest_type='test harvest type',
+                                                    name='Test collection two',
+                                                    visibility=Collection.LOCAL_VISIBILITY)
 
     def test_has_collection_set_based_permission_superuser(self):
         self.assertTrue(has_collection_set_based_permission(self.collection_set, self.superuser))
@@ -38,6 +42,12 @@ class AuthTests(TestCase):
     def test_has_collection_set_based_permission_user(self):
         self.assertTrue(has_collection_set_based_permission(self.collection_set, self.user1))
         self.assertFalse(has_collection_set_based_permission(self.collection_set, self.user2))
+
+    def test_has_collection_set_based_permission_visibility(self):
+        self.assertTrue(
+            has_collection_set_based_permission(self.collection_set, self.user1, allow_collection_visibility=True))
+        self.assertTrue(
+            has_collection_set_based_permission(self.collection_set, self.user2, allow_collection_visibility=True))
 
     def test_has_user_based_permission_superuser(self):
         self.assertTrue(has_user_based_permission(self.credential, self.superuser))

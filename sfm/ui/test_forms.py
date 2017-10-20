@@ -11,7 +11,6 @@ from .models import User, CollectionSet, Credential, Collection, Seed
 
 
 class CollectionSetFormTest(TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
         self.request = self.factory.get("/")
@@ -46,7 +45,6 @@ class CollectionSetFormTest(TestCase):
 
 
 class CollectionSetUpdateFormTest(TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
         self.user = User.objects.create_user(username='testuser',
@@ -55,7 +53,7 @@ class CollectionSetUpdateFormTest(TestCase):
         group = Group.objects.create(name='testgroup1')
         self.user.groups.add(group)
         self.collection_set = CollectionSet.objects.create(name='Test Collection Set One',
-                                                    group=group)
+                                                           group=group)
         self.path = '/ui/collection_sets/' + str(self.collection_set.pk) + '/update/'
 
     def test_valid_data(self):
@@ -63,7 +61,7 @@ class CollectionSetUpdateFormTest(TestCase):
         request.user = self.user
         groupno = Group.objects.filter(name='testgroup1')
         response = CollectionSetUpdateView.as_view()(request,
-                                                  pk=self.collection_set.pk)
+                                                     pk=self.collection_set.pk)
         form = CollectionSetForm({
             'name': 'my test collection set updated name',
             'description': 'my updated description',
@@ -76,7 +74,7 @@ class CollectionSetUpdateFormTest(TestCase):
         request = self.factory.get(self.path)
         request.user = self.user
         response = CollectionSetUpdateView.as_view()(request,
-                                                  pk=self.collection_set.pk)
+                                                     pk=self.collection_set.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'testgroup2')
 
@@ -85,7 +83,7 @@ class CollectionSetUpdateFormTest(TestCase):
         request.user = self.user
         groupno = Group.objects.filter(name='testgroup1')
         response = CollectionSetUpdateView.as_view()(request,
-                                                  pk=self.collection_set.pk)
+                                                     pk=self.collection_set.pk)
         form = CollectionSetForm({
             'name': '',
             'description': 'my description',
@@ -111,16 +109,19 @@ class CollectionFormTest(TestCase):
             'name': 'my test collection',
             'end_date': '01/01/2200',
             'date_added': '03/16/2016',
-            'schedule_minutes': '60'
+            'schedule_minutes': '60',
+            'visibility': 'default'
         }
 
     def test_valid_form(self):
-        form = CollectionTwitterSearchForm(self.data, coll=self.collection_set.pk, credential_list=Credential.objects.all())
+        form = CollectionTwitterSearchForm(self.data, coll=self.collection_set.pk,
+                                           credential_list=Credential.objects.all())
         self.assertTrue(form.is_valid())
 
     def test_end_date_after_now(self):
         self.data['end_date'] = "01/01/2000"
-        form = CollectionTwitterSearchForm(self.data, coll=self.collection_set.pk, credential_list=Credential.objects.all())
+        form = CollectionTwitterSearchForm(self.data, coll=self.collection_set.pk,
+                                           credential_list=Credential.objects.all())
         self.assertFalse(form.is_valid())
 
 
@@ -272,9 +273,9 @@ class TestExportForm(TestCase):
         self.credential = Credential.objects.create(user=self.user, platform="test_platform",
                                                     token="{}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
-                                              name="test_collection",
-                                              harvest_type="twitter_search",
-                                              credential=self.credential)
+                                                    name="test_collection",
+                                                    harvest_type="twitter_search",
+                                                    credential=self.credential)
         self.seed = Seed.objects.create(token="test",
                                         collection=self.collection)
         Seed.objects.create(token="test2",
