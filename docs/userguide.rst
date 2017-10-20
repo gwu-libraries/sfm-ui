@@ -121,7 +121,7 @@ platforms' terms (`Twitter <https://twitter.com/rules>`_,
 `Tumblr <https://www.tumblr.com/policy/en/terms-of-service>`_),
 as you agreed to them when you created your social media account. Social Feed
 Manager respects those platforms' terms as an application
-(`Twitter <https://dev.twitter.com/overview/terms/policy>`_,
+(`Twitter <https://developer.twitter.com/en/developer-terms/policy>`_,
 `Flickr <https://www.flickr.com/services/developer>`_,
 `Sina Weibo <http://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5>`_,
 `Tumblr <https://www.tumblr.com/docs/en/api_agreement>`_).

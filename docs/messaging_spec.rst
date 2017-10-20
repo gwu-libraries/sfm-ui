@@ -41,7 +41,7 @@ Background information
   requester may also want to monitor the status of a harvest. In the current
   architecture, the SFM UI serves the role of requester.
 * A stream harvest is a harvest that is intended to continue indefinitely until
-  terminated. A harvest of a `Twitter public stream <https://dev.twitter.com/streaming/public>`_
+  terminated. A harvest of a Twitter sample stream
   is an example of a stream harvest. A stream harvest is different from a non-stream
   harvest in that a requester must both start and optionally stop a stream harvest.
   Following the naming conventions from Twitter, a harvest of a REST, non-streaming API
