@@ -6,7 +6,7 @@ author: justin_littman
 excerpt: "In which I look at suspended Twitter accounts listed in the U.S. Digital Registry, including some recently tweeting in Russian."
 ---
 
-At GW Libraries, we archive the tweets of roughly 3000 U.S. government agencies using Social Feed Manager. This originated with our involvement in the [End of Term project](http://eotarchive.cdlib.org/), a collaborative effort to capture the web presence of the federal government at the end of each presidential term. However, given the affordances of Twitter (viz., the ability to collect historical tweets is extremely limited), we decided to continue collecting the tweets on an ongoing basis.
+At GW Libraries, we collect the tweets of roughly 3000 U.S. government agencies using Social Feed Manager. This originated with our involvement in the [End of Term project](http://eotarchive.cdlib.org/), a collaborative effort to capture the web presence of the federal government at the end of each presidential term. However, given the affordances of Twitter (viz., the ability to collect historical tweets is extremely limited), we decided to continue collecting the tweets on an ongoing basis.
 
 When collecting a large number of Twitter accounts, the list of accounts requires occasional maintenance, as sometimes Twitter accounts are deleted or protected. It’s understandable how U.S. government accounts would be expected to change over time as agencies and initiatives change. However, when I was doing maintenance earlier today, I noticed something odd: a number of the accounts were [suspended](https://support.twitter.com/articles/15790), not deleted or protected.
 
