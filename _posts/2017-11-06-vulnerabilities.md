@@ -71,7 +71,7 @@ While I chose to tweet a quote from Wilford Brimley, my tweets could have been m
  
  ![USEmbassyRiyadh in IA]({{ site.github.url }}/images/vulnerabilities/USEmbassyRiyadh-IA.png)
  
- Without close scrutiny, it is not evident that the most recent capture is fake. (This "attack" was inspired by Lerner, Kohno, and Roesner's "[Rewriting History: Changing the Archived Web from the Present](https://repository.wellesley.edu/cgi/viewcontent.cgi?referer=https://t.co/h80k4hb5lG&httpsredir=1&article=1158&context=scholarship")).
+ Without close scrutiny, it is not evident that the most recent capture is fake. (This "attack" was inspired by Lerner, Kohno, and Roesner's "[Rewriting History: Changing the Archived Web from the Present](https://repository.wellesley.edu/cgi/viewcontent.cgi?referer=https://t.co/h80k4hb5lG&httpsredir=1&article=1158&context=scholarship)).
  
  While I have to admit a tad bit of ethical queasiness about this exercise, I felt it was justified to demonstrate that a Twitter account that is allegedly representative of the U.S. government can be faked and then recorded in the best historical record of web history that we have. I would suggest that the implications for our trust in official information from the U.S. government, Twitter as a communications platform, and the Internet Archive as the historical record are significant.
  
