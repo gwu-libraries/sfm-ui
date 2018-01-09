@@ -12,7 +12,7 @@ ads: false
 
 Guidelines and Resources on Social Media Archiving
 --------------------
-* [Social media research ethical and privacy guidelines]({{ site.github.url }}/resources/social_media_research_ethical_and_privacy_guidelines.pdf): general guidelines for GW researchers guidelines focusing on the collecting, sharing, and publishing of social media data
+* [Social media research ethical and privacy guidelines]({{ site.github.url }}/resources/social_media_research_ethical_and_privacy_guidelines.pdf): general guidelines for GW researchers focusing on the collecting, sharing, and publishing of social media data
 * [Social Feed Manager: Guide for Building Social Media Archives]({{ site.github.url }}/resources/SFMReportProm2017.pdf), Christopher J. Prom (June 7, 2017)
 * [Legal and Ethical Issues of Social Media Collecting: Annotated Bibliography]({{ site.github.url }}/resources/annotated-bibliography) (June 2, 2017)
 * [Building Social Media Archives: Collection Development Guidelines]({{ site.github.url }}/resources/guidelines) (March 20, 2017)
