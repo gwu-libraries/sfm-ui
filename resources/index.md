@@ -16,7 +16,7 @@ Guidelines and Resources on Social Media Archiving
 * [Social Feed Manager: Guide for Building Social Media Archives]({{ site.github.url }}/resources/SFMReportProm2017.pdf), Christopher J. Prom (June 7, 2017)
 * [Legal and Ethical Issues of Social Media Collecting: Annotated Bibliography]({{ site.github.url }}/resources/annotated-bibliography) (June 2, 2017)
 * [Building Social Media Archives: Collection Development Guidelines]({{ site.github.url }}/resources/guidelines) (March 20, 2017)
-* [API-based Social Media Collecting as a Form of Web Archiving]({{ site.github.url }}/resources/social-media-collecting-IJDL.pdf): Article in International Journal on Digital Libraries, Special Issue on Web Archiving (Dec 28, 2016)
+* [API-based Social Media Collecting as a Form of Web Archiving]({{ site.github.url }}/resources/sm-collecting-IJDL.pdf): Article in International Journal on Digital Libraries, Special Issue on Web Archiving (Dec 28, 2016)
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
 * [Using Social Media Data: Articles and resources on ethics]({{ site.github.url }}/resources/ethics)
 
