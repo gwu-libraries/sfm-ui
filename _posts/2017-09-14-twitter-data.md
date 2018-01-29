@@ -95,6 +95,6 @@ First, when considering a Twitter service provider, it is important to know whet
 Second, while the value-added services offered by a Twitter service provider may be very powerful and not require technical skill to use, they are generally a “black box”. So, for example, if a service provider performs bot detection, you may not know which bot detection algorithm is being used.
 
 ### Conclusion
-As should now be evident, the combination of Twitter’s restrictions on sharing data and the affordances of Twitter’s public API makes acquiring a Twitter dataset for academic research note entirely straight-forward. Hopefully this guide has provided enough of a description of the landscape for Twitter data that you can move forward with your research.
+As should now be evident, the combination of Twitter’s restrictions on sharing data and the affordances of Twitter’s public API makes acquiring a Twitter dataset for academic research not entirely straight-forward. Hopefully this guide has provided enough of a description of the landscape for Twitter data that you can move forward with your research.
 
 [Comments](https://gwu-libraries.github.io/sfm-ui/contact) on this guide and [questions](https://gwu-libraries.github.io/sfm-ui/contact) about Twitter data are welcome.
