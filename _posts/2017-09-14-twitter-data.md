@@ -61,28 +61,36 @@ A number of individuals and organizations have publicly posted Twitter datasets,
 
 Twitter’s Developer Policy is generally interpreted as allowing sharing of tweets locally, i.e., within an academic institution. For example, we share the datasets we have collected at GW Libraries with members of the GW research community (but when sharing outside the GW community, we only share the tweet ids). However, only a small number of institutions proactively collect Twitter data -- your library is a good place to inquire.
 
-Though only a proof-of-concept, another option for acquiring an existing Twitter dataset is [TweetSets](https://tweetsets.library.gwu.edu/), a web application that I’m developing. TweetSets allows you to create your own dataset by querying and limiting an existing dataset. For example, you can create a dataset that only contains original tweets with the term “trump” from the Women’s March dataset. If you are local, TweetSets will allow you to download the complete tweet; otherwise, just the tweet ids can be downloaded.
+Another option for acquiring an existing Twitter dataset is [TweetSets](https://tweetsets.library.gwu.edu/), a web application that I’ve developed. TweetSets allows you to create your own dataset by querying and limiting an existing dataset. For example, you can create a dataset that only contains original tweets with the term “trump” from the Women’s March dataset. If you are local, TweetSets will allow you to download the complete tweet; otherwise, just the tweet ids can be downloaded.
 
 ### 3.  Purchase from Twitter
-You can purchase historical Twitter data from [Gnip](https://gnip.com/), a data service provider owned by Twitter. I have not done this myself, but my understanding is that you provide a set of query terms and other limiters and Gnip will provide a cost estimate. It is not a trivial amount of money, but may be feasible for some research projects. Further, I am not familiar with the conditions placed on the uses / sharing of the purchased dataset. Nonetheless, this is likely to be as complete a dataset as it is possible to get.
+You can purchase historical Twitter data directly from Twitter, using the [Historical PowerTrack](https://developer.twitter.com/en/docs/tweets/batch-historical/overview) enterprise product.
+ 
+ Historical Twitter data was previously available from Gnip, a data service provider purchased by Twitter. Gnip has now been folded into Twitter. The way this used to work is that you provided a set of query terms and other limiters and a Gnip sales rep replied with a cost estimate. With recent changes, the process is less clear.
+ 
+ For filtering tweets, the Historical Powertrack offers a number of enhancements over the public Twitter API. This includes [additional filter operators](https://developer.twitter.com/en/docs/tweets/rules-and-filtering/overview/all-operators) and tweet enhancements (e.g., profile location and unshortened URLs).
+  
+  When considering purchasing tweets, you should be aware that it is not likely to be a trivial amount of money. The cost depends on both the length of the time period and the number of tweets; often, the cost is driven by the length of the time period, so shorter periods are more affordable. The cost may be feasible for some research projects, especially if the cost can be written into a grant. Further, I am not familiar with the conditions placed on the uses / sharing of the purchased dataset. Nonetheless, this is likely to be as complete a dataset as it is possible to get.
 
 ### 4. Access or purchase from a Twitter service provider
 A number of commercial and academic organizations act as Twitter service providers, usually for a fee. These services provide: 
 * Access to Twitter data
-* Value-added services for the Twitter data, such as analysis or data enhancement. If you are not using your own tools for analysis, these value-added services may be extremely useful for your research.
+* Value-added services for the Twitter data, such as coding, classification, analysis, or data enhancement. If you are not using your own tools for analysis, these value-added services may be extremely useful for your research (or they may be used in combination with your own tools).
 
 Twitter data options available from a service provider generally include one or more of the following types (available at different costs):
 * Data from the public Twitter APIs. This obviously comes with the limitations described previously with the public Twitter APIs, but will be less costly than the other Twitter data options.
-* Data from the enterprise Twitter APIs, which have access to all historical tweets. Like purchasing data directly from Gnip, the cost will depend on factors such as the number of tweets. [DiscoverText](https://discovertext.com/) offers this type of data acquisition.
+* Data from the enterprise Twitter APIs, which have access to all historical tweets. Like purchasing data directly from Twitter, the cost will depend on factors such as the number of tweets and the length of the time period. [DiscoverText](https://discovertext.com/) offers this type of data acquisition.
 * Datasets built by querying against an existing set of historical tweets. The service provider will have an arrangement with Twitter that will provide them with access to the “firehose” of all tweets to build this collection. [Crimson Hexagon](https://www.crimsonhexagon.com/) offers this type of data acquisition.
 
 Twitter service providers generally provide reliable access to the APIs, with redundancy and backfill. This means that you will not miss tweets because of network problems or other issues that might occur when using a tool to access the APIs yourself. Note, also, that some service providers can provide data from other social media platforms, such as Facebook.
 
-Most Twitter service providers’ offerings focus on marketing and business intelligence, not academic research. The two service providers that I am aware of that do serve academic researchers are DiscoverText and Crimson Hexagon. [Social Data Analytics at Boston University](https://www.sodaanalyticsatbu.org/) is a new entry in this field.
+Despite what the sales representative may tell you, most Twitter service providers’ offerings focus on marketing and business intelligence, not academic research. The notable exception is DiscoverText, which is focused primarily on supporting academic researchers. DiscoverText allows you to acquire data from the public Twitter APIs, as well as purchasing historical tweets. Within the DiscoverText platform, tweets can be filtered, coded, and classified (using machine learning).
+
+Crimson Hexagon focuses on marketing, but also supports academic research. [Social Data Analytics at Boston University](https://www.sodaanalyticsatbu.org/) is a new entry in the academic field.
 
 There are some limitations of Twitter service providers that you should be aware of. Whether these limitations are significant will depend on your research requirements.
 
-First, when considering a Twitter service provider, it is important to know whether you are able to export your dataset from the service provider’s platform. (All should allow you to export reports or analysis.) If you need the raw data to perform your own analysis or for data sharing, this may be an important consideration.
+First, when considering a Twitter service provider, it is important to know whether you are able to export your dataset from the service provider’s platform. (All should allow you to export reports or analysis.) For most platforms, export is limited to 50,000 tweets per day. If you need the raw data to perform your own analysis or for data sharing, this may be an important consideration.
 
 Second, while the value-added services offered by a Twitter service provider may be very powerful and not require technical skill to use, they are generally a “black box”. So, for example, if a service provider performs bot detection, you may not know which bot detection algorithm is being used.
 
