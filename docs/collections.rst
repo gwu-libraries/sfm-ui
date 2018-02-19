@@ -139,6 +139,8 @@ matching is not supported. See the `track parameter documentation
 <https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track>`_ for more
 information.
 
+- Note: When entering a comma-separated list of search terms for the track or follow parameters, make sure to use the standard ``,`` character.  When typing in certain languages that use a non-Roman alphabet, a different character is generated for commas.  For example, when typing in languages such as Arabic, Farsi, Urdu, etc., typing a comma generates the ``،`` character.  To avoid errors, the Track parameter should use the Roman ``,`` character; for example:   سواقة المرأه , قرار قيادة سيارة 
+
 **Follow** collects tweets that are posted by or about a user (not including
 mentions) from a comma separated list of user IDs (the numeric identifier for
 a user account). Tweets collected will include those made by the user, retweeting
