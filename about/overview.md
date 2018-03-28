@@ -3,7 +3,7 @@ layout: article
 title: "Overview of Social Feed Manager"
 permalink: /about/overview
 date: 2016-06-10
-modified: 2016-11-10
+modified: 2018-03-28
 excerpt: ""
 share: false
 ads: false
@@ -73,7 +73,7 @@ SFM requires some level of expertise to run.  [Instructions](https://sfm.readthe
 
 What is the state of the software?
 ----------------------------------
-SFM version 1.10 was released in August 2017.  It is suitable for production, but we welcome bug reports, suggestions for enhancements, and comments on issues via [GitHub](https://github.com/gwu-libraries/sfm-ui/issues) or email to sfm@gwu.edu.
+SFM version 1.11 was released in October 2018.  It is suitable for production, but we welcome bug reports, suggestions for enhancements, and comments on issues via [GitHub](https://github.com/gwu-libraries/sfm-ui/issues) or email to sfm@gwu.edu.
 
 
 Social Feed Manager has been supported by a grant from the National Historical Publications & Records Commission and the Council on East Asian Libraries. Previous work was supported by the Institute of Museum and Library Services.  
