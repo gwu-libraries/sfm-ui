@@ -15,6 +15,8 @@ class WarcFilter(FilterSet):
     seed = ListFilter(name="harvest__historical_seeds__seed_id", distinct=True)
     harvest_date_start = IsoDateTimeFilter(name="harvest__date_started", lookup_type='gte')
     harvest_date_end = IsoDateTimeFilter(name="harvest__date_started", lookup_type='lte')
+    created_date_start = IsoDateTimeFilter(name="date_created", lookup_type='gte')
+    created_date_end = IsoDateTimeFilter(name="date_created", lookup_type='lte')
     exclude_web = MethodFilter(action="web_filter")
 
     class Meta:

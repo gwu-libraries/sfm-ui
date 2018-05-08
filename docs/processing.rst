@@ -92,8 +92,9 @@ Here is arguments it accepts::
 
     root@0ac9caaf7e72:/sfm-data# find_warcs.py
     usage: find_warcs.py [-h] [--include-web] [--harvest-start HARVEST_START]
-                         [--harvest-end HARVEST_END] [--api-base-url API_BASE_URL]
-                         [--debug [DEBUG]]
+                         [--harvest-end HARVEST_END] [--warc-start WARC_START]
+                         [--warc-end WARC_END] [--api-base-url API_BASE_URL]
+                         [--debug [DEBUG]] [--newline]
                          collection [collection ...]
 
 For example, to get a list of the WARC files in a particular collection, provide some part of
@@ -102,7 +103,8 @@ the collection id::
     root@0ac9caaf7e72:/sfm-data# find_warcs.py 4f4d1
     /sfm-data/collection_set/b06d164c632d405294d3c17584f03278/4f4d1a6677f34d539bbd8486e22de33b/2016/05/04/14/515dab00c05740f487e095773cce8ab1-20160504143638715-00000-47-88e5bc8a36a5-8000.warc.gz
 
-(In this case there is only one WARC file. If there was more than one, it would be space separated.)
+(In this case there is only one WARC file. If there was more than one, it would be space separated. Use ``--newline`` to
+to separate with a newline instead.)
 
 The collection id can be found from the SFM UI.
 
@@ -140,7 +142,7 @@ This recipe uses `parallel <https://www.gnu.org/software/parallel/>`_ for parall
 
 Create a list of WARC files::
 
-    find_warcs.py 7c37157 | tr ' ' '\n' > source.lst
+    find_warcs.py --newline 7c37157 > source.lst
 
 Replace `7c37157` with the first few characters of the collection id that you want to export. The collection id is
 available on the colllection detail page in SFM UI.
