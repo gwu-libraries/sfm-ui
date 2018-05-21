@@ -10,7 +10,7 @@ django-filter==0.12.0
 django-datetime-widget==0.9.3
 django-datatables-view==1.14.0
 iso8601==0.1.11
-psycopg2==2.7.4
+psycopg2-binary==2.7.4
 pytz==2016.4
 rabbitmq-admin==0.2
 SQLAlchemy==1.0.11
