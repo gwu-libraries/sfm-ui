@@ -3,6 +3,7 @@ layout: article
 permalink: /posts/2017-04-12-geographic-collecting
 title: "Collecting by Geographic Location"
 author: yonah_bromberg_gaber
+categories: top
 excerpt: "SFM provides the opportunity to collect useful metadata about the geographic
 location of tweets provided by the Twitter API."
 ---

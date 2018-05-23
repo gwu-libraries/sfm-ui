@@ -2,7 +2,8 @@
 layout: article
 permalink: /posts/2018-03-20-twitter-command-line
 title: "Command-line tools for wrangling Twitter data"
-author: justin_littman 
+author: justin_littman
+categories: top 
 excerpt: "A Jupyter notebook that demonstrates various command-line tools for manipulating Twitter data."
 ---
 

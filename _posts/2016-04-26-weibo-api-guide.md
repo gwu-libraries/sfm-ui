@@ -2,6 +2,7 @@
 layout: article
 permalink: /posts/2016-04-26-weibo-api-guide
 title: "Weibo API Guide"
+categories: top
 excerpt: "This is a guide for programmers and researchers who intend to use Weibo's API. Since the current official documentation hasn't been updated for a long time, I am writing this guide to support using Social Feed Manager with Weibo's API."
 author: victor_tan
 tags: [weibo, API, guide, sfm]

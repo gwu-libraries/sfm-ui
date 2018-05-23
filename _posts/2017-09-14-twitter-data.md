@@ -2,6 +2,7 @@
 layout: article
 permalink: /posts/2017-09-14-twitter-data
 title: "Where to get Twitter data for academic research"
+categories: top
 author: justin_littman 
 excerpt: "Justin Littman explains the options for acquiring Twitter data for academic research."
 ---

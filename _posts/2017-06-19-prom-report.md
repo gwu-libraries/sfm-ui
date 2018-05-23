@@ -3,6 +3,7 @@ layout: article
 permalink: /posts/2017-06-19-prom-report
 title: "Announcing Social Feed Manager: Guide for Building Social Media Archives"
 author: laura_wrubel 
+categories: top
 excerpt: "We're pleased to share this report by Christopher Prom of University of Illinois,
 which assesses Social Feed Manager,
 offers thoughts for how it can support archivists building social media archives, and 

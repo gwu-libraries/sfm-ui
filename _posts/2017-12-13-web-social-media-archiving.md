@@ -2,6 +2,7 @@
 layout: article
 permalink: /posts/2017-12-13-web-social-media-archiving
 title: "Web archiving and/or/vs social media API archiving"
+categories: top 
 author: justin_littman 
 excerpt: "In which I discuss the differences between collecting social media via web capture and APIs."
 ---

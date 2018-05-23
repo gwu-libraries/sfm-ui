@@ -1,9 +1,9 @@
 ---
 layout: article
-title: "Resources"
-permalink: /resources/
-date: 2016-03-27
-modified: 2016-03-29
+title: "Data and Research"
+permalink: /data-research/
+date: 2018-05-23
+modified: 2018-05-23
 excerpt: ""
 share: false
 ads: false
@@ -11,7 +11,19 @@ ads: false
 
 {% include toc.html %}
 
-## Guidelines and Resources on Social Media Archiving
+## TweetSets
+
+Selected datasets collected by GWU are available via [TweetSets](https://tweetsets.library.gwu.edu) for research and archiving purposes.
+
+TweetSets allows users to choose an existing dataset; limit the dataset by querying on keywords, hashtags, and other parameters; and generate 
+and download dataset derivatives such as the list of tweet ids and mention nodes/edges. TweetSets is for academic purposes only and conforms
+to Twitter's policies. 
+
+## Published datasets
+
+Datasets of tweet identifiers from GWU-collected datasets are available at [GW Libraries Dataverse](https://dataverse.harvard.edu/dataverse/gwu-libraries).
+
+## Guidelines and resources on social media archiving
 
 * [Social media research ethical and privacy guidelines]({{ site.github.url }}/resources/social_media_research_ethical_and_privacy_guidelines.pdf): general guidelines for GW researchers focusing on the collecting, sharing, and publishing of social media data
 * [Social Feed Manager: Guide for Building Social Media Archives]({{ site.github.url }}/resources/SFMReportProm2017.pdf), Christopher J. Prom (June 7, 2017)
@@ -21,7 +33,15 @@ ads: false
 * [Provenance of a Tweet](https://scholarspace.library.gwu.edu/files/h128nd689): working paper on metadata collected by Social Feed Manager ([PDF version]({{ site.github.url }}/resources/provenance-of-tweet.pdf))
 * [Using Social Media Data: Articles and resources on ethics]({{ site.github.url }}/resources/ethics)
 
-## Presentations
+## Research using Social Feed Manager
+GW faculty, students, and researchers have used data collected with Social Feed Manager in published research. Examples include:
+
+* Alexander, Audrey. [Digital Decay: Tracing Change Over Time Among English-Language Islamic State Sympathizers on Twitter](https://extremism.gwu.edu/sites/g/files/zaxdzs2191/f/DigitalDecayFinal_0.pdf). Program on Extremism, George Washington University, October 2017.
+* Hayes, Danny and Jennifer Lawless. [Women on the Run: Gender, Media, and Political Campaigns in a Polarized Era.](https://www.amazon.com/dp/1107535867). Cambridge University Press, 2016.
+* Roper, Caitlin. [Targeting persuadable voters through social media: The use of twitter in the 2015 UK general election](https://gspm.gwu.edu/sites/g/files/zaxdzs2286/f/downloads/MC%20edits%20Working%20Paper_v1-2.pdf). Ph.D. diss., The George Washington University, 2016.
+* Mohr, Bailey. ["Campaign Messaging & Engagement on Twitter in the 2014 U.S. Senate Elections"](https://undergraduate.research.gwu.edu/sites/g/files/zaxdzs2441/f/downloads/Mohr_CampaignMessagingandEngagement.pdf), supported by the Manheim-Sterling Undergraduate Research Prize. May 11, 2015.
+
+## Presentations by the project team
 
 * ["Collecting Social Media with Social Feed Manager,"]({{ site.github.url }}/resources/CollectingSocialMediaData.pdf) library workshop, February 14, 2017. 
 * Rachel Trent, "Documenting the Demographic Imagination: Supporting Reproducibility of Social Media Silence in Historical Perspective," Preservation and Archiving Special Interest Group (PASIG), October 27, 2016.
@@ -36,10 +56,3 @@ ads: false
 * Justin Littman, ["Aligning Social Media Harvesting and Web Harvesting"](https://t.co/Rj8LEbBOp8) at International Internet Preservation Consortium (IIPC) Web Archiving Conference, April 14, 2016 in Reykjavík, Iceland.
 * Laura Wrubel and Jason Casden, ["Building and Managing Social Media Collections"](http://www.slideshare.net/casden/building-and-managing-social-media-collections), DLF Forum workshop, October 27, 2015 in Vancouver, BC.
 * Vakil Smallen, Seemantani Sharma, Dan Chudnov, "Social Feed Manager" at [Web Archives 2015: Capture, Curate, Analyze](http://www.lib.umich.edu/webarchivesconference), November 13, 2015 at University of Michigan in Ann Arbor, MI. 
-
-
-## For Developers
-
-Questions, feedback, and pull requests are welcome.  You can reach us at sfm@gwu.edu or [@SocialFeedMgr](http://twitter.com/SocialFeedMgr).
-
-See the [technical documentation](https://sfm.readthedocs.org) for further details about installing and using SFM. 
