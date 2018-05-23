@@ -3,7 +3,7 @@ layout: article
 title: "About"
 permalink: /about/
 date: 2016-03-26
-modified: 2016-03-26
+modified: 2018-05-23
 excerpt: "About Social Feed Manager"
 image:
   feature:
@@ -13,43 +13,36 @@ share: false
 ads: false
 ---
 
+{% include toc.html %}
+
+## Contact us
+
+Email: sfm@gwu.edu
+
+Twitter: [@SocialFeedMgr](http://twitter.com/SocialFeedMgr)
+ 
+GitHub: [Report an issue or see current milestone work](https://github.com/gwu-libraries/sfm-ui/issues) 
+
+Members of the [project team]({{ site.github.url }}/about/project-team) speak regularly about SFM at [conferences]({{ site.github.url }}/resources/) and welcome the opportunity to talk in person. 
+
+## About the project and software
 Social Feed Manager (SFM) empowers social media researchers, students, and cultural heritage institutions 
 to define and collect datasets from social media services. Its development is led by a [project team]({{ site.github.url }}/about/project-team) at [George Washington University Libraries](http://library.gwu.edu), made up of software developers, archivists, and librarians. 
 
-In 2015, we evaluated the services and function we had been offering for several years with the [earlier version of SFM](http://social-feed-manager.readthedocs.org) and have focused our efforts on reshaping the app to meet the needs of use cases we've experienced and anticipate in the future. We have re-architected SFM to support multiple social media platforms and allow users to build collections without the mediation of a librarian or archivist.                                                                                                       
-
 [Overview of Social Feed Manager]({{ site.github.url }}/about/overview)
 
-[Project Scope and Objectives](#scope)
+The Social Feed Manager software aims to achieve the following:
 
-[User Stories]({{ site.github.url }}/about/user-stories)
-
-[Development Roadmap]({{ site.github.url }}/about/roadmap)
-
-[Project Team]({{ site.github.url }}/about/project-team)
-
-
-## <a name="scope"></a>Project Scope
-
-### Objectives
-
-Social Feed Manager (SFM) empowers social media researchers, students, archivists, librarians,
-and others to define and collect datasets from social media services. To support this work,
-SFM:
-
-* presents an easy-to-use web-based user interface that lets users define collections
+* present an easy-to-use web-based user interface that lets users define collections
 comprising sets of targeted accounts, keywords, and other search strategies appropriate to
-different platforms
-* lets users authorize SFM to collect data from those accounts, keywords,
+different social media platforms
+* let users authorize SFM to collect data from those accounts, keywords,
 searches, and related web resources on those users' behalf
-* uses
+* use
 a set of carefully managed processes to crawl, collect, and store this data, recording its
 actions in detail
-* makes collected information and metadata about crawls available to users,
+* make collected information and metadata about crawls available to users,
 who may extract, filter, and export these to formats appropriate to their work.
-
-
-### Requirements
 
 SFM is designed around these key requirements:
 
@@ -63,15 +56,12 @@ SFM is designed around these key requirements:
   platform; SFM will only support methods that fall clearly within these terms of service, such
   as using only supported API methods and respecting API rate limits.
 
-
-### Out of scope
-
 These objectives are not directly supported by SFM:
 
 * SFM is not a primary access, discovery, publishing, dataset hosting/sharing, analysis, or
   archival platform for collected data. It may provide some baseline statistics, summarization,
   and browsing of collections in support of users and staff in defining, assessing, and exporting
-  collections, but access, analysis, and long-term storage are complementary to sfm, rather than
+  collections, but access, analysis, and long-term storage are complementary to SFM, rather than
   core functions.
 * SFM is not a general-purpose web crawling and archiving application; although it may support
   direct capture of web pages and sites, it is complementary to, rather than a substitute for,
@@ -81,13 +71,14 @@ These objectives are not directly supported by SFM:
   skills on their team.
 
 
-### Funding history
+## Funding history
 
 * Development of this project has been supported by a grant (#NARDI-14-50017-14) from
   the [National Historical Publications & Records Commission](http://www.archives.gov/nhprc/)
   to George Washington University Libraries from 2014-2017.
-* Development of the Sina Weibo harvester is supported by a grant from the [Council on East Asian
+* Development of the Sina Weibo harvester was supported by a grant from the [Council on East Asian
   Libraries](http://www.eastasianlib.org/).
 * Prior development of SFM under the [previous repository](https://github.com/gwu-libraries/social-feed-manager)
   was supported by a grant (#LG-46-13-0257-13) from the [Institute of Museum and Library Services](http://www.imls.gov/)
   to George Washington University Libraries from 2013-2014.
+

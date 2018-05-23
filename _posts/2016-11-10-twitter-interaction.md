@@ -3,6 +3,7 @@ layout: article
 permalink: /posts/2016-11-10-twitter-interaction
 title: "On retweets, replies, quotes & favorites:  A guide for researchers"
 author: justin_littman 
+categories: top
 excerpt: "A Jupyter notebook that explores the affordances of the Twitter API for retweets, replies, quotes, and favorites."
 ---
 

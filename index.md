@@ -11,11 +11,12 @@ image:
   <p>For more information see <a href="{{ site.github.url }}/about/overview">Overview of Social Feed Manager</a> and the <a href="https://sfm.readthedocs.org">documentation</a>.</p> 
   </div>
   
-  <div class="tile"><h2>Latest Posts</h2></div>
-  {% for post in site.posts %}
-	{% include post-grid.html %}
-  {% endfor %}
-  <div class="tile"><p><img src="{{ site.github.url }}/images/nhprc-logo.png" width="100" alt="NHPRC logo" align="left" style="border:0">Social Feed Manager is supported by a grant from the
-  <a href="http://www.archives.gov/nhprc/">National Historical Publications & Records Commission</a></p>
+  <div class="tile"><h2>Featured Posts</h2></div>
+      {% for post in site.categories.top %}
+    	  {% include post-grid.html %}
+      {% endfor %}
+  <div class="tile"><p><a href="{{ site.github.url }}/blog">See all posts</a></p></div> 
+  <div class="tile"><p><img src="{{ site.github.url }}/images/nhprc-logo.png" width="100" alt="NHPRC logo" align="left" style="border:0">Social Feed Manager has been supported by a grant from the
+  <a href="http://www.archives.gov/nhprc/">National Historical Publications & Records Commission</a> as well as grants from IMLS and the Council on East Asian Libraries.</p>
   </div>
 </div><!-- /.tiles -->

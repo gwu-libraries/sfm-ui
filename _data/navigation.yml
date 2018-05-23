@@ -3,14 +3,12 @@
 - title: About
   url: /about/
 
-- title: Code
-  url: https://github.com/gwu-libraries/sfm-ui
-
 - title: Documentation 
   url: http://sfm.readthedocs.org
 
-- title: Resources
-  url: /resources/
+- title: Data & Research
+  url: /data-research/
 
-- title: Contact Us
-  url: /contact
+- title: Blog
+  url: /blog/
+

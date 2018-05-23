@@ -2,6 +2,7 @@
 layout: article
 title: "Collection development guidelines for social media archiving"
 permalink: /posts/2017-03-20-releasing-guidelines
+categories: top
 date: 2017-03-20
 modified: 2017-03-20
 author: rachel_trent
