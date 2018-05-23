@@ -34,7 +34,7 @@ Datasets of tweet identifiers from GWU-collected datasets are available at [GW L
 * [Using Social Media Data: Articles and resources on ethics]({{ site.github.url }}/resources/ethics)
 
 ## Research using Social Feed Manager
-GW faculty, students, and researchers have used data collected with Social Feed Manager in published research:
+GW faculty, students, and researchers have used data collected with Social Feed Manager in published research. Examples include:
 
 * Alexander, Audrey. [Digital Decay: Tracing Change Over Time Among English-Language Islamic State Sympathizers on Twitter](https://extremism.gwu.edu/sites/g/files/zaxdzs2191/f/DigitalDecayFinal_0.pdf). Program on Extremism, George Washington University, October 2017.
 * Hayes, Danny and Jennifer Lawless. [Women on the Run: Gender, Media, and Political Campaigns in a Polarized Era.](https://www.amazon.com/dp/1107535867). Cambridge University Press, 2016.

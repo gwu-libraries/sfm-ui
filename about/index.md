@@ -39,9 +39,9 @@ different social media platforms
 * let users authorize SFM to collect data from those accounts, keywords,
 searches, and related web resources on those users' behalf
 * use
-a set of carefully managed processes to crawl, collect, and store this data, recording its
+a set of carefully managed processes to harvest, collect, and store this data, recording its
 actions in detail
-* make collected information and metadata about crawls available to users,
+* make collected information and metadata about harvests available to users,
 who may extract, filter, and export these to formats appropriate to their work.
 
 SFM is designed around these key requirements:
