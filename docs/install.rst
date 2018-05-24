@@ -206,7 +206,7 @@ Note:
 To stop the containers gracefully::
 
     docker-compose stop -t 180 twitterstreamharvester
-    docker-compose stop
+    docker-compose stop -t 45
 
 SFM can then be restarted with ``docker-compose up -d``.
 

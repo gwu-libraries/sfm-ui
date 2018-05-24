@@ -39,8 +39,6 @@ RUN ln -sf /dev/stderr /var/log/apache2/error.log
 ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 ENV LOAD_FIXTURES=false
 EXPOSE 80
+STOPSIGNAL SIGWINCH
 
-CMD sh /opt/sfm-setup/setup_reqs.sh \
-    && appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672  --file-wait /sfm-data/collection_set \
-    && sh /opt/sfm-setup/setup_ui.sh \
-    && sh /opt/sfm-setup/invoke.sh
+CMD ["/opt/sfm-setup/invoke.sh"]

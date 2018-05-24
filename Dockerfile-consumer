@@ -7,10 +7,10 @@ RUN pip install -r requirements/common.txt -r requirements/release.txt
 
 RUN pip install django-finalware==0.1.0
 
+ADD docker/consumer/invoke_consumer.sh /opt/sfm-setup/
+RUN chmod +x /opt/sfm-setup/invoke_consumer.sh
+
 ENV DJANGO_SETTINGS_MODULE=sfm.settings.docker_settings
 ENV LOAD_FIXTURES=false
 
-# Waiting for ui to start so that syncdb performed.
-CMD sh /opt/sfm-setup/setup_reqs.sh \
-    && appdeps.py --wait-secs 90 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672 --port-wait ui:8080 --file-wait /sfm-data/collection_set \
-    && gosu sfm /opt/sfm-ui/sfm/manage.py startconsumer
+CMD ["/opt/sfm-setup/invoke_consumer.sh"]
