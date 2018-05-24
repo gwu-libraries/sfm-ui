@@ -25,7 +25,6 @@ This site provides documentation for installation and usage of SFM. See the `Soc
    collections
    Data Dictionary <data_dictionary>
    processing
-   exploring
    releasing_datasets
 
 .. _admin-documentation:

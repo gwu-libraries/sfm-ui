@@ -74,9 +74,6 @@ The following is a outline of the structure of sfm-data::
         containers/
             <container id>/
                 Working files for individual containers
-        elk/
-            <container id>/
-                ELK files
         export/
             <export id>/
                 Export files

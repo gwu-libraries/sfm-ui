@@ -70,8 +70,6 @@ Some ideas for how to use SFM:
     of online artists.
     (:ref:`guide-tumblr-blog-posts`).
   - **Archiving posts** from any social media platform for later research.
-  - **Analyzing trends** by :ref:`exploring` (note that ELK requires coding
-    ability--contact your SFM administrator for help).
 
 Note that SFM currently collects social media data from Twitter, Tumblr, Flickr,
 and Sina Weibo.
@@ -107,8 +105,6 @@ Once you've collected data, there are a few ways to use it:
   * You could export it into a CSV or Excel format for a basic analysis
     (:ref:`guide-export-data`), or load the format into analysis software such
     as Stata, SPSS, or Gephi.
-  * You could use try :ref:`exploring`, a processor for data analysis (although
-    ELK requires some technical knowledge, so ask your SFM admin for help if you need it).
   * You could set up an archive using the JSON files or Excel files.
 
 Privacy and platform policy considerations
@@ -307,7 +303,3 @@ To export:
 
   * To help understand each metadata field in the export, see
     :ref:`data-dictionaries`.
-
-
-For the advanced processing provided by ELK, see
-:ref:`Commandline exporting/processing`.

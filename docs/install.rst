@@ -251,7 +251,7 @@ otherwise, replacing 1.11.0 with the correct version::
 
     curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/1.11.0/example.prod.docker-compose.yml > docker-compose.yml
 
-4. If you customized your previous ``docker-compose.yml`` file (e.g., for SFM ELK containers), make the same changes
+4. If you customized your previous ``docker-compose.yml`` file, make the same changes
 in your new ``docker-compose.yml``.
 
 5. Make any changes in your ``.env`` file prescribed by the release notes.
