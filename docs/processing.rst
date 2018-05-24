@@ -37,6 +37,8 @@ The other tools available in a processing container are:
 * `JWAT Tools <https://sbforge.org/display/JWAT/JWAT-Tools>`_ for processing WARCs.
 * `warctools <https://github.com/internetarchive/warctools>`_ for processing WARCs.
 * `parallel <https://www.gnu.org/software/parallel/>`_ for parallelizing processing.
+* `csvkit <https://csvkit.readthedocs.io/>`_ for processing CSVs.
+* `gron <https://github.com/TomNomNom/gron>`_ for grepping JSON.
 
 To instantiate a processing container, from the directory that contains your ``docker-compose.yml`` file::
 
@@ -110,6 +112,22 @@ The collection id can be found from the SFM UI.
 
 Note that if you are running ``find_warcs.py`` from outside a Docker environment, you will need
 to supply ``--api-base-url``.
+
+Sync scripts
+============
+Sync scripts will extract social media data from WARC files for a collection and write it
+to line-oriented JSON files. It is called a "sync script" because it will
+skip WARCs that have already been processed.
+
+Sync scripts are parallelized, allowing for faster processing.
+
+There are sync scripts for Twitter REST collections (`twitter_rest_sync.sh`) and Twitter stream
+collections (`twitter_stream_sync.sh`). Usage is `./<script> <collection id> <destination directory> <# of threads>`.
+For example::
+
+    cd /opt/processing
+    mkdir /sfm-processing/test
+    ./twitter_rest_sync.sh e76b140351574015a6aac8999b06dcc7 /sfm-processing/test 2
 
 READMEs
 =======
