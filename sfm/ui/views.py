@@ -970,6 +970,7 @@ def export_file(request, pk, file_name):
         if os.path.exists(filepath):
             response = StreamingHttpResponse()
             response['Content-Disposition'] = 'attachment; filename=%s' % file_name
+            response['Content-Type'] = 'application/octet-stream'
             file_obj = open(filepath)
             response.streaming_content = _read_file_chunkwise(file_obj)
             return response
