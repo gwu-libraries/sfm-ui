@@ -58,10 +58,7 @@ Export a collection to a spreadsheet.
 
 ![spreadsheet screenshot]({{ site.github.url }}/images/overview/excel.png)
 
-You can also feed data into your own processing pipeline from the command line or explore data with Elasticsearch/Logstash/Kibana (ELK).
-
-
-![Kibana]({{ site.github.url }}/images/overview/kibana.png)
+You can also feed data into your own processing pipeline from the command line.
 
 What sort of expertise is needed to use SFM?
 --------------------------------------------
