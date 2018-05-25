@@ -66,13 +66,13 @@ Twitter search
 
 Twitter searches collect tweets from the last 7-9 days that match search
 queries, similar to a regular search done on Twitter, using
-the `Twitter Search API <https://developer.twitter.com/en/docs/tweets/search/overview/basic-search>`_.
+the `Twitter Search API <https://developer.twitter.com/en/docs/tweets/search/overview/standard>`_.
 This is **not** a complete search of all tweets; results are limited
 both by time and arbitrary relevance (determined by Twitter).
 
 Search queries must follow standard search term formulation; permitted queries
 are listed in the documentation for the `Twitter Search API
-<https://developer.twitter.com/en/docs/tweets/search/overview/operator_descriptions>`_,
+<https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators>`_,
 or you can construct a query
 using the `Twitter Advanced Search query builder
 <https://twitter.com/search-advanced>`_.
@@ -154,7 +154,7 @@ more information.
 **Location** collects tweets that were geolocated within specific parameters,
 based on a bounding box made using the southwest and northeast corner
 coordinates. See the `location parameter documentation
-<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#location>`_ for
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations>`_ for
 more information.
 
 Twitter will return a limited number of tweets, so filters that return many

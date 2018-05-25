@@ -23,7 +23,7 @@ Twitter Dictionary
 
 For more info about source tweet data, see the `Twitter API documentation
 <https://developer.twitter.com/en/docs>`_, including `Tweet data dictionaries
-<https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json.html>`_.
+<https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json>`_.
 
 Documentation about older archived tweets is archived by the Wayback Machine for
 the `Twitter API

@@ -574,12 +574,13 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
 
 class SeedTwitterSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text='See <a href="https://developer.twitter.com/en/docs/tweets/search/overview/operator_descriptions" target="_blank">' \
-                              'these instructions</a> for writing a query. ' \
-                              'Example: firefly OR "lightning bug"')
+                            help_text='See <a href="https://developer.twitter.com/en/docs/tweets/search/guides/'
+                                      'standard-operators" target="_blank">'
+                                      'these instructions</a> for writing a query. '
+                                      'Example: firefly OR "lightning bug"')
     geocode = forms.CharField(required=False,
-                            help_text='Geocode in the format latitude,longitude,radius. ' \
-                              'Example: 38.899434,-77.036449,50mi')
+                              help_text='Geocode in the format latitude,longitude,radius. '
+                                        'Example: 38.899434,-77.036449,50mi')
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
@@ -647,13 +648,15 @@ class SeedWeiboSearchForm(BaseSeedForm):
 class SeedTwitterFilterForm(BaseSeedForm):
     track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="""Separate keywords and phrases with commas. See Twitter <a 
-                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track">
+                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/
+                            basic-stream-parameters#track">
                             track</a> for more information.""")
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                              help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose 
                              tweets, retweets, and replies will be collected. See Twitter <a 
                              target="_blank" 
-                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#follow"> follow</a> 
+                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/
+                             basic-stream-parameters#follow"> follow</a> 
                              documentation for a full list of what is returned. User <a target="_blank" 
                              href="https://tweeterid.com/">TweeterID</a> to get the user ID for a screen name.""")
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),

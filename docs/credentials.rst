@@ -118,7 +118,7 @@ To manually add credentials:
     *This is a social media research and archival tool, which collects data for
     academic researchers through an accessible user interface.*
     * **Enter a Website** such as the SFM url. Any website will work.
-  * **Enter a Callback URL** such as the same url used for the website field.
+  * **Enter a Callback URL** that is the SFM url.
   * **Review and agree to the Twitter Developer Agreement** and click *Create
     your Twitter Application.*
   * Recommended:
