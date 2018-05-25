@@ -654,7 +654,8 @@ class BulkSeedCreateView(LoginRequiredMixin, View):
                 cleaned_data = [clean_token(t) for t in tokens]
 
             for token in cleaned_data:
-                if token:
+                # Can't save a token called "null". It causes problems.
+                if token and token.lower() != "null":
                     param = {'uid': token} if seeds_type == 'uid' else {'token__iexact': token}
                     if not Seed.objects.filter(collection=collection, **param).exists():
                         log.debug("Creating seed %s for collection %s", token, collection.pk)

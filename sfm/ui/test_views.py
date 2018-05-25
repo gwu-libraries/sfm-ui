@@ -298,6 +298,7 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
 
         test2
           @test3
+        null
         """})
         self.assertEqual(3, Seed.objects.filter(collection=self.collection).count())
         self.assertTrue(Seed.objects.filter(collection=self.collection, token='test3').exists())
