@@ -175,10 +175,19 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
     media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
     web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
     user_images_option = forms.BooleanField(initial=False, required=False, label=USER_PROFILE_LABEL)
+    deleted_accounts_option = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                      "for deleted / not found "
+                                                                                      "accounts.")
+    suspended_accounts_option = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                        "for suspended accounts.")
+    protected_accounts_options = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                         "for protected accounts.")
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option',
+                                         'deleted_accounts_option', 'suspended_accounts_option',
+                                         'protected_accounts_options'))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -190,6 +199,12 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
                 self.fields['web_resources_option'].initial = harvest_options["web_resources"]
             if "user_images" in harvest_options:
                 self.fields['user_images_option'].initial = harvest_options["user_images"]
+            if "deactivate_not_found_seeds" in harvest_options:
+                self.fields['deleted_accounts_option'].initial = harvest_options["deactivate_not_found_seeds"]
+            if "deactivate_unauthorized_seeds" in harvest_options:
+                self.fields['protected_accounts_options'].initial = harvest_options["deactivate_unauthorized_seeds"]
+            if "deactivate_suspended_seeds" in harvest_options:
+                self.fields['suspended_accounts_option'].initial = harvest_options["deactivate_suspended_seeds"]
 
     def save(self, commit=True):
         m = super(CollectionTwitterUserTimelineForm, self).save(commit=False)
@@ -198,7 +213,10 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
             "incremental": self.cleaned_data["incremental"],
             "media": self.cleaned_data["media_option"],
             "web_resources": self.cleaned_data["web_resources_option"],
-            "user_images": self.cleaned_data["user_images_option"]
+            "user_images": self.cleaned_data["user_images_option"],
+            "deactivate_not_found_seeds": self.cleaned_data["deleted_accounts_option"],
+            "deactivate_unauthorized_seeds": self.cleaned_data["protected_accounts_options"],
+            "deactivate_suspended_seeds": self.cleaned_data["suspended_accounts_option"]
         }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
@@ -389,7 +407,6 @@ class CollectionWeiboSearchForm(BaseCollectionForm):
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
-
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -591,7 +608,7 @@ class SeedTwitterSearchForm(BaseSeedForm):
                 token = json.loads(self.instance.token)
             # This except handling is for converting over old query tokens
             except ValueError:
-                token = { 'query': self.instance.token }
+                token = {'query': self.instance.token}
             if 'query' in token:
                 self.fields['query'].initial = token['query']
             if 'geocode' in token:
@@ -624,7 +641,6 @@ class SeedTwitterSearchForm(BaseSeedForm):
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
-
 
 
 class SeedWeiboSearchForm(BaseSeedForm):
@@ -832,7 +848,7 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
                 numtoken.append(clean_t)
             elif clean_t and not clean_t.isdigit():
                 strtoken.append(clean_t)
-            finaltokens.append(clean_t+"\n")
+            finaltokens.append(clean_t + "\n")
         if seed_type == 'token' and numtoken:
             raise ValidationError(
                 'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')

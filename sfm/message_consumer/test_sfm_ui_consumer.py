@@ -22,8 +22,10 @@ class ConsumerTest(TestCase):
                                                harvest_type="test_type", name="test_collection",
                                                harvest_options=json.dumps({}))
         stream_collection = Collection.objects.create(collection_set=collection_set, credential=credential,
-                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_stream_collection",
-                                               harvest_options=json.dumps({}), is_on=True)
+                                                      harvest_type=Collection.TWITTER_SAMPLE,
+                                                      name="test_stream_collection",
+                                                      harvest_options=json.dumps({}), is_on=True)
+
         self.assertTrue(stream_collection.is_on)
         Seed.objects.create(collection=collection, uid="131866249@N02", seed_id='1')
         Seed.objects.create(collection=collection, token="library_of_congress", seed_id='2')
@@ -155,6 +157,46 @@ class ConsumerTest(TestCase):
         self.assertEqual("Twitter Harvester", harvest.service)
         self.assertEqual("f0c3c5ef7031", harvest.host)
         self.assertEqual("39", harvest.instance)
+
+        # Now changes harvest options and check that seeds deleted.
+        # "deactivate_not_found_seeds": self.cleaned_data["deleted_accounts_option"],
+        # "deactivate_unauthorized_seeds": self.cleaned_data["protected_accounts_options"],
+        # "deactivate_suspended_seeds": self.cleaned_data["suspended_accounts_option"]
+        collection = Collection.objects.get(name="test_collection")
+        # Make sure both seeds are on.
+        seed_ids = []
+        for seed in collection.seeds.all():
+            self.assertTrue(seed.is_active)
+            seed_ids.append(seed.seed_id)
+        collection.harvest_options = json.dumps({
+            "deactivate_not_found_seeds": True,
+            "deactivate_unauthorized_seeds": False,
+            "deactivate_suspended_seeds": False
+        })
+        collection.save()
+
+        self.consumer.message = {
+            "id": "test:1",
+            "status": Harvest.SUCCESS,
+            "date_started": "2015-07-28T11:18:36.640044",
+            "date_ended": "2015-07-28T11:18:42.539470",
+            "warnings": [
+                {"code": "token_unauthorized", "message": "This token is unauthorized.", "seed_id": seed_ids[0]},
+                {"code": "token_not_found", "message": "This token is not found.", "seed_id": seed_ids[1]},
+            ],
+            "service": "Twitter Harvester",
+            "host": "f0c3c5ef7031",
+            "instance": "39",
+        }
+        # Trigger on_message
+        self.consumer.on_message()
+
+        unauthorized_seed = Seed.objects.get(seed_id=seed_ids[0])
+        self.assertTrue(unauthorized_seed.is_active)
+
+        not_found_seed = Seed.objects.get(seed_id=seed_ids[1])
+        self.assertFalse(not_found_seed.is_active)
+
 
     @patch("message_consumer.sfm_ui_consumer.collection_stop")
     def test_harvest_status_stream_failed_on_message(self, mock_collection_stop):

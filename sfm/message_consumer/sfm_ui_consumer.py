@@ -1,6 +1,7 @@
 import logging
 from sfmutils.consumer import BaseConsumer
-from sfmutils.harvester import CODE_UNKNOWN_ERROR
+from sfmutils.harvester import CODE_UNKNOWN_ERROR, CODE_UID_NOT_FOUND, CODE_TOKEN_NOT_FOUND, CODE_TOKEN_UNAUTHORIZED, \
+    CODE_UID_UNAUTHORIZED, CODE_TOKEN_SUSPENDED, CODE_UID_SUSPENDED
 from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
 from ui.utils import get_email_addresses_for_collection_set, get_site_url
@@ -40,7 +41,8 @@ class SfmUiConsumer(BaseConsumer):
             elif self.routing_key == "harvest.start.web":
                 self._on_web_harvest_start_message()
             else:
-                log.warn("Unexpected message with routing key %s: %s", self.routing_key, json.dumps(self.message, indent=4))
+                log.warn("Unexpected message with routing key %s: %s", self.routing_key,
+                         json.dumps(self.message, indent=4))
         except Exception, e:
             log.exception(e)
             raise e
@@ -102,6 +104,29 @@ class SfmUiConsumer(BaseConsumer):
             except ObjectDoesNotExist:
                 log.error("Seed model object with seed_id %s not found to update uid to %s", seed_id, uid)
 
+        # Delete seeds based on warnings and collection harvest options
+        harvest_options = json.loads(harvest.collection.harvest_options)
+        for warning_msg in self.message.get("warnings", []):
+            log.info(warning_msg)
+            if warning_msg.get('seed_id'):
+                history_note = None
+                if warning_msg['code'] in (CODE_UID_NOT_FOUND, CODE_TOKEN_NOT_FOUND) and harvest_options.get(
+                        'deactivate_not_found_seeds'):
+                    history_note = "Account deleted or not found."
+                elif warning_msg['code'] in (CODE_UID_UNAUTHORIZED, CODE_TOKEN_UNAUTHORIZED) and harvest_options.get(
+                        'deactivate_unauthorized_seeds'):
+                    history_note = "Account protected."
+                elif warning_msg['code'] in (CODE_UID_SUSPENDED, CODE_TOKEN_SUSPENDED) and harvest_options.get(
+                        'deactivate_suspended_seeds'):
+                    history_note = "Account suspended."
+                if history_note:
+                    seed = Seed.objects.get(seed_id=warning_msg['seed_id'])
+                    if seed.is_active:
+                        log.debug("Turning seed %s off: %s", (seed.token or seed.uid), history_note)
+                        seed.is_active = False
+                        seed.history_note = history_note
+                        seed.save()
+
         # Update stats
         if self.message["status"] != Harvest.FAILURE:
             day_stats = self.message.get("stats", {})
@@ -129,8 +154,8 @@ class SfmUiConsumer(BaseConsumer):
 
         # Send email if completed and failed or has messages
         if harvest.status == Harvest.FAILURE or (
-                        harvest.status in (Harvest.SUCCESS, Harvest.PAUSED) and (
-                                harvest.infos or harvest.warnings or harvest.errors)):
+                harvest.status in (Harvest.SUCCESS, Harvest.PAUSED) and (
+                harvest.infos or harvest.warnings or harvest.errors)):
 
             # Get emails for group members
             receiver_emails = get_email_addresses_for_collection_set(harvest.collection.collection_set,
