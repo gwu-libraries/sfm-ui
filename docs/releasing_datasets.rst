@@ -37,9 +37,11 @@ Note that the Women's March dataset is a single (SFM) collection. For an example
    ::
      time parallel –j 3 -a source.lst -a dest.lst --xapply "twitter_stream_warc_iter.py {1} | jq –r ‘.id_str’  > {2}"
 
-   This command executes a Twitter Stream WARC iterator to extract the tweets from the WARC files and jq to extract the tweet ids. Parallel is used to perform this process in parallel (using multiple processors), using WARC files from `source.lst` and text files from `dest.lst`.
+   This command executes a Twitter Stream WARC iterator to extract the tweets from the WARC files and jq to extract the tweet ids. This shows using `twitter_stream_warc_iter.py` for a Twitter stream collection. For a Twitter REST collection, use `twitter_rest_warc_iter.py`.
 
-   - Note: `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
+   Parallel is used to perform this process in parallel (using multiple processors), using WARC files from `source.lst` and text files from `dest.lst`. `-j 3` limits parallel to 3 processors. Make sure to select an appropriate number for your server.
+
+   An alternative to steps 1 and 2 is to use a sync script to write tweet id text files and tweet JSON files in one step. (See :doc:`processing`)
 
 4. Combine multiple files into large files:
 

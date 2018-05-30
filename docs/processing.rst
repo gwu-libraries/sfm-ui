@@ -115,8 +115,8 @@ to supply ``--api-base-url``.
 
 Sync scripts
 ============
-Sync scripts will extract social media data from WARC files for a collection and write it
-to line-oriented JSON files. It is called a "sync script" because it will
+Sync scripts will extract Twitter data from WARC files for a collection and write tweets to
+to line-oriented JSON files and tweet ids to text files. It is called a "sync script" because it will
 skip WARCs that have already been processed.
 
 Sync scripts are parallelized, allowing for faster processing.
