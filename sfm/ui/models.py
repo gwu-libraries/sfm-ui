@@ -781,8 +781,8 @@ class Export(models.Model):
     SEGMENT_CHOICES = [
         (100000, "100,000"),
         (250000, "250,000"),
-        (5000000, "500,000"),
-        (10000000, "1,000,000"),
+        (500000, "500,000"),
+        (100000, "1,000,000"),
         (None, "Single file"),
     ]
     user = models.ForeignKey(User, related_name='exports')
