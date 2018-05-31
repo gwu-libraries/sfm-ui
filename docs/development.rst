@@ -126,17 +126,17 @@ the integration tests.
 
 Smoke tests
 ^^^^^^^^^^^
-sfm-docker contains some smoke tests which will verify that SFM is running correctly.
+sfm-docker contains some smoke tests which will verify that a development instance of SFM is running correctly.
 
 To run the smoke tests, first bring up SFM::
 
-    docker-compose up -d
+    docker-compose -f example.docker-compose.yml -f smoketests.docker-compose.yml up -d
 
-and then run the tests::
+wait, and then run the tests::
 
-    docker-compose -f docker-compose.yml -f smoketests.docker-compose.yml run --rm smoketests python -m unittest discover
+    docker-compose -f example.docker-compose.yml -f smoketests.docker-compose.yml run --rm smoketests /bin/bash -c "appdeps.py --port-wait mq:5672 --port-wait ui:8080 && python -m unittest discover"
 
-Note that the smoke tests are not yet complete.
+Note that the smoke tests are not yet complete and require test fixtures that are only available in a development deploy.
 
 For reference, the `continuous integration deploy instructions <https://github.com/gwu-libraries/sfm-ui/wiki/Continuous-integration-deploy>`_
 shows the steps of running the smoke tests.
