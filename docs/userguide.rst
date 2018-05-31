@@ -127,9 +127,6 @@ Social media platforms' terms of service generally do not allow republishing of
 full datasets, and you should refer to their terms to understand what you may
 share. Authors typically retain rights and ownership to their content.
 
-Take a look at
-`these guidelines <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_
-on social media collection development.
 
 Ethical considerations
 ----------------------
@@ -137,33 +134,8 @@ Ethical considerations
 In addition to respecting the platforms' terms, as a user of Social Feed Manager
 and data collected within it, it is your responsibility to consider the ethical
 aspects of collecting and using social media data. Your discipline or
-professional organization may offer guidance.
-
-Many people have written about the important ethical and legal considerations in
-collecting and using social media data. To begin understanding these aspects,
-here are a few resources with which to start:
-
-* Social Feed Manager's `"Building Social Media Archives: Collection Development
-  Guidelines" <https://gwu-libraries.github.io/sfm-ui/resources/guidelines>`_,
-  2017
-* Sara Mannheimer and Elizabeth A. Hull, `"Sharing selves: Developing an ethical
-  framework for curating social media data"
-  <https://scholarworks.montana.edu/xmlui/bitstream/handle/1/12661/Mannheimer-Hull-Sharing-Selves-2017.pdf>`_,
-  2017.
-* Association of Internet Researchers, `“Ethical Decision-Making and Internet
-  Research” <http://aoir.org/reports/ethics2.pdf>`_, 2012.
-* Annette Markham, `“OKCupid data release fiasco”
-  <https://points.datasociety.net/okcupid-data-release-fiasco-ba0388348cd>`_,
-  May 18, 2016.
-* North Carolina State University Libraries, `“Social Media Toolkit: Legal and
-  Ethical Implications”
-  <https://www.lib.ncsu.edu/social-media-archives-toolkit/legal>`_, 2015.
-* Katrin Weller and Katharina Kinder-Kurlanda, `“A manifesto for data sharing in
-  social media research”
-  <https://www.lib.ncsu.edu/social-media-archives-toolkit/legal>`_,
-  Proceedings of the 8th ACM Conference on Web Science, 2016.
-
-
+professional organization may offer guidance. In addition, take a look at
+these `social media research ethical and privacy guidelines <https://gwu-libraries.github.io/sfm-ui/resources/social_media_research_ethical_and_privacy_guidelines.pdf>`_.
 
 .. _guide-setting-up-credentials:
 
