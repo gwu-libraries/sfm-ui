@@ -32,104 +32,160 @@ the `Twitter API
 and `Entities
 <https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_.
 
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| Field	                  | Description                                         | Example                                          |
-|                         |                                                     |                                                  |
-+=========================+=====================================================+==================================================+
-| created_at              | Date and time the tweet was created, in             | 2016-12-21T19:30:03+00:00                        |
-|                         | ISO 8601 format and UTC time zone.                  |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| twitter_id              | Twitter identifier for the tweet.                   | 114749583439036416                               |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| screen_name             | The unique screen name of the account that          | NASA                                             |
-|                         | authored the tweet, at the time the tweet was       |                                                  |
-|                         | posted. Note that an account's screen name may      |                                                  |
-|                         | change over time.                                   |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| location                | The user's self-described location.                 | San Francisco, California                        |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| followers_count         | Number of followers this account had at the time    | 235                                              |
-|                         | the tweet was harvested.                            |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| friends_count           | Number of users this account was following at the   | 114                                              |
-|                         | time the tweet was harvested.                       |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| favorite_count/         | Number of times this tweet had been favorited/liked | 12                                               |
-| like_count              | by other users at the time the tweet was harvested. |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| retweet_count           | Number of times this tweet had been retweeted at    | 25                                               |
-|                         | the time the tweet was harvested.                   |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| hashtags                | Hashtags from the tweet                             | Mars, askNASA                                    |
-|                         | text, as a comma-separated list.                    |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| mentions                | Other Twitter accounts mentioned in the text of the | NASA_Airborne, NASA_Ice                          |
-|                         | tweet, separated by comma and space.                |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| in_reply_to_screen_name | If the tweet is a reply, the screen name of         | wiredscience                                     |
-|                         | the original tweet's author.                        |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| twitter_url             | URL of the tweet. If the tweet is a retweet made    | http://twitter.com/NASA/status/394883921303056384|
-|                         | using the Twitter retweet feature, the URL will     | retweet redirecting to original tweet:           |
-|                         | redirect to the original tweet.                     | http://twitter.com/NASA/status/394875351894994944|
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| text                    | The text of the tweet.  Newline characters are      | Observing Hurricane Raymond Lashing Western      |
-|                         | stripped out.                                       | Mexico: Low pressure System 96E developed quickly|
-|                         |                                                     | over the... http://t.co/YpffdKVrgm               |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| is_retweet              | `Yes` if tweet is a retweet of another tweet,       | Yes                                              |
-|                         | according to the tweet's metadata; otherwise `No`.  |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| is_quote                | `Yes` if tweet is a quote of another tweet,         | No                                               |
-|                         | according to the tweet's metadata; otherwise `No`.  |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| coordinates             | The geographic coordinates of the tweet.  This is   | [-0.22012208, 51.59248806]                       |
-|                         | only enabled if geotagging is enabled on the        |                                                  |
-|                         | account.  The value, if present, is of the form     |                                                  |
-|                         | [longitude, latitude]                               |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| url1                    | First URL in text of tweet, as shortened by         | http://t.co/WGJ9VmoKME                           |
-|                         | Twitter.                                            |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| url1_expanded           | Expanded version of `url1`; URL entered by user and | http://instagram.com/p/gA_zQ5IaCz/               |
-|                         | displayed in Twitter. Note that the user-entered    |                                                  |
-|                         | URL may itself be a shortened URL,                  |                                                  |
-|                         | e.g. from bit.ly.                                   |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| url2                    | Second URL in text of tweet, as shortened           | https://t.co/ZTUQZcikJa                          |
-|                         | Twitter.                                            |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| url2_expanded           | Expanded version of `url2`; URL entered by user and | http://instagram.com/p/gA_zQ5IaCz/               |
-|                         | displayed in Twitter. Note that the user-entered    |                                                  |
-|                         | URL may itself be a shortened URL,                  |                                                  |
-|                         | e.g. from bit.ly.                                   |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-| media_url               | URL of the media embedded in the tweet.  If the     | http://pbs.twimg.com/media/Cyir15CVIAAfAWd.jpg   |
-|                         | media embedded in the tweet is a video, this is     |                                                  |
-|                         | the URL of the video's thumbnail image              |                                                  |
-|                         |                                                     |                                                  |
-+-------------------------+-----------------------------------------------------+--------------------------------------------------+
-
-
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| Field	                       | Description                                         | Example                                   |
+|                              |                                                     |                                           |
++==============================+=====================================================+===========================================+
+| id                           | Twitter identifier for the tweet.                   | 114749583439036416                        |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| tweet_url                    | URL of the tweet on Twitter's website. If the tweet | https://twitter.com/NASA/                 |
+|                              | is a retweet, the URL will be redirected to the     | status/394883921303056384                 |
+|                              | original tweet.                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| created_at                   | Date and time the tweet was created, in Twitter's   | Fri Sep 16 17:16:47 +0000 2011            |
+|                              | default format.                                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| parsed_created_at            | Date and time the tweet was created, in ISO 8601    | 2016-12-21T19:30:03+00:00                 |
+|                              | format and UTC time zone.                           |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_screen_name             | The unique screen name of the account that authored | NASA                                      |
+|                              | the tweet, at the time the tweet was posted. Screen |                                           |
+|                              | names are generally displayed with a @ prefixed.    |                                           |
+|                              | Note that an account’s screen name may change over  |                                           |
+|                              | time.                                               |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| text                         | The text of the tweet. Newline characters are       | Observing Hurricane Raymond Lashing       |
+|                              | replaced with a space.                              | Western Mexico: Low pressure System 96E   |
+|                              |                                                     | developed quickly over the…               |
+|                              |                                                     | http://t.co/YpffdKVrgm                    |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| tweet_type                   | original, reply, quote, or retweet                  | retweet                                   |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| coordinates                  | The geographic coordinates of the tweet. This is    | [-0.22012208, 51.59248806]                |
+|                              | only enabled if geotagging is enabled on the        |                                           |
+|                              | account. The value, if present, is of the form      |                                           |
+|                              | [longitude, latitude].                              |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| hashtags                     | Hashtags from the tweet text, as a comma-separated  | Mars, askNASA                             |
+|                              | list. Hashtags are generally displayed with a #     |                                           |
+|                              | prefixed.                                           |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| media                        | URLs of media objects (photos, videos, GIFs) that   | https://twitter.com/NASA_Orion/status/    |
+|                              | are attached to the tweet.                          | 394866827857100800/photo/1                |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| urls                         | URLs entered by user as part of tweet. Note that    | http://instagram.com/p/gA_zQ5IaCz/        |
+|                              | URL may be a shortened URL, e.g. from bit.ly.       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| favorite_count               | Number of times this tweet had been favorited/liked | 12                                        |
+|                              | by other users at the time the tweet was collected. |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| in_reply_to_screen_name      | If tweet is a reply, the screen name of the author  | NASA                                      |
+|                              | of the tweet that is being replied to.              |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| in_reply_to_status_id        | If tweet is a reply, the Twitter identifier of the  | 114749583439036416                        |
+|                              | tweet that is being replied to.                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| in_reply_to_user_id          | If tweet is a reply, the Twitter identifier of the  | 481186914                                 |
+|                              | author of the tweet that is being replied to.       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| lang                         | Language of the tweet text, as determined by        | en                                        |
+|                              | Twitter.                                            |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| place                        | The user or application-provided geographic         | Washington, DC                            |
+|                              | location from which a tweet was posted.             |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| possibly_sensitive           | Indicates that URL contained in the tweet may       | true                                      |
+|                              | reference sensitive content.                        |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| retweet_count                | Number of times the tweet had been retweeted at     | 25                                        |
+|                              | the time the tweet was collected.                   |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| retweet_or_quote_id          | If tweet is a retweet or quote tweet, the Twitter   | 114749583439036416                        |
+|                              | identifier of the source tweet.                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| retweet_or_quote_screen_name | If tweet is a retweet or quote tweet, the screen    | NASA                                      |
+|                              | name of the author of the source tweet.             |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| retweet_or_quote_user_id     | If tweet is a retweet or quote tweet, the Twitter   | 481186914                                 |
+|                              | identifier of the author or the source tweet.       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| source                       | The application from which the tweet was posted.    | <a href=\"http://twitter.com/download/    |
+|                              |                                                     | iphone\" rel=\"nofollow\">Twitter for     |
+|                              |                                                     | iPhone</a>                                |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_id                      | Twitter identifier for the author of the tweet.     | 481186914                                 |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_created_at              | Date and time the tweet was created, in Twitter's   | Wed Mar 18 13:46:38 +0000 2009            |
+|                              | default format.                                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_default_profile_image   | URL of the user's profile image.                    | https://pbs.twimg.com/profile_images/     |
+|                              |                                                     | 942858479592554497/BbazLO9L_normal.jpg    |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_description             | The user-provided account description. Newline      | The safest spacecraft designed by NASA,   |
+|                              | characters are replaced with a space.               | Orion will carry humans to the moon and   |
+|                              |                                                     | beyond.                                   |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_favourites_count        | Number of tweets that have been favorited/liked     | 19                                        |
+|                              | by the user.                                        |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_followers_count         | Number of followers this account had at the time    | 235                                       |
+|                              | the tweet was collected.                            |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_friends_count           | Number of users this account was following at the   | 114                                       |
+|                              | time the tweet was collected.                       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_listed_count            | Number of public lists that this user is a member   | 3                                         |
+|                              | of.                                                 |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_location                | The user's self-described location. Not necessarily | San Francisco, California                 |
+|                              | an actual place.                                    |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_name                    | The user's self-provided name.                      | Orion Spacecraft                          |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_statuses_count          | Number of tweets that the user has posted.          | 2375                                      |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_time_zone               | The user-provided time zone. Currently deprecated.  | Eastern Time (US & Canada)                |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_urls                    | URLs entered by user as part of user's description. | http://www.Instagram.com/realDonaldTrump  |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_verified                | Indicates that the user's account is verified.      | true                                      |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
 
 -----------------
 Tumblr Dictionary
