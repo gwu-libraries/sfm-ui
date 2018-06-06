@@ -34,10 +34,8 @@ The full Social Feed Manager is made up of several component repositories:
 * [sfm-twitter-harvester](https://github.com/gwu-libraries/sfm-twitter-harvester): A harvester for Twitter.
 * [sfm-weibo-harvester](https://github.com/gwu-libraries/sfm-weibo-harvester):   A harvester for Sina Weibo.
 * [sfm-tumblr-harvester](https://github.com/gwu-libraries/sfm-tumblr-harvester):   A harvester for Tumblr.
-* [sfm-web-harvester](https://github.com/gwu-libraries/sfm-web-harvester):  A harvester for web resources using Heritrix.
 * [sfm-utils](https://github.com/gwu-libraries/sfm-utils): Utilities to support SFM.
 * [sfm-docker](https://github.com/gwu-libraries/sfm-docker):  Docker configuration for deploying SFM.
-* [sfm-elk](https://github.com/gwu-libraries/sfm-elk): Proof-of-concept analytics dashboard using the ELK stack.
 
 ## sfm-ui is a Django app which: 
 
@@ -55,6 +53,3 @@ Tickets / pull requests / discussion are welcome.
   `cd sfm`
   
   `./manage.py test --settings=sfm.settings.test_settings`
-
-
-Social Feed Manager is supported by a grant from the [National Historical Publications & Records Commission](http://www.archives.gov/nhprc/).

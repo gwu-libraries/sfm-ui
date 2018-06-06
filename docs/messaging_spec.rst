@@ -30,10 +30,7 @@ will be added to this document.
 ---------------------------------
 
 Harvesting is the process of retrieving social media content from the APIs
-of social media services and writing to WARC files. It also includes extracting
-urls for other web resources from the social media so that they can be
-harvested by a web harvester. (For example, the link for an image may be extracted
-from a tweet.)
+of social media services and writing to WARC files.
 
 Background information
 ======================
@@ -60,13 +57,11 @@ creating a single warc:
 2. Upon receiving the harvest message, a harvester:
 
    1. Makes the appropriate api calls.
-   2. Extracts urls for web resources from the results.
-   3. Writes the api calls to a warc.
+   2. Writes the api calls to a warc.
 3. Upon completing the api harvest, the harvester:
 
-   1. Publishes a web harvest message containing the extracted urls.
-   2. Publishes a warc created message.
-   3. Publishes a harvest status message with the status of `completed success` or `completed failure`.
+   1. Publishes a warc created message.
+   2. Publishes a harvest status message with the status of `completed success` or `completed failure`.
 
 
 The following is the message flow for a harvester performing a stream harvest and
@@ -76,20 +71,17 @@ creating multiple warcs:
 2. Upon receiving the harvest message, a harvester:
 
    1. Opens the api stream.
-   2. Extracts urls for web resources from the results.
-   3. Writes the stream results to a warc.
+   2. Writes the stream results to a warc.
 3. When rotating to a new warc, the harvester publishes a warc created message.
 4. At intervals during the harvest, the harvester:
 
-   1. Publishes a web harvest message containing extracted urls.
-   2. Publishes a harvest status message with the status of `running`.
+   1. Publishes a harvest status message with the status of `running`.
 5. When ready to stop, the requester publishes a harvest stop message.
 6. Upon receiving the harvest stop message, the harvester:
 
    1. Closes the api stream.
-   2. Publishes a final web harvest message containing extracted urls.
-   3. Publishes a final warc created message.
-   4. Publishes a final harvest status message with the status of `completed success` or `completed failure`.
+   2. Publishes a final warc created message.
+   3. Publishes a final harvest status message with the status of `completed success` or `completed failure`.
 
 * Any harvester may send harvest status messages with the status of `running` before the final
   harvest status message. A harvester performing a stream harvest must send harvest status messages
@@ -178,39 +170,6 @@ Another example::
 * `credentials`: All credentials that are necessary to access the social media platform.
   Credentials is a name/value map; the contents are specific to a social media platform.
 * `path`: The base path for the collection.
-
-Web resource harvest start message
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Harvesters will extract urls from the harvested social media content and
-publish a web resource harvest start message. This message is similar to
-other harvest start messages, with the differences noted below. Example::
-
-    {
-        "id": "flickr:45",
-        "parent_id": "sfmui:45",
-        "type": "web",
-        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
-        "seeds": [
-            {
-                "id": "3724fd97e85345ee84f5175eee09748d",
-                "token": "http://www.gwu.edu/"
-            },
-            {
-                "id": "aba6033aafce4fbabd846026ca47f13e",
-                "token": "http://library.gwu.edu/"
-            }
-        ],
-        "collection_set": {
-            "id": "3989a5f99e41487aaef698680537c3f5"
-        },
-        "collection": {
-            "id": "6980fac666c54322a2ebdbcb2a9510f5"
-        }
-    }
-
-* The routing key will be `harvest.start.web`.
-* `parent_id`: The id of the harvest from which the urls were extracted.
 
 Harvest stop message
 --------------------

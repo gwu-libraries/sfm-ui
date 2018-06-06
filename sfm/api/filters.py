@@ -1,4 +1,4 @@
-from django_filters import FilterSet, CharFilter, IsoDateTimeFilter, MethodFilter
+from django_filters import FilterSet, CharFilter, IsoDateTimeFilter
 from ui.models import Warc, Seed, Harvest, Collection
 from django_filters import Filter
 from django_filters.fields import Lookup
@@ -17,18 +17,10 @@ class WarcFilter(FilterSet):
     harvest_date_end = IsoDateTimeFilter(name="harvest__date_started", lookup_type='lte')
     created_date_start = IsoDateTimeFilter(name="date_created", lookup_type='gte')
     created_date_end = IsoDateTimeFilter(name="date_created", lookup_type='lte')
-    exclude_web = MethodFilter(action="web_filter")
 
     class Meta:
         model = Warc
         fields = ['collection']
-
-    @staticmethod
-    def web_filter(queryset, value):
-        if value.lower() in ("true", "yes"):
-            return queryset.exclude(harvest__harvest_type='web')
-        else:
-            return queryset
 
 
 class CollectionFilter(FilterSet):

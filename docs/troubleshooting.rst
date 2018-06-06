@@ -75,18 +75,6 @@ restart the Docker service.  On Ubuntu, this can be done with::
     # service docker start
     docker start/running, process 15039
 
-Web harvesting / Heritrix problems
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If you are encountering problems with web harvesting, check the logs of the web harvester container (``docker-compose logs webharvester``)
-and the heritrix container (``docker-compose logs heritrix``).
-
-If you see a line like ``heritrix:8443 not available after wait.`` in the web harvester logs and various Java exceptions
-in the heritrix container logs then kill, remove, and restart the containers::
-
-    docker-compose kill webharvester heritrix
-    docker-compose rm -vf webharvester heritrix
-    docker-compose up -d
-
 CSV export problems
 ^^^^^^^^^^^^^^^^^^^
 Excel for Mac has problems with unicode characters in CSV files. As a work-around, export to Excel (XLSX) format.

@@ -9,8 +9,7 @@ Social Feed Manager (SFM)
 Social Feed Manager is open source software for libraries, archives, cultural heritage institutions and research
 organizations. It empowers those communities' researchers, faculty, students, and archivists to define and create
 collections of data from social media platforms. Social Feed Manager will harvest from Twitter, Tumblr, Flickr,
-and Sina Weibo and is extensible for other platforms. In addition to collecting data from those platforms' APIs,
-it will collect linked web pages and media.
+and Sina Weibo and is extensible for other platforms.
 
 This site provides documentation for installation and usage of SFM. See the `Social Feed Manager project site <http://gwu-libraries.github.io/sfm-ui/>`_ for full information about the project's objectives, roadmap, and updates.
 
@@ -67,8 +66,8 @@ Indices and tables
 Funding history
 -----------------
 
-* Development of this project has been supported by a grant (#NARDI-14-50017-14) from the `National Historical Publications & Records Commission <http://www.archives.gov/nhprc/>`_ to George Washington University Libraries from 2014-2017.
-* Development of the Sina Weibo harvester is supported by a grant from the `Council on East Asian Libraries <http://www.eastasianlib.org/>`_.
+* Development of this project was supported by a grant (#NARDI-14-50017-14) from the `National Historical Publications & Records Commission <http://www.archives.gov/nhprc/>`_ to George Washington University Libraries from 2014-2017.
+* Development of the Sina Weibo harvester was supported by a grant from the `Council on East Asian Libraries <http://www.eastasianlib.org/>`_.
 * Prior development of SFM under the `previous repository <https://github.com/gwu-libraries/social-feed-manager>`_
    was supported by a grant (#LG-46-13-0257-13) from the `Institute of Museum and Library Services <http://www.imls.gov/>`_
    to George Washington University Libraries from 2013-2014.

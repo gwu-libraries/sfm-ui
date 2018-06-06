@@ -19,8 +19,6 @@ Collection types
   * `Weibo timeline`_: Collects posts from the user and the user's friends
   * `Weibo search`_: Collects recent weibo posts by a user-provided search query
   * `Tumblr blog posts`_: Collects blog posts from specific Tumblr blogs
-  * `Collecting Web resources`_: Secondary collections of resources linked to or
-    embedded in social media posts.
 
 .. _guide-twitter-user-timelines:
 
@@ -53,9 +51,6 @@ all other valid seeds will be collected.
 See :ref:`guide-incremental-collecting` to decide whether or not to collect
 incrementally.
 
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect media or web resources.
-
 .. _guide-twitter-search:
 
 .. _Twitter search:
@@ -87,9 +82,6 @@ want to run the search once and then turn off the collection.
 See :ref:`guide-incremental-collecting` to decide whether or not to collect
 incrementally.
 
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect media or web resources.
-
 .. _guide-twitter-sample:
 
 .. _Twitter sample:
@@ -110,10 +102,6 @@ Unlike other Twitter collections, there are no seeds for a Twitter sample.
 When on, the sample returns data every 30 minutes.
 
 Only one sample or :ref:`Twitter filter` can be run at a time per credential.
-
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collection media or web resources.
-
 
 .. _guide-twitter-filter:
 
@@ -170,9 +158,6 @@ you are getting every tweet.
 There is only one seed in a filter collection. Twitter filter collection are
 either turned on or off (there is no schedule).
 
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collection media or web resources.
-
 .. _guide-flickr-user-timeline:
 
 .. _Flickr user:
@@ -228,9 +213,6 @@ or without the .tumblr.com extension.
 
 See :ref:`guide-incremental-collecting` to decide whether or not to collect incrementally.
 
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect image or web resources.
-
 .. _guide-weibo-timelines:
 .. _Weibo timeline:
 
@@ -245,9 +227,6 @@ of the user whose credentials are provided using the `Weibo friends_timeline API
 Note that because collection is determined by the user whose credentials are
 provided, there are no seeds for a Weibo timeline collection. To change what is
 being collected, change the user's friends from the Weibo website or app.
-
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect image or web resources.
 
 .. _Weibo search:
 
@@ -270,36 +249,15 @@ search count is accomplished within SFM.
 When the incremental option is not selected, the search will be performed again,
 and there will most likely be duplicates in the count.
 
-See the :ref:`Collecting web resources` guidance below for deciding whether to
-collect image or web resources.
-
-
 
 .. _guide-incremental-collecting:
 
--------------------------------
+----------------------
 Incremental collecting
--------------------------------
+----------------------
 
 The incremental option is the default and will collect tweets or posts that have been published since the last harvest. 
 When the incremental option is not selected, the maximum number of tweets or posts will be harvested each 
 time the harvest runs. If a non-incremental harvest is performed multiple times, there will most likely be
 duplicates. However, with these duplicates, you may be able to track changes across time in a user's
 timeline, such as changes in retweet and like counts, deletion of tweets, and follower counts.
-
-.. _guide-web-resources:
-
-.. _Collecting web resources:
-
-------------------------
-Collecting web resources
-------------------------
-
-Most collection types allow you to select an option to collect web resources
-such as images, web pages, etc. that are included in the social media post. When
-a social media post includes a URL, SFM will harvest the web page at that URL.
-It will harvest only that web page, not any pages linked from that page.
-
-Be very deliberate in collecting web resources. Performing a web harvest both
-takes longer and requires significantly more storage than collecting the
-original social media post.

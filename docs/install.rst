@@ -128,11 +128,6 @@ statements change *master* to the correct version, e.g., *1.11.0*::
     # - echo RABBITMQ_MANAGEMENT_PORT=15672 >> .env
     # DB CONFIGURATION
     # - echo POSTGRES_PASSWORD=password >> .env
-    # WEB HARVESTER CONFIGURATION
-    # - echo HERITRIX_USER=sfm_user >> .env
-    # - echo HERITRIX_PASSWORD=password >> .env
-    # - echo HERITRIX_ADMIN_PORT=8443 >> .env
-    # - echo HERITRIX_CONTACT_URL=http://library.myschool.edu >> .env
      - docker-compose up -d
      - docker-compose scale twitterrestharvester=2 twitterpriorityrestharvester=2
 
@@ -159,7 +154,7 @@ Note the following:
 
 Configuration is documented in ``example.env``. For a production deployment, pay particular attention to the following:
 
-* Set new passwords for ``SFM_SITE_ADMIN_PASSWORD``, ``RABBIT_MQ_PASSWORD``, ``POSTGRES_PASSWORD``, and ``HERITRIX_PASSWORD``.
+* Set new passwords for ``SFM_SITE_ADMIN_PASSWORD``, ``RABBIT_MQ_PASSWORD``, and ``POSTGRES_PASSWORD``.
 * The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
   is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used. To use a host volume
   instead, change the ``DATA_VOLUME`` and ``PROCESSING_VOLUME`` settings. Host volumes are recommended for production
@@ -176,7 +171,6 @@ Configuration is documented in ``example.env``. For a production deployment, pay
 * Set an admin email address with ``SFM_SITE_ADMIN_EMAIL``. Problems with SFM are sent to this address.
 * Set an SFM contact email address with ``SFM_CONTACT_EMAIL``. Users are provided with this address.
 * For branding in the SFM UI, provide ``SFM_INSTITUTION_NAME`` and ``SFM_INSTITUTION_LINK``.
-* Provide a contact URL (e.g., http://library.gwu.edu) to be used when web harvesting with ``HERITRIX_CONTACT_URL``.
 
 Note that if you make a change to configuration *after* SFM is brought up, you will need to restart containers. If
 the change only applies to a single container, then you can stop the container with ``docker kill <container name>``. If

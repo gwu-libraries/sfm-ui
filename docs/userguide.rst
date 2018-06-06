@@ -95,8 +95,6 @@ Types of Collections
     friends
   * :ref:`guide-tumblr-blog-posts`: Collects blog posts from specific Tumblr
     blogs
-  * :ref:`guide-web-resources`: Secondary collections of resources linked to or
-    embedded in social media posts.
 
 How to use the data
 ^^^^^^^^^^^^^^^^^^^
@@ -234,7 +232,6 @@ For details on each collection type, see:
 | :ref:`guide-flickr-user-timeline`
 | :ref:`guide-weibo-timelines`
 | :ref:`guide-tumblr-blog-posts`
-| :ref:`guide-web-resources`
 |
 |
 

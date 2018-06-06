@@ -344,28 +344,3 @@ class ConsumerTest(TestCase):
         self.assertEqual("Twitter Exporter", export.service)
         self.assertEqual("f0c3c5ef7031", export.host)
         self.assertEqual("39", export.instance)
-
-    def test_web_harvest_start_on_message(self):
-        self.consumer.routing_key = "harvest.start.web"
-        self.consumer.message = {
-            "id": "webtest:1",
-            "parent_id": self.harvest.harvest_id,
-            "type": "web",
-            "seeds": [
-                {
-                    "token": "http://www.gwu.edu/"
-                }
-            ],
-            "collection_set": {
-                "id": "test_collection_set",
-            }
-        }
-
-        # Trigger on_message
-        self.consumer.on_message()
-
-        # Check new harvest model object
-        harvest = Harvest.objects.get(harvest_id="webtest:1")
-        self.assertEqual("web", harvest.harvest_type)
-        self.assertEqual(self.harvest, harvest.parent_harvest)
-        self.assertEqual(harvest.status, "requested")

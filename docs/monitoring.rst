@@ -74,23 +74,8 @@ To get the stderr log, substitute `.err` for `.out`.
 To follow the log, use `tail -f` instead of `cat`. For example,
 ``docker exec -t sfm_twitterstreamharvester_1 tail -f /sfm-data/containers/bffcae5d0603/log/d4493eed5f4f49c6a1981c89cb5d525f.err.log``.
 
----------------------
- Management consoles
----------------------
-
-Several of the services used by SFM offer management consoles that can be useful for monitoring.
-
-For each of these, the username, password, and port are available from your `.env` file.
-
-RabbitMQ
-========
+-----------------------------
+ RabbitMQ management console
+-----------------------------
 
 The RabbitMQ Admin is usually available on port 15672. For example, `http://localhost:15672/ <http://localhost:15672/>`_.
-
-Heritrix
-========
-
-The Heritrix management console is usually available on port 8443. For example, `https://localhost:8443/ <https://localhost:8443/>`_.
-
-Note that you must used HTTPS to reach the management console. You may be warned by your browser
-about the certificate; it is safe to proceed.

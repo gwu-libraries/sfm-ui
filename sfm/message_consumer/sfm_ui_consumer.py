@@ -38,8 +38,6 @@ class SfmUiConsumer(BaseConsumer):
                 self._on_warc_created_message()
             elif self.routing_key.startswith("export.status."):
                 self._on_export_status_message()
-            elif self.routing_key == "harvest.start.web":
-                self._on_web_harvest_start_message()
             else:
                 log.warn("Unexpected message with routing key %s: %s", self.routing_key,
                          json.dumps(self.message, indent=4))
@@ -105,7 +103,8 @@ class SfmUiConsumer(BaseConsumer):
                 log.error("Seed model object with seed_id %s not found to update uid to %s", seed_id, uid)
 
         # Delete seeds based on warnings and collection harvest options
-        harvest_options = json.loads(harvest.collection.harvest_options)
+        harvest_options = json.loads(harvest.collection.harvest_options) if harvest.collection.harvest_options else {}
+
         for warning_msg in self.message.get("warnings", []):
             log.info(warning_msg)
             if warning_msg.get('seed_id'):
@@ -309,17 +308,4 @@ class SfmUiConsumer(BaseConsumer):
 
         except ObjectDoesNotExist:
             log.error("Export model object not found for export status message: %s",
-                      json.dumps(self.message, indent=4))
-
-    def _on_web_harvest_start_message(self):
-        try:
-            log.debug("Creating harvest for web harvest with id %s", self.message["id"])
-            parent_harvest = Harvest.objects.get(harvest_id=self.message["parent_id"])
-            harvest = Harvest.objects.create(harvest_type=self.message["type"],
-                                             harvest_id=self.message["id"],
-                                             parent_harvest=parent_harvest,
-                                             collection=parent_harvest.collection)
-            harvest.save()
-        except ObjectDoesNotExist:
-            log.error("Harvest model object not found for web harvest status message: %s",
                       json.dumps(self.message, indent=4))

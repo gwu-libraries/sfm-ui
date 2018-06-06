@@ -36,14 +36,9 @@ DATETIME_WIDGET = DateTimeWidget(
 )
 
 SCHEDULE_HELP = "How frequently you want data to be retrieved."
-TWITTER_MEDIA_LABEL = "Media (e.g., images) embedded in tweets."
-TWITTER_WEB_RESOURCES_LABEL = "Web pages referenced in tweets."
 INCREMENTAL_LABEL = "Incremental harvest"
 INCREMENTAL_HELP = "Only collect new items since the last data retrieval."
 GROUP_HELP = "Your default group is your username, unless the SFM team has added you to another group."
-USER_PROFILE_LABEL = "User profile images and user banner images."
-WEIBO_LABEL = "Perform web harvests of resources (e.g., web pages) linked in weibo texts."
-TUMBLR_LABEL = "Perform web harvests of resources (e.g., web pages) linked in Tumblr posts."
 
 
 class CollectionSetForm(forms.ModelForm):
@@ -172,9 +167,6 @@ class BaseCollectionForm(forms.ModelForm):
 
 class CollectionTwitterUserTimelineForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
-    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
-    user_images_option = forms.BooleanField(initial=False, required=False, label=USER_PROFILE_LABEL)
     deleted_accounts_option = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
                                                                                       "for deleted / not found "
                                                                                       "accounts.")
@@ -185,7 +177,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'user_images_option', 'web_resources_option',
+        self.helper.layout[0][4].extend(('incremental',
                                          'deleted_accounts_option', 'suspended_accounts_option',
                                          'protected_accounts_options'))
 
@@ -193,12 +185,6 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "media" in harvest_options:
-                self.fields['media_option'].initial = harvest_options["media"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
-            if "user_images" in harvest_options:
-                self.fields['user_images_option'].initial = harvest_options["user_images"]
             if "deactivate_not_found_seeds" in harvest_options:
                 self.fields['deleted_accounts_option'].initial = harvest_options["deactivate_not_found_seeds"]
             if "deactivate_unauthorized_seeds" in harvest_options:
@@ -211,9 +197,6 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
         m.harvest_type = Collection.TWITTER_USER_TIMELINE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"],
-            "user_images": self.cleaned_data["user_images_option"],
             "deactivate_not_found_seeds": self.cleaned_data["deleted_accounts_option"],
             "deactivate_unauthorized_seeds": self.cleaned_data["protected_accounts_options"],
             "deactivate_suspended_seeds": self.cleaned_data["suspended_accounts_option"]
@@ -225,29 +208,21 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
 class CollectionTwitterSearchForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
-    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "media" in harvest_options:
-                self.fields['media_option'].initial = harvest_options["media"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionTwitterSearchForm, self).save(commit=False)
         m.harvest_type = Collection.TWITTER_SEARCH
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
@@ -255,96 +230,52 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
 
 
 class CollectionTwitterSampleForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
-
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSampleForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('media_option', 'web_resources_option'))
-        if self.instance and self.instance.harvest_options:
-            harvest_options = json.loads(self.instance.harvest_options)
-            if "media" in harvest_options:
-                self.fields['media_option'].initial = harvest_options["media"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionTwitterSampleForm, self).save(commit=False)
         m.harvest_type = Collection.TWITTER_SAMPLE
-        harvest_options = {
-            "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"],
-        }
-        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.schedule_minutes = None
         m.save()
         return m
 
 
 class CollectionTwitterFilterForm(BaseCollectionForm):
-    media_option = forms.BooleanField(initial=False, required=False, label=TWITTER_MEDIA_LABEL)
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=TWITTER_WEB_RESOURCES_LABEL)
-
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('media_option', 'web_resources_option'))
-
-        if self.instance and self.instance.harvest_options:
-            harvest_options = json.loads(self.instance.harvest_options)
-            if "media" in harvest_options:
-                self.fields['media_option'].initial = harvest_options["media"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionTwitterFilterForm, self).save(commit=False)
         m.harvest_type = Collection.TWITTER_FILTER
-        harvest_options = {
-            "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"]
-        }
-        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.schedule_minutes = None
         m.save()
         return m
 
 
 class CollectionFlickrUserForm(BaseCollectionForm):
-    # See https://www.flickr.com/services/api/flickr.photos.getSizes.html
-    SIZE_OPTIONS = (
-        ("Thumbnail", "Thumbnail"),
-        ("Small", "Small"),
-        ("Medium", "Medium"),
-        ("Large", "Large"),
-        ("Original", "Original")
-    )
-    image_sizes = forms.MultipleChoiceField(choices=SIZE_OPTIONS, initial=("Thumbnail", "Large", "Original"),
-                                            widget=forms.CheckboxSelectMultiple, label="Image sizes", )
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'image_sizes'))
+        self.helper.layout[0][4].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "image_sizes" in harvest_options:
-                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
 
     def save(self, commit=True):
         m = super(CollectionFlickrUserForm, self).save(commit=False)
         m.harvest_type = Collection.FLICKR_USER
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "image_sizes": self.cleaned_data["image_sizes"]
         }
         m.harvest_options = json.dumps(harvest_options)
         m.save()
@@ -352,37 +283,22 @@ class CollectionFlickrUserForm(BaseCollectionForm):
 
 
 class CollectionWeiboTimelineForm(BaseCollectionForm):
-    SIZE_OPTIONS = (
-        ("Thumbnail", "Thumbnail"),
-        ("Medium", "Medium"),
-        ("Large", "Large")
-    )
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
-    image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
-                                            help_text="For harvesting images, select the image sizes.",
-                                            widget=forms.CheckboxSelectMultiple, label="Image sizes")
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=WEIBO_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "image_sizes" in harvest_options:
-                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionWeiboTimelineForm, self).save(commit=False)
         m.harvest_type = Collection.WEIBO_TIMELINE
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "image_sizes": self.cleaned_data["image_sizes"],
-            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
@@ -390,40 +306,22 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
 
 
 class CollectionWeiboSearchForm(BaseCollectionForm):
-    SIZE_OPTIONS = (
-        ("Thumbnail", "Thumbnail"),
-        ("Medium", "Medium"),
-        ("Large", "Large")
-    )
     incremental = forms.BooleanField(initial=True, required=False, help_text=INCREMENTAL_HELP, label=INCREMENTAL_LABEL)
-    image_sizes = forms.MultipleChoiceField(required=False, choices=SIZE_OPTIONS, initial=(None,),
-                                            help_text="For harvesting images, select the image sizes.",
-                                            widget=forms.CheckboxSelectMultiple, label="Image sizes")
-    web_resources_option = forms.BooleanField(initial=False, required=False,
-                                              help_text="Perform web harvests of resources (e.g., web pages) linked in "
-                                                        "weibo texts.",
-                                              label="Web resources")
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('image_sizes', 'incremental', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "image_sizes" in harvest_options:
-                self.fields['image_sizes'].initial = harvest_options["image_sizes"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionWeiboSearchForm, self).save(commit=False)
         m.harvest_type = Collection.WEIBO_SEARCH
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "image_sizes": self.cleaned_data["image_sizes"],
-            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
@@ -432,31 +330,21 @@ class CollectionWeiboSearchForm(BaseCollectionForm):
 
 class CollectionTumblrBlogPostsForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
-    media_option = forms.BooleanField(initial=False, required=False,
-                                      help_text="Perform web harvests of images in photo type posts.",
-                                      label="Images option")
-    web_resources_option = forms.BooleanField(initial=False, required=False, label=TUMBLR_LABEL)
 
     def __init__(self, *args, **kwargs):
         super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental', 'media_option', 'web_resources_option'))
+        self.helper.layout[0][4].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
             if "incremental" in harvest_options:
                 self.fields['incremental'].initial = harvest_options["incremental"]
-            if "media" in harvest_options:
-                self.fields['media_option'].initial = harvest_options["media"]
-            if "web_resources" in harvest_options:
-                self.fields['web_resources_option'].initial = harvest_options["web_resources"]
 
     def save(self, commit=True):
         m = super(CollectionTumblrBlogPostsForm, self).save(commit=False)
         m.harvest_type = Collection.TUMBLR_BLOG_POSTS
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
-            "media": self.cleaned_data["media_option"],
-            "web_resources": self.cleaned_data["web_resources_option"]
         }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()

@@ -8,7 +8,7 @@
 Collections and collection sets are portable. That means they can be moved to another SFM instance or
 to another environment, such as a repository. This can also be used to backup an SFM instance.
 
-A collection includes all of the social media items and web resources (stored in WARCs) and the database
+A collection includes all of the social media items (stored in WARCs) and the database
 records for the collection sets, collections, users, groups, credentials, seeds, harvests, and WARCs, as well
 as the history of collection sets, collections, credentials, and seeds. The
 database records are stored in JSON format in the ``records`` subdirectory of the collection. Each collection

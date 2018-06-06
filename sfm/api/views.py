@@ -11,7 +11,7 @@ class WarcViewSet(ReadOnlyModelViewSet):
     filter_class = WarcFilter
 
     def get_queryset(self):
-        return Warc.objects.all()
+        return Warc.objects.all().exclude(harvest__harvest_type='web')
 
 
 class CollectionViewSet(ReadOnlyModelViewSet):

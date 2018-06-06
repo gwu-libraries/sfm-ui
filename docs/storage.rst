@@ -8,7 +8,7 @@
 
 SFM stores data on 2 volumes:
 
-* sfm-data: The data volume is where SFM stores the harvested social media content and web resources, the db files, and
+* sfm-data: The data volume is where SFM stores the harvested social media content, the db files, and
   exports. This is described in more detail below. It is available within containers as /sfm-data.
 * sfm-processing: The processing volume is where processed data is stored when using a processing container.
   (See :doc:`processing`.) It is available within containers as /sfm-processing.
@@ -65,8 +65,6 @@ The following is a outline of the structure of sfm-data::
                 <collection id>/
                     README.txt (README for collection)
                     state.json (Harvest state record)
-                    heritrix_job/
-                        Web harvest state records
                     records/
                         JSON records for the collection metadata
                     <year>/<month>/<day>/<hour>/

@@ -17,7 +17,7 @@ container is a Linux shell environment with access to the SFM's data and preload
 Using a processing container requires familiarity with the Linux shell and shell access to the SFM server.  If
 you are interested in using a processing container, please contact your SFM administrator for help.
 
-When exporting/processing data, remember that harvested social media content and and web resources are stored
+When exporting/processing data, remember that harvested social media content are stored
 in ``/sfm-data``.  ``/sfm-processing`` is provided to store your exports, processed data, or scripts.  Depending
 on how it is configured, you may have access to ``/sfm-processing`` from your local filesystem. See :doc:`storage`.
 
@@ -93,7 +93,7 @@ warc iterator tools. (It gets the list of WARC files by querying the SFM API.)
 Here is arguments it accepts::
 
     root@0ac9caaf7e72:/sfm-data# find_warcs.py
-    usage: find_warcs.py [-h] [--include-web] [--harvest-start HARVEST_START]
+    usage: find_warcs.py [-h] [--harvest-start HARVEST_START]
                          [--harvest-end HARVEST_END] [--warc-start WARC_START]
                          [--warc-end WARC_END] [--api-base-url API_BASE_URL]
                          [--debug [DEBUG]] [--newline]
