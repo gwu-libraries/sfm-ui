@@ -37,7 +37,7 @@ The Social Feed Manager software aims to achieve the following:
 comprising sets of targeted accounts, keywords, and other search strategies appropriate to
 different social media platforms
 * let users authorize SFM to collect data from those accounts, keywords,
-searches, and related web resources on those users' behalf
+and searches on those users' behalf
 * use
 a set of carefully managed processes to harvest, collect, and store this data, recording its
 actions in detail
@@ -63,9 +63,8 @@ These objectives are not directly supported by SFM:
   and browsing of collections in support of users and staff in defining, assessing, and exporting
   collections, but access, analysis, and long-term storage are complementary to SFM, rather than
   core functions.
-* SFM is not a general-purpose web crawling and archiving application; although it may support
-  direct capture of web pages and sites, it is complementary to, rather than a substitute for,
-  more established, robust tools like Heritrix.
+* SFM is not a general-purpose web crawling and archiving application; it is complementary to, rather 
+  than a substitute for, more established, robust tools like Heritrix.
 * SFM is not a "one-click install" application; although its installation is supported through
   automation tools, we assume most who deploy SFM will have some unix system administration
   skills on their team.
