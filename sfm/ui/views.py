@@ -388,7 +388,7 @@ def _get_credential_list(collection_set_pk, harvest_type, extra_credential=None)
     q = Q(platform=platform, user=User.objects.filter(groups=collection_set.group))
     if extra_credential:
         q = q | Q(pk=extra_credential.pk)
-    return Credential.objects.filter(q).order_by('name')
+    return Credential.objects.filter(q).filter(is_active=True).order_by('name')
 
 
 def _get_credential_use_map(credentials, harvest_type):
@@ -805,6 +805,23 @@ class CredentialUpdateView(LoginRequiredMixin, UserOrSuperuserPermissionMixin, U
 
     def get_success_url(self):
         return reverse("credential_detail", args=(self.object.pk,))
+
+
+class CredentialToggleActiveView(LoginRequiredMixin, UserOrSuperuserPermissionMixin, RedirectView):
+    permanent = False
+    pattern_name = "credential_detail"
+    http_method_names = ['post', 'put']
+
+    def get_redirect_url(self, *args, **kwargs):
+        credential = get_object_or_404(Credential, pk=kwargs['pk'])
+        credential.is_active = not credential.is_active
+        credential.history_note = self.request.POST.get("history_note", "")
+        if credential.is_active:
+            messages.info(self.request, "Credential undeleted.")
+        else:
+            messages.info(self.request, "Credential deleted.")
+        credential.save()
+        return super(CredentialToggleActiveView, self).get_redirect_url(*args, **kwargs)
 
 
 class ExportListView(LoginRequiredMixin, ListView):

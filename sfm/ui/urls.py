@@ -93,6 +93,10 @@ urlpatterns = patterns('',
                            views.CredentialUpdateView.as_view(),
                            name="credential_update"),
 
+                       url(r'^credentials/(?P<pk>\d+)/toggle/$',
+                           views.CredentialToggleActiveView.as_view(),
+                           name="credential_toggle_active"),
+
                        url(r'^credentials/$',
                            views.CredentialListView.as_view(),
                            name="credential_list"),
