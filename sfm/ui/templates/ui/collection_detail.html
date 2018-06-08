@@ -206,6 +206,10 @@
         {% if collection.description %}
             <p><strong>Description: </strong>{{ collection.description }}</p>
         {% endif %}
+        {% if collection.link %}
+        <p><strong>Public link: </strong><a href="{{ collection.link }}" target="_blank">{{ collection.link }}</a></p>
+        <p class="help-block">See the public version for citing this collection.</p>
+        {% endif %}
         <p><strong>Data collected:</strong> {{ collection.warcs_count|intcomma }} file{{ collection.warcs_count|pluralize }} ({{ collection.warcs_bytes|filesizeformat }})</p>
            {% if collection.stats %}
               <p><strong>Stats:</strong></p>

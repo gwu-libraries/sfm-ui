@@ -375,6 +375,7 @@ class Collection(models.Model):
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255, verbose_name='Collection name')
     description = models.TextField(blank=True)
+    link = models.CharField(max_length=512, blank=True, verbose_name='Public link')
     is_on = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     visibility = models.CharField(max_length=255, choices=VISIBILITY_CHOICES, default=DEFAULT_VISIBILITY,
@@ -396,7 +397,7 @@ class Collection(models.Model):
     class Meta:
         diff_fields = (
             "collection_set", "credential", "harvest_type", "name", "description", "is_on", "is_active", "visibility",
-            "schedule_minutes", "harvest_options", "end_date")
+            "schedule_minutes", "harvest_options", "end_date", "link")
 
     def __str__(self):
         return '<Collection %s "%s">' % (self.id, self.name)

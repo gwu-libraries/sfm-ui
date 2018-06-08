@@ -100,3 +100,12 @@ For this example, we will be adding the collection to the GW Libraries Dataverse
    Go to the page of the draft that was just saved, and click '*Publish*' button.
 
    .. image:: images/releasing_datasets/Dataverse-Publishing_data.png
+
+--------------------------------
+Adding link to Dataverse dataset
+--------------------------------
+Once you have published your collection data on Dataverse, you can add to it from SFM. This will allow other SFM users to find the public version of your collection.
+
+1. Go to the collection page for your collection in SFM and click Edit.
+
+2. Add the Dataverse link to in the "Public Link" field and click Save.

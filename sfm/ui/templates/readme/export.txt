@@ -16,6 +16,7 @@ Harvest end date: {{ export.harvest_date_end }}{% endif %}
 {% endif %}
 COLLECTION INFORMATION
 Collection name: {{ collection.name }}
+{% if collection.link %}Collection public link: {{ collection.link }}{% endif %}
 Collection id: {{ collection.collection_id }}
 Collection set: {{ collection.collection_set.name }} (collection set id {{ collection.collection_set.collection_set_id }})
 Harvest type: {{ collection.get_harvest_type_display }}{% if collection.description %}

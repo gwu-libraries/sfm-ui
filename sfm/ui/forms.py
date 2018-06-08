@@ -99,10 +99,12 @@ class NameModelChoiceField(forms.ModelChoiceField):
 
 class BaseCollectionForm(forms.ModelForm):
     credential = NameModelChoiceField(None)
+    link = forms.URLField(required=False, label="Public link",
+                          help_text="Link to a public version of this collection, e.g., in a data repository.")
 
     class Meta:
         model = Collection
-        fields = ['name', 'description', 'collection_set', 'visibility',
+        fields = ['name', 'description', 'link', 'collection_set', 'visibility',
                   'schedule_minutes', 'credential', 'end_date',
                   'history_note']
         exclude = []
@@ -140,6 +142,7 @@ class BaseCollectionForm(forms.ModelForm):
                 '',
                 'name',
                 'description',
+                'link',
                 'credential',
                 Div(css_id='credential_warning'),
                 Div(),

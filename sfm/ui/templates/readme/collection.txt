@@ -4,6 +4,7 @@ Collection name: {{ collection.name }}
 Collection id: {{ collection.collection_id }}
 Harvest type: {{ collection.get_harvest_type_display }}
 {% if collection.description %}Collection description: {{ collection.description }}{% endif %}
+{% if collection.link %}Public link: {{ collection.link }}{% endif %}
 
 This collection is part of collection set {{ collection.collection_set.name }} (collection set id {{ collection.collection_set.collection_set_id }}).
 
