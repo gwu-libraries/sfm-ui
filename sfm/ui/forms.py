@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
+from django.conf import settings
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
@@ -971,6 +971,9 @@ class ExportForm(forms.ModelForm):
                     HTML("""<h4>Limit by item date range</h4>"""),
                     'item_date_start',
                     'item_date_end',
+                    HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be 
+                    made to match the time zone of the items. For example, dates in 
+                    tweets are UTC.</p>""".format(settings.TIME_ZONE)),
                     css_class="panel panel-default panel-body"),
                 Div(
                     HTML("""<h4>Limit by harvest date range</h4>"""),

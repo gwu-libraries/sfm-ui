@@ -252,14 +252,16 @@ To export:
   * Select the file type you want (.csv is recommended; .xlsx types will also be
     easily accessible).
 
-  * Select the export file size you want, based on number of posts per file. Note that
-    larger file sizes will take longer to download.
+  * Select the export file size you want, based on number of posts per file. You may want to select
+    a number of posts that will work the program that you will be loading the data into, e.g., Excel.
 
   * Select Deduplicate if you only want one instance of every post. This will clean
     up your data, but will make the export take longer.
 
   * Item start date/end date allow you to limit the export based on the date
-    each post was created.
+    each post was created. Note that the date you enter will be in the local timezone. The date
+    in posts may be in a different timezone, e.g., UTC. Appropriate adjustments will be made to account
+    for this.
 
   * Harvest start date/end date allow you to limit the export based on the
     harvest dates.
