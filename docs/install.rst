@@ -225,7 +225,7 @@ see if any additional steps are required.
 1. Stop the containers gracefully::
 
     docker-compose stop -t 180 twitterstreamharvester
-    docker-compose stop
+    docker-compose stop -t 45
 
 This may take several minutes.
 
