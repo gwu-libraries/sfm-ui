@@ -180,7 +180,7 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterUserTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',
+        self.helper.layout[0][5].extend(('incremental',
                                          'deleted_accounts_option', 'suspended_accounts_option',
                                          'protected_accounts_options'))
 
@@ -214,7 +214,7 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',))
+        self.helper.layout[0][5].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -267,7 +267,7 @@ class CollectionFlickrUserForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionFlickrUserForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',))
+        self.helper.layout[0][5].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -290,7 +290,7 @@ class CollectionWeiboTimelineForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboTimelineForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',))
+        self.helper.layout[0][5].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -313,7 +313,7 @@ class CollectionWeiboSearchForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionWeiboSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',))
+        self.helper.layout[0][5].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
@@ -336,7 +336,7 @@ class CollectionTumblrBlogPostsForm(BaseCollectionForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionTumblrBlogPostsForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][4].extend(('incremental',))
+        self.helper.layout[0][5].extend(('incremental',))
 
         if self.instance and self.instance.harvest_options:
             harvest_options = json.loads(self.instance.harvest_options)
