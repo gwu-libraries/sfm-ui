@@ -11,6 +11,13 @@ ads: false
 
 {% include toc.html %}
 
+## Citing SFM
+The recommended citation for Social Feed Manager (i.e., the software) is:
+
+    George Washington University Libraries. (2016). Social Feed Manager. Zenodo. https://doi.org/10.5281/zenodo.597278
+    
+See our [guidance](http://sfm.readthedocs.io/en/latest/citing.html) on citing SFM and datasets.    
+
 ## TweetSets
 
 Selected datasets collected by GWU are available via [TweetSets](https://tweetsets.library.gwu.edu) for research and archiving purposes.
