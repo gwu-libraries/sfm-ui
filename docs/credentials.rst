@@ -61,8 +61,12 @@ Twitter
 
   For detailed instructions, see :ref:`twitter-credentials`.
 
-  It is recommended to change the application permissions to read-only.  You
-  *must* provide a callback URL, but the URL you provide doesn't matter.
+  You *must* provide a callback URL which is *http://<SFM hostname>/accounts/twitter/login/callback/*.
+  Note that this should be *http* not *https* even if you are using https.
+
+  Also, turn on *Enable Callback Locking* and *Allow this application to be used to Sign in with Twitter*.
+
+  It is recommended to change the application permissions to read-only.
 
 Flickr
   Flickr credentials can be obtained from
@@ -117,8 +121,7 @@ To manually add credentials:
   * **Enter a description.** You may copy and paste:
     *This is a social media research and archival tool, which collects data for
     academic researchers through an accessible user interface.*
-    * **Enter a Website** such as the SFM url. Any website will work.
-  * **Enter a Callback URL** that is the SFM url.
+  * **Enter a Website** such as the SFM url. Any website will work.
   * **Review and agree to the Twitter Developer Agreement** and click *Create
     your Twitter Application.*
   * Recommended:
