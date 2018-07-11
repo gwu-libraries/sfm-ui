@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from django.core.management.base import BaseCommand, CommandError
-from ui.models import CollectionSet
-from ui.serialize import RecordDeserializer
+from sfm.ui.serialize import RecordDeserializer
 
 
 class Command(BaseCommand):

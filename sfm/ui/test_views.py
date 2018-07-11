@@ -1,12 +1,12 @@
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import RequestFactory, TestCase, Client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from .models import CollectionSet, User, Credential, Seed, Collection, Export
-from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, CollectionCreateView, \
-    CollectionDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
+from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, \
+    CollectionCreateView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
     ChangeLogView, UserProfileDetailView, SeedsJSONAPIView
 
 import os
@@ -106,7 +106,6 @@ class CollectionSetDetailViewTests(CollectionSetTestsMixin, TestCase):
         response = CollectionSetDetailView.as_view()(request, pk=self.collection_set1.pk)
         model_name = response.context_data["model_name"]
         item_id = response.context_data["item_id"]
-        diffs = response.context_data["diffs"]
         self.assertEqual("collection_set", model_name)
         self.assertEqual(self.collection_set1.pk, item_id)
 
@@ -183,7 +182,7 @@ class CollectionDetailViewTests(TestCase):
                                                      token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set1,
                                                     credential=self.credential1,
-                                                    harvest_type='test harvest type',
+                                                    harvest_type=Collection.TWITTER_SEARCH,
                                                     name='Test collection one',
                                                     )
         self.seed = Seed.objects.create(collection=self.collection, token='{}')
@@ -430,20 +429,24 @@ class ExportFileTest(TestCase):
         request.user = self.user
         response = export_file(request, self.export.pk, "test.csv")
         self.assertEquals(response["content-disposition"], "attachment; filename=test.csv")
-        self.assertEquals("test", "".join(response.streaming_content))
+        self.assertEquals("test", self._streaming_content(response))
 
     def test_export_file_by_superuser(self):
         request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
         request.user = self.superuser
         response = export_file(request, self.export.pk, "test.csv")
         self.assertEquals(response["content-disposition"], "attachment; filename=test.csv")
-        self.assertEquals("test", "".join(response.streaming_content))
+        self.assertEquals("test", self._streaming_content(response))
 
     def test_file_not_found(self):
         request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
         request.user = self.user2
         with self.assertRaises(PermissionDenied):
             export_file(request, self.export.pk, "test.csv")
+
+    @staticmethod
+    def _streaming_content(response):
+        return "".join((c.decode('utf-8') for c in response.streaming_content))
 
 
 class ChangeLogTests(TestCase):

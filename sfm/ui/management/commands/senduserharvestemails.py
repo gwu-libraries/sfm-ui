@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
-
-from ui.models import User
-from ui.notifications import send_user_harvest_emails
+from sfm.ui.models import User
+from sfm.ui.notifications import send_user_harvest_emails
 
 
 class Command(BaseCommand):
@@ -16,6 +15,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         users = None
         if options['username']:
-            users = [User.objects.get(username = options['username'])]
+            users = [User.objects.get(username=options['username'])]
         send_user_harvest_emails(users)
         self.stdout.write('Sent user harvest emails.')

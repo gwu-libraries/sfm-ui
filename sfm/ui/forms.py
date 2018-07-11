@@ -3,7 +3,7 @@
 
 from django import forms
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -127,7 +127,7 @@ class BaseCollectionForm(forms.ModelForm):
         super(BaseCollectionForm, self).__init__(*args, **kwargs)
 
         # Set default if only 1 value.
-        if len(self.credential_list) == 1:
+        if self.credential_list and self.credential_list.count() == 1:
             self.initial['credential'] = self.credential_list[0]
         self.fields['credential'].queryset = self.credential_list
 
@@ -389,7 +389,8 @@ class BaseSeedForm(forms.ModelForm):
             Fieldset(
                 '',
                 Div(),
-                'history_note'
+                'history_note',
+                'collection'
             ),
             FormActions(
                 Submit('submit', 'Save'),

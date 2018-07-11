@@ -1,8 +1,6 @@
-from __future__ import absolute_import
 from django.core.management.base import BaseCommand, CommandError
-from ui.models import Warc
-from ui.rabbit import RabbitWorker
-
+from sfm.ui.models import Warc
+from sfm.ui.rabbit import RabbitWorker
 import json
 
 

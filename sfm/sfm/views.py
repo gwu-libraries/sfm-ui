@@ -13,4 +13,6 @@ class PasswordResetDoneView(TemplateView):
         # get the first super user email information
         context["email_info"] = 'mailto:' + superusers[0].email if superusers else ''
         return render(request, self.template_name, context)
+
+
 password_reset_done = PasswordResetDoneView.as_view()

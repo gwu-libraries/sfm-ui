@@ -2,7 +2,7 @@ import logging
 from sfmutils.consumer import BaseConsumer
 from sfmutils.harvester import CODE_UNKNOWN_ERROR, CODE_UID_NOT_FOUND, CODE_TOKEN_NOT_FOUND, CODE_TOKEN_UNAUTHORIZED, \
     CODE_UID_UNAUTHORIZED, CODE_TOKEN_SUSPENDED, CODE_UID_SUSPENDED
-from ui.models import User, Harvest, Collection, Seed, Warc, Export, HarvestStat
+from ui.models import User, Harvest, Seed, Warc, Export, HarvestStat
 from ui.jobs import collection_stop
 from ui.utils import get_email_addresses_for_collection_set, get_site_url
 from ui.export import create_readme_for_export
@@ -11,7 +11,7 @@ import json
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import iso8601
 import time
 from smtplib import SMTPException
@@ -39,9 +39,9 @@ class SfmUiConsumer(BaseConsumer):
             elif self.routing_key.startswith("export.status."):
                 self._on_export_status_message()
             else:
-                log.warn("Unexpected message with routing key %s: %s", self.routing_key,
-                         json.dumps(self.message, indent=4))
-        except Exception, e:
+                log.warning("Unexpected message with routing key %s: %s", self.routing_key,
+                            json.dumps(self.message, indent=4))
+        except Exception as e:
             log.exception(e)
             raise e
 
@@ -196,9 +196,9 @@ class SfmUiConsumer(BaseConsumer):
                         log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
                         send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
                                   receiver_emails, fail_silently=False)
-                    except SMTPException, ex:
+                    except SMTPException as ex:
                         log.error("Error sending email: %s", ex)
-                    except IOError, ex:
+                    except IOError as ex:
                         log.error("Error sending email: %s", ex)
             else:
                 log.debug("No email addresses for %s", harvest.collection.collection_set.group)
@@ -209,8 +209,8 @@ class SfmUiConsumer(BaseConsumer):
                 and current_harvest_status in (Harvest.STOP_REQUESTED, Harvest.VOIDED,
                                                Harvest.SUCCESS, Harvest.FAILURE) \
                 and harvest.status == Harvest.RUNNING:
-            log.warn('Sending an extra stop request for harvest with id %s. This may be OK or a rogue harvest.',
-                     self.message["id"])
+            log.warning('Sending an extra stop request for harvest with id %s. This may be OK or a rogue harvest.',
+                        self.message["id"])
             # Send stop message
             collection_stop(harvest.collection.id)
 
@@ -269,7 +269,7 @@ class SfmUiConsumer(BaseConsumer):
                     f.write(readme_txt)
 
             else:
-                log.warn("Not writing export README for %s since %s does not exist.", export, export.path)
+                log.warning("Not writing export README for %s since %s does not exist.", export, export.path)
 
             if export.status in (Export.SUCCESS, Export.FAILURE):
                 # Get receiver's email address
@@ -298,13 +298,13 @@ class SfmUiConsumer(BaseConsumer):
                                 log.debug("Sending email to %s: %s", receiver_email, mail_subject)
                                 send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
                                           [receiver_email], fail_silently=False)
-                            except SMTPException, ex:
+                            except SMTPException as ex:
                                 log.error("Error sending email: %s", ex)
-                            except IOError, ex:
+                            except IOError as ex:
                                 log.error("Error sending email: %s", ex)
 
                 else:
-                    log.warn("No email address for %s", export.user)
+                    log.warning("No email address for %s", export.user)
 
         except ObjectDoesNotExist:
             log.error("Export model object not found for export status message: %s",

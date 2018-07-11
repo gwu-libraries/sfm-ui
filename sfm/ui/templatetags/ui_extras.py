@@ -4,8 +4,8 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 import json as json_lib
 from collections import OrderedDict
 
-from ui.models import Harvest
-import ui.auth
+from ..models import Harvest
+from .. import auth
 
 register = template.Library()
 
@@ -132,7 +132,7 @@ def render_dict_text(value):
     return rend
 
 
-@register.assignment_tag
+@register.simple_tag
 def join_stats(d, status, sep=", "):
     joined = ""
 
@@ -173,17 +173,16 @@ def verbose_name(instance, field_name=None):
     return instance._meta.verbose_name
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def has_collection_set_based_permission(context, obj, allow_superuser=True, allow_staff=False):
-    return ui.auth.has_collection_set_based_permission(obj, context["user"], allow_superuser, allow_staff)
+    return auth.has_collection_set_based_permission(obj, context["user"], allow_superuser, allow_staff)
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def has_user_based_permission(context, obj, allow_superuser=True, allow_staff=False):
-    return ui.auth.has_user_based_permission(obj, context["user"], allow_superuser, allow_staff)
+    return auth.has_user_based_permission(obj, context["user"], allow_superuser, allow_staff)
 
 
 @register.filter
 def get_item(items, key):
     return items.get(key)
-

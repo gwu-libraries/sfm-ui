@@ -1,12 +1,9 @@
-FROM gwul/sfm-base@sha256:07b3495d4496d603d464b3f829f92e61c6d27da8b773e1076e1b6ffcfd643eaf
-MAINTAINER Justin Littman <justinlittman@gwu.edu>
+FROM gwul/sfm-base@sha256:e68cb98bdc9dc23bbed734f3e507a0ffb866b007dffea038b6af8d88a62150e6
+MAINTAINER Social Feed Manager <sfm@gwu.edu>
 
 ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
 RUN pip install -r requirements/common.txt -r requirements/release.txt
-
-#This is used to automatically create the admin user.
-RUN pip install django-finalware==0.1.0
 
 # Adds fixtures.
 ADD docker/ui/fixtures.json /opt/sfm-setup/

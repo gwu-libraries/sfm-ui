@@ -1,13 +1,13 @@
 language: python
 python:
-- '2.7'
+- '3.6'
 install: pip install -r requirements/common.txt -r requirements/master.txt
 script:
 - cd sfm
 - "./manage.py test --settings=sfm.settings.test_settings"
 notifications:
   email:
-  - justinlittman@gmail.com
+  - sfm@gwu.edu
   slack:
     secure: W1mfOzdbt4rRiIcK3QnCSElOW5FeyQTY2ydXru+44PICQvFYpHDb78bEbXrGhEolqDM7lhyc09rPobVLxm6vkicUQmlqtMEKvzkFoIwVPVQmug7JLwt4jZ+QjSJPjiWOWLLmiMq3R6juGGf9vT2ht7yMas+dkMcH99r+gJ4uc/RmwxC9/WIRH00NTz8jthJnodKogkA+O1sgLFkXur3gMZj+gCbBNTjci05thLSGbqpCGhbz14Kbuex3L628Y7e8TUciFkh+guFHid2Jenp2JYbFh0f71/NrUPzGYSMxediOXcHAqMskpD6XLmc4dajrP2De9IrXmgePbnf0fQOzNZmXtsVFhSTX6eiBQurAP3DtjAIL9TCwCsOO6gMB/FNdvpCIyEsJHgDex4RYIRB/3vAav5q0kVfD5ExR15Er0iCcD6k4AyCu2Q1P4JbfX1G7Jlq6FV1jdaQDbsGsz5QIfpTGckjy8Uz+rJwRTknwOpwbv7tbrqbtfZtfwNYHGMnNGI1uhcVczs3g4SjwKxEinXN0EyaDna3Qc7Ct312ZqMLIeNTOXkyTIg560FC8Re2LIa1NIPTjBw816wWCtRuJOvkIwiaJul8Ini6o9doH/cl012IPdWyzzuCZxbXTITesv4PWiSJiBmD/MMnFmrw3XJKx6RZrOusK/ps4FCZXm+4=
     on_success: never

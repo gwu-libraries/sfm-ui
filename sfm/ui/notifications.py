@@ -4,18 +4,18 @@ from collections import OrderedDict
 from smtplib import SMTPException
 from subprocess import check_output, CalledProcessError
 import pytz
+from itertools import chain
 
 from django.template.loader import get_template
-from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Sum, Q
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .models import User, CollectionSet, Collection, HarvestStat, Harvest
 from .sched import next_run_time
 from .utils import get_admin_email_addresses, get_site_url
-import ui.monitoring
+from . import monitoring
 
 log = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class MonitorSpace(object):
         res = self.run_check_cmd()
         split_lines = res.split('\n')
         for line in split_lines:
-            line_units = filter(None, line.split(' '))
+            line_units = list(filter(None, line.split(' ')))
             # the sfm-data and sfm-processing mount at sfm-data,
             # we only need to count the sfm-data
             if line_units:
@@ -100,9 +100,9 @@ class MonitorSpace(object):
         try:
             res = check_output(cmd, shell=True)
             log.debug("Running %s completed.", cmd)
-        except CalledProcessError, e:
+        except CalledProcessError as e:
             log.error("%s returned %s: %s", cmd, e.returncode, e.output)
-        return res
+        return res.decode('utf-8')
 
     @staticmethod
     def _size_readable_fmt(num, suffix='B'):
@@ -150,9 +150,9 @@ def send_free_space_emails():
             try:
                 log.debug("Sending email to %s: %s", msg.to, msg.subject)
                 msg.send()
-            except SMTPException, ex:
+            except SMTPException as ex:
                 log.error("Error sending email: %s", ex)
-            except IOError, ex:
+            except IOError as ex:
                 log.error("Error sending email: %s", ex)
 
 
@@ -165,7 +165,7 @@ def _create_space_email(email_address, msg_cache):
     text_template = get_template('email/free_space_email.txt')
     html_template = get_template('email/free_space_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
-    d = Context(msg_cache)
+    d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
@@ -179,11 +179,11 @@ def get_queue_data():
 
 
 def get_warn_queue(q_th_map, q_th_other):
-    hqs, eqs, uqs = ui.monitoring.monitor_queues()
+    hqs, eqs, uqs = monitoring.monitor_queues()
 
     # filter any msg count larger than the threshold
-    return filter(lambda x: x[1] >= int(q_th_map[x[0]] if x[0] in q_th_map else q_th_other),
-                  hqs.items() + eqs.items() + uqs.items())
+    return list(filter(lambda x: x[1] >= int(q_th_map[x[0]] if x[0] in q_th_map else q_th_other),
+                       chain(hqs.items(), eqs.items(), uqs.items())))
 
 
 def send_queue_warn_emails():
@@ -200,9 +200,9 @@ def send_queue_warn_emails():
             try:
                 log.debug("Sending email to %s: %s", msg.to, msg.subject)
                 msg.send()
-            except SMTPException, ex:
+            except SMTPException as ex:
                 log.error("Error sending email: %s", ex)
-            except IOError, ex:
+            except IOError as ex:
                 log.error("Error sending email: %s", ex)
 
 
@@ -211,7 +211,7 @@ def _create_queue_warn_email(email_address, msg_cache):
     html_template = get_template('email/queue_length_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
     msg_cache["monitor_url"] = _create_url(reverse('monitor'))
-    d = Context(msg_cache)
+    d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Long message queue on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
@@ -229,9 +229,9 @@ def send_user_harvest_emails(users=None):
             try:
                 log.debug("Sending email to %s: %s", msg.to, msg.subject)
                 msg.send()
-            except SMTPException, ex:
+            except SMTPException as ex:
                 log.error("Error sending email: %s", ex)
-            except IOError, ex:
+            except IOError as ex:
                 log.error("Error sending email: %s", ex)
 
         else:
@@ -257,7 +257,7 @@ def _should_send_email(user, today=None):
 def _create_email(user, collection_set_cache):
     text_template = get_template('email/user_harvest_email.txt')
     html_template = get_template('email/user_harvest_email.html')
-    d = Context(_create_context(user, collection_set_cache))
+    d = _create_context(user, collection_set_cache)
     msg = EmailMultiAlternatives("Update on your Social Feed Manager harvests", text_template.render(d),
                                  settings.EMAIL_HOST_USER, [user.email])
     msg.attach_alternative(html_template.render(d), "text/html")
@@ -366,21 +366,21 @@ def _update_stats_for_na(stats, name, collection, range_start, range_end):
 def _was_harvest_in_range(range_start, range_end, collection):
     # Harvests that have start and end (i.e., completed)
     if Harvest.objects.filter(Q(collection=collection)
-                                      & Q(date_started__isnull=False)
-                                      & Q(date_ended__isnull=False)
-                                      & (Q(date_started__range=(range_start, range_end))
-                                             | Q(date_ended__range=(range_start, range_end))
-                                             | (Q(date_started__lt=range_start) & Q(date_ended__gt=range_end)))
-                                      & ~Q(harvest_type='web')).exists():
+                              & Q(date_started__isnull=False)
+                              & Q(date_ended__isnull=False)
+                              & (Q(date_started__range=(range_start, range_end))
+                                 | Q(date_ended__range=(range_start, range_end))
+                                 | (Q(date_started__lt=range_start) & Q(date_ended__gt=range_end)))
+                              & ~Q(harvest_type='web')).exists():
         return True
     # Harvests that are still running
     # Using status=RUNNING to try to filter out some
     if Harvest.objects.filter(Q(collection=collection)
-                                      & Q(status=Harvest.RUNNING)
-                                      & Q(date_started__isnull=False)
-                                      & Q(date_ended__isnull=True)
-                                      & Q(date_started__range=(range_start, range_end))
-                                      & ~Q(harvest_type='web')).exists():
+                              & Q(status=Harvest.RUNNING)
+                              & Q(date_started__isnull=False)
+                              & Q(date_ended__isnull=True)
+                              & Q(date_started__range=(range_start, range_end))
+                              & ~Q(harvest_type='web')).exists():
         return True
     return False
 

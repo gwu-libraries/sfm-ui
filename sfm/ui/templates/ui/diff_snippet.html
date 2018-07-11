@@ -13,7 +13,7 @@
         <td>{{ diff.date }}</td>
         <td>{{ diff.user|default_if_none:"system" }}</td>
         <td>
-            {% for key, values in diff.fields.iteritems %}
+            {% for key, values in diff.fields.items %}
                 {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}" <br/>
             {% endfor %}
             {% if diff.note %}<strong>Note:</strong> {{ diff.note}}{% endif %}

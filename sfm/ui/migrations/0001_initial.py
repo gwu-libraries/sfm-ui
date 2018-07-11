@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import jsonfield.fields
+from jsonfield import JSONField
 import django.contrib.auth.models
 import django.db.models.deletion
 import django.utils.timezone
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
                 ('history_note', models.TextField(blank=True)),
-                ('group', models.ForeignKey(related_name='collection_sets', to='auth.Group')),
+                ('group', models.ForeignKey(related_name='collection_sets', to='auth.Group', on_delete=models.CASCADE)),
             ],
             options={
                 'diff_fields': ('group', 'name', 'description'),
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
                 ('history_note', models.TextField(blank=True)),
-                ('user', models.ForeignKey(related_name='credentials', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='credentials', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'diff_fields': ('name', 'platform', 'token', 'is_active'),
@@ -116,10 +116,10 @@ class Migration(migrations.Migration):
                 ('item_date_end', models.DateTimeField(null=True, blank=True)),
                 ('harvest_date_start', models.DateTimeField(null=True, blank=True)),
                 ('harvest_date_end', models.DateTimeField(null=True, blank=True)),
-                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('collection', models.ForeignKey(blank=True, to='ui.Collection', null=True)),
+                ('infos', JSONField(default=dict, blank=True)),
+                ('warnings', JSONField(default=dict, blank=True)),
+                ('errors', JSONField(default=dict, blank=True)),
+                ('collection', models.ForeignKey(blank=True, to='ui.Collection', null=True, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -133,14 +133,14 @@ class Migration(migrations.Migration):
                 ('date_started', models.DateTimeField(db_index=True, null=True, blank=True)),
                 ('date_ended', models.DateTimeField(null=True, blank=True)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
-                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('token_updates', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('uids', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('infos', JSONField(default=dict, blank=True)),
+                ('warnings', JSONField(default=dict, blank=True)),
+                ('errors', JSONField(default=dict, blank=True)),
+                ('token_updates', JSONField(default=dict, blank=True)),
+                ('uids', JSONField(default=dict, blank=True)),
                 ('warcs_count', models.PositiveIntegerField(default=0)),
                 ('warcs_bytes', models.BigIntegerField(default=0)),
-                ('collection', models.ForeignKey(related_name='harvests', to='ui.Collection')),
+                ('collection', models.ForeignKey(related_name='harvests', to='ui.Collection', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
                 ('harvest_date', models.DateField()),
                 ('item', models.CharField(max_length=255)),
                 ('count', models.PositiveIntegerField()),
-                ('harvest', models.ForeignKey(related_name='harvest_stats', to='ui.Harvest')),
+                ('harvest', models.ForeignKey(related_name='harvest_stats', to='ui.Harvest', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -263,7 +263,7 @@ class Migration(migrations.Migration):
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
                 ('history_note', models.TextField(blank=True)),
-                ('collection', models.ForeignKey(related_name='seeds', to='ui.Collection')),
+                ('collection', models.ForeignKey(related_name='seeds', to='ui.Collection', on_delete=models.CASCADE)),
             ],
             options={
                 'diff_fields': ('token', 'uid', 'is_active'),
@@ -280,18 +280,18 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField()),
                 ('date_added', models.DateTimeField(default=django.utils.timezone.now)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
-                ('harvest', models.ForeignKey(related_name='warcs', to='ui.Harvest')),
+                ('harvest', models.ForeignKey(related_name='warcs', to='ui.Harvest', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='harvest',
             name='historical_collection',
-            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCollection', null=True),
+            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCollection', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='harvest',
             name='historical_credential',
-            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCredential', null=True),
+            field=models.ForeignKey(related_name='historical_harvests', to='ui.HistoricalCredential', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='harvest',
@@ -301,7 +301,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='harvest',
             name='parent_harvest',
-            field=models.ForeignKey(related_name='child_harvests', blank=True, to='ui.Harvest', null=True),
+            field=models.ForeignKey(related_name='child_harvests', blank=True, to='ui.Harvest', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='export',
@@ -311,17 +311,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='export',
             name='user',
-            field=models.ForeignKey(related_name='exports', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='exports', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='collection',
             name='collection_set',
-            field=models.ForeignKey(related_name='collections', to='ui.CollectionSet'),
+            field=models.ForeignKey(related_name='collections', to='ui.CollectionSet', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='collection',
             name='credential',
-            field=models.ForeignKey(related_name='collections', to='ui.Credential'),
+            field=models.ForeignKey(related_name='collections', to='ui.Credential', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='harveststat',
