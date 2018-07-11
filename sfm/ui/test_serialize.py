@@ -3,7 +3,7 @@ from django.core.serializers.base import DeserializationError
 from .models import Collection, CollectionSet, Seed, Credential, Group, User, Harvest, HarvestStat, Warc, default_uuid
 from .utils import collection_path as get_collection_path
 from .utils import collection_set_path as get_collection_set_path
-import serialize
+from . import serialize
 import tempfile
 import os
 import shutil

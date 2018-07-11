@@ -1,7 +1,6 @@
 from django.test import TestCase
 from .notifications import _should_send_email, _create_email, _create_context, _create_space_email, \
-    _should_send_space_email, get_warn_queue, _create_queue_warn_email, _was_harvest_in_range
-from .notifications import MonitorSpace
+    _should_send_space_email, get_warn_queue, _create_queue_warn_email, _was_harvest_in_range, MonitorSpace
 from .models import User, Group, CollectionSet, Credential, Collection, Harvest, HarvestStat
 import datetime
 from collections import OrderedDict

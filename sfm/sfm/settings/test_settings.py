@@ -1,4 +1,4 @@
-from .common import *
+from sfm.settings.common import *
 import tempfile
 import os
 
@@ -10,7 +10,7 @@ DATABASES = {
     }
 }
 
-SFM_DATA_DIR=os.path.join(tempfile.gettempdir(), "test-data")
+SFM_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
 
 SCHEDULER_DB_URL = "sqlite:///testdb"
 

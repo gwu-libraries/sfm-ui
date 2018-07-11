@@ -2,11 +2,11 @@ from django.test import TestCase
 import json
 from mock import patch, ANY, call
 from .models import Collection, CollectionSet, Credential, Group, User, Harvest
-from jobs import collection_harvest
+from .jobs import collection_harvest
 from datetime import datetime
 import pytz
 from django.db.models.signals import post_save, pre_delete
-from sched import schedule_harvest_receiver, unschedule_harvest_receiver, toggle_collection_inactive
+from .sched import schedule_harvest_receiver, unschedule_harvest_receiver, toggle_collection_inactive
 
 
 class ScheduleTests(TestCase):
@@ -25,7 +25,6 @@ class ScheduleTests(TestCase):
 
     @patch("ui.sched.sched", autospec=True)
     def test_modify_collection(self, mock_scheduler):
-
         # Add collection
         mock_scheduler.get_job.side_effect = [None, None, True, True]
         end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
@@ -73,17 +72,16 @@ class ScheduleTests(TestCase):
                                                        trigger="interval",
                                                        start_date=ANY,
                                                        end_date=None,
-                                                       minutes=60*24)
+                                                       minutes=60 * 24)
 
     # Modify Inactive Collection
     @patch("ui.sched.sched", autospec=True)
     def test_modify_inactive_collection(self, mock_scheduler):
-
         # Add collection
         mock_scheduler.get_job.side_effect = [None, None, True, None]
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                         harvest_type="test_type", name="test_collection", is_on=True,
-                                         schedule_minutes=60)
+                                               harvest_type="test_type", name="test_collection", is_on=True,
+                                               schedule_minutes=60)
         collection_id = collection.id
         mock_scheduler.get_job.assert_has_calls([call(str(collection_id)), call("end_{}".format(collection_id))])
         mock_scheduler.remove_job.assert_not_called()
@@ -106,7 +104,6 @@ class ScheduleTests(TestCase):
     # Delete collection
     @patch("ui.sched.sched", autospec=True)
     def test_delete_collection(self, mock_scheduler):
-
         # Add collection
         mock_scheduler.get_job.side_effect = [None, None, True, None]
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,

@@ -8,7 +8,7 @@ from .utils import collection_path, get_email_addresses_for_collection_set
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.conf import settings
@@ -46,7 +46,7 @@ def collection_harvest(collection_pk):
         # Make sure that have the correct number of seeds.
         required_seed_count = collection.required_seed_count()
         if (required_seed_count is None and len(historical_seeds) == 0) or (
-                        required_seed_count is not None and required_seed_count != len(historical_seeds)):
+                required_seed_count is not None and required_seed_count != len(historical_seeds)):
             log.warning("Collection %s has wrong number of active seeds.", collection_pk)
             return
 
@@ -133,20 +133,19 @@ def collection_harvest(collection_pk):
                                                    reverse('harvest_detail', args=(harvest.id,)))
                 mail_subject = u"SFM Harvest for {} was skipped".format(
                     harvest.collection.name)
-                mail_message = u"The harvest for {} ({}) was skipped. This may be because it is scheduled too frequently " \
-                               u"and the last harvest has not had time to complete. It " \
+                mail_message = u"The harvest for {} ({}) was skipped. This may be because it is scheduled too " \
+                               u"frequently and the last harvest has not had time to complete. It " \
                                u"may also indicate a problem with SFM. The SFM administrator has been notified.".format(
-                    harvest.collection.name,
-                    harvest_url)
+                                harvest.collection.name, harvest_url)
 
                 if receiver_emails:
                     try:
                         log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
                         send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
                                   receiver_emails, fail_silently=False)
-                    except SMTPException, ex:
+                    except SMTPException as ex:
                         log.error("Error sending email: %s", ex)
-                    except IOError, ex:
+                    except IOError as ex:
                         log.error("Error sending email: %s", ex)
 
     # Send message outside the transaction

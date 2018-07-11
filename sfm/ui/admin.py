@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.contrib import admin as a
-from ui import models as m
+from . import models as m
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
@@ -38,7 +38,7 @@ class UserAdmin(AuthUserAdmin):
     fieldsets = AuthUserAdmin.fieldsets + (
         (None, {'fields': ('email_frequency', 'harvest_notifications',)}),
     )
-    list_display=['username','email','first_name','last_name','date_joined','is_staff']
+    list_display=['username', 'email', 'first_name', 'last_name', 'date_joined', 'is_staff']
 
 
 class Credential(a.ModelAdmin):

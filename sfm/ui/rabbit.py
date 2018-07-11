@@ -25,7 +25,7 @@ class RabbitWorker:
             with self.get_connection() as connection:
                 log.debug("Declaring %s exchange", self.exchange.name)
                 self.exchange(connection).declare()
-        except:
+        except Exception:
             log.error("Error connecting to RabbitMQ to declare exchange")
 
     def send_message(self, message, routing_key):

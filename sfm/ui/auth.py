@@ -4,7 +4,7 @@ from allauth.exceptions import ImmediateHttpResponse
 
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
 from django.core.exceptions import PermissionDenied

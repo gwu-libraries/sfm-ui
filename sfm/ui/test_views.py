@@ -1,12 +1,12 @@
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import RequestFactory, TestCase, Client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from .models import CollectionSet, User, Credential, Seed, Collection, Export
-from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, CollectionCreateView, \
-    CollectionDetailView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
+from .views import CollectionSetListView, CollectionSetDetailView, CollectionSetUpdateView, \
+    CollectionCreateView, SeedUpdateView, SeedCreateView, SeedDetailView, ExportDetailView, export_file, \
     ChangeLogView, UserProfileDetailView, SeedsJSONAPIView
 
 import os
@@ -106,7 +106,6 @@ class CollectionSetDetailViewTests(CollectionSetTestsMixin, TestCase):
         response = CollectionSetDetailView.as_view()(request, pk=self.collection_set1.pk)
         model_name = response.context_data["model_name"]
         item_id = response.context_data["item_id"]
-        diffs = response.context_data["diffs"]
         self.assertEqual("collection_set", model_name)
         self.assertEqual(self.collection_set1.pk, item_id)
 

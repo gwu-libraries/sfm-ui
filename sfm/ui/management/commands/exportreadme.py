@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from django.core.management.base import BaseCommand, CommandError
-from ui.export import create_readme_for_collection
-from ui.models import Collection
+from sfm.ui.export import create_readme_for_collection
+from sfm.ui.models import Collection
 
 
 class Command(BaseCommand):

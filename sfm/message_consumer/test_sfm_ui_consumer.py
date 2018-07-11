@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ui.models import Harvest, Collection, Group, CollectionSet, Credential, User, Seed, Warc, Export, HarvestStat
 import json
-from sfm_ui_consumer import SfmUiConsumer
+from .sfm_ui_consumer import SfmUiConsumer
 import iso8601
 from mock import patch
 
@@ -197,7 +197,6 @@ class ConsumerTest(TestCase):
         not_found_seed = Seed.objects.get(seed_id=seed_ids[1])
         self.assertFalse(not_found_seed.is_active)
 
-
     @patch("message_consumer.sfm_ui_consumer.collection_stop")
     def test_harvest_status_stream_failed_on_message(self, mock_collection_stop):
         self.consumer.routing_key = "harvest.status.twitter.twitter_sample"
@@ -261,7 +260,8 @@ class ConsumerTest(TestCase):
         self.consumer.routing_key = "warc_created"
         self.consumer.message = {
             "warc": {
-                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection_set/2015/07/28/11/" +
+                "path": "/var/folders/_d/3zzlntjs45nbq1f4dnv48c499mgzyf/T/tmpKwq9NL/test_collection_set/2015/07/28/"
+                        "11/" +
                         "test_collection_set-flickr-2015-07-28T11:17:36Z.warc.gz",
                 "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
                 "bytes": 26146,

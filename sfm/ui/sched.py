@@ -2,10 +2,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from django.conf import settings
 import logging
-from jobs import collection_harvest, collection_stop
-from models import Collection, Harvest
+from .jobs import collection_harvest, collection_stop
+from .models import Collection, Harvest
 import datetime
-from utils import diff_field_changed
+from .utils import diff_field_changed
 from django.core.exceptions import ObjectDoesNotExist
 
 log = logging.getLogger(__name__)

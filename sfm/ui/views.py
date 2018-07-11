@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -19,17 +19,17 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.html import mark_safe
 
-from notifications import get_free_space, get_queue_data
+from .notifications import get_free_space, get_queue_data
 from .forms import CollectionSetForm, ExportForm
-import forms
+from . import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
 from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
-from .auth import CollectionSetOrSuperuserOrStaffPermissionMixin, CollectionSetOrSuperuserPermissionMixin, \
+from .auth import CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
     has_collection_set_based_permission, CollectionSetOrCollectionVisibilityOrSuperuserOrStaffPermissionMixin
-from ui.templatetags import ui_extras
+from .templatetags import ui_extras
 
 import os
 import logging
@@ -107,7 +107,8 @@ class CollectionSetCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
     model = CollectionSet
     form_class = CollectionSetForm
     template_name = 'ui/collection_set_create.html'
-    success_message = "New collection set added. You can now add collections. A collection retrieves data from a particular social media platform."
+    success_message = "New collection set added. You can now add collections. A collection retrieves data from a " \
+                      "particular social media platform."
 
     def get_form_kwargs(self):
         kwargs = super(CollectionSetCreateView, self).get_form_kwargs()
@@ -312,8 +313,6 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
         context["credential_used_col"] = credential_used_col
         # Harvest types that are not limited support bulk add
         context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
-        harvest_list = Harvest.objects.filter(harvest_type=self.object.harvest_type,
-                                              historical_collection__id=self.object.id)
         # Can export if there is a WARC
         context["can_export"] = Warc.objects.filter(harvest__harvest_type=self.object.harvest_type,
                                                     harvest__historical_collection__id=self.object.id).exists()
@@ -549,7 +548,8 @@ class SeedDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibilityOrSu
         context["collection_set"] = CollectionSet.objects.get(id=self.object.collection.collection_set.id)
         context["item_id"] = self.object.id
         context["model_name"] = "seed"
-        can_edit = has_collection_set_based_permission(self.object, self.request.user) and self.object.collection.is_active
+        can_edit = has_collection_set_based_permission(self.object,
+                                                       self.request.user) and self.object.collection.is_active
         if self.object.collection.is_streaming():
             can_edit = can_edit and not self.object.collection.is_on
         context["can_edit"] = can_edit
@@ -1056,11 +1056,9 @@ class ChangeLogView(LoginRequiredMixin, ListView):
         context["model_name"] = self.kwargs["model"].replace("_", " ")
         try:
             context["name"] = item.name
-        except:
+        except Exception:
             context["name"] = item.token
 
-        # context["collection_set"] = self.collection.collection_set
-        # context['collection'] = self.collection
         diff_list = list()
         for historical_obj in context['history_list']:
             diff_list.append(diff_historical_object(historical_obj))

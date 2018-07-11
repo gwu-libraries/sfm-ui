@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from django.utils import timezone
 from django.template.loader import get_template

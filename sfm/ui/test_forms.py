@@ -4,8 +4,8 @@ import pytz
 from django.contrib.auth.models import Group
 from django.test import TestCase, RequestFactory
 
-from .forms import CollectionSetForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, CredentialTwitterForm, \
-    CollectionTwitterSearchForm, SeedTwitterUserTimelineForm
+from .forms import CollectionSetForm, ExportForm, CredentialWeiboForm, CredentialFlickrForm, \
+    CredentialTwitterForm, CollectionTwitterSearchForm, SeedTwitterUserTimelineForm
 from .views import CollectionSetUpdateView
 from .models import User, CollectionSet, Credential, Collection, Seed
 

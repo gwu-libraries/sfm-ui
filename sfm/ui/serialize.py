@@ -520,7 +520,7 @@ class RecordDeserializer:
         return record
 
     def _deserialize_item(self, record_filepath):
-        return self._deserialize_iter(record_filepath).next()
+        return self._deserialize_iter(record_filepath).__next__()
 
     @transaction.atomic
     def _deserialize(self, filepath):

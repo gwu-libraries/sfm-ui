@@ -1,19 +1,19 @@
-APScheduler==3.0.6
-Django==1.8.8
-django-allauth==0.25.2
-django-braces==1.8.1
-django-crispy-forms==1.5.2
-django-jsonfield==0.9.15
-django-simple-history==1.8.0
-djangorestframework==3.3.2
-django-filter==0.12.0
+APScheduler==3.5.1
+Django==2.0.7
+django-allauth==0.36.0
+django-braces==1.13.0
+django-crispy-forms==1.7.2
+django-jsonfield==1.0.1
+django-simple-history==2.2.0
+djangorestframework==3.8.2
+django-filter==1.1.0
 django-datetime-widget==0.9.3
-django-datatables-view==1.14.0
+django-datatables-view==1.16.0
 iso8601==0.1.11
-psycopg2-binary==2.7.4
-pytz==2016.4
+psycopg2-binary==2.7.5
+pytz==2018.5
 rabbitmq-admin==0.2
-SQLAlchemy==1.0.11
+SQLAlchemy==1.2.9
 
 # Pinning to correct version for sfm-utils
 requests==2.9.1

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from message_consumer.sfm_ui_consumer import SfmUiConsumer
+from sfm.message_consumer.sfm_ui_consumer import SfmUiConsumer
 from sfmutils.consumer import MqConfig, EXCHANGE
 
 QUEUE = "sfm_ui"

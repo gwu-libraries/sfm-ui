@@ -1,5 +1,5 @@
 from django_filters import FilterSet, CharFilter, IsoDateTimeFilter
-from ui.models import Warc, Seed, Harvest, Collection
+from ui.models import Warc, Collection
 from django_filters import Filter
 from django_filters.fields import Lookup
 
@@ -28,3 +28,4 @@ class CollectionFilter(FilterSet):
 
     class Meta:
         model = Collection
+        fields = ['collection_set']

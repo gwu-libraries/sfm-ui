@@ -3,7 +3,7 @@
 
 from django import forms
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.conf import settings

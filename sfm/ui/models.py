@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
 import django.db.models.options as options
@@ -117,7 +116,7 @@ class Credential(models.Model):
     ]
     credential_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     name = models.CharField(max_length=255, verbose_name='Credential name')
-    user = models.ForeignKey(User, related_name='credentials')
+    user = models.ForeignKey(User, related_name='credentials', on_delete=models.CASCADE)
     platform = models.CharField(max_length=255, help_text='Platform name', choices=PLATFORM_CHOICES)
     token = models.TextField(blank=True, unique=True)
     is_active = models.BooleanField(default=True)
@@ -157,11 +156,9 @@ class CollectionSetHistoryModel(models.Model):
         return self.collection_set_id, self.history_date
 
 
-@python_2_unicode_compatible
 class CollectionSet(models.Model):
     collection_set_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    group = models.ForeignKey(Group,
-                              related_name='collection_sets')
+    group = models.ForeignKey(Group, related_name='collection_sets', on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False,
                             verbose_name='Collection set name')
     description = models.TextField(blank=True)
@@ -295,7 +292,6 @@ class CollectionHistoryModel(models.Model):
         return self.collection_id, self.history_date
 
 
-@python_2_unicode_compatible
 class Collection(models.Model):
     TWITTER_SEARCH = 'twitter_search'
     TWITTER_FILTER = "twitter_filter"
@@ -370,8 +366,8 @@ class Collection(models.Model):
         # This can be expanded with additional options
     ]
     collection_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    collection_set = models.ForeignKey(CollectionSet, related_name='collections')
-    credential = models.ForeignKey(Credential, related_name='collections')
+    collection_set = models.ForeignKey(CollectionSet, related_name='collections', on_delete=models.CASCADE)
+    credential = models.ForeignKey(Credential, related_name='collections', on_delete=models.CASCADE)
     harvest_type = models.CharField(max_length=255, choices=HARVEST_CHOICES)
     name = models.CharField(max_length=255, verbose_name='Collection name')
     description = models.TextField(blank=True)
@@ -544,11 +540,10 @@ class SeedHistoryModel(models.Model):
         return self.seed_id, self.history_date
 
 
-@python_2_unicode_compatible
 class Seed(models.Model):
     UPDATE_VIEW = "updateView"
     CREATE_VIEW = "createView"
-    collection = models.ForeignKey(Collection, related_name='seeds')
+    collection = models.ForeignKey(Collection, related_name='seeds', on_delete=models.CASCADE)
     seed_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     token = models.TextField(blank=True)
     uid = models.TextField(blank=True)
@@ -636,12 +631,15 @@ class Harvest(models.Model):
         (PAUSED, "Paused")
     )
     harvest_type = models.CharField(max_length=255)
-    historical_collection = models.ForeignKey(HistoricalCollection, related_name='historical_harvests', null=True)
-    historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True)
+    historical_collection = models.ForeignKey(HistoricalCollection, related_name='historical_harvests', null=True,
+                                              on_delete=models.CASCADE)
+    historical_credential = models.ForeignKey(HistoricalCredential, related_name='historical_harvests', null=True,
+                                              on_delete=models.CASCADE)
     historical_seeds = models.ManyToManyField(HistoricalSeed, related_name='historical_harvests')
     harvest_id = models.CharField(max_length=32, unique=True, default=default_uuid)
-    collection = models.ForeignKey(Collection, related_name='harvests')
-    parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True)
+    collection = models.ForeignKey(Collection, related_name='harvests', on_delete=models.CASCADE)
+    parent_harvest = models.ForeignKey("self", related_name='child_harvests', null=True, blank=True,
+                                       on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=REQUESTED)
     date_requested = models.DateTimeField(blank=True, default=timezone.now)
     date_started = models.DateTimeField(blank=True, null=True, db_index=True)
@@ -695,7 +693,7 @@ class HarvestStatManager(models.Manager):
 
 
 class HarvestStat(models.Model):
-    harvest = models.ForeignKey(Harvest, related_name="harvest_stats")
+    harvest = models.ForeignKey(Harvest, related_name="harvest_stats", on_delete=models.CASCADE)
     harvest_date = models.DateField()
     item = models.CharField(max_length=255)
     count = models.PositiveIntegerField()
@@ -718,7 +716,7 @@ class WarcManager(models.Manager):
 
 
 class Warc(models.Model):
-    harvest = models.ForeignKey(Harvest, related_name='warcs')
+    harvest = models.ForeignKey(Harvest, related_name='warcs', on_delete=models.CASCADE)
     warc_id = models.CharField(max_length=32, unique=True)
     path = models.TextField()
     sha1 = models.CharField(max_length=42)
@@ -786,8 +784,8 @@ class Export(models.Model):
         (100000, "1,000,000"),
         (None, "Single file"),
     ]
-    user = models.ForeignKey(User, related_name='exports')
-    collection = models.ForeignKey(Collection, blank=True, null=True)
+    user = models.ForeignKey(User, related_name='exports', on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, blank=True, null=True, on_delete=models.CASCADE)
     seeds = models.ManyToManyField(Seed, blank=True)
     export_id = models.CharField(max_length=32, unique=True, default=default_uuid)
     export_type = models.CharField(max_length=255)
