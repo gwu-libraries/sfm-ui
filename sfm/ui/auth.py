@@ -79,7 +79,7 @@ def has_collection_set_based_permission(obj, user, allow_superuser=True, allow_s
     if hasattr(obj, "get_collection_set"):
         collection_set = obj.get_collection_set()
         # User is logged in
-        if user.is_authenticated():
+        if user.is_authenticated:
             # If staff or superuser or in group, then yes.
             if (allow_staff and user.is_staff) \
                     or (allow_superuser and user.is_superuser) \
@@ -116,7 +116,7 @@ def has_user_based_permission(obj, user, allow_superuser=True, allow_staff=False
     if hasattr(obj, "get_user"):
         obj_user = obj.get_user()
         # User is logged in
-        if user.is_authenticated():
+        if user.is_authenticated:
             # If staff or superuser or share a common group, then yes.
             if (allow_staff and user.is_staff) \
                     or (allow_superuser and user.is_superuser) \

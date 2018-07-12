@@ -127,7 +127,7 @@ class BaseCollectionForm(forms.ModelForm):
         super(BaseCollectionForm, self).__init__(*args, **kwargs)
 
         # Set default if only 1 value.
-        if len(self.credential_list) == 1:
+        if self.credential_list and self.credential_list.count() == 1:
             self.initial['credential'] = self.credential_list[0]
         self.fields['credential'].queryset = self.credential_list
 

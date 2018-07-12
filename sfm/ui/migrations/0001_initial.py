@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import jsonfield.fields
+from jsonfield import JSONField
 import django.contrib.auth.models
 import django.db.models.deletion
 import django.utils.timezone
@@ -116,9 +116,9 @@ class Migration(migrations.Migration):
                 ('item_date_end', models.DateTimeField(null=True, blank=True)),
                 ('harvest_date_start', models.DateTimeField(null=True, blank=True)),
                 ('harvest_date_end', models.DateTimeField(null=True, blank=True)),
-                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('infos', JSONField(default=dict, blank=True)),
+                ('warnings', JSONField(default=dict, blank=True)),
+                ('errors', JSONField(default=dict, blank=True)),
                 ('collection', models.ForeignKey(blank=True, to='ui.Collection', null=True, on_delete=models.CASCADE)),
             ],
         ),
@@ -133,11 +133,11 @@ class Migration(migrations.Migration):
                 ('date_started', models.DateTimeField(db_index=True, null=True, blank=True)),
                 ('date_ended', models.DateTimeField(null=True, blank=True)),
                 ('date_updated', models.DateTimeField(auto_now=True)),
-                ('infos', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('warnings', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('errors', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('token_updates', jsonfield.fields.JSONField(default=dict, blank=True)),
-                ('uids', jsonfield.fields.JSONField(default=dict, blank=True)),
+                ('infos', JSONField(default=dict, blank=True)),
+                ('warnings', JSONField(default=dict, blank=True)),
+                ('errors', JSONField(default=dict, blank=True)),
+                ('token_updates', JSONField(default=dict, blank=True)),
+                ('uids', JSONField(default=dict, blank=True)),
                 ('warcs_count', models.PositiveIntegerField(default=0)),
                 ('warcs_bytes', models.BigIntegerField(default=0)),
                 ('collection', models.ForeignKey(related_name='harvests', to='ui.Collection', on_delete=models.CASCADE)),

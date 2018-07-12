@@ -1,4 +1,4 @@
-FROM gwul/sfm-base@sha256:81f3ecc962b9510604ea3dca9a385ba1012268fc07bf1496975f91a69817d939
+FROM gwul/sfm-base@sha256:e68cb98bdc9dc23bbed734f3e507a0ffb866b007dffea038b6af8d88a62150e6
 MAINTAINER Justin Littman <justinlittman@gwu.edu>
 
 # Install apache

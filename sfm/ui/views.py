@@ -308,7 +308,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
             credential_used_col_object = Collection.objects.filter(credential=self.object.credential.pk,
                                                                    harvest_type__in=Collection.STREAMING_HARVEST_TYPES,
                                                                    is_on=True)
-            if len(credential_used_col_object) != 0:
+            if credential_used_col_object.count() != 0:
                 credential_used_col = credential_used_col_object[0]
         context["credential_used_col"] = credential_used_col
         # Harvest types that are not limited support bulk add
@@ -384,7 +384,7 @@ def _get_harvest_type_name(harvest_type):
 def _get_credential_list(collection_set_pk, harvest_type, extra_credential=None):
     collection_set = CollectionSet.objects.get(pk=collection_set_pk)
     platform = Collection.HARVEST_TYPES_TO_PLATFORM[harvest_type]
-    q = Q(platform=platform, user=User.objects.filter(groups=collection_set.group))
+    q = Q(platform=platform, user__in=User.objects.filter(groups=collection_set.group))
     if extra_credential:
         q = q | Q(pk=extra_credential.pk)
     return Credential.objects.filter(q).filter(is_active=True).order_by('name')

@@ -27,7 +27,7 @@ class CollectionSetFormTest(TestCase):
         self.assertEqual([self.group, ], list(form.fields['group'].queryset))
 
     def test_valid_data(self):
-        groupno = Group.objects.filter(name='testgroup1')
+        groupno = Group.objects.get(name='testgroup1').id
         form = CollectionSetForm({
             'name': 'my test collection set',
             'description': 'my description',
@@ -59,7 +59,7 @@ class CollectionSetUpdateFormTest(TestCase):
     def test_valid_data(self):
         request = self.factory.get(self.path)
         request.user = self.user
-        groupno = Group.objects.filter(name='testgroup1')
+        groupno = Group.objects.get(name='testgroup1').id
         response = CollectionSetUpdateView.as_view()(request,
                                                      pk=self.collection_set.pk)
         form = CollectionSetForm({

@@ -4,9 +4,9 @@ from collections import OrderedDict
 from smtplib import SMTPException
 from subprocess import check_output, CalledProcessError
 import pytz
+from itertools import chain
 
 from django.template.loader import get_template
-from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Sum, Q
 from django.conf import settings
@@ -44,7 +44,7 @@ class MonitorSpace(object):
         res = self.run_check_cmd()
         split_lines = res.split('\n')
         for line in split_lines:
-            line_units = filter(None, line.split(' '))
+            line_units = list(filter(None, line.split(' ')))
             # the sfm-data and sfm-processing mount at sfm-data,
             # we only need to count the sfm-data
             if line_units:
@@ -165,7 +165,7 @@ def _create_space_email(email_address, msg_cache):
     text_template = get_template('email/free_space_email.txt')
     html_template = get_template('email/free_space_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
-    d = Context(msg_cache)
+    d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
@@ -182,8 +182,8 @@ def get_warn_queue(q_th_map, q_th_other):
     hqs, eqs, uqs = monitoring.monitor_queues()
 
     # filter any msg count larger than the threshold
-    return filter(lambda x: x[1] >= int(q_th_map[x[0]] if x[0] in q_th_map else q_th_other),
-                  hqs.items() + eqs.items() + uqs.items())
+    return list(filter(lambda x: x[1] >= int(q_th_map[x[0]] if x[0] in q_th_map else q_th_other),
+                       chain(hqs.items(), eqs.items(), uqs.items())))
 
 
 def send_queue_warn_emails():
@@ -211,7 +211,7 @@ def _create_queue_warn_email(email_address, msg_cache):
     html_template = get_template('email/queue_length_email.html')
     msg_cache["url"] = _create_url(reverse('home'))
     msg_cache["monitor_url"] = _create_url(reverse('monitor'))
-    d = Context(msg_cache)
+    d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Long message queue on SFM server",
                                  text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
@@ -257,7 +257,7 @@ def _should_send_email(user, today=None):
 def _create_email(user, collection_set_cache):
     text_template = get_template('email/user_harvest_email.txt')
     html_template = get_template('email/user_harvest_email.html')
-    d = Context(_create_context(user, collection_set_cache))
+    d = _create_context(user, collection_set_cache)
     msg = EmailMultiAlternatives("Update on your Social Feed Manager harvests", text_template.render(d),
                                  settings.EMAIL_HOST_USER, [user.email])
     msg.attach_alternative(html_template.render(d), "text/html")

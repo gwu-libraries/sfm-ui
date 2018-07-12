@@ -265,7 +265,7 @@ class RecordSerializer:
     @staticmethod
     def _write_readme(model_name, obj, path):
         readme_template = get_template('readme/{}.txt'.format(model_name))
-        readme_txt = readme_template.render(Context({model_name: obj, "now": datetime_now()}))
+        readme_txt = readme_template.render({model_name: obj, "now": datetime_now()})
         readme_filepath = os.path.join(path, "README.txt")
         log.debug("Writing %s README to %s: %s", model_name, readme_filepath, readme_txt)
         with codecs.open(readme_filepath, "w", encoding="utf-8") as f:
