@@ -5,9 +5,6 @@ ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
 RUN pip install -r requirements/common.txt -r requirements/release.txt
 
-#This is used to automatically create the admin user.
-RUN pip install django-finalware==0.1.0
-
 # Adds fixtures.
 ADD docker/ui/fixtures.json /opt/sfm-setup/
 

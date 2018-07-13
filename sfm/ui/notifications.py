@@ -102,7 +102,7 @@ class MonitorSpace(object):
             log.debug("Running %s completed.", cmd)
         except CalledProcessError as e:
             log.error("%s returned %s: %s", cmd, e.returncode, e.output)
-        return res
+        return res.decode('utf-8')
 
     @staticmethod
     def _size_readable_fmt(num, suffix='B'):

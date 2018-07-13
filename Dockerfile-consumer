@@ -5,8 +5,6 @@ ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
 RUN pip install -r requirements/common.txt -r requirements/release.txt
 
-RUN pip install django-finalware==0.1.0
-
 ADD docker/consumer/invoke_consumer.sh /opt/sfm-setup/
 RUN chmod +x /opt/sfm-setup/invoke_consumer.sh
 

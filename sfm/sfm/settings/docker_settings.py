@@ -1,32 +1,5 @@
 from .common import *
 
-INSTALLED_APPS.append("finalware")
-
-# This field is stored in `User.USERNAME_FIELD`.
-# This is usually a `username` or  an `email`.
-SITE_SUPERUSER_USERNAME = env.get('SFM_SITE_ADMIN_NAME', 'sfmadmin')
-
-# This field is stored in the `email` field, provided,
-# that `User.USERNAME_FIELD` is not an `email`.
-# If `User.USERNAME_FIELD` is already an email address,
-# set `SITE_SUPERUSER_EMAIL = SITE_SUPERUSER_USERNAME`
-SITE_SUPERUSER_EMAIL = env.get('SFM_SITE_ADMIN_EMAIL', 'nowhere@example.com')
-
-# A hashed version of `SITE_SUPERUSER_PASSWORD` will be store
-# in superuser's `password` field.
-SITE_SUPERUSER_PASSWORD = env.get('SFM_SITE_ADMIN_PASSWORD', 'password')
-
-# Configure sites
-SITE_OBJECTS_INFO_DICT = {
-    '1': {
-        'name': 'SFM',
-        'domain': env.get('SFM_HOST', 'localhost')
-    },
-    '2': {
-        'name': 'SFM-80',
-        'domain': env.get('SFM_HOSTNAME', 'localhost')
-    }
-}
 SITE_ID = 2 if env.get('SFM_USE_HTTPS', 'False').lower() == 'true' else 1
 
 if 'SFM_SITE_ADMIN_EMAIL' in env:
