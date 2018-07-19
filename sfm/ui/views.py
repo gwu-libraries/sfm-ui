@@ -289,7 +289,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
                 seed_warning_message = "1 active seed must be added before harvesting can be turned on."
             elif self.object.active_seed_count() > 1:
                 seed_error_message = "Deactivate all seeds except 1 before harvesting can be turned on."
-        elif self.object.required_seed_count() > 1:
+        elif self.object.required_seed_count() is not None and self.object.required_seed_count() > 1:
             if self.object.active_seed_count() < self.object.required_seed_count():
                 seed_warning_message = "{} active seeds must be added before harvesting can be turned on.".format(
                     self.object.required_seed_count())
@@ -329,19 +329,18 @@ def download_seed_list(request, pk):
     check_collection_set_based_permission(collection, request.user, allow_staff=True, allow_collection_visibility=True)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="seedlist.csv"'
-    response.write("\xEF\xBB\xBF")
     writer = csv.writer(response, delimiter=',')
     writer.writerow([
-        u"Token",
-        u"Uid",
-        u"Link",
+        "Token",
+        "Uid",
+        "Link",
     ])
     for seed in collection.seeds.all():
         if seed.is_active:
             writer.writerow([
-                seed.token.encode("utf-8"),
-                seed.uid.encode("utf-8"),
-                (seed.social_url() or "").encode("utf-8")
+                seed.token,
+                seed.uid,
+                (seed.social_url() or "")
             ])
     return response
 
@@ -627,7 +626,6 @@ class SeedUpdateView(LoginRequiredMixin, CollectionSetOrSuperuserPermissionMixin
 
     def get_success_url(self):
         return reverse("seed_detail", args=(self.object.pk,))
-
 
 class BulkSeedCreateView(LoginRequiredMixin, View):
     template_name = 'ui/bulk_seed_create.html'
@@ -989,7 +987,7 @@ def export_file(request, pk, file_name):
             response = StreamingHttpResponse()
             response['Content-Disposition'] = 'attachment; filename=%s' % file_name
             response['Content-Type'] = 'application/octet-stream'
-            file_obj = open(filepath)
+            file_obj = open(filepath, 'rb')
             response.streaming_content = _read_file_chunkwise(file_obj)
             return response
         else:

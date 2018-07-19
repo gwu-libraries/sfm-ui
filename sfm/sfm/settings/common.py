@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'message_consumer',             # Message Consumer
     'simple_history',
     'rest_framework',               # For REST API
+    'django_filters',
     'api',
     'datetimewidget'
 ]

@@ -2,7 +2,6 @@ import logging
 
 from django.utils import timezone
 from django.template.loader import get_template
-from django.template import Context
 
 from .models import Export
 from .utils import diff_collection_and_seeds_history
@@ -88,10 +87,10 @@ def request_export(export):
 
 def _create_readme(collection, export, now):
     readme_template = get_template('readme/export.txt')
-    return readme_template.render(Context({"collection": collection,
-                                           "export": export,
-                                           "diffs": diff_collection_and_seeds_history(collection),
-                                           "now": now}))
+    return readme_template.render({"collection": collection,
+                                   "export": export,
+                                   "diffs": diff_collection_and_seeds_history(collection),
+                                   "now": now})
 
 
 def create_readme_for_collection(collection):

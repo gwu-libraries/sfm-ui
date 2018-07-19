@@ -389,7 +389,8 @@ class BaseSeedForm(forms.ModelForm):
             Fieldset(
                 '',
                 Div(),
-                'history_note'
+                'history_note',
+                'collection'
             ),
             FormActions(
                 Submit('submit', 'Save'),

@@ -1,2 +1,3 @@
+#Kludge for building docker
 git+https://github.com/gwu-libraries/sfm-utils.git@py3#egg=sfmutils
 #git+https://github.com/gwu-libraries/sfm-utils.git@1.12.0#egg=sfmutils
