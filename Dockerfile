@@ -4,7 +4,7 @@ MAINTAINER Social Feed Manager <sfm@gwu.edu>
 # Install apache
 RUN apt-get update && apt-get install -y \
     apache2=2.4* \
-    libapache2-mod-wsgi=4.5*
+    apache2-dev=2.4*
 
 ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
@@ -15,6 +15,11 @@ ADD docker/ui/fixtures.json /opt/sfm-setup/
 
 # Add envvars. User and group for Apache is set in envvars.
 ADD docker/ui/envvars /etc/apache2/
+
+# Add WSGI
+RUN pip3 install mod_wsgi
+ADD docker/ui/wsgi.load /etc/apache2/mods-available/wsgi.load
+RUN a2enmod wsgi
 
 # Enable sfm site
 ADD docker/ui/apache.conf /etc/apache2/sites-available/sfm.conf
