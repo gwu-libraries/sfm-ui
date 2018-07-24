@@ -3,8 +3,8 @@ MAINTAINER Social Feed Manager <sfm@gwu.edu>
 
 # Install apache
 RUN apt-get update && apt-get install -y \
-    apache2=2.4.10-10+deb8u* \
-    libapache2-mod-wsgi=4.3.0-1
+    apache2=2.4* \
+    libapache2-mod-wsgi=4.5*
 
 ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
