@@ -838,7 +838,8 @@ class ExportListView(LoginRequiredMixin, ListView):
         for export in exports:
             seeds = list(export.seeds.all())
             collection = seeds[0].collection if seeds else export.collection
-            export_list.append((collection.collection_set, collection, export))
+            if collection:
+                export_list.append((collection.collection_set, collection, export))
         context['export_list'] = export_list
         return context
 
