@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='export',
             name='errors',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='export',
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='export',
             name='infos',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='export',
@@ -105,17 +105,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='export',
             name='warnings',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='harvest',
             name='errors',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='harvest',
             name='infos',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='harvest',
@@ -125,17 +125,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='harvest',
             name='token_updates',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default={}),
         ),
         migrations.AlterField(
             model_name='harvest',
             name='uids',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default={}),
         ),
         migrations.AlterField(
             model_name='harvest',
             name='warnings',
-            field=jsonfield.fields.JSONField(blank=True),
+            field=jsonfield.fields.JSONField(blank=True, default=[]),
         ),
         migrations.AlterField(
             model_name='historicalcollection',
