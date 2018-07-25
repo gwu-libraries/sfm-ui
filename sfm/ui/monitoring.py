@@ -2,7 +2,9 @@ import datetime
 from rabbitmq_admin import AdminAPI
 from django.conf import settings
 from .models import Harvest, Export
+import logging
 
+log = logging.getLogger(__name__)
 
 def monitor_harvests():
     # From 3 days ago to the present. This will omit old activity.
@@ -39,9 +41,9 @@ class QueueAPI(AdminAPI):
         for queue in self._api_get("/api/queues"):
             queue_name = queue["name"].replace("_", " ").title()
             if queue_name.endswith("Harvester") or queue_name.endswith("Priority"):
-                harvester_queues[queue_name] = queue["messages"]
+                harvester_queues[queue_name] = queue.get("messages", 0)
             elif queue_name.endswith("Exporter"):
-                exporter_queues[queue_name] = queue["messages"]
+                exporter_queues[queue_name] = queue.get("messages", 0)
             elif queue_name.endswith("Ui"):
-                ui_queues[queue_name] = queue["messages"]
+                ui_queues[queue_name] = queue.get("messages", 0)
         return harvester_queues, exporter_queues, ui_queues

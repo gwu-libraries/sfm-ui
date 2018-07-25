@@ -2,7 +2,6 @@
 
 from django.db import migrations
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,5 +9,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL('delete from apscheduler_jobs;')
+        migrations.RunSQL('drop table if exists apscheduler_jobs;')
     ]

@@ -14,6 +14,8 @@ psycopg2-binary==2.7.5
 pytz==2018.5
 rabbitmq-admin==0.2
 SQLAlchemy==1.2.9
+# Used when executing SQL in migration.
+sqlparse==0.2.4
 
 # Pinning to correct version for sfm-utils
 requests==2.19.1
