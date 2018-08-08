@@ -36,7 +36,7 @@ API is short for “Application Programming Interface” and in this case is a w
 * Searching tweets
 * Filtering real-time tweets (i.e., the tweets as they are passing through the Twitter platform upon posting)
 
-While you can write your own software for accessing the [Twitter API](https://dev.twitter.com/rest/public), a number of tools already exist. They are quite varied in their capabilities and require different levels of technical skills and infrastructure. These include:
+While you can write your own software for accessing the [Twitter API](https://developer.twitter.com/en/docs), a number of tools already exist. They are quite varied in their capabilities and require different levels of technical skills and infrastructure. These include:
 * Software libraries (e.g., [Tweepy](http://www.tweepy.org/) for Python and [rtweet](https://github.com/mkearney/rtweet) for R)
 * Command line tools (e.g., [Twarc](https://github.com/docnow/twarc))
 * Web applications (e.g., [DMI-TCAT](https://github.com/digitalmethodsinitiative/dmi-tcat) and our very own [Social Feed Manager](http://go.gwu.edu/sfm))
@@ -62,7 +62,7 @@ A number of individuals and organizations have publicly posted Twitter datasets,
 
 Twitter’s Developer Policy is generally interpreted as allowing sharing of tweets locally, i.e., within an academic institution. For example, we share the datasets we have collected at GW Libraries with members of the GW research community (but when sharing outside the GW community, we only share the tweet ids). However, only a small number of institutions proactively collect Twitter data -- your library is a good place to inquire.
 
-Another option for acquiring an existing Twitter dataset is [TweetSets](https://tweetsets.library.gwu.edu/), a web application that I’ve developed. TweetSets allows you to create your own dataset by querying and limiting an existing dataset. For example, you can create a dataset that only contains original tweets with the term “trump” from the Women’s March dataset. If you are local, TweetSets will allow you to download the complete tweet; otherwise, just the tweet ids can be downloaded.
+Another option for acquiring an existing Twitter dataset is [TweetSets](https://tweetsets.library.gwu.edu/), a web application that I’ve developed. TweetSets allows you to create your own dataset by querying and limiting an existing dataset. For example, you can create a dataset that only contains original tweets with the term “trump” from the Women’s March dataset. If you are local, TweetSets will allow you to download the complete tweet; otherwise, just the tweet ids can be downloaded. Currently, TweetSets includes nearly a half billion tweets.
 
 ### 3.  Purchase from Twitter
 You can purchase historical Twitter data directly from Twitter, using the [Historical PowerTrack](https://developer.twitter.com/en/docs/tweets/batch-historical/overview) enterprise product.
@@ -85,9 +85,11 @@ Twitter data options available from a service provider generally include one or 
 
 Twitter service providers generally provide reliable access to the APIs, with redundancy and backfill. This means that you will not miss tweets because of network problems or other issues that might occur when using a tool to access the APIs yourself. Note, also, that some service providers can provide data from other social media platforms, such as Facebook.
 
-Despite what the sales representative may tell you, most Twitter service providers’ offerings focus on marketing and business intelligence, not academic research. The notable exception is DiscoverText, which is focused primarily on supporting academic researchers. DiscoverText allows you to acquire data from the public Twitter APIs, as well as purchasing historical tweets. Within the DiscoverText platform, tweets can be filtered, coded, and classified (using machine learning).
+Despite what the sales representative may tell you, most Twitter service providers’ offerings focus on marketing and business intelligence, not academic research. The notable exception is DiscoverText, which is focused primarily on supporting academic researchers. DiscoverText allows you to acquire data from the public Twitter Search API; purchase historical tweets through the Twitter data access tool, Sifter; or upload other types of textual data. [Sifter](http://sifter.texifter.com) provides free cost estimates and has a lower entry price point ($32.50) than purchasing from Twitter. Within the DiscoverText platform, tweets can be searched, filtered, de-duplicated, coded, and classified (using machine learning), along with a host of other functionality. Key for academics are features for measuring inter-coder reliability and adjudicating annotator disagreements.
 
-Crimson Hexagon focuses on marketing, but also supports academic research. [Social Data Analytics at Boston University](https://www.sodaanalyticsatbu.org/) is a new entry in the academic field.
+Crimson Hexagon focuses on marketing, but also supports academic research. [Soda Analytics](https://www.sodanalytics.com/) is a new entry in the academic field.
+
+Note that some academic institutions have licenses to Twitter service providers; check with your department or a data services librarian.
 
 There are some limitations of Twitter service providers that you should be aware of. Whether these limitations are significant will depend on your research requirements.
 
