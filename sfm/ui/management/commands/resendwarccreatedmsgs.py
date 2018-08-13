@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from sfm.ui.models import Warc
-from sfm.ui.rabbit import RabbitWorker
+from ui.models import Warc
+from ui.rabbit import RabbitWorker
 import json
 
 

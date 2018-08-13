@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from sfm.ui.notifications import send_free_space_emails
+from ui.notifications import send_free_space_emails
 
 
 class Command(BaseCommand):

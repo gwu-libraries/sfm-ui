@@ -440,7 +440,7 @@ class RecordDeserializer:
                                                  "seed_id", Seed)
 
             # Harvests
-            self._deserialize(harvest_filepath)
+            self._deserialize_harvests(harvest_filepath)
 
             # Harvest stats
             self._deserialize(harvest_stats_filepath)
@@ -498,6 +498,16 @@ class RecordDeserializer:
 
         self._deserialize_historical_objects(historical_credentials_record_filepath, credentials_record_filepath,
                                              "credential_id", Credential, credential_ids)
+
+    @transaction.atomic
+    def _deserialize_harvests(self, filepath):
+        for d_harvest in self._deserialize_iter(filepath):
+            # Due to historical reasons, these JSON fields are a mess.
+            if isinstance(d_harvest.object.infos, str):
+                d_harvest.object.infos = json.loads(d_harvest.object.infos)
+                d_harvest.object.warnings = json.loads(d_harvest.object.warnings)
+                d_harvest.object.errors = json.loads(d_harvest.object.errors)
+            d_harvest.save()
 
     @transaction.atomic
     def _deserialize_historical_objects(self, historical_record_filepath, record_filepath, record_id_field, Model,

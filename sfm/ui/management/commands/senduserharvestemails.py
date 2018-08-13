@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from sfm.ui.models import User
-from sfm.ui.notifications import send_user_harvest_emails
+from ui.models import User
+from ui.notifications import send_user_harvest_emails
 
 
 class Command(BaseCommand):
