@@ -391,10 +391,10 @@ class QueueNotificationTests(TestCase):
         queue_th_map = {'Twitter Rest Harvester': '20', 'Web Harvester': '25', 'Sfm Ui': '15'}
         queue_th_other = '10'
         msg_cache['queue_data'] = get_warn_queue(queue_th_map, queue_th_other)
-        self.assertEqual(
+        self.assertEqual(dict(
             [('Twitter Rest Harvester', 100), ('Web Harvester', 50), ('Tumblr Harvester', 200),
-             ('Twitter Rest Exporter', 100), ('Sfm Ui', 25)],
-            msg_cache['queue_data'])
+             ('Twitter Rest Exporter', 100), ('Sfm Ui', 25)]),
+            dict(msg_cache['queue_data']))
 
     def test_create_email(self):
         msg = _create_queue_warn_email("superuser@test.com", {})
