@@ -228,18 +228,16 @@ PERFORM_MONITOR_QUEUE = env.get('SFM_PERFORM_MONITOR_QUEUE', 'True') == 'True'
 MONITOR_QUEUE_HOUR_INTERVAL = env.get('SFM_MONITOR_QUEUE_HOUR_INTERVAL', '12')
 # queue threshold for each harvester to send warning message
 QUEUE_LENGTH_THRESHOLD = {
-    'Web Harvester': env.get('WEB_QUEUE_LENGTH_THRESHOLD', '25')
-    # 'Twitter Rest Harvester': '33',
+    'Sfm Ui': env.get('UI_QUEUE_LENGTH_THRESHOLD', '20'),
+    'Twitter Rest Harvester': env.get('TWITTER_REST_HARVESTER_QUEUE_LENGTH_THRESHOLD', '5'),
+    'Twitter Rest Harvester Priority': env.get('TWITTER_REST_HARVESTER_QUEUE_LENGTH_THRESHOLD', '5')
     # 'Flickr Harvester': '20',
     # 'Tumblr Harvester': '30',
-    # 'Twitter Harvester': '20',
     # 'Weibo Harvester': '30',
     # 'Weibo Exporter': '40',
     # 'Twitter Stream Exporter': '10',
-    # 'Twitter Rest Exporter': '50',
     # 'Tumblr Exporter': '60',
     # 'Flickr Exporter': '70',
-    # 'Sfm Ui':'10'
 }
 # other harvester not setting in above map, the default value will be 10
 QUEUE_LENGTH_THRESHOLD_OTHER = env.get('QUEUE_LENGTH_THRESHOLD_OTHER', '5')
