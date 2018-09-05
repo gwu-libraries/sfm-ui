@@ -2,6 +2,8 @@
 
 [![DOI](https://zenodo.org/badge/39789776.svg)](https://zenodo.org/badge/latestdoi/39789776)
 [![Build Status](https://travis-ci.org/gwu-libraries/sfm-ui.svg?branch=master)](https://travis-ci.org/gwu-libraries/sfm-ui)
+[![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/gwu-libraries/sfm-ui.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/gwu-libraries/sfm-ui/context:python)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/gwu-libraries/sfm-ui.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/gwu-libraries/sfm-ui/alerts)
 
 Social Feed Manager (SFM) harvests social media data from multiple platforms' public APIs to help archivists,
 librarians, and researchers to build social media collections. [More information about the project itself.](http://gwu-libraries.github.io/sfm-ui)
