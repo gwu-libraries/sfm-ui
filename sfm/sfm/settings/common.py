@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 from os import environ as env
 from django.conf.locale.en import formats as sfm_formats
+import requests
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,7 +32,15 @@ DEBUG = env.get('SFM_DEBUG', 'True') == 'True'
 # Used when DEBUG = False
 # See https://docs.djangoproject.com/en/1.8/ref/settings/#allowed-hosts
 # This will remove ports if provided.
-ALLOWED_HOSTS = (env.get('SFM_HOST', 'localhost').split(":")[0], 'api', 'ui')
+ALLOWED_HOSTS = [env.get('SFM_HOST', 'localhost').split(":")[0], 'api', 'ui']
+if env.get('SFM_USE_ELB', 'False') == 'True':
+    try:
+        internal_ip = requests.get('http://instance-data/latest/meta-data/local-ipv4').text
+    except requests.exceptions.ConnectionError:
+        pass
+    else:
+        ALLOWED_HOSTS.append(internal_ip)
+
 
 # Application definition
 
