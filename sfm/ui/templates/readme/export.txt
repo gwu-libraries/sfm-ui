@@ -31,7 +31,7 @@ Harvest options:
 Change log:
 
 {% for diff in diffs %}Change to {{ diff.obj | name }} ({{ diff.obj|verbose_name }}) on {{ diff.date }} by {{ diff.user|default_if_none:"system" }}:
-{% for key, values in diff.fields.iteritems %}* {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}"
+{% for key, values in diff.fields.items %}* {{ key }}: "{{ values.0|name|default_if_none:"blank" }}" changed to "{{ values.1|name }}"
 {% endfor %}{% if diff.note %}Note: {{ diff.note}}
 {% endif %}
 {% empty %}No changes yet.{% endfor %}
