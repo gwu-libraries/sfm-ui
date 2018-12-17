@@ -491,9 +491,14 @@ class SeedTwitterSearchForm(BaseSeedForm):
                               help_text='Geocode in the format latitude,longitude,radius. '
                                         'Example: 38.899434,-77.036449,50mi')
 
+    lang = forms.CharField(required=False,
+                           help_text='Lang limits to tweets in the given language, given by the two-letter '
+                                     '<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">ISO-639-1 code</a>. '
+                                     'Example: fr')
+
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('query', 'geocode'))
+        self.helper.layout[0][0].extend(('query', 'geocode', 'lang'))
 
         if self.instance and self.instance.token:
             try:
@@ -505,6 +510,8 @@ class SeedTwitterSearchForm(BaseSeedForm):
                 self.fields['query'].initial = token['query']
             if 'geocode' in token:
                 self.fields['geocode'].initial = token['geocode']
+            if 'lang' in token:
+                self.fields['lang'].initial = token['lang']
 
     def clean_query(self):
         query_val = self.cleaned_data.get("query")
@@ -514,14 +521,19 @@ class SeedTwitterSearchForm(BaseSeedForm):
         geocode_val = self.cleaned_data.get("geocode")
         return geocode_val.strip()
 
+    def clean_lang(self):
+        lang_val = self.cleaned_data.get("lang")
+        return lang_val.strip()
+
     def clean(self):
         # if do string strip in here, string ends an empty space, not sure why
         query_val = self.cleaned_data.get("query")
         geocode_val = self.cleaned_data.get("geocode")
+        lang_val = self.cleaned_data.get("lang")
 
         # should not all be empty
-        if not query_val and not geocode_val:
-            raise ValidationError(u'One of the following fields is required: query, geocode.')
+        if not query_val and not geocode_val and not lang_val:
+            raise ValidationError(u'One of the following fields is required: query, geocode, lang.')
 
     def save(self, commit=True):
         m = super(SeedTwitterSearchForm, self).save(commit=False)
@@ -530,6 +542,8 @@ class SeedTwitterSearchForm(BaseSeedForm):
             token['query'] = self.cleaned_data['query']
         if self.cleaned_data['geocode']:
             token['geocode'] = self.cleaned_data['geocode']
+        if self.cleaned_data['lang']:
+            token['lang'] = self.cleaned_data['lang']
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
