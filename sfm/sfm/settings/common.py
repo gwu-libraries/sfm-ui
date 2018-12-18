@@ -211,6 +211,7 @@ EMAIL_HOST = env.get('SFM_SMTP_HOST', 'smtp.gmail.com')
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env.get('SFM_EMAIL_USER')
 EMAIL_HOST_PASSWORD = env.get('SFM_EMAIL_PASSWORD')
+EMAIL_FROM = env.get('SFM_EMAIL_FROM') or env.get('SFM_EMAIL_USER')
 EMAIL_USE_TLS = True
 
 # contact email

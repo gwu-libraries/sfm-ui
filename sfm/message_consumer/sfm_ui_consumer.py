@@ -194,7 +194,7 @@ class SfmUiConsumer(BaseConsumer):
 
                     try:
                         log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
-                        send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                        send_mail(mail_subject, mail_message, settings.EMAIL_FROM,
                                   receiver_emails, fail_silently=False)
                     except SMTPException as ex:
                         log.error("Error sending email: %s", ex)
@@ -296,7 +296,7 @@ class SfmUiConsumer(BaseConsumer):
                         if mail_message:
                             try:
                                 log.debug("Sending email to %s: %s", receiver_email, mail_subject)
-                                send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                                send_mail(mail_subject, mail_message, settings.EMAIL_FROM,
                                           [receiver_email], fail_silently=False)
                             except SMTPException as ex:
                                 log.error("Error sending email: %s", ex)

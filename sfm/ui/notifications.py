@@ -167,7 +167,7 @@ def _create_space_email(email_address, msg_cache):
     msg_cache["url"] = _create_url(reverse('home'))
     d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Low free space on SFM server",
-                                 text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
+                                 text_template.render(d), settings.EMAIL_FROM, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg
 
@@ -213,7 +213,7 @@ def _create_queue_warn_email(email_address, msg_cache):
     msg_cache["monitor_url"] = _create_url(reverse('monitor'))
     d = msg_cache
     msg = EmailMultiAlternatives("[WARNING] Long message queue on SFM server",
-                                 text_template.render(d), settings.EMAIL_HOST_USER, [email_address])
+                                 text_template.render(d), settings.EMAIL_FROM, [email_address])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg
 
@@ -259,7 +259,7 @@ def _create_email(user, collection_set_cache):
     html_template = get_template('email/user_harvest_email.html')
     d = _create_context(user, collection_set_cache)
     msg = EmailMultiAlternatives("Update on your Social Feed Manager harvests", text_template.render(d),
-                                 settings.EMAIL_HOST_USER, [user.email])
+                                 settings.EMAIL_FROM, [user.email])
     msg.attach_alternative(html_template.render(d), "text/html")
     return msg
 

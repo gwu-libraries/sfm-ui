@@ -141,7 +141,7 @@ def collection_harvest(collection_pk):
                 if receiver_emails:
                     try:
                         log.debug("Sending email to %s: %s", receiver_emails, mail_subject)
-                        send_mail(mail_subject, mail_message, settings.EMAIL_HOST_USER,
+                        send_mail(mail_subject, mail_message, settings.EMAIL_FROM,
                                   receiver_emails, fail_silently=False)
                     except SMTPException as ex:
                         log.error("Error sending email: %s", ex)
