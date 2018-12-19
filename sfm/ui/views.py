@@ -1123,7 +1123,20 @@ class MonitorView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MonitorView, self).get_context_data(**kwargs)
-        context['harvests'] = monitor_harvests()
-        context['exports'] = monitor_exports()
+        allharvests = monitor_harvests()
+        harvests = [harvest for harvest in allharvests if
+                    has_collection_set_based_permission(harvest,
+                                                        self.request.user,
+                                                        allow_superuser=True,
+                                                        allow_staff=True,
+                                                        allow_collection_visibility=True)]
+        allexports = monitor_exports()
+        exports = [export for export in allexports if
+                   has_collection_set_based_permission(export,
+                                                       self.request.user,
+                                                       allow_superuser=True,
+                                                       allow_collection_visibility=True)]
+        context['harvests'] = harvests
+        context['exports'] = exports
         context["harvester_queues"], context["exporter_queues"], context["ui_queues"] = monitor_queues()
         return context
