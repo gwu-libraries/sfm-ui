@@ -1,1 +1,1 @@
-git+https://github.com/gwu-libraries/sfm-utils.git@2.0.2#egg=sfmutils
+git+https://github.com/gwu-libraries/sfm-utils.git@2.1.0#egg=sfmutils

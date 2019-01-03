@@ -33,15 +33,15 @@ Installing locally requires Docker and Docker-Compose. See :ref:`docker-installi
 
     git clone https://github.com/gwu-libraries/sfm-docker.git
     cd sfm-docker
-    # Replace 2.0.2 with the correct version.
-    git checkout 2.0.2
+    # Replace 2.1.0 with the correct version.
+    git checkout 2.1.0
     cp example.prod.docker-compose.yml docker-compose.yml
     cp example.env .env
 
-or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 2.0.2 with the correct version)::
+or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 2.1.0 with the correct version)::
 
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.0.2/example.prod.docker-compose.yml > docker-compose.yml
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.0.2/example.env > .env
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.1.0/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.1.0/example.env > .env
 
 2. Update configuration in ``.env`` as described in :ref:`install-configuration`.
 
@@ -70,7 +70,7 @@ Notes:
 To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
 In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
 user details and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
-statements change *master* to the correct version, e.g., *2.0.2*::
+statements change *master* to the correct version, e.g., *2.1.0*::
 
     #cloud-config
     repo_update: true
@@ -87,8 +87,8 @@ statements change *master* to the correct version, e.g., *2.0.2*::
      - mkdir /sfm-processing
      - cd /home/ubuntu
     # This brings up the latest production release. To bring up master, remove prod.
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.0.2/example.prod.docker-compose.yml > docker-compose.yml
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.0.2/example.env > .env
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.1.0/example.prod.docker-compose.yml > docker-compose.yml
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.1.0/example.env > .env
     # Set config below by uncommenting.
     # Don't forget to escape $ as \$.
     # COMMON CONFIGURATION
@@ -237,13 +237,13 @@ This may take several minutes.
 3. Get the latest ``example.prod.docker-compose.yml``. If you previously cloned the sfm-docker repository then::
 
     git pull
-    # Replace 2.0.2 with the correct version.
-    git checkout 2.0.2
+    # Replace 2.1.0 with the correct version.
+    git checkout 2.1.0
     cp example.prod.docker-compose.yml docker-compose.yml
 
-otherwise, replacing 2.0.2 with the correct version::
+otherwise, replacing 2.1.0 with the correct version::
 
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.0.2/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.1.0/example.prod.docker-compose.yml > docker-compose.yml
 
 4. If you customized your previous ``docker-compose.yml`` file, make the same changes
 in your new ``docker-compose.yml``.
