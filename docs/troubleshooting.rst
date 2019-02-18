@@ -54,7 +54,7 @@ or choose a different port for SFM. (Chances are the other application is Apache
 Bad Request (400)
 ^^^^^^^^^^^^^^^^^
 If you receive a Bad Request (400) when trying to access SFM, your ``SFM_HOST`` environment variable is not
-configured correctly. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
+configured correctly. Check what ``SFM_HOSTNAME`` is set to in *./home/ubuntu/.env*, and update and restart if necessary. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
 
 Social Network Login Failure for Twitter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
