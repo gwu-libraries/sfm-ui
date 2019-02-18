@@ -53,8 +53,8 @@ or choose a different port for SFM. (Chances are the other application is Apache
 
 Bad Request (400)
 ^^^^^^^^^^^^^^^^^
-If you receive a Bad Request (400) when trying to access SFM, your ``SFM_HOST`` environment variable is not
-configured correctly. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
+If you receive a Bad Request (400) when trying to access SFM, your ``SFM_HOSTNAME`` environment variable is not
+configured correctly. Check what ``SFM_HOSTNAME`` is set to in ``.env``, and update and restart (``docker-compose stop ui`` then ``docker-compose up -d``) if necessary. For more information, see `ALLOWED_HOSTS <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-ALLOWED_HOSTS>`_.
 
 Social Network Login Failure for Twitter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
