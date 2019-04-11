@@ -25,20 +25,13 @@ As you are reading this, feel free to skip any of the sections of code.
 
 ```python
 # This installs Twarc
-# !pip install twarc
-# This is temporary until https://github.com/DocNow/twarc/pull/118 is merged.
-!pip install git+https://github.com/justinlittman/twarc.git@retweets#egg=twarc
-# This imports some classes and functions that will be used later in this notebook.
-from twarc import Twarc, load_config, default_config_filename
+!pip install twarc
+from twarc import Twarc
 import json
 import codecs
 
 # This creates an instance of Twarc.
-credentials = load_config(default_config_filename(), 'main')
-t = Twarc(consumer_key=credentials['consumer_key'],
-          consumer_secret=credentials['consumer_secret'],
-          access_token=credentials['access_token'],
-          access_token_secret=credentials['access_token_secret'])
+t = Twarc()
 
 # Create a summary of a tweet, only showing relevant fields.
 def summarize(tweet, extra_fields = None):
