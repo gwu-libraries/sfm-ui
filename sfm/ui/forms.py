@@ -555,21 +555,20 @@ class SeedWeiboSearchForm(BaseSeedForm):
 
 class SeedTwitterFilterForm(BaseSeedForm):
     track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text="""Separate keywords and phrases with commas. See Twitter <a 
-                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/
-                            basic-stream-parameters#track">
+                            help_text="""Separate keywords and phrases with commas. See Twitter <a
+                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track">
                             track</a> for more information.""")
     follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                             help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose 
-                             tweets, retweets, and replies will be collected. See Twitter <a 
-                             target="_blank" 
-                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/
-                             basic-stream-parameters#follow"> follow</a> 
-                             documentation for a full list of what is returned. User <a target="_blank" 
+                             help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose
+                             tweets, retweets, and replies will be collected. See Twitter <a
+                             target="_blank"
+                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#follow">
+                             follow</a>
+                             documentation for a full list of what is returned. User <a target="_blank"
                              href="https://tweeterid.com/">TweeterID</a> to get the user ID for a screen name.""")
     locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                                help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic 
-                                bounding box. See Twitter <a target="blank" 
+                                help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic
+                                bounding box. See Twitter <a target="blank"
                                 href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations">
                                 locations</a> for more information.""")
 
@@ -975,8 +974,8 @@ class ExportForm(forms.ModelForm):
                     HTML("""<h4>Limit by item date range</h4>"""),
                     'item_date_start',
                     'item_date_end',
-                    HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be 
-                    made to match the time zone of the items. For example, dates in 
+                    HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be
+                    made to match the time zone of the items. For example, dates in
                     tweets are UTC.</p>""".format(settings.TIME_ZONE)),
                     css_class="panel panel-default panel-body"),
                 Div(
