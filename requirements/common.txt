@@ -1,24 +1,24 @@
-APScheduler==3.5.1
+APScheduler==3.5.3
 django==2.0.13
-django-allauth==0.38.0
+django-allauth==0.39.1
 django-braces==1.13.0
 django-crispy-forms==1.7.2
-django-datatables-view==1.17.0
+django-datatables-view==1.18.0
 django-datetime-widget==0.9.3
 django-filter==1.1.0
-django-simple-history==2.6.0
+django-simple-history==2.7.3
 djangorestframework==3.9.4
 iso8601==0.1.12
 jsonfield==2.0.2
-psycopg2-binary==2.7.6.1
-pytz==2018.7
+psycopg2-binary==2.8.3
+pytz==2019.1
 rabbitmq-admin==0.2
 SQLAlchemy==1.3.5
 # Used when executing SQL in migration.
-sqlparse==0.2.4
+sqlparse==0.3.0
 
 # Pinning to correct version for sfm-utils
-requests==2.21.0
+requests==2.22.0
 
 # Testing
 mock==2.0.0
