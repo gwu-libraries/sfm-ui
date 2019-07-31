@@ -118,6 +118,7 @@ body {
 
 .longseed{
     word-wrap: break-word;
+    display: none;
 }
 
 table {
