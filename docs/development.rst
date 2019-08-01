@@ -88,6 +88,9 @@ requires a ``test_config.py`` containing::
 Note that if this file is not present, unit tests that require it will be skipped. Each component's README
 will describe the ``test_config.py`` requirements.
 
+Also note that some unit tests may fail unless the local environment contains an `LC_ALL` environment variable
+set to `en_US.UTF-8`.
+
 Unit tests for most components can be run with::
 
     python -m unittest discover
