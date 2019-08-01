@@ -566,15 +566,21 @@ class SeedTwitterFilterForm(BaseSeedForm):
                              follow</a>
                              documentation for a full list of what is returned. User <a target="_blank"
                              href="https://tweeterid.com/">TweeterID</a> to get the user ID for a screen name.""")
-    locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+    locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}),
                                 help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic
                                 bounding box. See Twitter <a target="blank"
                                 href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations">
                                 locations</a> for more information.""")
 
+    language = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}),
+                               help_text="""Provide a comma-separated list of two-letter <a target="blank"
+                               href="https://datahub.io/core/language-codes">BCP 47 language codes</a> (e.g. en,es). See Twitter <a target="blank"
+                               href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#language">
+                               language</a> for more information.""")
+
     def __init__(self, *args, **kwargs):
         super(SeedTwitterFilterForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('track', 'follow', 'locations'))
+        self.helper.layout[0][0].extend(('track', 'follow', 'locations', 'language'))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
@@ -584,6 +590,8 @@ class SeedTwitterFilterForm(BaseSeedForm):
                 self.fields['follow'].initial = token['follow']
             if 'locations' in token:
                 self.fields['locations'].initial = token['locations']
+            if 'language' in token:
+                self.fields['language'].initial = token['language']
 
     def clean_track(self):
         track_val = self.cleaned_data.get("track").strip()
@@ -593,6 +601,9 @@ class SeedTwitterFilterForm(BaseSeedForm):
 
     def clean_locations(self):
         return self.cleaned_data.get("locations").strip()
+
+    def clean_language(self):
+        return self.cleaned_data.get("language").strip()
 
     def clean_follow(self):
         follow_val = self.cleaned_data.get("follow").strip()
@@ -605,10 +616,11 @@ class SeedTwitterFilterForm(BaseSeedForm):
         track_val = self.cleaned_data.get("track")
         follow_val = self.cleaned_data.get("follow")
         locations_val = self.cleaned_data.get("locations")
+        language_val = self.cleaned_data.get("language")
 
         # should not all be empty
-        if not track_val and not follow_val and not locations_val:
-            raise ValidationError(u'One of the following fields is required: track, follow, locations.')
+        if not track_val and not follow_val and not locations_val and not language_val:
+            raise ValidationError(u'One of the following fields is required: track, follow, locations, language.')
 
         # check follow should be number uid
         if re.compile(r'[^0-9, ]').search(follow_val):
@@ -621,6 +633,8 @@ class SeedTwitterFilterForm(BaseSeedForm):
             token_val['follow'] = follow_val
         if locations_val:
             token_val['locations'] = locations_val
+        if language_val:
+            token_val['language'] = language_val
         token_val = json.dumps(token_val, ensure_ascii=False)
         # for the update view
         if self.view_type == Seed.UPDATE_VIEW:
@@ -643,6 +657,8 @@ class SeedTwitterFilterForm(BaseSeedForm):
             token['follow'] = self.cleaned_data['follow']
         if self.cleaned_data['locations']:
             token['locations'] = self.cleaned_data['locations']
+        if self.cleaned_data['language']:
+            token['language'] = self.cleaned_data['language']
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
