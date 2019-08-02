@@ -112,14 +112,14 @@ Twitter filter
 ---------------
 
 Twitter Filter collections harvest a live selection of public tweets from
-criteria matching keywords, locations, or users, based on the
+criteria matching keywords, locations, languages, or users, based on the
 `Twitter filter streaming API
 <https://developer.twitter.com/en/docs/tweets/filter-realtime/overview/statuses-filter>`_. Because
 tweets are collected live, tweets from the past are not included. (Use a
 :ref:`Twitter search` collection to find tweets from the recent past.)
 
-There are three different filter queries supported by SFM: track, follow, and
-location.
+There are four different filter queries supported by SFM: track, follow, 
+location, and language.
 
 **Track** collects tweets based on a keyword search. A space between words
 is treated as 'AND' and a comma is treated as 'OR'. Note that exact phrase
@@ -143,6 +143,12 @@ more information.
 based on a bounding box made using the southwest and northeast corner
 coordinates. See the `location parameter documentation
 <https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations>`_ for
+more information.
+
+**Language** collects tweets that Twitter detected as being written in the specified languages.
+For example, specifying `en,es` will only collect Tweets detected to be in the English or Spanish languages.
+See the `language parameter documentation
+<https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#language>`_ for
 more information.
 
 Twitter will return a limited number of tweets, so filters that return many
