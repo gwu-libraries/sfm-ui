@@ -1,0 +1,14 @@
+---
+layout: article
+permalink: /posts/2019-09-17-releasing-2-2
+title: "Announcing SFM Version 2.2"
+author: laura_wrubel
+categories: top
+excerpt: ""
+---
+
+SFM 2.2 features an enhancement to collecting from the Twitter filter stream: you can now use the language parameter to collect tweets only from specified languages. This supports several requests we've had from students and faculty here at GWU studying tweets where the language of the tweet is an important aspect of the analysis. 
+
+We’ve also made usability improvements in exporting selected seeds' tweets from Twitter user timeline collections, fixed a bug related to the Weibo exporter, and updated versions of some dependencies.
+
+Consult the [SFM documentation](https://sfm.readthedocs.io/en/2.2.0/install.html#upgrading) for upgrading instructions.
