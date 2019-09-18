@@ -57,7 +57,7 @@ Accounts section of the Admin interface.
 
 Twitter
   Twitter credentials can be obtained from `the Twitter API
-  <https://apps.twitter.com/>`_.
+  <https://developer.twitter.com/apps>`_.
 
   For detailed instructions, see :ref:`twitter-credentials`.
 
@@ -114,7 +114,7 @@ using your Twitter account (see above), gives you greater control over your
 credentials and allows you to use multiple credentials.
 
 To manually add credentials:
-  * **Navigate to** https://apps.twitter.com/.
+  * **Navigate to** https://developer.twitter.com/apps.
   * **Sign in to Twitter and select "Create New App."**
   * **Enter a name for the app** like *Social Feed Manager* or the name of a new
     Collection Set.
