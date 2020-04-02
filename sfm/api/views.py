@@ -7,8 +7,8 @@ from .filters import WarcFilter, CollectionFilter
 class WarcViewSet(ReadOnlyModelViewSet):
     serializer_class = WarcSerializer
     lookup_field = "warc_id"
-    filter_fields = ('warc_id', 'path')
-    filter_class = WarcFilter
+    filterset_fields = ('warc_id', 'path')
+    filterset_class = WarcFilter
 
     def get_queryset(self):
         return Warc.objects.all().exclude(harvest__harvest_type='web')
@@ -17,7 +17,7 @@ class WarcViewSet(ReadOnlyModelViewSet):
 class CollectionViewSet(ReadOnlyModelViewSet):
     serializer_class = CollectionSerializer
     lookup_field = "warc_id"
-    filter_class = CollectionFilter
+    filterset_class = CollectionFilter
 
     def get_queryset(self):
         return Collection.objects.all()

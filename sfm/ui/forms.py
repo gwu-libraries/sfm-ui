@@ -11,7 +11,6 @@ from django.conf import settings
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
 from crispy_forms.bootstrap import FormActions
-from datetimewidget.widgets import DateTimeWidget
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
 from .utils import clean_token, clean_blogname
 
@@ -25,15 +24,6 @@ HISTORY_NOTE_LABEL = "Change Note"
 HISTORY_NOTE_HELP = "Explain why you made these changes at this time."
 HISTORY_NOTE_HELP_ADD = "Further information about this addition."
 HISTORY_NOTE_WIDGET = forms.Textarea(attrs={'rows': 4})
-
-DATETIME_WIDGET = DateTimeWidget(
-    usel10n=True,
-    bootstrap_version=3,
-    attrs={'data-readonly': 'false'},
-    options={
-        'showMeridian': True
-    }
-)
 
 SCHEDULE_HELP = "How frequently you want data to be retrieved."
 INCREMENTAL_LABEL = "Incremental harvest"
@@ -109,8 +99,7 @@ class BaseCollectionForm(forms.ModelForm):
                   'history_note']
         exclude = []
         widgets = {'collection_set': forms.HiddenInput,
-                   'history_note': HISTORY_NOTE_WIDGET,
-                   'end_date': DATETIME_WIDGET}
+                   'history_note': HISTORY_NOTE_WIDGET}
         labels = {
             'history_note': HISTORY_NOTE_LABEL,
             'visibility': 'Sharing'
@@ -961,12 +950,6 @@ class ExportForm(forms.ModelForm):
                   'harvest_date_start', 'harvest_date_end']
         localized_fields = None
         error_messages = {}
-        widgets = {
-            'item_date_start': DATETIME_WIDGET,
-            'item_date_end': DATETIME_WIDGET,
-            'harvest_date_start': DATETIME_WIDGET,
-            'harvest_date_end': DATETIME_WIDGET
-        }
         labels = {
             'dedupe': "Deduplicate (remove duplicate posts)",
             'export_segment_size': "Maximum number of items per file"
