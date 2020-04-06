@@ -66,8 +66,7 @@ INSTALLED_APPS = [
     'simple_history',
     'rest_framework',               # For REST API
     'django_filters',
-    'api',
-    'datetimewidget'
+    'api'
 ]
 
 MIDDLEWARE = (
