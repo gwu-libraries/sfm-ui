@@ -10,23 +10,23 @@
     <div class="col-md-12">
         <ol class="breadcrumb">
             {% if model_name == "credential" %}
-            <li><a href="{% url 'credential_list' %}">Credentials</a></li>
-            <li><a href="{% url 'credential_detail' item.id %}">{{ name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'credential_list' %}">Credentials</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'credential_detail' item.id %}">{{ name }}</a></li>
             {% elif model_name == "collection set" %}
-            <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
-            <li><a href="{% url 'collection_set_detail' item.id %}">{{ name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_detail' item.id %}">{{ name }}</a></li>
             {% elif model_name == "collection" %}
-            <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
-            <li><a href="{% url 'collection_set_detail' item.collection_set.id %}">{{ item.collection_set.name }}</a>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_detail' item.collection_set.id %}">{{ item.collection_set.name }}</a>
             </li>
-            <li><a href="{% url 'collection_detail' item.id %}">{{ name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_detail' item.id %}">{{ name }}</a></li>
             {% elif model_name == "seed" %}
-            <li><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
-            <li><a href="{% url 'collection_set_detail' item.collection.collection_set.id %}">{{ item.collection.collection_set.name }}</a></li>
-            <li><a href="{% url 'collection_detail' item.collection.id %}">{{ item.collection.name }}</a></li>
-            <li><a href="{% url 'seed_detail' item.id %}">{{ name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_list' %}">Collection Sets</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_set_detail' item.collection.collection_set.id %}">{{ item.collection.collection_set.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'collection_detail' item.collection.id %}">{{ item.collection.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'seed_detail' item.id %}">{{ name }}</a></li>
             {% endif %}
-            <li class="active">Change Log</li>
+            <li class="breadcrumb-item active">Change Log</li>
         </ol>
     </div>
 </div>
@@ -38,19 +38,19 @@
 {% endblock %}
 {% block content %}
 <nav>
-  <ul class="pager">
+  <ul class="pagination justify-content-center">
       {% if page_obj.has_previous %}
-          <li><a href="?page=1">&laquo;</a></li>
-          <li><a href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
+          <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
       {% endif %}
 
-      <li class="active">
+      <li class="page-item active">
           {{ page_obj.number }} of {{ paginator.num_pages }}
       </li>
 
       {% if page_obj.has_next %}
-          <li><a href="?page={{ page_obj.next_page_number }}">Next </a></li>
-          <li><a href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next </a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
       {% endif %}
   </ul>
 </nav>

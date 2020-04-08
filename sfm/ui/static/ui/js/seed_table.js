@@ -1,5 +1,6 @@
  $(document).ready(function() {
         var ajax_url = SEED_LIST_JSON_URL;
+        console.log(ajax_url)
         if ($.fn.dataTable.isDataTable('.seed-dt')) {
             dt = $('.seed-dt').DataTable();
         }

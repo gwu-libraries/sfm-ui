@@ -12,9 +12,9 @@
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-      <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-      <li><a href={% url "collection_set_detail" collection_set.pk %} >{{ collection_set.name }}</a></li>
-      <li class="active">Add {{ harvest_type_name }}</li>
+      <li class="breadcrumb-item"><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+      <li class="breadcrumb-item"><a href={% url "collection_set_detail" collection_set.pk %} >{{ collection_set.name }}</a></li>
+      <li class="breadcrumb-item active">Add {{ harvest_type_name }}</li>
     </ol>
   </div>
 </div>
