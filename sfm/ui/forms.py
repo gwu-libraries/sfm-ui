@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, HTML, Field
 from crispy_forms.bootstrap import FormActions
 from .models import CollectionSet, Collection, Seed, Credential, Export, User
 from .utils import clean_token, clean_blogname
@@ -137,7 +137,7 @@ class BaseCollectionForm(forms.ModelForm):
                 Div(css_id='credential_warning'),
                 Div(),
                 'schedule_minutes',
-                'end_date',
+                Field('end_date', css_class='datepicker'),
                 'collection_set',
                 'visibility',
                 'history_note',
@@ -976,18 +976,18 @@ class ExportForm(forms.ModelForm):
                 'dedupe',
                 Div(
                     HTML("""<h4>Limit by item date range</h4>"""),
-                    'item_date_start',
-                    'item_date_end',
+                    Field('item_date_start', css_class='datepicker'),
+                    Field('item_date_end', css_class='datepicker'),
                     HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be
                     made to match the time zone of the items. For example, dates in
                     tweets are UTC.</p>""".format(settings.TIME_ZONE)),
                     css_class="card panel-default card-body mb-3"),
                 Div(
                     HTML("""<h4>Limit by harvest date range</h4>"""),
-                    'harvest_date_start',
-                    'harvest_date_end',
-                    css_class="card panel-default card-body mb-3"),
-                css_class='crispy-form-custom'
+                    Field('harvest_date_start', css_class='datepicker'),
+                    Field('harvest_date_end', css_class='datepicker'),
+                    css_class="panel panel-default panel-body"),
+                css_class='crispy-for-custom'
             ),
             FormActions(
                 Submit('submit', 'Export'),

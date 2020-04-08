@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block title %}
     Add Export
@@ -32,4 +33,5 @@
         {% include "ui/terms_snippet.html" %}
     </div>
 </div>
+<script src="{% static 'ui/js/datepicker.js' %}"></script>
 {% endblock %}

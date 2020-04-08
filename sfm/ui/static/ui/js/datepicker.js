@@ -1,0 +1,1 @@
+$(".datepicker").flatpickr({enableTime: true});

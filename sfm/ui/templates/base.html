@@ -20,12 +20,11 @@
   <!--Replacement for bootstrap-multiselect-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 
-	<!-- Your stuff: Third-party css libraries go here -->
+    <!-- Your stuff: Third-party css libraries go here -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
 
-
-	<!-- This file store project specific CSS -->
+    <!-- This file store project specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
 
     {% block css %}
@@ -42,11 +41,13 @@
   <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
   <!--Font Awesome for icons-->
   <script src="https://kit.fontawesome.com/012dee33a5.js" crossorigin="anonymous"></script>
-    <!-- multiselect javascript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 
     <script src="{% static 'ui/js/seed_multiselect.js' %}"></script>
     <script src="{% static 'ui/js/seed_select_option.js' %}"></script>
+
+    <!-- flatpickr for jQuery datetimepicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     {% block javascript %}
 
@@ -55,8 +56,8 @@
     {% block extra_head %}
         <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
         <!--<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>-->
-		<script src="{% static 'ui/js/data_tables.js' %}"></script>
-		<script type="text/javascript">
+        <script src="{% static 'ui/js/data_tables.js' %}"></script>
+	<script type="text/javascript">
            var oPaginationType = "bs_normal";
            var oLanguages = {
                 "lengthMenu": "Display _MENU_ records per page",
@@ -69,7 +70,7 @@
                   "previous": "Previous"
                 }
             };
-        </script>
+	</script>
     {% endblock %}
 
   </head>
