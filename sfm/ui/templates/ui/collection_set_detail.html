@@ -9,8 +9,8 @@
 <div class="row">
   <div class="col-md-12">
     <ol class="breadcrumb">
-        <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-        <li class="active">{{ collection_set.name }}</li>
+        <li class="breadcrumb-item"><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+        <li class="breadcrumb-item active">{{ collection_set.name }}</li>
     </ol>
   </div>
 </div>
@@ -43,8 +43,8 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-      <div class="panel panel-default">
-       <div class="panel-heading">
+      <div class="card">
+       <div class="card-heading">
            <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
        </div>
        <div id="collapse" class="collapse" style="margin-left: 10px; margin-top: 10px">
@@ -64,9 +64,9 @@ $(document).ready(function(){
 
 <div class="row subsection">
   <div class="col-md-12">
-    <div class="panel panel-default">
-        <div class="panel-heading"><h4>Collections</h4></div>
-        <div class="panel-body">
+    <div class="card">
+        <div class="card-heading"><h4>Collections</h4></div>
+        <div class="card-body">
             {% if collection_list %}
             <table class="table table-striped">
               <thead>
@@ -123,7 +123,7 @@ $(document).ready(function(){
 
                 <ul class="dropdown-menu">
                     {% for harvest_type, harvest_label in harvest_types %}
-                        <li>
+                        <li class="dropdown-item">
                             <a class="flex-column align-items" href="{% url "collection_create" collection_set.id harvest_type %}">
                             <p><strong>Add {{ harvest_label }}</strong><br/>{{ harvest_description|get_item:harvest_type }}</p>
                             </a>
@@ -149,9 +149,9 @@ $(document).ready(function(){
                     {% csrf_token %}
                     <div class="modal-content">
                         <div class="modal-header">
+                            <h4 class="modal-title" id="addNoteModalLabel">Add note</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                     aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="addNoteModalLabel">Add note</h4>
                         </div>
                         <div class="modal-body">
                             <div id="div_id_add_note" class="form-group">
