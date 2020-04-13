@@ -40,12 +40,12 @@ $.extend( $.fn.dataTableExt.oPagination, {
 			};
 
 			$(nPaging).append(
-				'<nav class="hidden"><ul class="pager">'+
-				    '<li><a href="#">&laquo;</a></li>' +
-				    '<li class=""><a href="#">'+oLang.sPrevious+'</a></li>'+
-				    '<li class="active">&nbsp;1 of 5&nbsp;</li>' +
-					'<li class=""><a href="#">'+oLang.sNext+'</a></li>'+
-					'<li><a href="#"> &raquo;</a></li>' +
+				'<nav class="hidden"><ul class="pagination">'+
+				    '<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>' +
+				    '<li class="page-item"><a class="page-link" href="#">'+oLang.sPrevious+'</a></li>'+
+				    '<li class="page-item active">&nbsp;1 of 5&nbsp;</li>' +
+					'<li class="page-item"><a class="page-link" href="#">'+oLang.sNext+'</a></li>'+
+					'<li class="page-item"><a class="page-link" href="#"> &raquo;</a></li>' +
 				'</ul></nav>'
 			);
 			var els = $('a', nPaging);
