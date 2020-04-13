@@ -77,7 +77,7 @@
 {% if collection_set_list %}
     <div class="card">
         {% for collection_set in collection_set_list %}
-            <div class="card-heading">
+            <div class="card-heading bg-light border pl-3 pt-2">
                 <h3 class="card-title"><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></h3>
             </div>
             <div class="card-body">
@@ -85,7 +85,7 @@
                     <div class="col-md-4 text-center">
                       <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}" class="thumbnail">
                         <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-chart" style="width: 300px; height: 250px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-                        <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-xs" role="group">
+                        <div id="viz-{{ collection_set.pk }}-{{ item|slugify }}-btns" class="btn-group btn-group-sm btn-group-toggle" role="group">
                           <button type="button" class="btn btn-secondary viz_all">All</button>
                           <button type="button" class="btn btn-secondary viz_year">Last year</button>
                           <button type="button" class="btn btn-secondary disabled viz_month">Last month</button>

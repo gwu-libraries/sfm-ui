@@ -38,10 +38,10 @@
 {% endblock %}
 {% block content %}
 <nav>
-  <ul class="pagination justify-content-center">
+  <ul class="pagination justify-content-center align-items-center">
       {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
+          <li class="page-item"><a class="page-link rounded-pill mr-1" href="?page=1">&laquo;</a></li>
+          <li class="page-item"><a class="page-link rounded-pill mr-1" href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
       {% endif %}
 
       <li class="page-item active">
@@ -49,8 +49,8 @@
       </li>
 
       {% if page_obj.has_next %}
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next </a></li>
-          <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
+          <li class="page-item"><a class="page-link rounded-pill ml-1" href="?page={{ page_obj.next_page_number }}">Next </a></li>
+          <li class="page-item"><a class="page-link rounded-pill ml-1" href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
       {% endif %}
   </ul>
 </nav>
@@ -58,10 +58,10 @@
 	<table class="table">
 		<thead>
             <tr>
-                <th>Change to</th>
-                <th>Date</th>
-                <th>User</th>
-                <th>Fields</th>
+                <th class="border-top-0">Change to</th>
+                <th class="border-top-0">Date</th>
+                <th class="border-top-0">User</th>
+                <th class="border-top-0">Fields</th>
             </tr>
 		</thead>
 			{% for diff in diff_list %}

@@ -224,8 +224,8 @@
     </div>
     {% has_user_based_permission collection.credential allow_staff=True as has_perm %}
     <div class="col-md-12">
-          <div class="card">
-               <div class="card-heading">
+          <div class="card mb-3">
+               <div class="card-heading bg-light pl-3 pt-2 pb-2 border">
                    <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
                </div>
              <div id="collapse" class="collapse" style="margin-bottom: 10px;margin-left: 10px; margin-top: 10px">
@@ -254,8 +254,8 @@
 {% if has_seeds_list %}
 <div class="row">
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-heading"><h4>Seeds<a type="button" style="position: relative; top: -6px" class="pull-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
+      <div class="card mb-3">
+        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Seeds<a type="button" class="float-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="glyphicon glyphicon-download-alt"></span>Download seed list</a></h4></div>
          <div class="card-body">
            <ul id='seed_tab' class="nav nav-tabs">
                   <li class="nav-item"><a class="nav-link active" id="active" data-toggle="tab" href="#active_seed">Active
@@ -297,18 +297,18 @@
 {% if harvests %}
 <div class="row">
   <div class="col-md-12">
-      <div class="card">
-        <div class="card-heading"><h4>Harvests ({{ harvest_count|intcomma }})</h4></div>
+      <div class="card mb-3">
+        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Harvests ({{ harvest_count|intcomma }})</h4></div>
         <div class="card-body">
             <table class="table table-list-search">
                 <thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Requested</th>
-                    <th>Updated/Completed</th>
-                    <th>Status</th>
-                    <th>Stats</th>
-                    <th>Messages</th>
+                    <th class="border-0">Type</th>
+                    <th class="border-0">Requested</th>
+                    <th class="border-0">Updated/Completed</th>
+                    <th class="border-0">Status</th>
+                    <th class="border-0">Stats</th>
+                    <th class="border-0">Messages</th>
                 </tr>
                 </thead>
                 <tbody class="HarvestSearch">

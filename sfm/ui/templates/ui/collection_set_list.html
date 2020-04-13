@@ -20,10 +20,10 @@
         <ul id="collection_set_tabs" class="nav nav-tabs">
             {% for collection_set_key, collection_set_name, collection_set_list in collection_sets_lists %}
                 {% if forloop.first %}
-                    <li class="nav-item active"><a class="nav-link" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-dark">{{ collection_set_list | length }}</span></a></li>
+                    <li class="nav-item active"><a class="nav-link" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-pill badge-dark">{{ collection_set_list | length }}</span></a></li>
                 {% else %}
                         {% if collection_set_list %}
-                            <li class="nav-item"><a  link="nav-link" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-dark">{{ collection_set_list | length }}</span></a></li>
+                            <li class="nav-item"><a  link="nav-link" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-pill badge-dark">{{ collection_set_list | length }}</span></a></li>
                         {% endif %}
                 {% endif %}
             {% endfor %}

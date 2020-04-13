@@ -6,19 +6,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-heading"><h4>Harvester Status</h4></div>
+<div class="card mb-3">
+    <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Harvester Status</h4></div>
     <div class="card-body">
         {% if harvests %}
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Harvester</th>
-                    <th>Harvest</th>
-                    <th>Requested</th>
-                    <th>Updated/Completed</th>
-                    <th>Status</th>
-                    <th>Stats</th>
+                    <th class="border-0">Harvester</th>
+                    <th class="border-0">Harvest</th>
+                    <th class="border-0">Requested</th>
+                    <th class="border-0">Updated/Completed</th>
+                    <th class="border-0">Status</th>
+                    <th class="border-0">Stats</th>
                 </tr>
                 </thead>
                 {% for harvest in harvests %}
@@ -47,18 +47,18 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-heading"><h4>Exporter Status</h4></div>
+<div class="card mb-3">
+    <div class="card-heading  bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Exporter Status</h4></div>
     <div class="card-body">
         {% if exports %}
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Exporter</th>
-                    <th>Export</th>
-                    <th>Requested</th>
-                    <th>Updated/Completed</th>
-                    <th>Status</th>
+                    <th class="border-0">Exporter</th>
+                    <th class="border-0">Export</th>
+                    <th class="border-0">Requested</th>
+                    <th class="border-0">Updated/Completed</th>
+                    <th class="border-0">Status</th>
                 </tr>
                 </thead>
                 {% for export in exports %}
@@ -85,14 +85,14 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-heading"><h4>Harvester Queues</h4></div>
+<div class="card mb-3">
+    <div class="card-heading  bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Harvester Queues</h4></div>
     <div class="card-body">
         <table class="table">
             <thead>
             <tr>
-                <th>Queue</th>
-                <th>Queued Requests</th>
+                <th class="border-0">Queue</th>
+                <th class="border-0">Queued Requests</th>
             </tr>
             </thead>
             {% for queue, message_count in harvester_queues.items %}
@@ -105,14 +105,14 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-heading"><h4>Exporter Queues</h4></div>
+<div class="card mb-3">
+    <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Exporter Queues</h4></div>
     <div class="card-body">
         <table class="table">
             <thead>
             <tr>
-                <th>Queue</th>
-                <th>Queued Requests</th>
+                <th class="border-0">Queue</th>
+                <th class="border-0">Queued Requests</th>
             </tr>
             </thead>
             {% for queue, message_count in exporter_queues.items %}
@@ -125,14 +125,14 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-heading"><h4>UI Queues</h4></div>
+<div class="card mb-3">
+    <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>UI Queues</h4></div>
     <div class="card-body">
         <table class="table">
             <thead>
             <tr>
-                <th>Queue</th>
-                <th>Queued Requests</th>
+                <th class="border-0">Queue</th>
+                <th class="border-0">Queued Requests</th>
             </tr>
             </thead>
             {% for queue, message_count in ui_queues.items %}

@@ -34,16 +34,16 @@
 </div>
 {% if has_seeds_list %}
 <div class="row">
-  <div class="card">
-    <div class="card-heading"><h4>Seeds</h4></div>
+  <div class="card mb-3">
+    <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Seeds</h4></div>
        <div class="card-body">
          <table class="table">
            <thead>
              <tr>
-	       <th>Token</th>
-	       <th>uid</th>
-	       <th>Next harvest</th>
-	       <th>Active</th>
+	       <th class="border-0">Token</th>
+	       <th class="border-0">uid</th>
+	       <th class="border-0">Next harvest</th>
+	       <th class="border-0">Active</th>
              </tr>
             </thead>
           {% for seed in seed_list %}

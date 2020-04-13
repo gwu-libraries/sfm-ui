@@ -19,10 +19,10 @@
 {% endblock %}
 {% block content %}
 <nav>
-  <ul class="pagination">
+  <ul class="pagination justify-content-center align-items-center">
       {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
+          <li class="page-item"><a class="page-link rounded-pill mr-1" href="?page=1">&laquo;</a></li>
+          <li class="page-item"><a class="page-link rounded-pill mr-1" href="?page={{ page_obj.previous_page_number }}"> Previous</a></li>
       {% endif %}
 
       <li class="page-item active">
@@ -30,8 +30,8 @@
       </li>
 
       {% if page_obj.has_next %}
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next </a></li>
-          <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
+          <li class="page-item"><a class="page-link rounded-pill ml-1" href="?page={{ page_obj.next_page_number }}">Next </a></li>
+          <li class="page-item"><a class="page-link rounded-pill ml-1" href="?page={{ paginator.num_pages }}"> &raquo;</a></li>
       {% endif %}
   </ul>
 </nav>
@@ -39,12 +39,12 @@
 	<table class="table">
 		<thead>
 			<tr>
-                <th>Type</th>
-                <th>Requested</th>
-                <th>Updated/Completed</th>
-                <th>Status</th>
-                <th>Stats</th>
-                <th>Messages</th>
+                <th class="border-0">Type</th>
+                <th class="border-0">Requested</th>
+                <th class="border-0">Updated/Completed</th>
+                <th class="border-0">Status</th>
+                <th class="border-0">Stats</th>
+                <th class="border-0">Messages</th>
 			</tr>
 		</thead>
 			{% for harvest in harvest_list %}
