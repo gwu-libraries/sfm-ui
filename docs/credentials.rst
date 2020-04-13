@@ -4,9 +4,7 @@
 
 Accessing the APIs of social media platforms requires credentials for
 authentication (also knows as API keys). Social Feed Manager supports managing
-those credentials.
-
-Credentials/authentication allow a user to collect data through a platform’s
+those credentials. Credentials/authentication allow a user to collect data through a platform’s
 API. For some social media platforms (e.g., Twitter and Tumblr), Limits are
 placed on methods and rate of collection on a per credential basis.
 
@@ -15,7 +13,7 @@ they can control their own collection rates and can ensure that they are
 following each platform’s API policies.
 
 Most API credentials have two parts: an application credential and a user
-credential.(Flickr is the exception -- only an application credential
+credential. (Flickr is the exception -- only an application credential
 is necessary.)
 
 For more information about platform-specific policies, consult the documentation
@@ -45,50 +43,10 @@ social media platform by the systems administrator. The user credentials are
 obtained by the user being redirected to the social media website to give
 permission to SFM to access her account.
 
-SFM is configured with the application credentials in the ``.env``.
+SFM is configured with the application credentials in the ``.env`` file.
 If additional management is necessary, it can be performed using the Social
 Accounts section of the Admin interface.
 
-
-
---------------------
- Platform specifics
---------------------
-
-Twitter
-  Twitter credentials can be obtained from `the Twitter API
-  <https://developer.twitter.com/apps>`_.
-
-  For detailed instructions, see :ref:`twitter-credentials`.
-
-  You *must* provide a callback URL which is *http://<SFM hostname>/accounts/twitter/login/callback/*.
-  Note that this should be *http* not *https* even if you are using https.
-
-  Also, turn on *Enable Callback Locking* and *Allow this application to be used to Sign in with Twitter*.
-
-  It is recommended to change the application permissions to read-only.
-
-Flickr
-  Flickr credentials can be obtained from
-  `the Flickr API
-  <https://www.flickr.com/services/api/keys/>`_.
-
-  For detailed instructions, see :ref:`flickr-credentials`.
-
-Tumblr
-  Tumblr credentials can be obtained from
-  `the Tumblr API <https://www.tumblr.com/oauth/apps>`_.
-
-  For detailed instructions, see :ref:`tumblr-credentials`.
-
-
-Weibo
-^^^^^
-For instructions on obtaining Weibo credentials, see `this guide
-<http://gwu-libraries.github.io/sfm-ui/posts/2016-04-26-weibo-api-guide>`_.
-
-To use the connecting credentials approach for Weibo, the redirect URL must
-match the application's actual URL and use port 80.
 
 .. _twitter-credentials:
 
@@ -96,38 +54,51 @@ match the application's actual URL and use port 80.
 Adding Twitter Credentials
 --------------------------
 
-
-The easiest way to set up Twitter credentials is to connect them to your
-personal Twitter account (or another Twitter account you control). If you want
+As a user, the easiest way to set up Twitter credentials is to connect them to your
+personal Twitter account or another Twitter account you control. If you want
 more fine-tuned control, you can manually set up application-level credentials
-(see below).
-
-To connect to Twitter credentials, first sign in to Twitter with the account you
-want to use. Then, on the Credentials page, click *Connect to Twitter*. A
+(see below). To connect Twitter credentials, first sign in to Twitter with the account 
+you want to use. Then, on the Credentials page, click *Connect to Twitter*. A
 window will pop up from Twitter, asking you for authorization. Click authorize,
-and your credentials will automatically connect.
+and your credentials will automatically connect. Once credentials are connected, 
+you can start :ref:`guide-creating-collections`.
 
-Once credentials are connected, you can start :ref:`guide-creating-collections`.
+Twitter application credentials can be obtained from `the Twitter API
+<https://developer.twitter.com/apps>`_. This process requires applying for
+a developer account for your organization or your personal use and describing
+your use case for SFM. Be sure to answer all of the questions in the
+application. You may receive email follow-up before the application
+is approved.
 
-Manually adding Twitter Credentials, rather than connecting them automatically
+Creating application credentials and manually adding Twitter Credentials, 
+rather than connecting them automatically
 using your Twitter account (see above), gives you greater control over your
 credentials and allows you to use multiple credentials.
 
-To manually add credentials:
-  * **Navigate to** https://developer.twitter.com/apps.
-  * **Sign in to Twitter and select "Create New App."**
-  * **Enter a name for the app** like *Social Feed Manager* or the name of a new
-    Collection Set.
-  * **Enter a description.** You may copy and paste:
-    *This is a social media research and archival tool, which collects data for
+To obtain application credentials:
+  * Navigate to `<https://developer.twitter.com/en/apply-for-access>`_.
+  * Sign in to Twitter.
+  * Follow the prompts to describe your intended use case for academic/research. 
+  * When a description for you app is requested, you may include:
+    *This is an instance of Social Feed Manager, a social media research and 
+    archival tool, which collects data for
     academic researchers through an accessible user interface.*
-  * **Enter a Website** such as the SFM url. Any website will work.
-  * **Review and agree to the Twitter Developer Agreement** and click *Create
-    your Twitter Application.*
-  * Recommended:
-      * Click on your new application.
-      * Navigate to the *Permissions* tab.
-      * Select *Read only* then *Update settings*.
+  * Enter a website such as the SFM url. Any website will work.
+  * You must provide a callback URL which is http://<SFM hostname>/accounts/twitter/login/callback/. 
+    Note that this should be http not https even if you are using https.
+  * Turn on Enable Callback Locking and Allow this application to be used to Sign in with Twitter.
+  * It is recommended to change the application permissions to read-only.
+  * **Review and agree to the Twitter Developer Agreement**.
+  
+You may need to wait several days for the account and app to be approved. One 
+approved, it is recommended that you:
+  * Click on your new application.
+  * Navigate to the *Permissions* tab.
+  * Select *Read only* then *Update settings*.
+  
+You now have application-level credentials you can add to your ``.env`` file.
+
+To manually add a Twitter Credential in your SFM user account:
   * **Go to the Credentials page of SFM,** and click *Add Twitter Credential*.
   * Fill out all fields:
       * On the Twitter apps page (https://apps.twitter.com/) click your new
@@ -156,7 +127,7 @@ Adding Flickr Credentials
     accessible user interface.*
   * **Check both checkboxes**
   * **Click** *Submit*
-  * **Navigate to the SFM Credentials page** and click *Add Flicker Credential*
+  * **Navigate to the SFM Credentials page** and click *Add Flickr Credential*
   * **Enter the Key and Secret** in the correct fields and save.
 
 
