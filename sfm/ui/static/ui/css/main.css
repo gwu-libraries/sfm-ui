@@ -16,6 +16,10 @@ body {
     margin-top: 10px;
 }
 
+.description {
+    color: #333;
+}
+
 .navbar-default .navbar-nav>li>a,p {
     color: #333;
 }
