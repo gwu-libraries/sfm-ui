@@ -148,3 +148,7 @@ table {
     word-wrap: break-word;
     overflow-y:auto;
 }
+
+.fa-fw {
+    padding-right: 25px;
+}
