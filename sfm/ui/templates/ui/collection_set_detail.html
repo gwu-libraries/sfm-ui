@@ -45,7 +45,7 @@
     <div class="col-md-12">
       <div class="card mb-3">
        <div class="card-heading bg-light pl-3 pt-2 pb-2 border">
-           <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
+           <a class="collapse-toggle" data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
        </div>
        <div id="collapse" class="collapse" style="margin-left: 10px; margin-top: 10px">
         <p><strong>Group:</strong> {{collection_set.group }}</p>
@@ -125,7 +125,8 @@ $(document).ready(function(){
                     {% for harvest_type, harvest_label in harvest_types %}
                         <li class="dropdown-item">
                             <a class="flex-column align-items" href="{% url "collection_create" collection_set.id harvest_type %}">
-				    <strong>Add {{ harvest_label }}</strong><br/><span class="description">{{ harvest_description|get_item:harvest_type }}</span></a>
+                            <p><strong>Add {{ harvest_label }}</strong><br/>{{ harvest_description|get_item:harvest_type }}</p>
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>

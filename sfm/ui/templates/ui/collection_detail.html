@@ -21,7 +21,7 @@
 <div class="row">
     <div class="col-md-10">
         <div class="card {% if collection.is_on %} panel-on {% else %} panel-off {% endif %}">
-            <div class="card-heading panel-heading" >
+            <div class="card-heading panel-heading pl-3 pt-2 pb-2" >
                 <h1 class="card-title {% if collection.is_on %} text-white {% endif %}">{{ collection.name }}</h1>
             </div>
             <div class="card-body {% if collection.is_on %} panel-on {% else %} panel-off {% endif %}">
@@ -226,7 +226,7 @@
     <div class="col-md-12">
           <div class="card mb-3">
                <div class="card-heading bg-light pl-3 pt-2 pb-2 border">
-                   <a data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
+                   <a class="collapse-toggle" data-toggle="collapse" href="#collapse">Details  <span class="caret"></span></a>
                </div>
              <div id="collapse" class="collapse" style="margin-bottom: 10px;margin-left: 10px; margin-top: 10px">
                      <p><strong>Credential:</strong> {% if has_perm %}<a href={% url "credential_detail" collection.credential.pk %}>{% endif %}{{ collection.credential.name }}{% if has_perm %}</a>{% endif %}{% if not collection.credential.is_active %} <span class="text-warning">(Deleted)</span>{% endif %}</p>

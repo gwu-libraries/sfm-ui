@@ -16,10 +16,6 @@ body {
     margin-top: 10px;
 }
 
-.description {
-    color: #333;
-}
-
 .navbar-default .navbar-nav>li>a,p {
     color: #333;
 }
@@ -155,4 +151,16 @@ table {
 
 .fa-fw {
     padding-right: 25px;
+}
+
+.collapse-toggle::after {
+    display: inline-block;
+    margin-left: .255em;
+    vertical-align: .255em;
+    content: "";
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-bottom: 0;
+    border-left: .3em solid transparent;
+}
 }
