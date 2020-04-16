@@ -163,4 +163,15 @@ table {
     border-bottom: 0;
     border-left: .3em solid transparent;
 }
+
+.crispy-form-custom label {
+    font-weight: bold;
+}
+
+.crispy-form-custom .custom-control-label {
+    font-weight: normal;
+}
+
+.form-text.text-muted {
+    font-size: 100%;
 }

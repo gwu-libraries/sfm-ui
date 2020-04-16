@@ -73,7 +73,8 @@ class CollectionSetForm(forms.ModelForm):
                 'name',
                 'description',
                 'group',
-                'history_note'
+                'history_note',
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -139,7 +140,8 @@ class BaseCollectionForm(forms.ModelForm):
                 'end_date',
                 'collection_set',
                 'visibility',
-                'history_note'
+                'history_note',
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -379,7 +381,8 @@ class BaseSeedForm(forms.ModelForm):
                 '',
                 Div(),
                 'history_note',
-                'collection'
+                'collection',
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -717,7 +720,8 @@ class BaseBulkSeedForm(forms.Form):
                 '',
                 'seeds_type',
                 'tokens',
-                'history_note'
+                'history_note',
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -803,7 +807,8 @@ class BaseCredentialForm(forms.ModelForm):
                 '',
                 'name',
                 Div(),
-                'history_note'
+                'history_note',
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),
@@ -976,12 +981,13 @@ class ExportForm(forms.ModelForm):
                     HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be
                     made to match the time zone of the items. For example, dates in
                     tweets are UTC.</p>""".format(settings.TIME_ZONE)),
-                    css_class="panel panel-default panel-body"),
+                    css_class="card panel-default card-body mb-3"),
                 Div(
                     HTML("""<h4>Limit by harvest date range</h4>"""),
                     'harvest_date_start',
                     'harvest_date_end',
-                    css_class="panel panel-default panel-body"),
+                    css_class="card panel-default card-body mb-3"),
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Export'),
@@ -1044,7 +1050,8 @@ class UserProfileForm(forms.ModelForm):
                 'email',
                 'email_frequency',
                 'harvest_notifications',
-                Div()
+                Div(),
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Save'),

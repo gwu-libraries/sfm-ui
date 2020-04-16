@@ -168,7 +168,7 @@ RABBITMQ_PASSWORD = env.get('SFM_RABBITMQ_PASSWORD')
 RABBITMQ_MANAGEMENT_PORT = env.get('SFM_RABBITMQ_MANAGEMENT_PORT', "15672")
 
 # crispy forms bootstrap version
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
