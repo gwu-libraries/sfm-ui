@@ -5,7 +5,7 @@
 Accessing the APIs of social media platforms requires credentials for
 authentication (also knows as API keys). Social Feed Manager supports managing
 those credentials. Credentials/authentication allow a user to collect data through a platform’s
-API. For some social media platforms (e.g., Twitter and Tumblr), Limits are
+API. For some social media platforms (e.g., Twitter and Tumblr), limits are
 placed on methods and rate of collection on a per credential basis.
 
 SFM users are responsible for creating their own new credentials so that
@@ -58,8 +58,7 @@ As a user, the easiest way to set up Twitter credentials is to connect them to y
 personal Twitter account or another Twitter account you control. If you want
 more fine-tuned control, you can manually set up application-level credentials
 (see below). To connect Twitter credentials, first sign in to Twitter with the account 
-you want to use. Then, on the Credentials page, click *Connect to Twitter*. A
-window will pop up from Twitter, asking you for authorization. Click authorize,
+you want to use. Then, on the Credentials page, click *Connect to Twitter*. Your browser will open a page from Twitter, asking you for authorization. Click *Authorize*,
 and your credentials will automatically connect. Once credentials are connected, 
 you can start :ref:`guide-creating-collections`.
 
@@ -67,10 +66,10 @@ Twitter application credentials can be obtained from `the Twitter API
 <https://developer.twitter.com/apps>`_. This process requires applying for
 a developer account for your organization or your personal use and describing
 your use case for SFM. Be sure to answer all of the questions in the
-application. You may receive email follow-up before the application
-is approved.
+application. You may receive email follow-up requesting additional 
+information before the application is approved.
 
-Creating application credentials and manually adding Twitter Credentials, 
+Creating application credentials and manually adding Twitter credentials, 
 rather than connecting them automatically
 using your Twitter account (see above), gives you greater control over your
 credentials and allows you to use multiple credentials.
@@ -78,14 +77,14 @@ credentials and allows you to use multiple credentials.
 To obtain application credentials:
   * Navigate to `<https://developer.twitter.com/en/apply-for-access>`_.
   * Sign in to Twitter.
-  * Follow the prompts to describe your intended use case for academic/research. 
-  * When a description for you app is requested, you may include:
+  * Follow the prompts to describe your intended use case for academic research. 
+  * When a description for your app is requested, you may include:
     *This is an instance of Social Feed Manager, a social media research and 
     archival tool, which collects data for
     academic researchers through an accessible user interface.*
-  * Enter a website such as the SFM url. Any website will work.
-  * You must provide a callback URL which is http://<SFM hostname>/accounts/twitter/login/callback/. 
-    Note that this should be http not https even if you are using https.
+  * Enter a website such as the Social Feed Manager URL. Any website will work.
+  * You must provide a callback URL which is \h\t\t\p://<SFM hostname>/accounts/twitter/login/callback/. 
+    Note that the URL should begin with *http*, not *https*, even if you are using https.
   * Turn on Enable Callback Locking and Allow this application to be used to Sign in with Twitter.
   * It is recommended to change the application permissions to read-only.
   * **Review and agree to the Twitter Developer Agreement**.
@@ -96,7 +95,7 @@ approved, it is recommended that you:
   * Navigate to the *Permissions* tab.
   * Select *Read only* then *Update settings*.
   
-You now have application-level credentials you can add to your ``.env`` file.
+You now have application-level credentials you can use in your ``.env`` file.
 
 To manually add a Twitter Credential in your SFM user account:
   * **Go to the Credentials page of SFM,** and click *Add Twitter Credential*.
