@@ -175,3 +175,8 @@ table {
 .form-text.text-muted {
     font-size: 100%;
 }
+
+.dataTables_paginate {
+    width: 100%;
+    justify-content: center;
+}
