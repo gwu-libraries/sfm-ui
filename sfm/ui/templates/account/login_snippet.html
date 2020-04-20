@@ -4,7 +4,7 @@
 </div>
 <div class="col-md-6">
 
-<p>If you have not created an account yet, then please <a href="{% url "account_signup" %}">sign up</a> first.</p>
+<p>Don't have an account? <a href="{% url "account_signup" %}">Sign up now</a></p>
 
 <form class="login" method="POST" action="{% url 'account_login' %}">
     {% csrf_token %}
@@ -32,8 +32,8 @@
 </form>
 </div>
 
-<div class="col-md-5 col-md-offset-1" style="text-align: justify">
-<p>Social Feed Manager empowers researchers and archivists to create collections of social media data from Twitter, Tumblr, Flickr, and Sina Weibo. Read more about Social Feed Manager <a href="http://sfm.readthedocs.io/en/latest/">here</a>.</p>
+<div class="col-md-5 col-md-offset-1" >
+<p>Social Feed Manager empowers researchers and archivists to create collections of social media data from Twitter, Tumblr, Flickr, and Sina Weibo. <a href="http://sfm.readthedocs.io/en/latest/">Learn more about Social Feed Manager</a>.</p>
 </div>
 
 </div>

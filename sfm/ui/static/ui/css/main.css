@@ -148,3 +148,35 @@ table {
     word-wrap: break-word;
     overflow-y:auto;
 }
+
+.fa-fw {
+    padding-right: 25px;
+}
+
+.collapse-toggle::after {
+    display: inline-block;
+    margin-left: .255em;
+    vertical-align: .255em;
+    content: "";
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-bottom: 0;
+    border-left: .3em solid transparent;
+}
+
+.crispy-form-custom label {
+    font-weight: bold;
+}
+
+.crispy-form-custom .custom-control-label {
+    font-weight: normal;
+}
+
+.form-text.text-muted {
+    font-size: 100%;
+}
+
+.dataTables_paginate {
+    width: 100%;
+    justify-content: center;
+}

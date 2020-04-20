@@ -20,18 +20,18 @@
         <ul id="collection_set_tabs" class="nav nav-tabs">
             {% for collection_set_key, collection_set_name, collection_set_list in collection_sets_lists %}
                 {% if forloop.first %}
-                    <li class="active"><a  href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge">{{ collection_set_list | length }}</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-pill badge-dark">{{ collection_set_list | length }}</span></a></li>
                 {% else %}
                         {% if collection_set_list %}
-                            <li><a  href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge">{{ collection_set_list | length }}</span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="#{{ collection_set_key }}" data-toggle="tab">{{ collection_set_name }}&nbsp;<span class="badge badge-pill badge-dark">{{ collection_set_list | length }}</span></a></li>
                         {% endif %}
                 {% endif %}
             {% endfor %}
         </ul>
         <div class="tab-content ">
-            {% for colletion_set_key, colletion_set_name, collection_set_list in collection_sets_lists %}
-                 <div class="tab-pane {% if forloop.first %} active{% endif %}" id="{{ colletion_set_key }}">
-                    {% include "ui/collection_set_list_snippet.html" with collection_type=colletion_set_key collection_sets_input=collection_set_list %}
+            {% for collection_set_key, collection_set_name, collection_set_list in collection_sets_lists %}
+                 <div class="tab-pane {% if forloop.first %} active{% endif %}" id="{{ collection_set_key }}">
+                    {% include "ui/collection_set_list_snippet.html" with collection_type=collection_set_key collection_sets_input=collection_set_list %}
                 </div>
             {% endfor %}
         </div>

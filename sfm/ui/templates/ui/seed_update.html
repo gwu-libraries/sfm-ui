@@ -8,10 +8,10 @@
 <div class="row">
    <div class="col-md-12">
        <ol class="breadcrumb">
-           <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-           <li><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></li>
-           <li><a href={% url "collection_detail" seed.collection.pk %}>{{ seed.collection.name }}</a></li>
-           <li class="active">{{ seed.collection.get_harvest_type_display }} seed</a></li>
+           <li class="breadcrumb-item"><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+           <li class="breadcrumb-item"><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></li>
+           <li class="breadcrumb-item"><a href={% url "collection_detail" seed.collection.pk %}>{{ seed.collection.name }}</a></li>
+           <li class="breadcrumb-item active">{{ seed.collection.get_harvest_type_display }} seed</a></li>
        </ol>
    </div>
 </div>

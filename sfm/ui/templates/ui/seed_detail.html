@@ -9,10 +9,10 @@
     <div class="row">
         <div class="col-md-12">
             <ol class="breadcrumb">
-                <li><a href={% url "collection_set_list" %}>Collection Sets</a></li>
-                <li><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></li>
-                <li><a href={% url "collection_detail" seed.collection.pk %}>{{ seed.collection.name }}</a></li>
-                <li class="active">{{ seed.collection.get_harvest_type_display }} seed</li>
+                <li class="breadcrumb-item"><a href={% url "collection_set_list" %}>Collection Sets</a></li>
+                <li class="breadcrumb-item"><a href={% url "collection_set_detail" collection_set.pk %}>{{ collection_set.name }}</a></li>
+                <li class="breadcrumb-item"><a href={% url "collection_detail" seed.collection.pk %}>{{ seed.collection.name }}</a></li>
+                <li class="breadcrumb-item active">{{ seed.collection.get_harvest_type_display }} seed</li>
             </ol>
         </div>
     </div>
@@ -26,7 +26,7 @@
    <div class="row">
        <div class="col-md-12">
           <a class="btn btn-primary" href="{% url "seed_update" seed.pk %}" {% if not can_edit %}disabled="disabled"{% endif %} >
-             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a>
+             <span class="fas fa-pencil-alt fa-fw" aria-hidden="true"></span> Edit</a>
           <div class="btn-group">
              <form method="post" id = "toggleForm" action={% url "seed_toggle_active" seed.pk %}>
                {% csrf_token %}
@@ -35,11 +35,11 @@
                    Delete <span class="caret"></span>
                  </button><br />
                  <ul class="dropdown-menu">
-                   <li onclick="$('#toggleForm').submit();"> <a href="#">Delete</a></li>
-                   <li data-toggle="modal" data-target="#addNoteDeleteModal"> <a href="#">Add note and delete</a></li>
+                   <li class="dropdown-item" onclick="$('#toggleForm').submit();"> <a href="#">Delete</a></li>
+                   <li class="dropdown-item" data-toggle="modal" data-target="#addNoteDeleteModal"> <a href="#">Add note and delete</a></li>
                  </ul>
                {% else %}
-                   <button {% if not can_edit %}disabled="disabled"{% endif %} type="submit" class="btn btn-default">Undelete</button>
+                   <button {% if not can_edit %}disabled="disabled"{% endif %} type="submit" class="btn btn-secondary">Undelete</button>
                {% endif %}
              </form>
           </div>
@@ -49,9 +49,8 @@
                      {% csrf_token %}
                      <div class="modal-content">
                          <div class="modal-header">
-                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                   aria-hidden="true">&times;</span></button>
                              <h4 class="modal-title" id="addNoteDeleteModalLabel">Add note and delete</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                          </div>
                          <div class="modal-body">
                              <div id="div_id_history_note" class="form-group">
@@ -65,7 +64,7 @@
                              </div>
                          </div>
                          <div class="modal-footer">
-                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                              <button type="submit" class="btn btn-danger">
                                  <span aria-hidden="true"></span> Delete
                              </button>
@@ -90,8 +89,8 @@
             <p><strong>Token updated:</strong> {{ seed.date_updated }}</p>
        </div>
        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card mb-3">
+                <div class="card-body">
                     <p><strong>Id:</strong> {{ seed.seed_id }}</p>
                     <p><strong>Added:</strong> {{ seed.date_added }}</p>
                  </div>
@@ -103,7 +102,7 @@
        <div class="col-md-12">
           <h4>Change log</h4>
             <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_edit %} disabled {% endif %}>
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add note
+                <span class="fas fa-plus fa-fw" aria-hidden="true"></span> Add note
             </button><br>
             </p>
             <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModal">
@@ -112,9 +111,9 @@
                         {% csrf_token %}
                         <div class="modal-content">
                             <div class="modal-header">
+                                <h4 class="modal-title" id="addNoteModalLabel">Add note</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="addNoteModalLabel">Add note</h4>
                             </div>
                             <div class="modal-body">
                                 <div id="div_id_add_note" class="form-group">
