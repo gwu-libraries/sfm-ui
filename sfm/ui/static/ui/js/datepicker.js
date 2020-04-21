@@ -1,1 +1,2 @@
-$(".datepicker").flatpickr({enableTime: true});
+$(".datepicker").flatpickr({enableTime: true, allowInput: true});
+$(".datepicker").attr("autocomplete","off");
