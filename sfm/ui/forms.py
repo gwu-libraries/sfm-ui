@@ -981,13 +981,13 @@ class ExportForm(forms.ModelForm):
                     HTML("""<p class="help-block">The timezone for dates entered here are {}. Adjustments will be
                     made to match the time zone of the items. For example, dates in
                     tweets are UTC.</p>""".format(settings.TIME_ZONE)),
-                    css_class="card panel-default card-body mb-3 input-group"),
+                    css_class="card panel-default card-body mb-3"),
                 Div(
                     HTML("""<h4>Limit by harvest date range</h4>"""),
                     Field('harvest_date_start', css_class='datepicker'),
                     Field('harvest_date_end', css_class='datepicker'),
-                    css_class="card panel-default card-body mb-3 input-group"),
-                css_class='crispy-for-custom'
+                    css_class="card panel-default card-body mb-3"),
+                css_class='crispy-form-custom'
             ),
             FormActions(
                 Submit('submit', 'Export'),
