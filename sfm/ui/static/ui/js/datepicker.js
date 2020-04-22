@@ -1,2 +1,2 @@
-$(".datepicker").flatpickr({enableTime: true, allowInput: true});
-$(".datepicker").attr("autocomplete","off");
+$(".datepicker").flatpickr({enableTime: true, allowInput: true, defaultHour: 0});
+$(".datepicker").attr({"autocomplete": "off", "type": "search"});
