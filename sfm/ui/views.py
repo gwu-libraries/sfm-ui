@@ -222,11 +222,11 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
         elif column == 'messages':
             msg_seed = ""
             for msg in self.seed_infos.get(row.seed_id, []):
-                msg_seed += u'<li><p class="text-info">{}</p></li>'.format(msg)
+                msg_seed += u'<li><p class="text-message">{}</p></li>'.format(msg)
             for msg in self.seed_warnings.get(row.seed_id, []):
-                msg_seed += u'<li><p class="text-warning">{}</p></li>'.format(msg)
+                msg_seed += u'<li><p class="text-message">{}</p></li>'.format(msg)
             for msg in self.seed_errors.get(row.seed_id, []):
-                msg_seed += u'<li><p class="text-danger">{}</p></li>'.format(msg)
+                msg_seed += u'<li><p class="text-message">{}</p></li>'.format(msg)
             return mark_safe(u'<ul>{}</ul>'.format(msg_seed)) if msg_seed else ""
 
         elif column == 'uid':
