@@ -50,14 +50,19 @@
     <script src="{% static 'ui/js/seed_select_option.js' %}"></script>
     <script src="{% static 'ui/js/cookie_consent.js' %}"></script>
 
+    <!-- flatpickr for jQuery datetimepicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!--<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>-->
+    <script src="{% static 'ui/js/flatpickr.js' %}"></script>
+
     {% block javascript %}
 
     {% endblock %}
 
     {% block extra_head %}
         <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-	<script src="{% static 'ui/js/data_tables.js' %}"></script>
-	<script type="text/javascript">
+	      <script src="{% static 'ui/js/data_tables.js' %}"></script>
+	      <script type="text/javascript">
            var oPaginationType = "bs_normal";
            var oLanguages = {
                 "lengthMenu": "Display _MENU_ records per page",
@@ -70,7 +75,7 @@
                   "previous": "Previous"
                 }
             };
-        </script>
+	      </script>
     {% endblock %}
   </head>
 
