@@ -180,3 +180,14 @@ table {
     width: 100%;
     justify-content: center;
 }
+
+h2.change-log, h2.seeds, h2.harvests {
+    font-size: 1.5rem;
+}
+
+p.harvest-type-display {
+    font-size: 1.75rem;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}

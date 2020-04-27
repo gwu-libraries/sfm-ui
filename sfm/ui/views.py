@@ -217,8 +217,9 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
     def render_column(self, row, column):
         # We want to render user as a custom column
         if column == 'link':
-            return mark_safe(u'<a target="_blank" href="{0}"> <img src="{1}" height=35 width=35/></a>'.format(
-                row.social_url(), static('ui/img/{}_logo.png'.format(self.collection.harvest_type.split('_')[0]))))
+            platform_type = self.collection.harvest_type.split('_')[0]
+            return mark_safe(u'<a target="_blank" href="{0}"> <img src="{1}" alt="Link to {2} account for {3}" height=35 width=35/></a>'.format(
+                row.social_url(), static('ui/img/{}_logo.png'.format(platform_type)), platform_type, row.token))
         elif column == 'messages':
             msg_seed = ""
             for msg in self.seed_infos.get(row.seed_id, []):

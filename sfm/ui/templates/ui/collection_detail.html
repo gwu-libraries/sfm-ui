@@ -27,10 +27,10 @@
             <div class="card-body {% if collection.is_on %} panel-on {% else %} panel-off {% endif %}">
                 <div class="row">
                   <div class="col-md-1">
-                    <img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png" %} height=60 width=60/>
+                    <img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png"%} alt="{{ collection.credential.platform|add:" logo" }}" height=60 width=60/>
                   </div>
                   <div class="col-md-9">
-                    <h3>{{ collection.get_harvest_type_display }}</h3>
+                    <p class="harvest-type-display">{{ collection.get_harvest_type_display }}</p>
                     {% if collection.is_on %}<p>Collection is active. Turn off to edit.</p>{% endif %}
                     {% if not collection.is_active %}<p>Collection is deactivated. Activate to turn on harvesting.</p>{% endif %}
                   </div>
@@ -62,11 +62,11 @@
                                         aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
-                                <div id="div_id_history_note" class="form-group"><label for="id_history_note" class="col-form-label ">
+                                <div id="div_id_history_note_off" class="form-group"><label for="id_history_note_off" class="col-form-label ">
                                     Change Note
                                 </label>
                                     <div class="controls ">
-                                        <textarea class="textarea form-control" cols="40" id="id_history_note" name="history_note" rows="4"></textarea>
+                                        <textarea class="textarea form-control" cols="40" id="id_history_note_off" name="history_note" rows="4"></textarea>
                                         <p id="hint_id_history_note" class="help-block">Explain why you are turning off the collection.</p>
                                     </div>
                                 </div>
@@ -110,11 +110,11 @@
                                         aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
-                                <div id="div_id_history_note" class="form-group"><label for="id_history_note" class="col-form-label ">
+                                <div id="div_id_history_note_deactivate" class="form-group"><label for="id_history_note_deactivate" class="col-form-label ">
                                     Change Note
                                 </label>
                                     <div class="controls ">
-                                        <textarea class="textarea form-control" cols="40" id="id_history_note" name="history_note" rows="4"></textarea>
+                                        <textarea class="textarea form-control" cols="40" id="id_history_note_deactivate" name="history_note" rows="4"></textarea>
                                         <p id="hint_id_history_note" class="help-block">Explain why you are deactivating the collection.</p>
                                     </div>
                                 </div>
@@ -163,13 +163,13 @@
     <div class="alert alert-danger" role="alert">{{ seed_error_message }}</div>
 {% endif %}
 {% if not seed_error_message and not seed_warning_message and not collection.is_on and not credential_used_col and collection.is_active%}
-    <div class="alert alert-warning" role="alert">Turn on collection to start harvesting.</div>
+    <div class="alert alert-warning" role="status">Turn on collection to start harvesting.</div>
 {% endif %}
 {% if last_harvest.status == "completed failure" %}
     <div class="alert alert-danger" role="alert"><a href={% url "harvest_detail" last_harvest.pk %}>Last harvest</a> failed.</div>
 {% endif %}
 {% if last_harvest.infos %}
-    <div class="alert alert-info" role="alert">
+    <div class="alert alert-info" role="status">
         Information messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
         <ul class="ul_nav">
             {% for msg in last_harvest.infos %}
@@ -179,7 +179,7 @@
     </div>
 {% endif %}
 {% if last_harvest.warnings %}
-    <div class="alert alert-warning" role="alert">
+    <div class="alert alert-warning" role="status">
         Warning messages reported by <a href={% url "harvest_detail" last_harvest.pk %}>last harvest</a>:
         <ul class="ul_nav">
             {% for msg in last_harvest.warnings %}
@@ -199,7 +199,7 @@
     </div>
     {% endif %}
     {% if stream_stopping %}
-        <div class="alert alert-warning" role="alert">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
+        <div class="alert alert-warning" role="status">Harvest must complete before it can be turned on. This may take several minutes. If the harvest does not complete, go to the harvest's detail page and mark it void.</div>
     {% endif %}
   </div>
 </div>
@@ -255,7 +255,7 @@
 <div class="row">
     <div class="col-md-12">
       <div class="card mb-3">
-        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Seeds<a type="button" class="float-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="fas fa-download fa-fw"></span>Download seed list</a></h4></div>
+        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h2 class="seeds">Seeds<a type="button" class="float-right btn btn-primary" href="{% url "download" collection.pk %}"><span class="fas fa-download fa-fw" aria-hidden="true"></span>Download seed list</a></h2></div>
          <div class="card-body">
            <ul id='seed_tab' class="nav nav-tabs">
                   <li class="nav-item"><a class="nav-link active" id="active" data-toggle="tab" href="#active_seed">Active
@@ -298,7 +298,7 @@
 <div class="row">
   <div class="col-md-12">
       <div class="card mb-3">
-        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Harvests ({{ harvest_count|intcomma }})</h4></div>
+        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h2 class="harvests">Harvests ({{ harvest_count|intcomma }})</h2></div>
         <div class="card-body">
             <table class="table table-list-search">
                 <thead>
@@ -314,8 +314,8 @@
                 <tbody class="HarvestSearch">
                 {% for harvest in harvests %}
                 <tr class="HarvestContent">
-                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
-                    <td>{{ harvest.date_requested }}</td>
+                    <td>{{ harvest.get_harvest_type_display }}</td>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.date_requested }}</a></td>
                     <td>{% if harvest.status == "completed success" or harvest.status == "completed failure" %}
                         {{ harvest.date_ended}}
                         {% else %}
@@ -341,7 +341,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h4>Change log</h4>
+        <h2 class="change-log">Change log</h2>
         <p><button type="submit" class="btn btn-primary btn-stacked" data-toggle="modal" data-target="#addNoteModal" {% if not can_toggle_on %} disabled {% endif %}>
             <span class="fas fa-plus fa-fw" aria-hidden="true"></span> Add note</button><br/>
         </p>
