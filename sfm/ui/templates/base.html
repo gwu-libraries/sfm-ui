@@ -83,10 +83,10 @@
 
     {% if ENABLE_COOKIE_CONSENT %}
 
-      <div class="alert text-center cookiealert" role="alert">
-        <div class="container-fluid">
+      <div class="alert cookiealert" role="alert">
+        <div class="container">
           <div class="row align-items-center">
-            <!-- The "safe" filter is needed to disable automatic HTML escpaing;
+            <!-- The "safe" filter is needed to disable automatic HTML escaping;
                  this allows us to use HTML tags in the consent text,
                  for example to include an <a> tag for a link -->
             <div id="cookie_text" class="col-10">
