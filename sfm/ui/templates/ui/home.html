@@ -52,7 +52,7 @@
             </tr>
          </thead>
         {% for queue, msgcount in queue_data %}
-        <tr  class="alert-warning">
+        <tr class="alert-warning" role="status">
             <td><strong>{{ queue }}</strong></td>
             <td>{{ msgcount }}</td>
         </tr>
