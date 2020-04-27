@@ -17,35 +17,38 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-  <!--Replacement for bootstrap-multiselect-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <!--Replacement for bootstrap-multiselect-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 
     <!-- Your stuff: Third-party css libraries go here -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">
 
-    <!-- This file store project specific CSS -->
+    <!-- SFM-specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'ui/css/cookie_consent.css' %}">
 
     {% block css %}
 
     {% endblock %}
 
-	<!-- Latest JQuery -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <!--Bootstrap 4 requires Popper.js-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <!-- datatables.js with Bootstrap 4 support -->
-  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
-  <!--Font Awesome for icons-->
-  <script src="https://kit.fontawesome.com/012dee33a5.js" crossorigin="anonymous"></script>
+    <!-- Latest JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <!--Bootstrap 4 requires Popper.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- datatables.js with Bootstrap 4 support -->
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+    <!--Font Awesome for icons-->
+    <script src="https://kit.fontawesome.com/012dee33a5.js" crossorigin="anonymous"></script>
     <!-- multiselect javascript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 
     <script src="{% static 'ui/js/seed_multiselect.js' %}"></script>
     <script src="{% static 'ui/js/seed_select_option.js' %}"></script>
+    <script src="{% static 'ui/js/cookie_consent.js' %}"></script>
 
     <!-- flatpickr for jQuery datetimepicker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -58,9 +61,8 @@
 
     {% block extra_head %}
         <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-        <!--<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>-->
-        <script src="{% static 'ui/js/data_tables.js' %}"></script>
-	<script type="text/javascript">
+	      <script src="{% static 'ui/js/data_tables.js' %}"></script>
+	      <script type="text/javascript">
            var oPaginationType = "bs_normal";
            var oLanguages = {
                 "lengthMenu": "Display _MENU_ records per page",
@@ -73,23 +75,40 @@
                   "previous": "Previous"
                 }
             };
-	</script>
+	      </script>
     {% endblock %}
-
   </head>
 
   <body>
-    <!--<div class="navbar navbar-default">-->
+
+    {% if ENABLE_COOKIE_CONSENT %}
+
+      <div class="alert cookiealert" role="alert">
+        <div class="container">
+          <div class="row align-items-center">
+            <!-- The "safe" filter is needed to disable automatic HTML escaping;
+                 this allows us to use HTML tags in the consent text,
+                 for example to include an <a> tag for a link -->
+            <div id="cookie_text" class="col-10">
+              {{ COOKIE_CONSENT_HTML | safe }}
+            </div>
+            <div id="cookie_button" class="col-2">
+              <button type="button" class="btn btn-primary btn-sm acceptcookies" aria-label="Close">
+                {{ COOKIE_CONSENT_BUTTON_TEXT }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-3">  
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
          <a class="navbar-brand" href="{% url 'home' %}">Social Feed Manager</a>
           <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse-1" aria-expanded="false">
-            <!--<span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>-->
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
@@ -166,6 +185,5 @@
             <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
         </div>
     </footer>
-
 </body>
 </html>

@@ -182,6 +182,11 @@ INSTITUTION_NAME = env.get('SFM_INSTITUTION_NAME')
 # a link for the institution name, such as 'http://library.gwu.edu'
 INSTITUTION_LINK = env.get('SFM_INSTITUTION_LINK')
 
+# Cookie popup html
+ENABLE_COOKIE_CONSENT = env.get('SFM_ENABLE_COOKIE_CONSENT') == 'True'
+COOKIE_CONSENT_HTML = env.get('SFM_COOKIE_CONSENT_HTML')
+COOKIE_CONSENT_BUTTON_TEXT = env.get('SFM_COOKIE_CONSENT_BUTTON_TEXT')
+
 # Directory where SFM data (e.g., harvested WARCs) is stored.
 SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
 

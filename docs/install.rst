@@ -105,6 +105,12 @@ statements change *master* to the correct version, e.g., *2.2.0*::
     # - echo SFM_INSTITUTION_NAME=yourinstitution >> .env
     # Provide your institution link
     # - echo SFM_INSTITUTION_LINK=http://library.yourinstitution.edu >> .env
+    # Set to True to enable the cookie consent popup
+    # - echo SFM_ENABLE_COOKIE_CONSENT=False >> .env
+    # Provide the text you would like to appear on the cookie popup
+    # - echo SFM_COOKIE_CONSENT_HTML=<b>Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a> >> .env
+    # Provide the wording you would like to appear on the cookie button
+    # - echo SFM_COOKIE_CONSENT_BUTTON_TEXT=I consent >> .env
     # To send email, set these correctly.
     # - echo SFM_SMTP_HOST=smtp.gmail.com >> .env
     # - echo SFM_EMAIL_USER=someone@gmail.com >> .env
@@ -171,6 +177,13 @@ Configuration is documented in ``example.env``. For a production deployment, pay
 * Set an admin email address with ``SFM_SITE_ADMIN_EMAIL``. Problems with SFM are sent to this address.
 * Set an SFM contact email address with ``SFM_CONTACT_EMAIL``. Users are provided with this address.
 * For branding in the SFM UI, provide ``SFM_INSTITUTION_NAME`` and ``SFM_INSTITUTION_LINK``.
+* To enable the cookie consent popup:
+   * Set ``SFM_ENABLE_COOKIE_CONSENT`` to ``True``.
+   * Optionally, customize the text of ``SFM_COOKIE_CONSENT_HTML``.  HTML tags are allowed in
+     ``SFM_COOKIE_CONSENT_HTML``. For instance, you may wish to use an ``<a>`` (anchor tag) to 
+     include a link to your institution's privacy policy web page.
+   * Optionally, customize the wording of the cookie consent button in 
+     ``SFM_COOKIE_CONSENT_BUTTON_TEXT``.
 
 Note that if you make a change to configuration *after* SFM is brought up, you will need to restart containers. If
 the change only applies to a single container, then you can stop the container with ``docker kill <container name>``. If
