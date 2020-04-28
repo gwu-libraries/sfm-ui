@@ -12,11 +12,75 @@ body {
     margin-bottom: 120px;
 }
 
+a {
+    color: #2971a7;
+}
+
+a:hover {
+    color: #004065;
+}
+
+.btn-primary:active, .btn-primary:hover {
+    background-color: #0190DB;
+    border-color: #0190DB;
+    color: #FFF;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #0190DB;
+    border-color: #0190DB;
+    color: #FFF; 
+}
+
+.show>.btn-primary.dropdown-toggle:focus {
+    background-color: #0190DB;
+    border-color: #0190DB;
+    color: #FFF;
+}
+
+.btn-primary {
+    background-color: #2971a7;
+    border-color: #2971a7;
+}
+
+.btn-danger {
+    background-color: #C9102F;
+    border-color: #C9102F; 
+}
+
+.btn-success {
+    background-color: #78BE20;
+    border-color: #78BE20;
+}
+
 .alert {
     margin-top: 10px;
 }
 
-.navbar-default .navbar-nav>li>a,p {
+.alert-info {
+    background-color: #ccedff;
+    color: #333;
+}
+
+.alert-success {
+    background-color: #ccfff3;
+    color: #333;
+}
+
+.alert-warning {
+    background-color: #fcf2cf;
+    color: #333;
+}
+
+.alert-danger {
+    color: #333;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.navbar-light .navbar-nav .nav-link {
     color: #333;
 }
 
@@ -31,7 +95,7 @@ body {
 
 .panel-on>.panel-heading {
     color: #fff;
-    background-color: #337ab7;
+    background-color: #004065;
     background-image: none;
     border-bottom: solid 1px #ffffff;
 }
@@ -46,16 +110,8 @@ body {
     border-bottom: solid 1px #ffffff;
 }
 
-.panel-title {
-    font-size: 36px;
-}
-
 .btn-stacked {
     margin-top: 8px;
-}
-
-.btn .glyphicon {
-    margin-right: 8px;
 }
 
 .btn-aligned {
@@ -105,9 +161,6 @@ body {
     padding-top: 30px;
 }
 
-.text-warning {
-    color: #666;
-}
 .tooltip > .tooltip-inner {
     min-width: 200px;
     background-color: #333;
@@ -190,4 +243,16 @@ p.harvest-type-display {
     margin-bottom: .5rem;
     font-weight: 500;
     line-height: 1.2;
+}
+
+.dropdown-item:active {
+    background-color: #FFF;
+}
+
+.text-message { 
+   color: #A75523;
+}
+
+.card-title {
+    margin-top: 8px;
 }
