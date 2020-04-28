@@ -12,6 +12,10 @@ body {
     margin-bottom: 120px;
 }
 
+h1 {
+   margin-bottom: 1rem;
+}
+
 a {
     color: #2971a7;
 }
@@ -63,7 +67,6 @@ a:hover {
 }
 
 .alert-success {
-    background-color: #ccfff3;
     color: #333;
 }
 
