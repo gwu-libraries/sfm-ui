@@ -129,8 +129,7 @@ $(document).ready(function(){
                     {% for harvest_type, harvest_label in harvest_types %}
                         <li class="dropdown-item">
                             <a class="flex-column align-items" href="{% url "collection_create" collection_set.id harvest_type %}">
-                            <p><strong>Add {{ harvest_label }}</strong><br/>{{ harvest_description|get_item:harvest_type }}</p>
-                            </a>
+				    <p><strong>Add {{ harvest_label }}</strong></a><br/>{{ harvest_description|get_item:harvest_type }}</p>
                         </li>
                     {% endfor %}
                 </ul>

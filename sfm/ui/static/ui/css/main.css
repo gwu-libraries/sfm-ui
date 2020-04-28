@@ -16,29 +16,34 @@ h1 {
    margin-bottom: 1rem;
 }
 
-a, a.page-link {
+a {
     color: #2971a7;
+    text-decoration: underline;
 }
 
 a:hover {
     color: #004065;
 }
 
+a.btn {
+    text-decoration: none;
+}
+
 .btn-primary:active, .btn-primary:hover {
-    background-color: #0190DB;
-    border-color: #0190DB;
+    background-color: #017ABC;
+    border-color: ##017ABC;
     color: #FFF;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active {
-    background-color: #0190DB;
-    border-color: #0190DB;
-    color: #FFF; 
+    background-color: ##017ABC;
+    border-color: ##017ABC;
+    color: #FFF;
 }
 
 .show>.btn-primary.dropdown-toggle:focus {
-    background-color: #0190DB;
-    border-color: #0190DB;
+    background-color: ##017ABC;
+    border-color: ##017ABC;
     color: #FFF;
 }
 
@@ -83,24 +88,25 @@ a:hover {
     color: #333;
 }
 
-.alert a {
-    text-decoration: underline;
+.nav-link {
+    text-decoration: none;
 }
 
 .nav-link:hover {
     text-decoration: underline;
 }
 
+.navbar-header a {
+    text-decoration:none;
+}
+
 .navbar-light .navbar-nav .nav-link {
     color: #333;
+    text-decoration: none;
 }
 
 .breadcrumb {
     background-color: #ffffff;
-}
-
-.breadcrumb-item a {
-    text-decoration:underline;
 }
 
 .panel-on {
@@ -182,9 +188,6 @@ a:hover {
 }
 .modal {
     top: 35%;
-}
-.modal-body a {
-    text-decoration: underline;
 }
 
 .longseed{
@@ -288,8 +291,4 @@ p.harvest-type-display {
 	position:static;
 	width:auto;
 	height:auto;
-}
-
-td a {
-    text-decoration: underline;
 }
