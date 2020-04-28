@@ -65,7 +65,7 @@ $(document).ready(function(){
 <div class="row subsection">
   <div class="col-md-12">
     <div class="card mb-3">
-        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h4>Collections</h4></div>
+        <div class="card-heading bg-light pl-3 pr-3 pt-2 pb-2 border"><h2 class="collections">Collections</h2></div>
         <div class="card-body">
             {% if collection_list %}
             <table class="table table-striped">
@@ -102,7 +102,11 @@ $(document).ready(function(){
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  {% if not can_edit %} disabled {% endif %}>
                       Add Collection <span class="caret"></span>
                 </button>
-                <a href="#collectionsModal" data-toggle="modal" role="button" ><i class="fas fa-info-circle" style="padding-top:7px; margin-left: 10px"></i></a>
+                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#collectionsModal" aria-label="Details about each collection type">
+                  <!--<a href="#collectionsModal" data-toggle="modal" role="button" >-->
+                    <i class="fas fa-info-circle" style="padding-top:7px; margin-left: 10px" aria-hidden="true"></i>
+                    <!--</a>-->
+                  </button>
 
                 <!-- modal for i button -->
                 <div class="modal fade" tabindex="-1" role="dialog" id="collectionsModal">

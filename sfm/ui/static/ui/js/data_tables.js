@@ -2,7 +2,7 @@
 $.extend( true, $.fn.dataTable.defaults, {
     "sPaginationType": "bs_normal",
     "oLanguage": {
-        "sSearch": ""
+        "sSearch": "Search"
     }
 } );
 

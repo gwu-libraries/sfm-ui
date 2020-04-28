@@ -49,8 +49,8 @@
 		</thead>
 			{% for harvest in harvest_list %}
                 <tr>
-                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.get_harvest_type_display }}</a></td>
-                    <td>{{ harvest.date_requested }}</td>
+                    <td>{{ harvest.get_harvest_type_display }}</td>
+                    <td><a href="{% url "harvest_detail" harvest.pk %}">{{ harvest.date_requested }}</a></td>
                     <td>{% if harvest.status == "completed success" or harvest.status == "completed failure" %}
                         {{ harvest.date_ended}}
                         {% else %}
