@@ -27,7 +27,7 @@
             <div class="card-body {% if collection.is_on %} panel-on {% else %} panel-off {% endif %}">
                 <div class="row">
                   <div class="col-md-1">
-                    <img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png"%} alt="{{ collection.credential.platform|add:" logo" }}" height=60 width=60/>
+                    <img src={% static "ui/img/"|add:collection.credential.platform|add:"_logo.png"%} alt="{{ collection.credential.platform|add:" logo" }}" height="60" width="60"/>
                   </div>
                   <div class="col-md-9">
                     <p class="harvest-type-display">{{ collection.get_harvest_type_display }}</p>

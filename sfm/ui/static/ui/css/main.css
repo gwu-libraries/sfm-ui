@@ -181,7 +181,7 @@ table {
     justify-content: center;
 }
 
-h2.change-log, h2.seeds, h2.harvests {
+h2.change-log, h2.seeds, h2.harvests, h2.collections {
     font-size: 1.5rem;
 }
 
