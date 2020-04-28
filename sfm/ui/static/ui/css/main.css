@@ -245,3 +245,18 @@ table {
 .card-title {
     margin-top: 8px;
 }
+
+#skiptocontent a, #skiptocontent a:hover, #skiptocontent a:visited {
+	position:absolute;
+	left:0px;
+	top:-500px;
+	width:1px;
+	height:1px;
+	overflow:hidden;
+}
+
+#skiptocontent a:active, #skiptocontent a:focus {
+	position:static;
+	width:auto;
+	height:auto;
+}
