@@ -16,7 +16,7 @@ h1 {
    margin-bottom: 1rem;
 }
 
-a {
+a, a.page-link {
     color: #2971a7;
 }
 
@@ -57,6 +57,10 @@ a:hover {
     border-color: #78BE20;
 }
 
+.btn-link i {
+    color: #2971a7;
+}
+
 .alert {
     margin-top: 10px;
 }
@@ -79,6 +83,10 @@ a:hover {
     color: #333;
 }
 
+.alert a {
+    text-decoration: underline;
+}
+
 .nav-link:hover {
     text-decoration: underline;
 }
@@ -89,6 +97,10 @@ a:hover {
 
 .breadcrumb {
     background-color: #ffffff;
+}
+
+.breadcrumb-item a {
+    text-decoration:underline;
 }
 
 .panel-on {
@@ -170,6 +182,9 @@ a:hover {
 }
 .modal {
     top: 35%;
+}
+.modal-body a {
+    text-decoration: underline;
 }
 
 .longseed{
@@ -273,4 +288,8 @@ p.harvest-type-display {
 	position:static;
 	width:auto;
 	height:auto;
+}
+
+td a {
+    text-decoration: underline;
 }
