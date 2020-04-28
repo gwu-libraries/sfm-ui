@@ -31,7 +31,7 @@ a.btn {
 
 .btn-primary:active, .btn-primary:hover {
     background-color: #017ABC;
-    border-color: ##017ABC;
+    border-color: #017ABC;
     color: #FFF;
 }
 
@@ -42,8 +42,8 @@ a.btn {
 }
 
 .show>.btn-primary.dropdown-toggle:focus {
-    background-color: ##017ABC;
-    border-color: ##017ABC;
+    background-color: #017ABC;
+    border-color: #017ABC;
     color: #FFF;
 }
 
