@@ -16,13 +16,15 @@
     transform: translateY(100%);
     transition: all 500ms ease-out;
     color: #ecf0f1;
-    background: #004065
+    background: #004065;
+    visibility: hidden
 }
 
 .cookiealert.show {
     opacity: 1;
     transform: translateY(0%);
     transition-delay: 1000ms;
+    visibility: visible
 }
 
 .cookiealert a {
