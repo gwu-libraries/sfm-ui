@@ -36,8 +36,8 @@ a.btn {
 }
 
 .btn-primary:not(:disabled):not(.disabled):active {
-    background-color: ##017ABC;
-    border-color: ##017ABC;
+    background-color: #017ABC;
+    border-color: #017ABC;
     color: #FFF;
 }
 
