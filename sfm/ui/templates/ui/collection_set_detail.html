@@ -104,7 +104,7 @@ $(document).ready(function(){
                 </button>
                 <button type="button" class="btn btn-link" data-toggle="modal" data-target="#collectionsModal" aria-label="Details about each collection type">
                   <!--<a href="#collectionsModal" data-toggle="modal" role="button" >-->
-                    <i class="fas fa-info-circle" style="padding-top:7px; margin-left: 10px" aria-hidden="true"></i>
+                    <i class="fas fa-info-circle fa-lg" style="padding-top:7px; margin-left: 5px" aria-hidden="true"></i>
                     <!--</a>-->
                   </button>
 
@@ -129,8 +129,7 @@ $(document).ready(function(){
                     {% for harvest_type, harvest_label in harvest_types %}
                         <li class="dropdown-item">
                             <a class="flex-column align-items" href="{% url "collection_create" collection_set.id harvest_type %}">
-                            <p><strong>Add {{ harvest_label }}</strong><br/>{{ harvest_description|get_item:harvest_type }}</p>
-                            </a>
+				    <p><strong>Add {{ harvest_label }}</strong></a><br/>{{ harvest_description|get_item:harvest_type }}</p>
                         </li>
                     {% endfor %}
                 </ul>
