@@ -292,3 +292,12 @@ p.harvest-type-display {
 	width:auto;
 	height:auto;
 }
+
+.filter-option-inner-inner {
+    color: #333;
+}
+
+span.flatpickr-day.selected {
+    background-color: #2971a7;
+    border-color: #2971a7; 
+}
