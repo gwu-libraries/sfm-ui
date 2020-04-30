@@ -7,4 +7,5 @@ def settings(request):
             'INSTITUTION_NAME': django_settings.INSTITUTION_NAME, 'INSTITUTION_LINK': django_settings.INSTITUTION_LINK,
             'COOKIE_CONSENT_HTML': django_settings.COOKIE_CONSENT_HTML,
             'COOKIE_CONSENT_BUTTON_TEXT': django_settings.COOKIE_CONSENT_BUTTON_TEXT,
-            'ENABLE_COOKIE_CONSENT': django_settings.ENABLE_COOKIE_CONSENT}
+            'ENABLE_COOKIE_CONSENT': django_settings.ENABLE_COOKIE_CONSENT,
+            'ENABLE_GW_FOOTER': django_settings.ENABLE_GW_FOOTER}

@@ -28,7 +28,9 @@
     <!-- SFM-specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'ui/css/cookie_consent.css' %}">
-    <link rel="stylesheet" href="{% static 'ui/css/footer.css' %}">
+    {% if ENABLE_GW_FOOTER %}
+      <link rel="stylesheet" href="{% static 'ui/css/gw/gw_footer.css' %}">
+    {% endif %}
 
     {% block css %}
 
@@ -205,7 +207,9 @@
             {% endif %}
           </div>
         </div>
-        {% include "footer_lower.html" %}
+        {% if ENABLE_GW_FOOTER %}
+          {% include "gw/gw_footer_lower.html" %}
+        {% endif %}
     </footer>
 </body>
 </html>
