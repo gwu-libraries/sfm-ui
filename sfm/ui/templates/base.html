@@ -28,6 +28,7 @@
     <!-- SFM-specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'ui/css/cookie_consent.css' %}">
+    <link rel="stylesheet" href="{% static 'ui/css/footer.css' %}">
 
     {% block css %}
 
@@ -173,9 +174,18 @@
 
     <footer class="footer">
         <div class="footer-upper">
-            <hr>
-            <a class="footer-blue" href="{% url 'home' %}">SFM UI {{ SFM_UI_VERSION }}</a>
-            <span class="footer-divider"> | </span>
+          <hr>
+          <div>
+            <strong>SFM version {{ SFM_UI_VERSION }}</strong>
+            {% if INSTITUTION_NAME %}
+              {% if INSTITUTION_LINK %}
+                <strong> is a service of </strong><a class="footer-blue" href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a>
+              {% else %}
+                <strong> is a service of {{ INSTITUTION_NAME }}</strong>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div>
             <a id="getstarted" class="footer-blue" target="_blank" href="http://sfm.readthedocs.io/en/latest/userguide.html">
              User Guide
             </a>
@@ -193,10 +203,9 @@
               Contact Us
             </a>
             {% endif %}
+          </div>
         </div>
-        <div class="footer-lower">
-            <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
-        </div>
+        {% include "footer_lower.html" %}
     </footer>
 </body>
 </html>
