@@ -111,6 +111,8 @@ statements change *master* to the correct version, e.g., *2.2.0*::
     # - echo SFM_COOKIE_CONSENT_HTML=<b>Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a> >> .env
     # Provide the wording you would like to appear on the cookie button
     # - echo SFM_COOKIE_CONSENT_BUTTON_TEXT=I consent >> .env
+    # Set to True to enable the GW footer
+    # - echo SFM_ENABLE_GW_FOOTER=False >> .env
     # To send email, set these correctly.
     # - echo SFM_SMTP_HOST=smtp.gmail.com >> .env
     # - echo SFM_EMAIL_USER=someone@gmail.com >> .env
@@ -176,7 +178,7 @@ Configuration is documented in ``example.env``. For a production deployment, pay
   For more information and alternative approaches see :doc:`credentials`.
 * Set an admin email address with ``SFM_SITE_ADMIN_EMAIL``. Problems with SFM are sent to this address.
 * Set an SFM contact email address with ``SFM_CONTACT_EMAIL``. Users are provided with this address.
-* For branding in the SFM UI, provide ``SFM_INSTITUTION_NAME`` and ``SFM_INSTITUTION_LINK``.
+* For branding in the SFM UI footer, provide ``SFM_INSTITUTION_NAME`` and ``SFM_INSTITUTION_LINK``. (There is also a GW-specific footer available which, when enabled, appears below the standard footer.  The GW-specific footer is disabled by default.  The environment variable that controls this is ``SFM_ENABLE_GW_FOOTER``.)
 * To enable the cookie consent popup:
    * Set ``SFM_ENABLE_COOKIE_CONSENT`` to ``True``.
    * Optionally, customize the text of ``SFM_COOKIE_CONSENT_HTML``.  HTML tags are allowed in

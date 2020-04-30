@@ -149,30 +149,17 @@ a.btn {
 }
 
 .footer .footer-upper {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     font-weight: 700;
+    line-height: 1.75;
 }
 
 .footer .footer-blue {
-    color: #0e90d2;
+    color: #2971a7;
 }
 
 .footer .footer-divider {
     color: #ccc;
-}
-
-.footer .footer-lower {
-    color: #999;
-    font-size: 12px;
-}
-
-.footer .footer-lower p {
-    display: inline-block;
-    margin: 5px;
-}
-
-.footer .footer-lower a  {
-    color: #555;
 }
 
 .sfm-container {

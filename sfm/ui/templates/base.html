@@ -28,6 +28,9 @@
     <!-- SFM-specific CSS -->
     <link rel="stylesheet" href="{% static 'ui/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'ui/css/cookie_consent.css' %}">
+    {% if ENABLE_GW_FOOTER %}
+      <link rel="stylesheet" href="{% static 'ui/css/gw/gw_footer.css' %}">
+    {% endif %}
 
     {% block css %}
 
@@ -173,30 +176,31 @@
 
     <footer class="footer">
         <div class="footer-upper">
-            <hr>
-            <a class="footer-blue" href="{% url 'home' %}">SFM UI {{ SFM_UI_VERSION }}</a>
+          <hr>
+          <div>
+            <strong>SFM version {{ SFM_UI_VERSION }}</strong>
+            {% if INSTITUTION_NAME %}
+              {% if INSTITUTION_LINK %}
+                <strong> is a service of </strong><a class="footer-blue" href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a>
+              {% else %}
+                <strong> is a service of {{ INSTITUTION_NAME }}</strong>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div>
+            <a id="getstarted" class="footer-blue" target="_blank" href="http://sfm.readthedocs.io/en/latest/userguide.html">User Guide</a>
             <span class="footer-divider"> | </span>
-            <a id="getstarted" class="footer-blue" target="_blank" href="http://sfm.readthedocs.io/en/latest/userguide.html">
-             User Guide
-            </a>
+            <a id="doc" class="footer-blue" target="_blank" href="https://sfm.readthedocs.org">Documentation</a>
             <span class="footer-divider"> | </span>
-            <a id="doc" class="footer-blue" target="_blank" href="https://sfm.readthedocs.org">
-              Documentation
-            </a>
-            <span class="footer-divider"> | </span>
-            <a id="citing" class="footer-blue" target="_blank" href="http://sfm.readthedocs.io/en/latest/citing.html">
-              Citing
-            </a>
+            <a id="citing" class="footer-blue" target="_blank" href="http://sfm.readthedocs.io/en/latest/citing.html">Citing</a>
             {% if CONTACT_EMAIL %}
             <span class="footer-divider"> | </span>
-            <a id="contactus" class="footer-blue" target="_blank" href="mailto:{{ CONTACT_EMAIL }}">
-              Contact Us
-            </a>
-            {% endif %}
+            <a id="contactus" class="footer-blue" target="_blank" href="mailto:{{ CONTACT_EMAIL }}">Contact Us</a>
+            {% endif %} </div>
         </div>
-        <div class="footer-lower">
-            <strong><a href={{ INSTITUTION_LINK }} title="institution-name" target="_blank">{{ INSTITUTION_NAME }}</a></strong>
-        </div>
+        {% if ENABLE_GW_FOOTER %}
+          {% include "gw/gw_footer_lower.html" %}
+        {% endif %}
     </footer>
 </body>
 </html>
