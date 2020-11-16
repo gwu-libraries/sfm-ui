@@ -108,6 +108,9 @@ These instructions are for Ubuntu. They may need to be adjusted for other operat
 
         sudo chown -R 990:990 /sfm-data/*
         
+        sudo chown -R 999:999 /sfm-data/postgresql/
+        sudo chown -R 999:999 /sfm-data/rabbitmq/
+
 4. Change .env::
 
         #DATA_VOLUME=/sfm-data
