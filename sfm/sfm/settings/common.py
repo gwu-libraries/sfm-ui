@@ -190,8 +190,12 @@ COOKIE_CONSENT_BUTTON_TEXT = env.get('SFM_COOKIE_CONSENT_BUTTON_TEXT')
 # GW footer
 ENABLE_GW_FOOTER = env.get('SFM_ENABLE_GW_FOOTER') == 'True'
 
-# Directory where SFM data (e.g., harvested WARCs) is stored.
-SFM_DATA_DIR = env.get("SFM_DATA_DIR", "/sfm-data")
+# Directories where SFM data (e.g., harvested WARCs) is stored.
+SFM_COLLECTION_SET_DATA_DIR = env.get("SFM_COLLECTION_SET_DATA_DIR", "/sfm-collection-set-data")
+SFM_DB_DATA_DIR = env.get("SFM_DB_DATA_DIR", "/sfm-db-data")
+SFM_EXPORT_DATA_DIR = env.get("SFM_EXPORT_DATA_DIR", "/sfm-export-data")
+SFM_MQ_DATA_DIR = env.get("SFM_MQ_DATA_DIR", "/sfm-mq-data")
+SFM_CONTAINERS_DATA_DIR = env.get("SFM_CONTAINERS_DATA_DIR", "/sfm-containers-data")
 
 # Directory where SFM processing data is stored.
 SFM_PROCESSING_DIR = env.get("SFM_PROCESSING_DIR", "/sfm-processing")
@@ -231,15 +235,19 @@ PERFORM_USER_HARVEST_EMAILS = env.get('SFM_PERFORM_USER_HARVEST_EMAILS', 'True')
 USER_HARVEST_EMAILS_HOUR = env.get('SFM_USER_HARVEST_EMAILS_HOUR', '1')
 USER_HARVEST_EMAILS_MINUTE = env.get('SFM_USER_HARVEST_EMAILS_MINUTE', '0')
 
-# Whether to scan the amount of free space on /sfm-data and /sfm-processing
+# Whether to scan the amount of free space on /sfm-db-data, /sfm-mq-data, /sfm-export-data, /sfm-containers-data, /sfm-collection-set-data and /sfm-processing
 PERFORM_SCAN_FREE_SPACE = env.get('SFM_PERFORM_SCAN_FREE_SPACE', 'True') == 'True'
 SCAN_FREE_SPACE_HOUR_INTERVAL = env.get('SFM_SCAN_FREE_SPACE_HOUR_INTERVAL', '12')
 # sfm data space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
-DATA_THRESHOLD = env.get('DATA_VOLUME_THRESHOLD', '10GB')
+DATA_THRESHOLD_DB = env.get('DATA_VOLUME_THRESHOLD_DB', '10GB')
+DATA_THRESHOLD_MQ = env.get('DATA_VOLUME_THRESHOLD_MQ', '10GB')
+DATA_THRESHOLD_EXPORT = env.get('DATA_VOLUME_THRESHOLD_EXPORT', '10GB')
+DATA_THRESHOLD_CONTAINERS = env.get('DATA_VOLUME_THRESHOLD_CONTAINERS', '10GB')
+DATA_THRESHOLD_COLLECTION_SET = env.get('DATA_VOLUME_THRESHOLD_COLLECTION_SET', '10GB')
 # sfm processing space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
 PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')
 
-# Whether to scan the amount of free space on /sfm-data and /sfm-processing
+# Whether to scan the amount of free space on /sfm-db-data, /sfm-mq-data, /sfm-export-data, /sfm-containers-data, /sfm-collection-set-data and /sfm-processing
 PERFORM_MONITOR_QUEUE = env.get('SFM_PERFORM_MONITOR_QUEUE', 'True') == 'True'
 # frequency to check the queue message length,default is 2 hour
 MONITOR_QUEUE_HOUR_INTERVAL = env.get('SFM_MONITOR_QUEUE_HOUR_INTERVAL', '12')

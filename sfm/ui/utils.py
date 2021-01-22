@@ -181,7 +181,7 @@ def collection_path(collection, sfm_data_dir=None):
 
 
 def collection_path_by_id(collection_set_id, collection_id, sfm_data_dir=None):
-    return os.path.join(sfm_data_dir or settings.SFM_DATA_DIR, "collection_set",
+    return os.path.join(sfm_data_dir or settings.SFM_COLLECTION_SET_DATA_DIR, "collection_set",
                         collection_set_id,
                         collection_id)
 
@@ -191,7 +191,7 @@ def collection_set_path(collection_set, sfm_data_dir=None):
 
 
 def collection_set_path_by_id(collection_set_id, sfm_data_dir=None):
-    return os.path.join(sfm_data_dir or settings.SFM_DATA_DIR, "collection_set", collection_set_id)
+    return os.path.join(sfm_data_dir or settings.SFM_COLLECTION_SET_DATA_DIR, "collection_set", collection_set_id)
 
 
 def get_email_addresses_for_collection_set(collection_set, use_harvest_notification_preference=False,

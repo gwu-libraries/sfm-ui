@@ -2,7 +2,7 @@
 set -e
 
 sh /opt/sfm-setup/setup_reqs.sh
-appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672  --file-wait /sfm-data/collection_set
+appdeps.py --wait-secs 60 --port-wait db:5432 --file /opt/sfm-ui --port-wait mq:5672  --file-wait /sfm-collection-set-data/collection_set
 sh /opt/sfm-setup/setup_ui.sh
 
 echo "Running server"
