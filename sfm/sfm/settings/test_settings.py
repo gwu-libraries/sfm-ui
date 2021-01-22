@@ -10,7 +10,11 @@ DATABASES = {
     }
 }
 
-SFM_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
+SFM_DB_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
+SFM_MQ_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
+SFM_EXPORT_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
+SFM_CONTAINERS_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
+SFM_COLLECTION_SET_DATA_DIR = os.path.join(tempfile.gettempdir(), "test-data")
 
 SCHEDULER_DB_URL = "sqlite:///testdb"
 

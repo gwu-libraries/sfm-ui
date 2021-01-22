@@ -41,7 +41,7 @@ class StartJobsTests(TestCase):
         self.assertTrue(message["collection_set"]["id"])
         self.assertTrue(message["collection"]["id"])
         self.assertEqual(
-            "{}/collection_set/{}/{}".format(settings.SFM_DATA_DIR, self.collection_set.collection_set_id,
+            "{}/collection_set/{}/{}".format(settings.SFM_COLLECTION_SET_DATA_DIR, self.collection_set.collection_set_id,
                                              collection.collection_id),
             message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])
@@ -103,7 +103,7 @@ class StartJobsTests(TestCase):
         message = args[0]
         self.assertTrue(message["collection_set"]["id"])
         self.assertEqual(
-            "{}/collection_set/{}/{}".format(settings.SFM_DATA_DIR, self.collection_set.collection_set_id,
+            "{}/collection_set/{}/{}".format(settings.SFM_COLLECTION_SET_DATA_DIR, self.collection_set.collection_set_id,
                                              collection.collection_id),
             message["path"])
         self.assertDictEqual(self.harvest_options, message["options"])

@@ -344,8 +344,8 @@ class ExportDetailViewTests(TestCase):
             f.write("test")
 
     def tearDown(self):
-        if os.path.exists(settings.SFM_DATA_DIR):
-            shutil.rmtree(settings.SFM_DATA_DIR)
+        if os.path.exists(settings.SFM_COLLECTION_SET_DATA_DIR):
+            shutil.rmtree(settings.SFM_COLLECTION_SET_DATA_DIR)
 
     def test_export_detail_collection(self):
         export = Export.objects.create(user=self.user,
@@ -421,8 +421,8 @@ class ExportFileTest(TestCase):
         self.factory = RequestFactory()
 
     def tearDown(self):
-        if os.path.exists(settings.SFM_DATA_DIR):
-            shutil.rmtree(settings.SFM_DATA_DIR)
+        if os.path.exists(settings.SFM_COLLECTION_SET_DATA_DIR):
+            shutil.rmtree(settings.SFM_COLLECTION_SET_DATA_DIR)
 
     def test_export_file_by_user(self):
         request = self.factory.get(reverse("export_file", args=[self.export.pk, "test.csv"]))
