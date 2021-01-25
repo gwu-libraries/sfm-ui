@@ -105,18 +105,24 @@ WSGI_APPLICATION = 'sfm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+POSTGRES_HOST = env.get('SFM_POSTGRES_HOST', 'db')
+POSTGRES_PORT = env.get('SFM_POSTGRES_PORT', '5432')
+POSTGRES_DB = env.get('SFM_POSTGRES_DB', 'sfmdatabase')
+POSTGRES_USER = env.get('SFM_POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = env.get('SFM_POSTGRES_PASSWORD')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sfmdatabase',
-        'USER': 'postgres',
-        'PASSWORD': env.get('POSTGRES_PASSWORD'),
-        'HOST': env.get('POSTGRES_HOST', 'db'),
-        'PORT': '5432',
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_HOST,
+        'PORT': POSTGRES_PORT,
     }
 }
 
-SCHEDULER_DB_URL = "postgresql://{USER}:{PASSWORD}@{HOST}/{NAME}".format(**DATABASES["default"])
+SCHEDULER_DB_URL = "postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(**DATABASES["default"])
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -163,7 +169,8 @@ ACCOUNT_ADAPTER = "ui.auth.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "ui.auth.SocialAccountAdapter"
 
 RABBITMQ_HOST = env.get('SFM_RABBITMQ_HOST', 'mq')
-RABBITMQ_USER = env.get('SFM_RABBITMQ_USER')
+RABBITMQ_PORT = env.get('SFM_RABBITMQ_PORT', "5672")
+RABBITMQ_USER = env.get('SFM_RABBITMQ_USER', 'sfm_user')
 RABBITMQ_PASSWORD = env.get('SFM_RABBITMQ_PASSWORD')
 RABBITMQ_MANAGEMENT_PORT = env.get('SFM_RABBITMQ_MANAGEMENT_PORT', "15672")
 
