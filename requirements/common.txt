@@ -1,12 +1,12 @@
 APScheduler==3.5.3
-django==2.2.12
+django==2.2.18
 django-allauth==0.41.0
 django-braces==1.14.0
 django-crispy-forms==1.9.0
 django-datatables-view==1.18.0
 django-filter==2.2.0
 django-simple-history==2.7.3
-djangorestframework==3.11
+djangorestframework~=3.11.2
 iso8601==0.1.12
 jsonfield==3.1.0
 psycopg2-binary==2.8.4
