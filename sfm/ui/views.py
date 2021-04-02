@@ -285,19 +285,19 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
         seed_error_message = None
         # No active seeds.
         if self.object.required_seed_count() == 0 and self.object.active_seed_count() != 0:
-            seed_error_message = "All seeds must be deactivated before harvesting can be turned on."
+            seed_error_message = "All seeds must be deleted before harvesting can be turned on."
         # Specific number of active seeds.
         elif self.object.required_seed_count() == 1:
             if self.object.active_seed_count() == 0:
                 seed_warning_message = "1 active seed must be added before harvesting can be turned on."
             elif self.object.active_seed_count() > 1:
-                seed_error_message = "Deactivate all seeds except 1 before harvesting can be turned on."
+                seed_error_message = "Delete all seeds except 1 before harvesting can be turned on."
         elif self.object.required_seed_count() is not None and self.object.required_seed_count() > 1:
             if self.object.active_seed_count() < self.object.required_seed_count():
                 seed_warning_message = "{} active seeds must be added before harvesting can be turned on.".format(
                     self.object.required_seed_count())
             elif self.object.active_seed_count > self.object.required_seed_count():
-                seed_error_message = "Deactivate all seeds except {} before harvesting can be turned on.".format(
+                seed_error_message = "Delete all seeds except {} before harvesting can be turned on.".format(
                     self.object.required_seed_count())
         # At least one active seeds
         elif self.object.required_seed_count() is None and self.object.active_seed_count() == 0:
