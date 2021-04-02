@@ -203,6 +203,8 @@ class SeedsJSONAPIView(LoginRequiredMixin, BaseDatatableView):
         for exclusion in exclude_fields:
             if exclusion in self.columns:
                 self.columns.remove(exclusion)
+        # Need to update this property here, because it's used by the get_context_data() method of BaseDataTableView and is set PRIOR to the call to this method
+        self._columns = self.columns
 
         return Seed.objects.filter(collection=self.kwargs['pk'], is_active=self.status == 'active').order_by('token',
                                                                                                              'uid')
