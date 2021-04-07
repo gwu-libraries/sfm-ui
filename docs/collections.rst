@@ -82,6 +82,8 @@ want to run the search once and then turn off the collection.
 See :ref:`guide-incremental-collecting` to decide whether or not to collect
 incrementally.
 
+Only one active seed can be used per search collection. If you need to run multiple searches in parallel, create a new collection for each search, each with a single seed.
+
 .. _guide-twitter-sample:
 
 .. _Twitter sample:
