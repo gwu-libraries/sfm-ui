@@ -1,4 +1,5 @@
-FROM gwul/sfm-base@sha256:e68cb98bdc9dc23bbed734f3e507a0ffb866b007dffea038b6af8d88a62150e6
+# gwul/sfm-base 2.4.0
+FROM gwul/sfm-base@sha256:dc6f305631f756d9c25517b6322ec83a024c11c3e1e1d7be742d74a57b1f1028
 MAINTAINER Social Feed Manager <sfm@gwu.edu>
 
 ADD . /opt/sfm-ui/
