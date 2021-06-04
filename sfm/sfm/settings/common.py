@@ -203,7 +203,7 @@ SFM_DB_DATA_DIR = env.get("SFM_DB_DATA_DIR", "/sfm-db-data")
 SFM_EXPORT_DATA_DIR = env.get("SFM_EXPORT_DATA_DIR", "/sfm-export-data")
 SFM_MQ_DATA_DIR = env.get("SFM_MQ_DATA_DIR", "/sfm-mq-data")
 SFM_CONTAINERS_DATA_DIR = env.get("SFM_CONTAINERS_DATA_DIR", "/sfm-containers-data")
-
+SFM_SHARED_DIR = "/sfm-data-shared" if env.get('DATA_SHARED_USED', 'False') == 'True' else None
 # Directory where SFM processing data is stored.
 SFM_PROCESSING_DIR = env.get("SFM_PROCESSING_DIR", "/sfm-processing")
 
@@ -251,6 +251,8 @@ DATA_THRESHOLD_MQ = env.get('DATA_VOLUME_THRESHOLD_MQ', '10GB')
 DATA_THRESHOLD_EXPORT = env.get('DATA_VOLUME_THRESHOLD_EXPORT', '10GB')
 DATA_THRESHOLD_CONTAINERS = env.get('DATA_VOLUME_THRESHOLD_CONTAINERS', '10GB')
 DATA_THRESHOLD_COLLECTION_SET = env.get('DATA_VOLUME_THRESHOLD_COLLECTION_SET', '10GB')
+DATA_THRESHOLD_SHARED = env.get('DATA_THRESHOLD_SHARED', None)
+
 # sfm processing space threshold to send notification email,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
 PROCESSING_THRESHOLD = env.get('PROCESSING_VOLUME_THRESHOLD', '10GB')
 

@@ -116,10 +116,10 @@ class MonitorSpace(object):
     @staticmethod
     def _get_bar_color(percentage):
         if 70 <= percentage <= 80:
-            return 'progress-bar-warning'
+            return 'bg-warning'
         elif percentage > 80:
-            return 'progress-bar-danger'
-        return 'progress-bar-success'
+            return 'bg-danger'
+        return 'bg-success'
 
 
 def get_free_space():
@@ -140,6 +140,10 @@ def get_free_space():
     data_list.append(data_export_monitor.get_space_info())
     data_list.append(data_containers_monitor.get_space_info())
     data_list.append(data_collection_set_monitor.get_space_info())
+
+    if is_shared():
+        data_shared_monitor = MonitorSpace(settings.SFM_SHARED_DIR, settings.DATA_THRESHOLD_SHARED)
+        data_list.append(data_shared_monitor.get_space_info())
 
     # get sfm-processing info
     processing_monitor = MonitorSpace(settings.SFM_PROCESSING_DIR, settings.PROCESSING_THRESHOLD)
@@ -398,3 +402,10 @@ def _was_harvest_in_range(range_start, range_end, collection):
 
 def _create_url(path):
     return get_site_url() + path
+
+
+def is_shared():
+    if settings.SFM_SHARED_DIR and settings.DATA_THRESHOLD_SHARED:
+        return True
+    return False
+

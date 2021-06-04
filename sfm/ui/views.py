@@ -19,7 +19,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.html import mark_safe
 
-from .notifications import get_free_space, get_queue_data
+from .notifications import get_free_space, get_queue_data, is_shared
 from .forms import CollectionSetForm, ExportForm
 from . import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
@@ -1087,6 +1087,7 @@ class HomeView(TemplateView):
             group__in=self.request.user.groups.all(), collections__is_active=True).distinct().order_by('name')
         context['space_data'] = get_free_space()
         context['queue_data'] = get_queue_data()
+        context['shared_data'] = is_shared()
         return context
 
 
