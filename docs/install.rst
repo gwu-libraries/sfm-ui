@@ -162,16 +162,33 @@ Note the following:
 
 Configuration is documented in ``example.env``. For a production deployment, pay particular attention to the following:
 
-* Set new passwords for ``SFM_SITE_ADMIN_PASSWORD``, ``RABBIT_MQ_PASSWORD``, and ``POSTGRES_PASSWORD``.
+* Set new passwords for ``SFM_SITE_ADMIN_PASSWORD``, ``SFM_RABBIT_MQ_PASSWORD``, and ``SFM_POSTGRES_PASSWORD``.
 * The `data volume strategy <https://docs.docker.com/engine/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_
-  is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used. To use a host volume
-  instead, change the ``DATA_VOLUME`` and ``PROCESSING_VOLUME`` settings. Host volumes are recommended for production
-  because they allow access to the data from outside of Docker.
+  is used to manage the volumes that store SFM's data. By default, normal Docker volumes are used. Host volumes are recommended for production
+  because they allow access to the data from outside of Docker. To use host volumes, change the following values to point
+  to a directory or mounted filesystem (e.g. ``/sfm-data/sfm-mq-data:/sfm-mq-data``):
+   * ``DATA_VOLUME_MQ``
+   * ``DATA_VOLUME_DB``
+   * ``DATA_VOLUME_EXPORT``
+   * ``DATA_VOLUME_CONTAINERS``
+   * ``DATA_VOLUME_COLLECTION_SET``
+   * ``PROCESSING_VOLUME``
+* SFM allows data volumes to live on mounted filesystems and will monitor space usage of each. Many SFM instances are configured
+  with all data on the same server, however. If all data volumes are on the same filesystem:
+   * Change ``DATA_SHARED_USED`` to True.
+   * Set ``DATA_SHARED_DIR`` to the path of the parent directory on the filesystem, e.g. ``/sfm-data``.
+   * Provide a threshold for space usage warning emails to be sent by updating ``DATA_THRESHOLD_SHARED``.
+   * In ``docker-compose.yml``, uncomment the ``volumes`` section in the ``ui`` container definition so that the
+     ``DATA_SHARED_DIR`` is accessible to SFM for monitoring.
 * Set the ``SFM_HOSTNAME`` and ``SFM_PORT`` appropriately. These are the public hostname (e.g., sfm.gwu.edu) and port (e.g., 80)
   for SFM.
-* Email is configured by providing ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``.
+* If running RabbitMQ or Postgres on another server, set appropriate values for ``SFM_RABBITMQ_HOST``, ``SFM_RABBITMQ_PORT``,
+  ``SFM_RABBITMQ_MANAGEMENT_PORT, ``SFM_POSTGRES_HOST``, and ``SFM_POSTGRES_PORT``.
+  * Email is configured by providing ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``.
   (If the configured email account is hosted by Google, you will need to configure the account to "Allow less secure apps."
   Currently this setting is accessed, while logged in to the google account, via https://myaccount.google.com/security#connectedapps).
+
+
 * Application credentials for social media APIs are configured in by providing the ``TWITTER_CONSUMER_KEY``,
   ``TWITTER_CONSUMER_SECRET``, ``WEIBO_API_KEY``, ``WEIBO_API_SECRET``, and/or ``TUMBLR_CONSUMER_KEY``,
   ``TUMBLR_CONSUMER_SECRET``. These are optional, but will make acquiring credentials easier for users.
@@ -188,7 +205,7 @@ Configuration is documented in ``example.env``. For a production deployment, pay
      ``SFM_COOKIE_CONSENT_BUTTON_TEXT``.
 
 Note that if you make a change to configuration *after* SFM is brought up, you will need to restart containers. If
-the change only applies to a single container, then you can stop the container with ``docker kill <container name>``. If
+the change only applies to a single container, then you can stop the container with ``docker stop <container name>``. If
 the change applies to multiple containers (or you're not sure), you can stop all containers with ``docker-compose stop``.
 Containers can then be brought back up with ``docker-compose up -d`` and the configuration change will take effect.
 
