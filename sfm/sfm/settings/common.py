@@ -203,7 +203,9 @@ SFM_DB_DATA_DIR = env.get("SFM_DB_DATA_DIR", "/sfm-db-data")
 SFM_EXPORT_DATA_DIR = env.get("SFM_EXPORT_DATA_DIR", "/sfm-export-data")
 SFM_MQ_DATA_DIR = env.get("SFM_MQ_DATA_DIR", "/sfm-mq-data")
 SFM_CONTAINERS_DATA_DIR = env.get("SFM_CONTAINERS_DATA_DIR", "/sfm-containers-data")
-SFM_SHARED_DIR = "/sfm-data-shared" if env.get('DATA_SHARED_USED', 'False') == 'True' else None
+# If data volumes on shared filesystem, get internal and external paths
+SFM_SHARED_DIR = "/sfm-data-shared" if env.get("DATA_SHARED_USED", "False") == "True" else None
+SFM_DATA_SHARED_DIR = env.get("DATA_SHARED_DIR", None)
 # Directory where SFM processing data is stored.
 SFM_PROCESSING_DIR = env.get("SFM_PROCESSING_DIR", "/sfm-processing")
 

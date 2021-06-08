@@ -72,9 +72,13 @@
          <tbody>
          {% if shared_data %}
             {% for item in space_data %}
-	        {% if item.volume_id == "/sfm-data-shared" %}
-                     <tr>
-                     <th scope="row"><strong>{{ item.volume_id }}</strong></th>
+	        {% if item.volume_id == "/sfm-data-shared" or item.volume_id == "/sfm-processing" %}
+		     <tr>
+                     {% if item.volume_id == "/sfm-processing" %}
+		         <th scope="row"><strong>{{ item.volume_id }}</strong></th>
+                     {% elif item.volume_id == "/sfm-data-shared" %}
+		         <th scope="row"><strong>{{ shared_dir_id }}</strong></th>
+		     {% endif %}
                      <td>{{ item.total_space }}</td>
                      <td>{{ item.total_free_space }}</td>
                      <td>
@@ -89,7 +93,7 @@
                 {% endif %}
             {% endfor %}
          {% else %}
-	 {% for item in space_data %}
+	    {% for item in space_data %}
             <tr>
                 <th scope="row"><strong>{{ item.volume_id }}</strong></th>
 		<td>{{ item.total_space }}</td>
@@ -103,7 +107,7 @@
                      </div>
 		</td>
 	    </tr>
-         {% endfor %}
+            {% endfor %}
 	 {% endif %}
 	 </tbody>
     </table>
