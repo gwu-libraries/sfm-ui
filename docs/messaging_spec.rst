@@ -100,7 +100,7 @@ Harvest start messages specify for a harvester the details of a harvest. Example
     {
         "id": "sfmui:45",
         "type": "flickr_user",
-        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
+        "path": "/sfm-collection-set-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
         "seeds": [
             {
                 "id": "a36fe186fbfa47a89dbb0551e1f0f181",
@@ -132,7 +132,7 @@ Another example::
     {
         "id": "test:1",
         "type": "twitter_search",
-        "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
+        "path": "/sfm-collection-set-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5",
         "seeds": [
             {
                 "id": "32786222ef374eb38f1c5d56321c99e8",
@@ -250,7 +250,7 @@ created during a harvest. Example::
 
     {
         "warc": {
-            "path": "/sfm-data/collections/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5/2015/07/28/11/harvest_id-2015-07-28T11:17:36Z.warc.gz",,
+            "path": "/sfm-collection-set-data/collection_set/3989a5f99e41487aaef698680537c3f5/6980fac666c54322a2ebdbcb2a9510f5/2015/07/28/11/harvest_id-2015-07-28T11:17:36Z.warc.gz",,
             "sha1": "7512e1c227c29332172118f0b79b2ca75cbe8979",
             "bytes": 26146,
             "id": "aba6033aafce4fbabd846026ca47f13e",
@@ -311,7 +311,7 @@ Export start messages specify the requests for an export. Example::
         "collection": {
             "id": "005b131f5f854402afa2b08a4b7ba960"
         },
-        "path": "/sfm-data/exports/45",
+        "path": "/sfm-export-data/export/45",
         "format": "csv",
         "dedupe": true,
         "segment_size": 100000,
@@ -336,7 +336,7 @@ Another example::
                 "uid": "85779209@N08"
             }
         ],
-        "path": "/sfm-data/exports/45",
+        "path": "/sfm-export-data/export/45",
         "format": "json",
         "segment_size": null
     }

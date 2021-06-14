@@ -6,10 +6,13 @@
  Storage volumes
 -----------------
 
-SFM stores data on 2 volumes:
+SFM stores data on multiple volumes:
 
-* sfm-data: The data volume is where SFM stores the harvested social media content, the db files, and
-  exports. This is described in more detail below. It is available within containers as /sfm-data.
+* sfm-db-data: Postgres database for sfm-ui data
+* sfm-export-data: exports storage 
+* sfm-containers-data: Docker containers data
+* sfm-collection-set-data: collection set data, including WARCs
+* sfm-mq-data: RabbitMQ data
 * sfm-processing: The processing volume is where processed data is stored when using a processing container.
   (See :doc:`processing`.) It is available within containers as /sfm-processing.
 
@@ -28,9 +31,9 @@ The type of volume is specified in the `.env` file. When selecting a link to a h
 environment must be specified::
 
     # Docker internal volume
-    DATA_VOLUME=/sfm-data
+    DATA_VOLUME_COLLECTION_SET=/sfm-collection-set-data
     # Linked to host location
-    #DATA_VOLUME=/src/sfm-data:/sfm-data
+    #DATA_VOLUME_COLLECTION_SET=/src/sfm-data/sfm-collection-set-data:/sfm-collection-set-data
     # Docker internal volume
     PROCESSING_VOLUME=/sfm-processing
     # Linked to host location
@@ -53,12 +56,12 @@ leave behind files that do not have appropriate permissions for the sfm user.
 Note then when using Docker for Mac and linking to a host location, the file ownership may not appear as expected.
 
 ---------------------------------
- Directory structure of sfm-data
+ Directory structure of SFM data
 ---------------------------------
 
-The following is a outline of the structure of sfm-data::
+The following is a outline of the structure of sfm data::
 
-    /sfm-data/
+    /sfm-collection-set-data/
         collection_set/
             <collection set id>
                 README.txt (README for collection set)
@@ -69,24 +72,36 @@ The following is a outline of the structure of sfm-data::
                         JSON records for the collection metadata
                     <year>/<month>/<day>/<hour>/
                         WARC files
+    /sfm-containers-data
         containers/
             <container id>/
                 Working files for individual containers
+    /sfm-export-data
         export/
             <export id>/
                 Export files
+    /sfm-db-data
         postgresql/
             Postgres db files
+    /sfm-mq-data
+        rabbitmq
+            RabbitMQ files
 
 ----------------
  Space warnings
 ----------------
 
-SFM will monitor free space on sfm-data and sfm-processing. Administrators will be notified when the amount of free space
+SFM will monitor free space on data volumes and sfm-processing. Administrators will be notified when the amount of free space
 crosses a configurable threshold.  The threshold is set in the `.env` file::
 
-    # sfm-data free space threshold to send notification emails,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
-    DATA_VOLUME_THRESHOLD=10GB
+    # sfm-data free space threshold to send notification emails. Values must end with MB,GB,TB. eg. 500MB,10GB,1TB
+    # Use DATA_THRESHOLD_SHARED when all data volumes are on the same filesystem and DATA_SHARED_USED is True.
+    #DATA_THRESHOLD_SHARED=6GB
+    DATA_VOLUME_THRESHOLD_DB=10GB
+    DATA_VOLUME_THRESHOLD_MQ=10GB
+    DATA_VOLUME_THRESHOLD_EXPORT=10GB
+    DATA_VOLUME_THRESHOLD_CONTAINERS=10GB
+    DATA_VOLUME_THRESHOLD_COLLECTION_SET=10GB
     # sfm-processing free space threshold to send notification emails,only ends with MB,GB,TB. eg. 500MB,10GB,1TB
     PROCESSING_VOLUME_THRESHOLD=10GB
 
@@ -100,9 +115,13 @@ These instructions are for Ubuntu. They may need to be adjusted for other operat
 
         docker-compose stop
         
-2. Copy sfm-data contents from inside the container to a linked volume::
+2. Copy sfm data directory contents from inside the container to a linked volume. Linked volumes can be on a mounted filesystem or within a directory on the same filesystem::
 
-        sudo docker cp sfm_data_1:/sfm-data /
+        sudo docker cp sfm_data_1:/sfm-collection-set-data /sfm-data/sfm-collection-set-data
+        sudo docker cp sfm_data_1:/sfm-export-data /sfm-data/sfm-export-data
+        sudo docker cp sfm_data_1:/sfm-db-data /sfm-data/-sfm-db-data
+        sudo docker cp sfm_data_1:/sfm-mq-data /sfm-data/sfm-mq-data
+        sudo docker cp sfm_data_1:/sfm-containers-data /sfm-data/sfm-containers-data
         
 3. Set ownership::
 
@@ -110,8 +129,11 @@ These instructions are for Ubuntu. They may need to be adjusted for other operat
         
 4. Change .env::
 
-        #DATA_VOLUME=/sfm-data
-        DATA_VOLUME=/sfm-data:/sfm-data
+        DATA_VOLUME_MQ=/sfm-data/sfm-mq-data:/sfm-mq-data
+        DATA_VOLUME_DB=/sfm-data/sfm-db-data:/sfm-db-data
+        DATA_VOLUME_EXPORT=/sfm-data/sfm-export-data:/sfm-export-data
+        DATA_VOLUME_CONTAINERS=/sfm-data/sfm-containers-data:/sfm-containers-data
+        DATA_VOLUME_COLLECTION_SET=/sfm-data/sfm-collection-set-data:/sfm-collection-set-data
 
 5. Restart containers::
 

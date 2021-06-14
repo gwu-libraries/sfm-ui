@@ -68,11 +68,11 @@ id will be something like `bffcae5d0603`.
 
 Second, determine the harvest id. This is available from the harvest's detail page.
 
-Third, get the stdout log with ``docker exec -t <name> cat /sfm-data/containers/<container id>/log/<harvest id>.out.log``.
+Third, get the stdout log with ``docker exec -t <name> cat /sfm-containers-data/containers/<container id>/log/<harvest id>.out.log``.
 To get the stderr log, substitute `.err` for `.out`.
 
 To follow the log, use `tail -f` instead of `cat`. For example,
-``docker exec -t sfm_twitterstreamharvester_1 tail -f /sfm-data/containers/bffcae5d0603/log/d4493eed5f4f49c6a1981c89cb5d525f.err.log``.
+``docker exec -t sfm_twitterstreamharvester_1 tail -f /sfm-containers-data/containers/bffcae5d0603/log/d4493eed5f4f49c6a1981c89cb5d525f.err.log``.
 
 -----------------------------
  RabbitMQ management console
