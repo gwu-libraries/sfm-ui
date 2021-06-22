@@ -6,7 +6,7 @@
  Storage volumes
 -----------------
 
-SFM stores data on multiple volumes:
+SFM stores data in multiple directories, which may be set up as separate volumes:
 
 * sfm-db-data: Postgres database for sfm-ui data
 * sfm-export-data: exports storage 
