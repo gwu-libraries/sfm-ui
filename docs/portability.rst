@@ -16,13 +16,13 @@ has a complete set of JSON database records to support loading it into a differe
 
 Here are the JSON database records for an example collection::
 
-    [root@1da93afd43b5:/sfm-data/collection_set/4c59ebf2dcdc4a0e9660e32d004fa846/072ff07ea9954b39a1883e979de92d22/records# ls
+    [root@1da93afd43b5:/sfm-collection-set-data/collection_set/4c59ebf2dcdc4a0e9660e32d004fa846/072ff07ea9954b39a1883e979de92d22/records# ls
     collection.json      groups.json	 historical_collection.json	 historical_seeds.json	users.json
     collection_set.json  harvest_stats.json  historical_collection_set.json  info.json		warcs.json
     credentials.json     harvests.json	 historical_credentials.json	 seeds.json
 
 Thus, moving a collection set only requires moving/copying the collection set's directory; moving a collection
-only requires moving/copying a collection's directory.  Collection sets are in ``/sfm-data/collection_set`` and
+only requires moving/copying a collection's directory.  Collection sets are in ``/sfm-collection-set-data/collection_set`` and
 are named by their collection set ids.  Collections are subdirectories of their collection set
 and are named by their collection ids.
 
@@ -61,11 +61,11 @@ can be refreshed used the ``serializecollectionset`` and ``serializecollection``
  Loading a collection set / collection
 ---------------------------------------
 
-1. Move/copy the collection set/collection to ``/sfm-data/collection_set``. Collection sets should be placed
+1. Move/copy the collection set/collection to ``/sfm-collection-set-data/collection_set``. Collection sets should be placed
    in this directory. Collections should be placed into a collection set directory.
 2. Execute the ``deserializecollectionset`` or ``deserializecollection`` management command::
 
-    root@1da93afd43b5:/opt/sfm-ui/sfm# ./manage.py deserializecollectionset /sfm-data/collection_set/4c59ebf2dcdc4a0e9660e32d004fa846
+    root@1da93afd43b5:/opt/sfm-ui/sfm# ./manage.py deserializecollectionset /sfm-collection-set-data/collection_set/4c59ebf2dcdc4a0e9660e32d004fa846
 
 Note:
 
@@ -86,12 +86,12 @@ Note:
 -------------------------------
 
 1. Stop the source instance: ``docker-compose stop``.
-2. Copy the ``/sfm-data`` directory from the source server to the destination server.
+2. Copy the data directories (``/sfm-collection-set-data``, ``/sfm-containers-data``, ``/sfm-export-data``, ``/sfm-db-data``, ``/sfm-mq-data``) from their location on the source server to the destination server.
 3. If preserving processing data, also copy the ``/sfm-processing`` directory from the source server to the destination
    server.
 4. Copy the ``docker-compose.yml`` and ``.env`` files from the source server to the destination server.
 5. Make any changes necessary in the ``.env`` file, e.g., ``SFM_HOSTNAME``.
 6. Start the destination instance: ``docker-compose up -d``.
 
-If moving between AWS EC2 instances and ``/sfm-data`` is on a separate EBS volume, the volume can be detached from
+If moving between AWS EC2 instances and one or more sfm data directories are on a separate EBS volume, the volume can be detached from
 the source EC2 instances and attached to the destination EC2 instance.

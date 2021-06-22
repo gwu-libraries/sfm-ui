@@ -316,9 +316,9 @@ class SpaceNotificationTests(TestCase):
         self.user_no_email = User.objects.create_user(username="test_user3")
 
     @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
-    def test_get_free_info(self, mock_run_cmd):
-        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-data']
-        data_monitor = MonitorSpace('/sfm-data', '200GB')
+    def test_get_free_info_db(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-db-data']
+        data_monitor = MonitorSpace('/sfm-db-data', '200GB')
         space_msg_cache = {'space_data': data_monitor.get_space_info()}
         self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
         self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
@@ -326,27 +326,111 @@ class SpaceNotificationTests(TestCase):
         self.assertTrue(space_msg_cache['space_data']['send_email'])
 
     @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
-    def test_get_free_info_empty(self, mock_run_cmd):
+    def test_get_free_info_mq(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-mq-data']
+        data_monitor = MonitorSpace('/sfm-mq-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(50, space_msg_cache['space_data']['percentage'])
+        self.assertTrue(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_export(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-export-data']
+        data_monitor = MonitorSpace('/sfm-export-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(50, space_msg_cache['space_data']['percentage'])
+        self.assertTrue(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_containers(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-containers-data']
+        data_monitor = MonitorSpace('/sfm-containers-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(50, space_msg_cache['space_data']['percentage'])
+        self.assertTrue(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_collection_set(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['/dev/sda1        204800M 50949M   102400M  50% /sfm-collection-set-data']
+        data_monitor = MonitorSpace('/sfm-collection-set-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('200.0GB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('100.0GB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(50, space_msg_cache['space_data']['percentage'])
+        self.assertTrue(space_msg_cache['space_data']['send_email'])
+
+
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_empty_db(self, mock_run_cmd):
         mock_run_cmd.side_effect = ['']
-        data_monitor = MonitorSpace('/sfm-data', '200GB')
+        data_monitor = MonitorSpace('/sfm-db-data', '200GB')
         space_msg_cache = {'space_data': data_monitor.get_space_info()}
         self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
         self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
         self.assertEqual(0, space_msg_cache['space_data']['percentage'])
         self.assertFalse(space_msg_cache['space_data']['send_email'])
 
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_empty_mq(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['']
+        data_monitor = MonitorSpace('/sfm-mq-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(0, space_msg_cache['space_data']['percentage'])
+        self.assertFalse(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_empty_export(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['']
+        data_monitor = MonitorSpace('/sfm-export-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(0, space_msg_cache['space_data']['percentage'])
+        self.assertFalse(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_empty_containers(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['']
+        data_monitor = MonitorSpace('/sfm-containers-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(0, space_msg_cache['space_data']['percentage'])
+        self.assertFalse(space_msg_cache['space_data']['send_email'])
+
+    @patch("ui.notifications.MonitorSpace.run_check_cmd", autospec=True)
+    def test_get_free_info_empty_collection_set(self, mock_run_cmd):
+        mock_run_cmd.side_effect = ['']
+        data_monitor = MonitorSpace('/sfm-collection-set-data', '200GB')
+        space_msg_cache = {'space_data': data_monitor.get_space_info()}
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_space'])
+        self.assertEqual('0.0MB', space_msg_cache['space_data']['total_free_space'])
+        self.assertEqual(0, space_msg_cache['space_data']['percentage'])
+        self.assertFalse(space_msg_cache['space_data']['send_email'])
+
+
     def test_should_send_space_email_space_below(self):
         msg_cache = {
-            'space_data': [{'volume_id': '/sfm-data', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
+            'space_data': [{'volume_id': '/sfm-db-data', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
                             'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': True},
                            {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
                             'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}]
         }
         self.assertTrue(_should_send_space_email(msg_cache))
 
+
     def test_should_send_space_email_space_over(self):
         msg_cache = {
-            'space_data': [{'volume_id': '/sfm-data', 'threshold': '50GB', 'bar_color': 'progress-bar-success',
+            'space_data': [{'volume_id': '/sfm-db-data', 'threshold': '50GB', 'bar_color': 'progress-bar-success',
                             'total_space': '200GB', 'total_free_space': '100GB', 'percentage': 50, 'send_email': False},
                            {'volume_id': '/sfm-processing', 'threshold': '200GB', 'bar_color': 'progress-bar-success',
                             'total_space': '0.0MB', 'total_free_space': '0.0MB', 'percentage': 0, 'send_email': False}]

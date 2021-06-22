@@ -48,6 +48,7 @@ class MonitorSpace(object):
             # the sfm-data and sfm-processing mount at sfm-data,
             # we only need to count the sfm-data
             if line_units:
+                # The following uncommented code will not work anymore, '/sfm-data' was removed and replaced by '/sfm-db-data', '/sfm-mq-data' etc
                 # get rid of the unit at the space,12M
                 # eg:['/dev/sda1', '208074M', '47203M', '150279M', '24%', '/sfm-data']
                 total_free_space = int(line_units[3][:-1])
@@ -115,10 +116,10 @@ class MonitorSpace(object):
     @staticmethod
     def _get_bar_color(percentage):
         if 70 <= percentage <= 80:
-            return 'progress-bar-warning'
+            return 'bg-warning'
         elif percentage > 80:
-            return 'progress-bar-danger'
-        return 'progress-bar-success'
+            return 'bg-danger'
+        return 'bg-success'
 
 
 def get_free_space():
@@ -127,9 +128,23 @@ def get_free_space():
     :return: a space data list
     """
     data_list = []
-    # get sfm-data info
-    data_monitor = MonitorSpace(settings.SFM_DATA_DIR, settings.DATA_THRESHOLD)
-    data_list.append(data_monitor.get_space_info())
+    # get data directories info (sfm-db-data, sfm-mq-data, sfm-export-data, sfm-containers-data and sfm-collection-set-data)
+    data_db_monitor = MonitorSpace(settings.SFM_DB_DATA_DIR, settings.DATA_THRESHOLD_DB)
+    data_mq_monitor = MonitorSpace(settings.SFM_MQ_DATA_DIR, settings.DATA_THRESHOLD_MQ)
+    data_export_monitor = MonitorSpace(settings.SFM_EXPORT_DATA_DIR, settings.DATA_THRESHOLD_EXPORT)
+    data_containers_monitor = MonitorSpace(settings.SFM_CONTAINERS_DATA_DIR, settings.DATA_THRESHOLD_CONTAINERS)
+    data_collection_set_monitor = MonitorSpace(settings.SFM_COLLECTION_SET_DATA_DIR, settings.DATA_THRESHOLD_COLLECTION_SET)
+
+    data_list.append(data_db_monitor.get_space_info())
+    data_list.append(data_mq_monitor.get_space_info())
+    data_list.append(data_export_monitor.get_space_info())
+    data_list.append(data_containers_monitor.get_space_info())
+    data_list.append(data_collection_set_monitor.get_space_info())
+
+    if is_shared():
+        data_shared_monitor = MonitorSpace(settings.SFM_SHARED_DIR, settings.DATA_THRESHOLD_SHARED)
+        data_list.append(data_shared_monitor.get_space_info())
+
     # get sfm-processing info
     processing_monitor = MonitorSpace(settings.SFM_PROCESSING_DIR, settings.PROCESSING_THRESHOLD)
     data_list.append(processing_monitor.get_space_info())
@@ -387,3 +402,10 @@ def _was_harvest_in_range(range_start, range_end, collection):
 
 def _create_url(path):
     return get_site_url() + path
+
+
+def is_shared():
+    if settings.SFM_SHARED_DIR and settings.DATA_THRESHOLD_SHARED:
+        return True
+    return False
+

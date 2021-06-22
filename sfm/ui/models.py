@@ -813,7 +813,7 @@ class Export(models.Model):
     instance = models.CharField(max_length=255, null=True)
 
     def save(self, *args, **kwargs):
-        self.path = "{}/export/{}".format(settings.SFM_DATA_DIR, self.export_id)
+        self.path = "{}/export/{}".format(settings.SFM_EXPORT_DATA_DIR, self.export_id)
         super(Export, self).save(*args, **kwargs)
 
     def __str__(self):

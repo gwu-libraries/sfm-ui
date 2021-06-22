@@ -18,7 +18,7 @@ Using a processing container requires familiarity with the Linux shell and shell
 you are interested in using a processing container, please contact your SFM administrator for help.
 
 When exporting/processing data, remember that harvested social media content are stored
-in ``/sfm-data``.  ``/sfm-processing`` is provided to store your exports, processed data, or scripts.  Depending
+in ``/sfm-collection-set-data``.  ``/sfm-processing`` is provided to store your exports, processed data, or scripts.  Depending
 on how it is configured, you may have access to ``/sfm-processing`` from your local filesystem. See :doc:`storage`.
 
 ----------------------
@@ -26,9 +26,9 @@ on how it is configured, you may have access to ``/sfm-processing`` from your lo
 ----------------------
 
 To bootstrap export/processing, a processing image is provided. A container instantiated from this
-image is Ubuntu 14.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, and some other
+image is Ubuntu 16.04 and pre-installed with the warc iterator tools, ``find_warcs.py``, and some other
 useful tools. (Warc iterators and ``find_warcs.py`` are described below.)  It will also have read-only
-access to the data from ``/sfm-data`` and read/write access to ``/sfm-processing``.
+access to the data in sfm data directories (e.g. ``/sfm-collection-set-data``)  and read/write access to ``/sfm-processing``.
 
 The other tools available in a processing container are:
 
@@ -103,7 +103,7 @@ For example, to get a list of the WARC files in a particular collection, provide
 the collection id::
 
     root@0ac9caaf7e72:/sfm-data# find_warcs.py 4f4d1
-    /sfm-data/collection_set/b06d164c632d405294d3c17584f03278/4f4d1a6677f34d539bbd8486e22de33b/2016/05/04/14/515dab00c05740f487e095773cce8ab1-20160504143638715-00000-47-88e5bc8a36a5-8000.warc.gz
+    /sfm-collection-set-data/collection_set/b06d164c632d405294d3c17584f03278/4f4d1a6677f34d539bbd8486e22de33b/2016/05/04/14/515dab00c05740f487e095773cce8ab1-20160504143638715-00000-47-88e5bc8a36a5-8000.warc.gz
 
 (In this case there is only one WARC file. If there was more than one, it would be space separated. Use ``--newline`` to
 to separate with a newline instead.)
@@ -173,7 +173,7 @@ This command puts all of the JSON files in the same directory, using the filenam
 
 If you want to maintain the directory structure, but use a different root directory::
 
-    cat source.lst | sed 's/sfm-data\/collection_set/sfm-processing\/export/' | sed 's/.warc.gz/.json/'
+    cat source.lst | sed 's/sfm-collection-set-data\/collection_set/sfm-processing\/export/' | sed 's/.warc.gz/.json/'
 
 Replace `sfm-processing\/export` with the root directory that you want to use.
 
