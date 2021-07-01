@@ -69,33 +69,33 @@ Notes:
 -------------------------
 To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
 In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
-user details and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
-statements change *master* to the correct version, e.g., *2.3.0*::
+User data and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
+statements, confirm that the URL points to the correct version, e.g., *2.4.0*::
 
     #cloud-config
     repo_update: true
     repo_upgrade: all
 
     packages:
-     - python-pip
+     - python3-pip
 
     runcmd:
      - curl -sSL https://get.docker.com/ | sh
      - usermod -aG docker ubuntu
-     - pip install -U docker-compose
+     - pip3 install --upgrade pip
+     - pip3 install -U docker-compose
      - mkdir /sfm-data
      - mkdir /sfm-processing
      - cd /home/ubuntu
     # This brings up the latest production release. To bring up master, remove prod.
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.prod.docker-compose.yml > docker-compose.yml
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.env > .env
-    # Set config below by uncommenting.
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.prod.docker-compose.yml > docker-compose.yml
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.env > .env
+    # Set config below by uncommenting variables you wish to change.
     # Don't forget to escape $ as \$.
     # COMMON CONFIGURATION
     # - echo TZ=America/New_York >> .env
     # VOLUME CONFIGURATION
-    # Don't change these.
-     - echo DATA_VOLUME=/sfm-data:/sfm-data >> .env
+    # Don't change this.
      - echo PROCESSING_VOLUME=/sfm-processing:/sfm-processing >> .env
     # SFM UI CONFIGURATION
     # Don't change this.
@@ -144,7 +144,7 @@ When the instance is launched, SFM will be installed and started.
 Note the following:
 
 * Starting up the EC2 instance will take several minutes.
-* This has been tested with *Ubuntu Server 14.04 LTS*, but may work with other AMI types.
+* This has been tested with *Ubuntu Server 18.04 LTS*, but may work with other AMI types.
 * For suggestions on sizing your SFM server, see :ref:`server-sizing`.
 * If you need to make additional changes to your ``docker-compose.yml``, you can ssh into the EC2 instance
   and make changes.  ``docker-compose.yml`` and ``.env`` will be in the default user's
@@ -288,9 +288,9 @@ in your new ``docker-compose.yml``.
 
 It may take several minutes for the images to be downloaded and the containers to start.
 
-7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.0.2 with the correct previous version::
+7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.3.0 with the correct previous version::
 
-    docker rmi $(docker images | grep "2\\.0\\.2" | awk '{print $3}')
+    docker rmi $(docker images | grep "2\\.3\\.0" | awk '{print $3}')
 
 You may also want to periodically clean up Docker (>= 1.13) with ``docker system prune``.
 
@@ -307,9 +307,9 @@ different configurations that we use:
 Use                       Server type       Processors  RAM (gb)
 ========================  ================  ==========  ========
 Production                                  6           16
-Sandbox                   m4.large (AWS)    2           8
-Use in a class            m4.xlarge (AWS)   4           16
+Sandbox                   m5.large (AWS)    2           8
+Use in a class            m5.xlarge (AWS)   4           16
 Continuous integration    t2.medium (AWS)   2           4
-Heavy dataset processing  m4.4xlarge (AWS)  16          64
+Heavy dataset processing  m5.4xlarge (AWS)  16          64
 Development               Docker for Mac    2           3
 ========================  ================  ==========  ========
