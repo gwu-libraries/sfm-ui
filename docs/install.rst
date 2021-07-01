@@ -69,8 +69,8 @@ Notes:
 -------------------------
 To launch an Amazon EC2 instance running SFM, follow the normal procedure for launching an instance.
 In *Step 3: Configure Instance Details*, under *Advanced Details* paste the following in
-user details and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
-statements change *master* to the correct version, e.g., *2.3.0*::
+User data and modify as appropriate as described in :ref:`install-configuration`. Also, in the curl
+statements, confirm that the URL points to the correct version, e.g., *2.4.0*::
 
     #cloud-config
     repo_update: true
@@ -88,8 +88,8 @@ statements change *master* to the correct version, e.g., *2.3.0*::
      - mkdir /sfm-processing
      - cd /home/ubuntu
     # This brings up the latest production release. To bring up master, remove prod.
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.prod.docker-compose.yml > docker-compose.yml
-     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.env > .env
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.prod.docker-compose.yml > docker-compose.yml
+     - curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.env > .env
     # Set config below by uncommenting variables you wish to change.
     # Don't forget to escape $ as \$.
     # COMMON CONFIGURATION
