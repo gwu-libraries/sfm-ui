@@ -40,6 +40,8 @@ The other tools available in a processing container are:
 * `csvkit <https://csvkit.readthedocs.io/>`_ for processing CSVs.
 * `gron <https://github.com/TomNomNom/gron>`_ for grepping JSON.
 
+All of the above tools can be run from anywhere on the system, **except** JWAT Tools.  `jwattools.sh` and related tools are installed in `/opt/jwat-tools` and need to be invoked either from that directory (e.g. `cd /opt/jwat-tools`) or using the full path (e.g. `/opt/jwat-tools/jwattools.sh`).
+
 To instantiate a processing container, from the directory that contains your ``docker-compose.yml`` file::
 
     docker-compose run --rm processing /bin/bash
