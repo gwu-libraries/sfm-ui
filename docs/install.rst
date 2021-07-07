@@ -33,15 +33,15 @@ Installing locally requires Docker and Docker-Compose. See :ref:`docker-installi
 
     git clone https://github.com/gwu-libraries/sfm-docker.git
     cd sfm-docker
-    # Replace 2.3.0 with the correct version.
-    git checkout 2.3.0
+    # Replace 2.4.0 with the correct version.
+    git checkout 2.4.0
     cp example.prod.docker-compose.yml docker-compose.yml
     cp example.env .env
 
-or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 2.3.0 with the correct version)::
+or just download ``example.prod.docker-compose.yml`` and ``example.env`` (replacing 2.4.0 with the correct version)::
 
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.prod.docker-compose.yml > docker-compose.yml
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.env > .env
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.env > .env
 
 2. Update configuration in ``.env`` as described in :ref:`install-configuration`.
 
@@ -269,13 +269,13 @@ This may take several minutes.
 3. Get the latest ``example.prod.docker-compose.yml``. If you previously cloned the sfm-docker repository then::
 
     git pull
-    # Replace 2.3.0 with the correct version.
-    git checkout 2.3.0
+    # Replace 2.4.0 with the correct version.
+    git checkout 2.4.0
     cp example.prod.docker-compose.yml docker-compose.yml
 
-otherwise, replacing 2.3.0 with the correct version::
+otherwise, replacing 2.4.0 with the correct version::
 
-    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.3.0/example.prod.docker-compose.yml > docker-compose.yml
+    curl -L https://raw.githubusercontent.com/gwu-libraries/sfm-docker/2.4.0/example.prod.docker-compose.yml > docker-compose.yml
 
 4. If you customized your previous ``docker-compose.yml`` file, make the same changes
 in your new ``docker-compose.yml``.
@@ -288,7 +288,7 @@ in your new ``docker-compose.yml``.
 
 It may take several minutes for the images to be downloaded and the containers to start.
 
-7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.3.0 with the correct previous version::
+7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.4.0 with the correct previous version::
 
     docker rmi $(docker images | grep "2\\.3\\.0" | awk '{print $3}')
 
