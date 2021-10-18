@@ -18,7 +18,8 @@ class RabbitWorker:
         return Connection(transport="librabbitmq",
                           hostname=settings.RABBITMQ_HOST,
                           userid=settings.RABBITMQ_USER,
-                          password=settings.RABBITMQ_PASSWORD)
+                          password=settings.RABBITMQ_PASSWORD,
+                          transport_options={'max_retries': 1})
 
     def declare_exchange(self):
         try:
