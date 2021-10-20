@@ -1,5 +1,5 @@
-# gwul/sfm-base 2.4.0
-FROM gwul/sfm-base@sha256:dc6f305631f756d9c25517b6322ec83a024c11c3e1e1d7be742d74a57b1f1028
+# Python 3.8.12:buster
+FROM gwul/sfm-base@sha256:0b80a3d3562cdb4d631fbb55b9bd24889312838cbd27cd33e14cc0c18405f007
 MAINTAINER Social Feed Manager <sfm@gwu.edu>
 
 # Install apache

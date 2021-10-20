@@ -1,4 +1,4 @@
-APScheduler==3.5.3
+APScheduler==3.7.0
 django==2.2.24
 django-allauth==0.41.0
 django-braces==1.14.0
