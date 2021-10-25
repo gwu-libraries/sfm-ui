@@ -144,7 +144,7 @@ def join_stats(d, status, sep=", "):
 
     if d:
         for i, (item, count) in enumerate(d.items()):
-            if i > 1:
+            if i > 0:
                 joined += sep
             joined += "{} {}".format(intcomma(count), item)
     return joined if joined else empty_extras
