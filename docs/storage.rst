@@ -119,14 +119,20 @@ These instructions are for Ubuntu. They may need to be adjusted for other operat
 
         sudo docker cp sfm_data_1:/sfm-collection-set-data /sfm-data/sfm-collection-set-data
         sudo docker cp sfm_data_1:/sfm-export-data /sfm-data/sfm-export-data
-        sudo docker cp sfm_data_1:/sfm-db-data /sfm-data/-sfm-db-data
+        sudo docker cp sfm_data_1:/sfm-db-data /sfm-data/sfm-db-data
         sudo docker cp sfm_data_1:/sfm-mq-data /sfm-data/sfm-mq-data
         sudo docker cp sfm_data_1:/sfm-containers-data /sfm-data/sfm-containers-data
         
 3. Set ownership::
 
         sudo chown -R 990:990 /sfm-data/*
+
+   You may also need to set the following ownership::
+ 
+        sudo chown -R 999:999 /sfm-data/sfm-db-data/postgresql/
+        sudo chown -R 999:999 /sfm-data/sfm-mq-data/rabbitmq/
         
+
 4. Change .env::
 
         DATA_VOLUME_MQ=/sfm-data/sfm-mq-data:/sfm-mq-data
