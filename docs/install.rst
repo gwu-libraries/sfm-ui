@@ -183,7 +183,7 @@ Configuration is documented in ``example.env``. For a production deployment, pay
 * Set the ``SFM_HOSTNAME`` and ``SFM_PORT`` appropriately. These are the public hostname (e.g., sfm.gwu.edu) and port (e.g., 80)
   for SFM.
 * If running RabbitMQ or Postgres on another server, set appropriate values for ``SFM_RABBITMQ_HOST``, ``SFM_RABBITMQ_PORT``,
-  ``SFM_RABBITMQ_MANAGEMENT_PORT, ``SFM_POSTGRES_HOST``, and ``SFM_POSTGRES_PORT``.
+  ``SFM_RABBITMQ_MANAGEMENT_PORT``, ``SFM_POSTGRES_HOST``, and ``SFM_POSTGRES_PORT``.
   * Email is configured by providing ``SFM_SMTP_HOST``, ``SFM_EMAIL_USER``, and ``SFM_EMAIL_PASSWORD``.
   (If the configured email account is hosted by Google, you will need to configure the account to "Allow less secure apps."
   Currently this setting is accessed, while logged in to the google account, via https://myaccount.google.com/security#connectedapps).
@@ -251,7 +251,7 @@ To configure whether Docker is automatically starts, see :ref:`docker-stopping`.
  Upgrading
 -----------
 
-Following are general instructions for upgrading SFM versions. Always consult the release notes of the new version to
+Following are general instructions for upgrading SFM versions. Always consult the `release notes <https://github.com/gwu-libraries/sfm-ui/releases>`_ of the new version to
 see if any additional steps are required.
 
 1. Stop the containers gracefully::

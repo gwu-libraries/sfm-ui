@@ -61,13 +61,13 @@ Twitter search
 
 Twitter searches collect tweets from the last 7-9 days that match search
 queries, similar to a regular search done on Twitter, using
-the `Twitter Search API <https://developer.twitter.com/en/docs/tweets/search/overview/standard>`_.
+the `Twitter Search API <https://developer.twitter.com/en/docs/tweets/search/overview/standard>`__.
 This is **not** a complete search of all tweets; results are limited
 both by time and arbitrary relevance (determined by Twitter).
 
 Search queries must follow standard search term formulation; permitted queries
 are listed in the documentation for the `Twitter Search API
-<https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators>`_,
+<https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators>`__,
 or you can construct a query
 using the `Twitter Advanced Search query builder
 <https://twitter.com/search-advanced>`_.

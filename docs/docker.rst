@@ -15,8 +15,7 @@ administration, and development.
 
 On OS X:
 
-* Install `Docker for Mac <https://www.docker.com/products/docker#/mac>`_.
-* If you are using Docker Toolbox, switch to Docker for Mac.
+* Install `Docker for Mac <https://docs.docker.com/desktop/mac/install/>`_.
 
 On Ubuntu:
 
@@ -115,32 +114,6 @@ some additional guidance.
  Stopping Docker from automatically starting
 ---------------------------------------------
 
-Docker automatically starts when the server starts. To control this:
+Docker automatically starts when the server starts. To control this, see `Configure Docker to start on boot <https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot>`_.
 
-Ubuntu 14 (Upstart)
-^^^^^^^^^^^^^^^^^^^
-Stop Docker from automatically starting::
-
-    echo manual | sudo tee /etc/init/docker.override
-
-Allow Docker to automatically start::
-
-    sudo rm /etc/init/docker.override
-
-Manually start Docker::
-
-    sudo service docker start
-
-Ubuntu 16 (Systemd)
-^^^^^^^^^^^^^^^^^^^
-Stop Docker from automatically starting::
-
-    sudo systemctl disable docker
-
-Allow Docker to automatically start::
-
-    sudo systemctl enable docker
-
-Manually start Docker::
-
-    sudo systemctl start docker
+ 

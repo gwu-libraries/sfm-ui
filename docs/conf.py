@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'sfm'
-copyright = u'2015, The George Washington University Libraries'
+copyright = u'2021, The George Washington University Libraries'
 author = u'The George Washington University Libraries'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -111,19 +111,10 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-    # Override default css to get a larger width for local build
-    def setup(app):
-        #app.add_javascript("custom.js")
-        app.add_stylesheet('theme_overrides.css')
+    html_css_files = ['theme_overrides.css']
 else:
     # Override default css to get a larger width for ReadTheDoc build
-    html_context = {
-        'css_files': [
-            'https://media.readthedocs.org/css/sphinx_rtd_theme.css',
-            'https://media.readthedocs.org/css/readthedocs-doc-embed.css',
-            '_static/theme_overrides.css',
-        ],
-}
+    html_css_files = ['theme_overrides.css']
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
