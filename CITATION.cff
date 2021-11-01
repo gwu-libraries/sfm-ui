@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use or reference Social Feed Manager, please cite it as below."
+authors:
+- family-names: "Littman"
+  given-names: "Justin"
+  orcid: "https://orcid.org/0000-0003-1527-0030"
+- family-names: "Kerchner"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0002-5921-2193"
+- family-names: "Wrubel"
+  given-names: "Laura"
+  orcid: "https://orcid.org/0000-0002-8061-1981"
+- family-names: "Smith"
+  given-names: "Dolsy"
+  orcid: "https://orcid.org/0000-0003-4507-4735"
+- family-names: "Chudnov"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0003-1594-1447"
+title: "Social Feed Manager"
+version: 2.5.0
+doi: 10.5281/zenodo.597278
+date-released: 2021-11-01
+url: "https://github.com/gwu-libraries/sfm-ui/"
