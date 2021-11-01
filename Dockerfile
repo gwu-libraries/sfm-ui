@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
 
 ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
-RUN pip install -r requirements/common.txt -r requirements/release.txt
+RUN python -m pip install -r requirements/common.txt -r requirements/release.txt
 
 # Adds fixtures.
 ADD docker/ui/fixtures.json /opt/sfm-setup/
@@ -18,7 +18,7 @@ ADD docker/ui/fixtures.json /opt/sfm-setup/
 ADD docker/ui/envvars /etc/apache2/
 
 # Add WSGI
-RUN pip install mod_wsgi
+RUN python -m pip install mod_wsgi
 ADD docker/ui/wsgi.load /etc/apache2/mods-available/wsgi.load
 RUN a2enmod wsgi
 
