@@ -288,9 +288,9 @@ in your new ``docker-compose.yml``.
 
 It may take several minutes for the images to be downloaded and the containers to start.
 
-7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.5.0 with the correct previous version::
+7. Deleting images from the previous version is recommended to prevent Docker from filling up too much space. Replacing 2.4.0 with the correct previous version::
 
-    docker rmi $(docker images | grep "2\\.3\\.0" | awk '{print $3}')
+    docker rmi $(docker images | grep "2\\.4\\.0" | awk '{print $3}')
 
 You may also want to periodically clean up Docker (>= 1.13) with ``docker system prune``.
 
