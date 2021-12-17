@@ -778,7 +778,6 @@ class CredentialListView(LoginRequiredMixin, ListView):
             credential_objs = Credential.objects.filter(user=self.request.user,
                                                         platform=social_type).order_by('name')
             credentials.append((social_type, credential_objs, self._can_connect_credential(social_type)))
-
         context["credentials_lists"] = credentials
         return context
 

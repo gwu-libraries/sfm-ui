@@ -3,9 +3,11 @@
 
 from django import forms
 from django.contrib.auth.models import Group
+from django.forms.widgets import DateTimeInput
 from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.conf import settings
 
 from crispy_forms.helper import FormHelper
@@ -16,6 +18,7 @@ from .utils import clean_token, clean_blogname
 
 import json
 import logging
+import math
 import re
 
 log = logging.getLogger(__name__)
@@ -199,6 +202,46 @@ class CollectionTwitterUserTimelineForm(BaseCollectionForm):
         m.save()
         return m
 
+class CollectionTwitterUserTimeline2Form(BaseCollectionForm):
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+    deleted_accounts_option = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                      "for deleted / not found "
+                                                                                      "accounts.")
+    suspended_accounts_option = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                        "for suspended accounts.")
+    protected_accounts_options = forms.BooleanField(initial=False, required=False, label="Automatically delete seeds "
+                                                                                         "for protected accounts.")
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionTwitterUserTimeline2Form, self).__init__(*args, **kwargs)
+        self.helper.layout[0][5].extend(('incremental',
+                                         'deleted_accounts_option', 'suspended_accounts_option',
+                                         'protected_accounts_options'))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+            if "deactivate_not_found_seeds" in harvest_options:
+                self.fields['deleted_accounts_option'].initial = harvest_options["deactivate_not_found_seeds"]
+            if "deactivate_unauthorized_seeds" in harvest_options:
+                self.fields['protected_accounts_options'].initial = harvest_options["deactivate_unauthorized_seeds"]
+            if "deactivate_suspended_seeds" in harvest_options:
+                self.fields['suspended_accounts_option'].initial = harvest_options["deactivate_suspended_seeds"]
+
+    def save(self, commit=True):
+        m = super(CollectionTwitterUserTimeline2Form, self).save(commit=False)
+        m.harvest_type = Collection.TWITTER_USER_TIMELINE_2
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "deactivate_not_found_seeds": self.cleaned_data["deleted_accounts_option"],
+            "deactivate_unauthorized_seeds": self.cleaned_data["protected_accounts_options"],
+            "deactivate_suspended_seeds": self.cleaned_data["suspended_accounts_option"]
+        }
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
+        m.save()
+        return m
+
 
 class CollectionTwitterSearchForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
@@ -218,6 +261,53 @@ class CollectionTwitterSearchForm(BaseCollectionForm):
         harvest_options = {
             "incremental": self.cleaned_data["incremental"],
         }
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
+        m.save()
+        return m
+
+
+class CollectionTwitterSearch2Form(BaseCollectionForm):
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionTwitterSearch2Form, self).__init__(*args, **kwargs)
+        self.helper.layout[0][5].extend(('incremental',))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(CollectionTwitterSearch2Form, self).save(commit=False)
+        m.harvest_type = Collection.TWITTER_SEARCH_2
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+        }
+        m.harvest_options = json.dumps(harvest_options, sort_keys=True)
+        m.save()
+        return m
+
+
+class CollectionTwitterAcademicSearchForm(BaseCollectionForm):
+    incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][5].extend(('incremental',))
+
+        if self.instance and self.instance.harvest_options:
+            harvest_options = json.loads(self.instance.harvest_options)
+            if "incremental" in harvest_options:
+                self.fields['incremental'].initial = harvest_options["incremental"]
+
+    def save(self, commit=True):
+        m = super(CollectionTwitterAcademicSearchForm, self).save(commit=False)
+        m.harvest_type = Collection.TWITTER_ACADEMIC_SEARCH
+        harvest_options = {
+            "incremental": self.cleaned_data["incremental"],
+            "twitter_academic_search": True
+            }
         m.harvest_options = json.dumps(harvest_options, sort_keys=True)
         m.save()
         return m
@@ -473,6 +563,37 @@ class SeedTwitterUserTimelineForm(BaseSeedForm):
         return token_val
 
 
+class SeedTwitterUserTimeline2Form(BaseSeedForm):
+    class Meta(BaseSeedForm.Meta):
+        fields = ['token', 'uid']
+        fields.extend(BaseSeedForm.Meta.fields)
+        labels = dict(BaseSeedForm.Meta.labels)
+        labels["token"] = "Screen name"
+        labels["uid"] = "User id"
+        widgets = dict(BaseSeedForm.Meta.widgets)
+        widgets["token"] = forms.TextInput(attrs={'size': '40'})
+        widgets["uid"] = forms.TextInput(attrs={'size': '40'})
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterUserTimeline2Form, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('token', 'uid'))
+
+    def clean_uid(self):
+        uid_val = self.cleaned_data.get("uid")
+        # check the format
+        if uid_val and not uid_val.isdigit():
+            raise ValidationError('Uid should be numeric.', code='invalid')
+        return uid_val
+
+    def clean_token(self):
+        token_val = clean_token(self.cleaned_data.get("token"))
+        token_val = token_val.split(" ")[0]
+        # check the format
+        if token_val and token_val.isdigit():
+            raise ValidationError('Screen name may not be numeric.', code='invalid')
+        return token_val
+
+
 class SeedTwitterSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text='See <a href="https://developer.twitter.com/en/docs/tweets/search/guides/'
@@ -522,6 +643,104 @@ class SeedTwitterSearchForm(BaseSeedForm):
             token['query'] = self.cleaned_data['query']
         if self.cleaned_data['geocode']:
             token['geocode'] = self.cleaned_data['geocode']
+        m.token = json.dumps(token, ensure_ascii=False)
+        m.save()
+        return m
+
+
+class SeedTwitterSearch2Form(BaseSeedForm):
+    query = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
+                                      "Example: (happy OR happiness) lang:en -is:retweet")
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterSearch2Form, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('query', 'start_time', 'end_time', 'limit'))
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            if 'query' in token:
+                self.fields['query'].initial = token['query']
+            if 'start_time' in token:
+                self.fields['start_time'].initial = token['start_time']
+            if 'end_time' in token:
+                self.fields['end_time'].initial = token['end_time']
+            if 'limit' in token:
+                self.fields['limit'].initial = token['limit']
+
+    def clean_query(self):
+        query_val = self.cleaned_data.get("query")
+        return query_val.strip()
+
+    def save(self, commit=True):
+        m = super(SeedTwitterSearch2Form, self).save(commit=False)
+        token = dict()
+        if self.cleaned_data['query']:
+            token['query'] = self.cleaned_data['query']
+        if self.cleaned_data['start_time']:
+            token['start_time'] = self.cleaned_data['start_time'].isoformat()
+        if self.cleaned_data['end_time']:
+            token['end_time'] = self.cleaned_data['end_time'].isoformat()
+        if self.cleaned_data['limit']:
+            limit = self.cleaned_data['limit']
+            token['limit'] = _round_up(limit)
+        m.token = json.dumps(token, ensure_ascii=False)
+        m.save()
+        return m
+
+
+class SeedTwitterAcademicSearchForm(BaseSeedForm):
+    query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
+                                      "Example: (happy OR happiness) lang:en -is:retweet")
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
+    geocode = forms.CharField(required=False,
+                              help_text='Geocode point radius in the format: longitude latitude radius. '
+                                        'Example: -77.036449 38.899434 50mi')
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(('query', 'start_time', 'end_time', 'limit', 'geocode'))
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            if 'query' in token:
+                self.fields['query'].initial = token['query']
+            if 'start_time' in token:
+                self.fields['start_time'].initial = token['start_time']
+            if 'end_time' in token:
+                self.fields['end_time'].initial = token['end_time']
+            if 'geocode' in token:
+                self.fields['geocode'].initial = token['geocode']
+            if 'limit' in token:
+                self.fields['limit'].initial = token['limit']
+
+    def clean(self):
+        query_val = self.cleaned_data.get("query")
+        geocode_val = self.cleaned_data.get("geocode")
+        # should not all be empty
+        if not query_val and not geocode_val:
+            raise ValidationError(u'One of the following fields is required: query, geocode.')
+
+    def save(self, commit=True):
+        m = super(SeedTwitterAcademicSearchForm, self).save(commit=False)
+        token = dict()
+        if self.cleaned_data['query']:
+            token['query'] = self.cleaned_data['query']
+        if self.cleaned_data['geocode']:
+            token['geocode'] = self.cleaned_data['geocode']
+        if self.cleaned_data['start_time']:
+            token['start_time'] = self.cleaned_data['start_time'].isoformat()
+        if self.cleaned_data['end_time']:
+            token['end_time'] = self.cleaned_data['end_time'].isoformat()
+        if self.cleaned_data['limit']:
+            limit = self.cleaned_data['limit']
+            token['limit'] = _round_up(limit)
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
@@ -889,6 +1108,41 @@ class CredentialTwitterForm(BaseCredentialForm):
         return m
 
 
+class CredentialTwitter2Form(BaseCredentialForm):
+    consumer_key = forms.CharField(required=False)
+    consumer_secret = forms.CharField(required=False)
+    access_token = forms.CharField(required=False)
+    access_token_secret = forms.CharField(required=False)
+    bearer_token = forms.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CredentialTwitter2Form, self).__init__(*args, **kwargs)
+        self.helper.layout[0][1].extend(['consumer_key', 'consumer_secret', 'access_token', 'access_token_secret', 'bearer_token'])
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            self.fields['consumer_key'].initial = token.get('consumer_key')
+            self.fields['consumer_secret'].initial = token.get('consumer_secret')
+            self.fields['access_token'].initial = token.get('access_token')
+            self.fields['access_token_secret'].inital = token.get('access_token_secret')
+            self.fields['bearer_token'].initial = token.get('bearer_token')
+
+    def to_token(self):
+        return {
+            "consumer_key": self.cleaned_data.get("consumer_key", None),
+            "consumer_secret": self.cleaned_data.get("consumer_secret", None),
+            "access_token": self.cleaned_data.get("access_token", None),
+            "access_token_secret": self.cleaned_data.get("access_token_secret", None),
+            "bearer_token": self.cleaned_data.get("bearer_token", None)
+        }
+
+    def save(self, commit=True):
+        m = super(CredentialTwitter2Form, self).save(commit=False)
+        m.platform = Credential.TWITTER2
+        m.token = json.dumps(self.to_token())
+        m.save()
+        return m
+
+
 class CredentialTumblrForm(BaseCredentialForm):
     api_key = forms.CharField(required=True)
 
@@ -1058,3 +1312,9 @@ class UserProfileForm(forms.ModelForm):
                 Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
+
+def _round_up(x):
+    '''
+    Rounds up limit parameter to 100 to align with max_results=100 in twarc2 calls
+    '''
+    return int(math.ceil(x / 100.0)) * 100

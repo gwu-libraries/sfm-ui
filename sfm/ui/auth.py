@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 
 import logging
 
-from .forms import CredentialTwitterForm, CredentialWeiboForm, CredentialTumblrForm
+from .forms import CredentialTwitterForm, CredentialTwitter2Form, CredentialWeiboForm, CredentialTumblrForm
 from .models import Credential, CollectionSet, Collection
 
 log = logging.getLogger(__name__)

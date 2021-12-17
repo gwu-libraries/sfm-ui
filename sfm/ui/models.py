@@ -105,11 +105,13 @@ class Credential(models.Model):
     UPDATE_VIEW = "updateView"
     CREATE_VIEW = "createView"
     TWITTER = "twitter"
+    TWITTER2 = "twitter2"
     FLICKR = "flickr"
     WEIBO = "weibo"
     TUMBLR = "tumblr"
     PLATFORM_CHOICES = [
         (TWITTER, 'Twitter'),
+        (TWITTER2, 'Twitter version 2'),
         (FLICKR, 'Flickr'),
         (WEIBO, 'Weibo'),
         (TUMBLR, "Tumblr")
@@ -297,6 +299,9 @@ class Collection(models.Model):
     TWITTER_FILTER = "twitter_filter"
     TWITTER_USER_TIMELINE = 'twitter_user_timeline'
     TWITTER_SAMPLE = 'twitter_sample'
+    TWITTER_ACADEMIC_SEARCH = 'twitter_academic_search'
+    TWITTER_SEARCH_2 = 'twitter_search_2'
+    TWITTER_USER_TIMELINE_2 = 'twitter_user_timeline_2'
     FLICKR_USER = 'flickr_user'
     WEIBO_TIMELINE = 'weibo_timeline'
     WEIBO_SEARCH = 'weibo_search'
@@ -316,6 +321,9 @@ class Collection(models.Model):
         (TWITTER_SEARCH, 'Twitter search'),
         (TWITTER_FILTER, 'Twitter filter'),
         (TWITTER_SAMPLE, 'Twitter sample'),
+        (TWITTER_ACADEMIC_SEARCH, 'Twitter academic search'),
+        (TWITTER_SEARCH_2, 'Twitter search version 2'),
+        (TWITTER_USER_TIMELINE_2, 'Twitter user timeline version 2'),
         (TUMBLR_BLOG_POSTS, 'Tumblr blog posts'),
         (FLICKR_USER, 'Flickr user'),
         (WEIBO_TIMELINE, 'Weibo timeline')
@@ -325,6 +333,9 @@ class Collection(models.Model):
         TWITTER_FILTER: 'Tweets in real time matching filter criteria',
         TWITTER_USER_TIMELINE: 'Tweets from specific accounts',
         TWITTER_SAMPLE: 'A subset of all tweets in real time',
+        TWITTER_ACADEMIC_SEARCH: 'Tweets from the full archive using Twitter Academic Research',
+        TWITTER_SEARCH_2: 'Recent tweets matching a query from the standard version 2 API',
+        TWITTER_USER_TIMELINE_2: 'Tweets from specific accounts, from the version 2 API',
         FLICKR_USER: 'Posts and photos from specific accounts',
         WEIBO_TIMELINE: "Posts from a user and the user's friends",
         TUMBLR_BLOG_POSTS: 'Blog posts from specific blogs'
@@ -334,6 +345,9 @@ class Collection(models.Model):
         TWITTER_FILTER: {"link": None, "token": "Filter criteria", "uid": None},
         TWITTER_USER_TIMELINE: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
         TWITTER_SAMPLE: None,
+        TWITTER_ACADEMIC_SEARCH: {"link": None, "token": "Search query", "uid": None},
+        TWITTER_SEARCH_2: {"link": None, "token": "Search query", "uid": None},
+        TWITTER_USER_TIMELINE_2: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
         FLICKR_USER: {"link": "Link", "token": "Flickr users", "uid": "NSID"},
         WEIBO_TIMELINE: None,
         TUMBLR_BLOG_POSTS: {"link": "Link", "token": None, "uid": "Blog name"}
@@ -341,6 +355,8 @@ class Collection(models.Model):
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
         TWITTER_SEARCH: 1,
+        TWITTER_ACADEMIC_SEARCH: 1,
+        TWITTER_SEARCH_2: 1,
         WEIBO_SEARCH: 1,
         TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
@@ -350,13 +366,16 @@ class Collection(models.Model):
         TWITTER_FILTER: Credential.TWITTER,
         TWITTER_USER_TIMELINE: Credential.TWITTER,
         TWITTER_SAMPLE: Credential.TWITTER,
+        TWITTER_ACADEMIC_SEARCH: Credential.TWITTER2,
+        TWITTER_SEARCH_2: Credential.TWITTER2,
+        TWITTER_USER_TIMELINE_2: Credential.TWITTER2,
         FLICKR_USER: Credential.FLICKR,
         WEIBO_TIMELINE: Credential.WEIBO,
         WEIBO_SEARCH: Credential.WEIBO,
         TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
     STREAMING_HARVEST_TYPES = (TWITTER_SAMPLE, TWITTER_FILTER)
-    RATE_LIMITED_HARVEST_TYPES = (TWITTER_USER_TIMELINE, TWITTER_SEARCH)
+    RATE_LIMITED_HARVEST_TYPES = (TWITTER_USER_TIMELINE, TWITTER_SEARCH, TWITTER_USER_TIMELINE_2, TWITTER_SEARCH_2, TWITTER_ACADEMIC_SEARCH)
     DEFAULT_VISIBILITY = 'default'
     LOCAL_VISIBILITY = 'local'
     VISIBILITY_CHOICES = [
