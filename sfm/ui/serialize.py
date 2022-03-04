@@ -54,9 +54,15 @@ class RecordSerializer:
         for collection in collection_set.collections.all():
             self.serialize_collection(collection, force_serialize=force_serialize)
 
+        cspath = get_collection_set_path(collection_set, sfm_data_dir=self.data_dir)
+
+        # create collection set folder if it does not exist
+        # (no collection yet created in the collection set)
+        if not os.path.exists(cspath):
+            os.makedirs(cspath)
+
         # README
-        self._write_readme("collection_set", collection_set,
-                           get_collection_set_path(collection_set, sfm_data_dir=self.data_dir))
+        self._write_readme("collection_set", collection_set, cspath)
 
     def serialize_collection(self, collection, force_serialize=False):
         records_path = os.path.join(get_collection_path(collection, sfm_data_dir=self.data_dir), RECORD_DIR)
