@@ -696,7 +696,8 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
                                       "Example: (happy OR happiness) lang:en -is:retweet")
-    start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.", widget=DateTimeInput(attrs={'class': 'datepicker','placeholder':'Use start and end times in order to avoid using up monthly limit imposed by the API.'}))
+
+    start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker','placeholder':'Use start and end times in order to avoid using up monthly limit imposed by the API.'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker','placeholder':"Use start and end times in order to avoid using up monthly limit imposed by the API."}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
     geocode = forms.CharField(required=False,
