@@ -5,6 +5,8 @@
     Add Seed
 {% endblock %}
 
+
+
 {% block content_header %}
   <div class="row">
       <div class="col-md-12">
@@ -16,6 +18,18 @@
           </ol>
        </div>
   </div>
+
+  {% if harvest_type_name == 'Twitter academic search' %}
+
+    <div class="alert alert-success">
+
+    
+        <strong>Warning!</strong> Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.
+
+    </div>
+
+  {% endif %}
+
   <div class="row">
       <div class="col-md-12">
           <h2>Add {{ harvest_type_name }} seed</h2>
