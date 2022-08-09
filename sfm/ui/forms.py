@@ -470,6 +470,7 @@ class BaseSeedForm(forms.ModelForm):
             Fieldset(
                 '',
                 Div(),
+                Div(css_id='date_warning'),
                 'history_note',
                 'collection',
                 css_class='crispy-form-custom'
@@ -652,22 +653,22 @@ class SeedTwitterSearch2Form(BaseSeedForm):
     query = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
                                       "Example: (happy OR happiness) lang:en -is:retweet")
-    #start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
-    #end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearch2Form, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('query', 'limit'))
+        self.helper.layout[0][0].extend(('query','start_time','end_time','limit'))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
             if 'query' in token:
                 self.fields['query'].initial = token['query']
-            #if 'start_time' in token:
-                #self.fields['start_time'].initial = token['start_time']
-            #if 'end_time' in token:
-                #self.fields['end_time'].initial = token['end_time']
+            if 'start_time' in token:
+                self.fields['start_time'].initial = token['start_time']
+            if 'end_time' in token:
+                self.fields['end_time'].initial = token['end_time']
             if 'limit' in token:
                 self.fields['limit'].initial = token['limit']
 
@@ -680,10 +681,10 @@ class SeedTwitterSearch2Form(BaseSeedForm):
         token = dict()
         if self.cleaned_data['query']:
             token['query'] = self.cleaned_data['query']
-        #if self.cleaned_data['start_time']:
-            #token['start_time'] = self.cleaned_data['start_time'].isoformat()
-        #if self.cleaned_data['end_time']:
-            #token['end_time'] = self.cleaned_data['end_time'].isoformat()
+        if self.cleaned_data['start_time']:
+            token['start_time'] = self.cleaned_data['start_time'].isoformat()
+        if self.cleaned_data['end_time']:
+            token['end_time'] = self.cleaned_data['end_time'].isoformat()
         if self.cleaned_data['limit']:
             limit = self.cleaned_data['limit']
             token['limit'] = _round_up(limit)
@@ -695,10 +696,10 @@ class SeedTwitterSearch2Form(BaseSeedForm):
 class SeedTwitterAcademicSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
-                                      "Example: (happy OR happiness) lang:en -is:retweet")
+                                      "Example: (happy OR happiness) lang:en -is:retweet<br><br><br><br>  ")
 
-    start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker','placeholder':'Use start and end times in order to avoid using up monthly limit imposed by the API.'}))
-    end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker','placeholder':"Use start and end times in order to avoid using up monthly limit imposed by the API."}))
+    start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
     geocode = forms.CharField(required=False,
                               help_text='Geocode point radius in the format: longitude latitude radius. '
