@@ -162,6 +162,20 @@ For example::
     source ENV/bin/activate
     pip install -r requirements/common.txt -r requirements/dev.txt
 
+librabbitmq dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^
+In order to get this library to work with Python 3.8, it may be necessary to do the following:
+
+1. Build Python 3.8.12 from source. This `documentation <https://tecadmin.net/install-python-3-8-ubuntu/>_` may be helpful.
+2. Install additional dependencies::
+    sudo apt-get install libpython3.8-dev
+    sudo apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        pkg-config \
+        libtool
+
+
 ------------------
  Development tips
 ------------------
