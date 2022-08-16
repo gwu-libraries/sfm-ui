@@ -658,7 +658,10 @@ class SeedTwitterSearch2Form(BaseSeedForm):
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearch2Form, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('query','start_time','end_time','limit'))
+        self.helper.layout[0][0].extend(('query','start_time','end_time',HTML("""
+           <div class="alert alert-info">
+   Limits are approximate; actual results may exceed the limit slightly.
+</div>"""),'limit'))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
