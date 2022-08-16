@@ -654,7 +654,7 @@ class SeedTwitterSearch2Form(BaseSeedForm):
                                       "Example: (happy OR happiness) lang:en -is:retweet")
     start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
-    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.Limits are approximate; actual results may exceed the limit slightly.")
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100. Limits are approximate; actual results may exceed the limit slightly.")
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearch2Form, self).__init__(*args, **kwargs)
@@ -699,7 +699,7 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
 
     start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
-    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.Limits are approximate; actual results may exceed the limit slightly.")
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100. Limits are approximate; actual results may exceed the limit slightly.")
     geocode = forms.CharField(required=False,
                               help_text='Geocode point radius in the format: longitude latitude radius. '
                                         'Example: -77.036449 38.899434 50mi')
@@ -710,7 +710,7 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
         super(SeedTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('query',HTML("""
             <div class="alert alert-warning">
-            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time','limit', 'geocode'))
+            Use start and end times in order to avoid using up monthly limit imposed by the API. See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time','limit', 'geocode'))
 
 
 
@@ -1116,27 +1116,27 @@ class CredentialTwitterForm(BaseCredentialForm):
 
 
 class CredentialTwitter2Form(BaseCredentialForm):
-    consumer_key = forms.CharField(required=False)
-    consumer_secret = forms.CharField(required=False)
+    API_key = forms.CharField(required=False)
+    API_key_secret = forms.CharField(required=False)
     access_token = forms.CharField(required=False)
     access_token_secret = forms.CharField(required=False)
     bearer_token = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(CredentialTwitter2Form, self).__init__(*args, **kwargs)
-        self.helper.layout[0][1].extend(['consumer_key', 'consumer_secret', 'access_token', 'access_token_secret', 'bearer_token'])
+        self.helper.layout[0][1].extend(['API_key', 'API_key_secret', 'access_token', 'access_token_secret', 'bearer_token'])
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
-            self.fields['consumer_key'].initial = token.get('consumer_key')
-            self.fields['consumer_secret'].initial = token.get('consumer_secret')
+            self.fields['API_key'].initial = token.get('API_key')
+            self.fields['API_key_secret'].initial = token.get('API_key_secret')
             self.fields['access_token'].initial = token.get('access_token')
             self.fields['access_token_secret'].inital = token.get('access_token_secret')
             self.fields['bearer_token'].initial = token.get('bearer_token')
 
     def to_token(self):
         return {
-            "consumer_key": self.cleaned_data.get("consumer_key", None),
-            "consumer_secret": self.cleaned_data.get("consumer_secret", None),
+            "API_key": self.cleaned_data.get("API_key", None),
+            "API_key_secret": self.cleaned_data.get("API_key_secret", None),
             "access_token": self.cleaned_data.get("access_token", None),
             "access_token_secret": self.cleaned_data.get("access_token_secret", None),
             "bearer_token": self.cleaned_data.get("bearer_token", None)
