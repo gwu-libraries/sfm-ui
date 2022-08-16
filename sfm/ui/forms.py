@@ -710,7 +710,10 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
         super(SeedTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('query',HTML("""
             <div class="alert alert-warning">
-            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time', 'limit', 'geocode'))
+            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time',HTML("""
+           <div class="alert alert-info">
+   Limits are approximate; actual results may exceed the limit slightly.
+</div>"""),'limit', 'geocode'))
 
 
 
