@@ -654,14 +654,11 @@ class SeedTwitterSearch2Form(BaseSeedForm):
                                       "Example: (happy OR happiness) lang:en -is:retweet")
     start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
-    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.Limits are approximate; actual results may exceed the limit slightly.")
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterSearch2Form, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('query','start_time','end_time',HTML("""
-           <div class="alert alert-info">
-   Limits are approximate; actual results may exceed the limit slightly.
-</div>"""),'limit'))
+        self.helper.layout[0][0].extend(('query','start_time','end_time','limit'))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
@@ -702,7 +699,7 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
 
     start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
-    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.")
+    limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100.Limits are approximate; actual results may exceed the limit slightly.")
     geocode = forms.CharField(required=False,
                               help_text='Geocode point radius in the format: longitude latitude radius. '
                                         'Example: -77.036449 38.899434 50mi')
@@ -713,10 +710,7 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
         super(SeedTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout[0][0].extend(('query',HTML("""
             <div class="alert alert-warning">
-            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time',HTML("""
-           <div class="alert alert-info">
-   Limits are approximate; actual results may exceed the limit slightly.
-</div>"""),'limit', 'geocode'))
+            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time','limit', 'geocode'))
 
 
 
