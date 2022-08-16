@@ -470,7 +470,6 @@ class BaseSeedForm(forms.ModelForm):
             Fieldset(
                 '',
                 Div(),
-                Div(css_id='date_warning'),
                 'history_note',
                 'collection',
                 css_class='crispy-form-custom'
@@ -696,7 +695,7 @@ class SeedTwitterSearch2Form(BaseSeedForm):
 class SeedTwitterAcademicSearchForm(BaseSeedForm):
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
-                                      "Example: (happy OR happiness) lang:en -is:retweet<br><br><br><br>  ")
+                                      "Example: (happy OR happiness) lang:en -is:retweet")
 
     start_time = forms.DateTimeField(required=False,help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
@@ -705,9 +704,15 @@ class SeedTwitterAcademicSearchForm(BaseSeedForm):
                               help_text='Geocode point radius in the format: longitude latitude radius. '
                                         'Example: -77.036449 38.899434 50mi')
 
+    
+
     def __init__(self, *args, **kwargs):
         super(SeedTwitterAcademicSearchForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('query', 'start_time', 'end_time', 'limit', 'geocode'))
+        self.helper.layout[0][0].extend(('query',HTML("""
+            <div class="alert alert-warning">
+            Use start and end times in order to avoid using up monthly limit imposed by the API.See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level' target='_blank'>API access levels and versions here</a>.</div>"""),'start_time', 'end_time', 'limit', 'geocode'))
+
+
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
