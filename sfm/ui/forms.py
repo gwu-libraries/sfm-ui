@@ -1116,27 +1116,27 @@ class CredentialTwitterForm(BaseCredentialForm):
 
 
 class CredentialTwitter2Form(BaseCredentialForm):
-    API_key = forms.CharField(required=False)
-    API_key_secret = forms.CharField(required=False)
+    consumer_key = forms.CharField(required=False,label="API key")
+    consumer_secret = forms.CharField(required=False,label="API key secret")
     access_token = forms.CharField(required=False)
     access_token_secret = forms.CharField(required=False)
     bearer_token = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(CredentialTwitter2Form, self).__init__(*args, **kwargs)
-        self.helper.layout[0][1].extend(['API_key', 'API_key_secret', 'access_token', 'access_token_secret', 'bearer_token'])
+        self.helper.layout[0][1].extend(['consumer_key', 'consumer_secret', 'access_token', 'access_token_secret', 'bearer_token'])
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
-            self.fields['API_key'].initial = token.get('API_key')
-            self.fields['API_key_secret'].initial = token.get('API_key_secret')
+            self.fields['consumer_key'].initial = token.get('consumer_key')
+            self.fields['consumer_secret'].initial = token.get('consumer_secret')
             self.fields['access_token'].initial = token.get('access_token')
             self.fields['access_token_secret'].inital = token.get('access_token_secret')
             self.fields['bearer_token'].initial = token.get('bearer_token')
 
     def to_token(self):
         return {
-            "API_key": self.cleaned_data.get("API_key", None),
-            "API_key_secret": self.cleaned_data.get("API_key_secret", None),
+            "consumer_key": self.cleaned_data.get("consumer_key", None),
+            "consumer_secret": self.cleaned_data.get("consumer_secret", None),
             "access_token": self.cleaned_data.get("access_token", None),
             "access_token_secret": self.cleaned_data.get("access_token_secret", None),
             "bearer_token": self.cleaned_data.get("bearer_token", None)
