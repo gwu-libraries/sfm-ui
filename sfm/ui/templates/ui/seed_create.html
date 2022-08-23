@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block title %}
     Add Seed
 {% endblock %}
+
 
 {% block content_header %}
   <div class="row">
@@ -15,6 +17,10 @@
           </ol>
        </div>
   </div>
+
+
+    </style>
+
   <div class="row">
       <div class="col-md-12">
           <h2>Add {{ harvest_type_name }} seed</h2>
@@ -27,4 +33,5 @@
             {% crispy form %}
        </div>
   </div>
+  <script src="{% static 'ui/js/datepicker.js' %}"></script>
 {% endblock %}
