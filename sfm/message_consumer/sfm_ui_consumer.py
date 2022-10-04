@@ -18,7 +18,18 @@ from smtplib import SMTPException
 import os
 import codecs
 
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from psycopg2.errors import UniqueViolation
+
+from psycopg2.errorcodes import UNIQUE_VIOLATION
+from psycopg2 import errors
+import psycopg2
+
 log = logging.getLogger(__name__)
+
 
 
 class SfmUiConsumer(BaseConsumer):
@@ -101,6 +112,11 @@ class SfmUiConsumer(BaseConsumer):
                 seed.save()
             except ObjectDoesNotExist:
                 log.error("Seed model object with seed_id %s not found to update uid to %s", seed_id, uid)
+            except psycopg2.Error as e:
+                log.error("Adhithya Kiran duplicate key value violates unique constraint")
+                
+
+
 
         # Delete seeds based on warnings and collection harvest options
         harvest_options = json.loads(harvest.collection.harvest_options) if harvest.collection.harvest_options else {}
