@@ -18,10 +18,8 @@ import shutil
 
 log = logging.getLogger(__name__)
 
-from psycopg2.errorcodes import UNIQUE_VIOLATION
-from psycopg2 import errors
-import psycopg2
-UniqueViolation = errors.lookup('23505')
+
+import django.db
 
 # This adds an additional meta field
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + (u'diff_fields',)
@@ -79,8 +77,8 @@ def history_save(self, *args, **kw):
 
         try:
             return super(self.__class__, self).save(*args, **kw)
-        except UniqueViolation as err:
-            log.error("duplicate key value violates unique constraint")
+        except django.db.Error as e:
+            dbException = e.__cause__     
             
     else:
         self.skip_history_when_saving = True
@@ -608,11 +606,9 @@ class Seed(models.Model):
         return '<Seed %s "%s">' % (self.id, self.token)
 
     def save(self, *args, **kw):
-        try:
-            return history_save(self, *args, **kw)
-        except UniqueViolation as err:
-            log.error("uplicate key value violates unique constraint")           
-
+    
+        return history_save(self, *args, **kw)
+                      
     def natural_key(self):
         return self.seed_id,
 
