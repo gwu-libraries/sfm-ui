@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
@@ -17,9 +17,6 @@ import os
 import shutil
 
 log = logging.getLogger(__name__)
-
-
-import django.db
 
 # This adds an additional meta field
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + (u'diff_fields',)
@@ -75,10 +72,7 @@ def history_save(self, *args, **kw):
 
     if is_changed:
 
-        try:
-            return super(self.__class__, self).save(*args, **kw)
-        except django.db.Error as e:
-            dbException = e.__cause__     
+        return super(self.__class__, self).save(*args, **kw)
             
     else:
         self.skip_history_when_saving = True
@@ -607,7 +601,11 @@ class Seed(models.Model):
 
     def save(self, *args, **kw):
     
-        return history_save(self, *args, **kw)
+        try:
+            return history_save(self, *args, **kw)
+        except IntegrityError as e:
+            log.debug('Catching error with duplicate seeds. Ignoring duplicate.')
+            log.error(e)
                       
     def natural_key(self):
         return self.seed_id,
