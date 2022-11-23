@@ -983,6 +983,32 @@ class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
                 'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
         return ''.join(finaltokens)
 
+class BulkSeedTwitterUserTimeline2Form(BaseBulkSeedForm):
+    def __init__(self, *args, **kwargs):
+        super(BulkSeedTwitterUserTimeline2Form, self).__init__(*args, **kwargs)
+        self.fields['seeds_type'].choices = (('token', 'Screen Name'), ('uid', 'User id'))
+
+    def clean_tokens(self):
+        seed_type = self.cleaned_data.get("seeds_type")
+        tokens = self.cleaned_data.get("tokens")
+        splittoken = ''.join(tokens).splitlines()
+        numtoken, strtoken, finaltokens = [], [], []
+        for t in splittoken:
+            clean_t = clean_token(t)
+            clean_t = clean_t.split(" ")[0]
+            if clean_t and clean_t.isdigit():
+                numtoken.append(clean_t)
+            elif clean_t and not clean_t.isdigit():
+                strtoken.append(clean_t)
+            finaltokens.append(clean_t + "\n")
+        if seed_type == 'token' and numtoken:
+            raise ValidationError(
+                'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')
+        elif seed_type == 'uid' and strtoken:
+            raise ValidationError(
+                'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
+        return ''.join(finaltokens)
+
 
 class BulkSeedFlickrUserForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
