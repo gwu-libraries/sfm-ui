@@ -518,18 +518,18 @@ class BaseSeedForm(forms.ModelForm):
             if token_val.lower() != self.entry.token.lower() and \
                     token_val and Seed.objects.filter(collection=self.collection,
                                                       token__iexact=token_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+                raise ValidationError(u'{}: {} already exists.'.format(token_label, token_val))
             # check updated uid whether exist in db if changes
             if uid_val.lower() != self.entry.uid.lower() and \
                     uid_val and Seed.objects.filter(collection=self.collection,
                                                     uid__iexact=uid_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+                raise ValidationError(u'{}: {} already exists.'.format(uid_label, uid_val))
         else:
             if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+                raise ValidationError(u'{}: {} already exists.'.format(token_label, token_val))
 
             if uid_val and Seed.objects.filter(collection=self.collection, uid__iexact=uid_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+                raise ValidationError(u'{}: {} already exists.'.format(uid_label, uid_val))
 
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
