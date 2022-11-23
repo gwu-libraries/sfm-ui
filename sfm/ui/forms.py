@@ -652,7 +652,7 @@ class SeedTwitterSearch2Form(BaseSeedForm):
     query = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
                                       "Example: (happy OR happiness) lang:en -is:retweet")
-    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC. Start and end dates must be within the previous 7 days. A start date outside of that window will be ignore.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100. Limits are approximate; actual results may exceed the limit slightly.")
 
