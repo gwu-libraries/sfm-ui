@@ -20,7 +20,6 @@ import codecs
 
 log = logging.getLogger(__name__)
 
-
 class SfmUiConsumer(BaseConsumer):
     """
     Class for the SFM UI Consumer, which subscribes to

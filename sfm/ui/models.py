@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from jsonfield import JSONField
 from simple_history.models import HistoricalRecords
@@ -71,7 +71,9 @@ def history_save(self, *args, **kw):
         del kw["force_history"]
 
     if is_changed:
+
         return super(self.__class__, self).save(*args, **kw)
+            
     else:
         self.skip_history_when_saving = True
         try:
@@ -598,8 +600,13 @@ class Seed(models.Model):
         return '<Seed %s "%s">' % (self.id, self.token)
 
     def save(self, *args, **kw):
-        return history_save(self, *args, **kw)
-
+    
+        try:
+            return history_save(self, *args, **kw)
+        except IntegrityError as e:
+            log.debug('Catching error with duplicate seeds. Ignoring duplicate.')
+            log.error(e)
+                      
     def natural_key(self):
         return self.seed_id,
 

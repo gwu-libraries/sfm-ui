@@ -518,18 +518,18 @@ class BaseSeedForm(forms.ModelForm):
             if token_val.lower() != self.entry.token.lower() and \
                     token_val and Seed.objects.filter(collection=self.collection,
                                                       token__iexact=token_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+                raise ValidationError(u'{}: {} already exists.'.format(token_label, token_val))
             # check updated uid whether exist in db if changes
             if uid_val.lower() != self.entry.uid.lower() and \
                     uid_val and Seed.objects.filter(collection=self.collection,
                                                     uid__iexact=uid_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+                raise ValidationError(u'{}: {} already exists.'.format(uid_label, uid_val))
         else:
             if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(token_label, token_val))
+                raise ValidationError(u'{}: {} already exists.'.format(token_label, token_val))
 
             if uid_val and Seed.objects.filter(collection=self.collection, uid__iexact=uid_val).exists():
-                raise ValidationError(u'{}: {} already exist.'.format(uid_label, uid_val))
+                raise ValidationError(u'{}: {} already exists.'.format(uid_label, uid_val))
 
 
 class SeedTwitterUserTimelineForm(BaseSeedForm):
@@ -652,7 +652,7 @@ class SeedTwitterSearch2Form(BaseSeedForm):
     query = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
                                       "Example: (happy OR happiness) lang:en -is:retweet")
-    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC. Start and end dates must be within the previous 7 days. A start date outside of that window will be ignore.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100. Limits are approximate; actual results may exceed the limit slightly.")
 
@@ -960,6 +960,32 @@ class BaseBulkSeedForm(forms.Form):
 class BulkSeedTwitterUserTimelineForm(BaseBulkSeedForm):
     def __init__(self, *args, **kwargs):
         super(BulkSeedTwitterUserTimelineForm, self).__init__(*args, **kwargs)
+        self.fields['seeds_type'].choices = (('token', 'Screen Name'), ('uid', 'User id'))
+
+    def clean_tokens(self):
+        seed_type = self.cleaned_data.get("seeds_type")
+        tokens = self.cleaned_data.get("tokens")
+        splittoken = ''.join(tokens).splitlines()
+        numtoken, strtoken, finaltokens = [], [], []
+        for t in splittoken:
+            clean_t = clean_token(t)
+            clean_t = clean_t.split(" ")[0]
+            if clean_t and clean_t.isdigit():
+                numtoken.append(clean_t)
+            elif clean_t and not clean_t.isdigit():
+                strtoken.append(clean_t)
+            finaltokens.append(clean_t + "\n")
+        if seed_type == 'token' and numtoken:
+            raise ValidationError(
+                'Screen names may not be numeric. Please correct the following seeds: ' + ', '.join(numtoken) + '.')
+        elif seed_type == 'uid' and strtoken:
+            raise ValidationError(
+                'UIDs must be numeric. Please correct the following seeds: ' + ', '.join(strtoken) + '.')
+        return ''.join(finaltokens)
+
+class BulkSeedTwitterUserTimeline2Form(BaseBulkSeedForm):
+    def __init__(self, *args, **kwargs):
+        super(BulkSeedTwitterUserTimeline2Form, self).__init__(*args, **kwargs)
         self.fields['seeds_type'].choices = (('token', 'Screen Name'), ('uid', 'User id'))
 
     def clean_tokens(self):
