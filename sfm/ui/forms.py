@@ -933,32 +933,10 @@ class SeedTwitterFilterStreamForm(BaseSeedForm):
             raise ValidationError("Can only track 400 keywords.")
         return track_val
 
-    def clean_locations(self):
-        return self.cleaned_data.get("locations").strip()
-
-    def clean_language(self):
-        return self.cleaned_data.get("language").strip()
-
-    def clean_follow(self):
-        follow_val = self.cleaned_data.get("follow").strip()
-        if len(follow_val.split(",")) > 5000:
-            raise ValidationError("Can only follow 5000 users.")
-        return follow_val
 
     def clean(self):
         # if do string strip in here, string ends an empty space, not sure why
         track_val = self.cleaned_data.get("track")
-        follow_val = self.cleaned_data.get("follow")
-        locations_val = self.cleaned_data.get("locations")
-        language_val = self.cleaned_data.get("language")
-
-        # should not all be empty
-        if not track_val and not follow_val and not locations_val and not language_val:
-            raise ValidationError(u'One of the following fields is required: track, follow, locations, language.')
-
-        # check follow should be number uid
-        if re.compile(r'[^0-9, ]').search(follow_val):
-            raise ValidationError('Follow must be user ids', code='invalid_follow')
 
         token_val = {}
         if track_val:
@@ -987,12 +965,7 @@ class SeedTwitterFilterStreamForm(BaseSeedForm):
         token = dict()
         if self.cleaned_data['track']:
             token['track'] = self.cleaned_data['track']
-        if self.cleaned_data['follow']:
-            token['follow'] = self.cleaned_data['follow']
-        if self.cleaned_data['locations']:
-            token['locations'] = self.cleaned_data['locations']
-        if self.cleaned_data['language']:
-            token['language'] = self.cleaned_data['language']
+
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
