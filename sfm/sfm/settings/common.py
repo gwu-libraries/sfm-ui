@@ -290,3 +290,5 @@ SFM_UI_VERSION = "2.5.0"
 PRIORITY_SCHEDULE_MINUTES = 60
 # Harvest types that support priority queues.
 PRIORITY_HARVEST_TYPES = ['twitter_search', 'twitter_user_timeline']
+# For Django 3.2, recommended to set the autofield for primary-key columns explicitly
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
