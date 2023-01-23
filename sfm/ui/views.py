@@ -16,7 +16,7 @@ from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.utils.html import mark_safe
 from django.conf import settings
 
