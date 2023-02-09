@@ -360,7 +360,7 @@ class Collection(models.Model):
     }
     REQUIRED_SEED_COUNTS = {
         TWITTER_FILTER: 1,
-        TWITTER_FILTER_STREAM: 1,
+        TWITTER_FILTER_STREAM: None,  # allowed seeds depend on user's access level
         TWITTER_SEARCH: 1,
         TWITTER_ACADEMIC_SEARCH: 1,
         TWITTER_SEARCH_2: 1,
