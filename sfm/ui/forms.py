@@ -1417,7 +1417,7 @@ class ExportForm(forms.ModelForm):
                        onclick="window.location.href='{0}'".format(cancel_url))
             )
         )
-        if len(self.fields["seeds"].queryset) < 2:
+        if (len(self.fields["seeds"].queryset) < 2) or (self.collection.harvest_type == 'twitter_filter_stream'):
             del self.fields["seeds"]
             del self.fields["seed_choice"]
             self.helper.layout[0].pop(0)
