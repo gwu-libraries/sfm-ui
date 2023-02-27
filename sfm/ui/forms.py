@@ -907,87 +907,34 @@ class SeedTwitterFilterForm(BaseSeedForm):
 #Code for filter stream
 
 class SeedTwitterFilterStreamForm(BaseSeedForm):
-    track = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                            help_text="""Separate keywords and phrases with commas. See Twitter <a
-                            target="_blank" href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track">
-                            track</a> for more information.""")
-    follow = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
-                             help_text="""Use commas to separate user IDs (e.g. 1233718,6378678) of accounts whose
-                             tweets, retweets, and replies will be collected. See Twitter <a
-                             target="_blank"
-                             href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#follow">
-                             follow</a>
-                             documentation for a full list of what is returned. User <a target="_blank"
-                             href="https://tweeterid.com/">TweeterID</a> to get the user ID for a screen name.""")
-    locations = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}),
-                                help_text="""Provide a longitude and latitude (e.g. -74,40,-73,41) of a geographic
-                                bounding box. See Twitter <a target="blank"
-                                href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#locations">
-                                locations</a> for more information.""")
-
-    language = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2}),
-                               help_text="""Provide a comma-separated list of two-letter <a target="blank"
-                               href="https://datahub.io/core/language-codes">BCP 47 language codes</a> (e.g. en,es). See Twitter <a target="blank"
-                               href="https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#language">
-                               language</a> for more information.""")
+    rule = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text="""Enter a streaming rule to select Tweets during your streaming harvest. See the <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule" target="_blank">Twitter API documentation</a> for guidance on creating rules. 
+                            """)
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterFilterStreamForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('track', 'follow', 'locations', 'language'))
+        self.helper.layout[0][0].extend(('rule',))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
-            if 'track' in token:
-                self.fields['track'].initial = token['track']
-            if 'follow' in token:
-                self.fields['follow'].initial = token['follow']
-            if 'locations' in token:
-                self.fields['locations'].initial = token['locations']
-            if 'language' in token:
-                self.fields['language'].initial = token['language']
+            if 'rule' in token:
+                self.fields['rule'].initial = token['rule']
 
-    def clean_track(self):
-        track_val = self.cleaned_data.get("track").strip()
-        if len(track_val.split(",")) > 400:
-            raise ValidationError("Can only track 400 keywords.")
-        return track_val
-
-    def clean_locations(self):
-        return self.cleaned_data.get("locations").strip()
-
-    def clean_language(self):
-        return self.cleaned_data.get("language").strip()
-
-    def clean_follow(self):
-        follow_val = self.cleaned_data.get("follow").strip()
-        if len(follow_val.split(",")) > 5000:
-            raise ValidationError("Can only follow 5000 users.")
-        return follow_val
+    def clean_rule(self):
+        rule_val = self.cleaned_data.get("rule").strip()
+        return rule_val
 
     def clean(self):
         # if do string strip in here, string ends an empty space, not sure why
-        track_val = self.cleaned_data.get("track")
-        follow_val = self.cleaned_data.get("follow")
-        locations_val = self.cleaned_data.get("locations")
-        language_val = self.cleaned_data.get("language")
+        rule_val = self.cleaned_data.get("rule")
 
         # should not all be empty
-        if not track_val and not follow_val and not locations_val and not language_val:
-            raise ValidationError(u'One of the following fields is required: track, follow, locations, language.')
-
-        # check follow should be number uid
-        if re.compile(r'[^0-9, ]').search(follow_val):
-            raise ValidationError('Follow must be user ids', code='invalid_follow')
+        if not rule_val:
+            raise ValidationError(u'A streaming rule is required.')
 
         token_val = {}
-        if track_val:
-            token_val['track'] = track_val
-        if follow_val:
-            token_val['follow'] = follow_val
-        if locations_val:
-            token_val['locations'] = locations_val
-        if language_val:
-            token_val['language'] = language_val
+        if rule_val:
+            token_val['rule'] = rule_val
         token_val = json.dumps(token_val, ensure_ascii=False)
         # for the update view
         if self.view_type == Seed.UPDATE_VIEW:
@@ -1004,14 +951,8 @@ class SeedTwitterFilterStreamForm(BaseSeedForm):
     def save(self, commit=True):
         m = super(SeedTwitterFilterStreamForm, self).save(commit=False)
         token = dict()
-        if self.cleaned_data['track']:
-            token['track'] = self.cleaned_data['track']
-        if self.cleaned_data['follow']:
-            token['follow'] = self.cleaned_data['follow']
-        if self.cleaned_data['locations']:
-            token['locations'] = self.cleaned_data['locations']
-        if self.cleaned_data['language']:
-            token['language'] = self.cleaned_data['language']
+        if self.cleaned_data['rule']:
+            token['rule'] = self.cleaned_data['rule']
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
