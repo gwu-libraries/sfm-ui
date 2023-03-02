@@ -315,8 +315,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
             if credential_used_col_object.count() != 0:
                 credential_used_col = credential_used_col_object[0]
         context["credential_used_col"] = credential_used_col
-        # Harvest types that are not limited support bulk add
-        context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
+        # Harvest types that are not limited support bulk add, except for Twitter v2. filter stream
+        # To do --> support bulk add for streaming rules
+        context["can_add_bulk_seeds"] = (self.object.required_seed_count() is None) and (self.object.harvest_type != 'twitter_filter_stream')
         # Can export if there is a WARC
         context["can_export"] = Warc.objects.filter(harvest__harvest_type=self.object.harvest_type,
                                                     harvest__historical_collection__id=self.object.id).exists()
