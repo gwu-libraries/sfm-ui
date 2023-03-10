@@ -342,8 +342,6 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
         m.save()
         return m
 
-#code for filter stream
-
 class CollectionTwitterFilterStreamForm(BaseCollectionForm):
     class Meta(BaseCollectionForm.Meta):
         exclude = ('schedule_minutes',)
@@ -357,10 +355,6 @@ class CollectionTwitterFilterStreamForm(BaseCollectionForm):
         m.schedule_minutes = None
         m.save()
         return m
-
-
-#code end for filter stream        
-
 
 
 
@@ -904,37 +898,47 @@ class SeedTwitterFilterForm(BaseSeedForm):
         return m
 
 
-#Code for filter stream
-
 class SeedTwitterFilterStreamForm(BaseSeedForm):
-    rule = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4}),
+    rule = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="""Enter a streaming rule to select Tweets during your streaming harvest. See the <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule" target="_blank">Twitter API documentation</a> for guidance on creating rules. 
                             """)
+    
+    tag = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 1}),
+                            help_text="""Enter a tag for your rule. Tags will appear in exported data for this collection.""")
 
     def __init__(self, *args, **kwargs):
         super(SeedTwitterFilterStreamForm, self).__init__(*args, **kwargs)
-        self.helper.layout[0][0].extend(('rule',))
+        self.helper.layout[0][0].extend(("rule","tag"))
 
         if self.instance and self.instance.token:
             token = json.loads(self.instance.token)
-            if 'rule' in token:
-                self.fields['rule'].initial = token['rule']
+            if "rule" in token:
+                self.fields["rule"].initial = token["rule"]
+            if "tag" in token:
+                self.fields["tag"].initial = token["tag"]
 
     def clean_rule(self):
         rule_val = self.cleaned_data.get("rule").strip()
         return rule_val
+    
+    def clean_tag(self):
+        tag_val = self.cleaned_data.get("tag").strip()
+        return tag_val
 
     def clean(self):
         # if do string strip in here, string ends an empty space, not sure why
         rule_val = self.cleaned_data.get("rule")
+        tag_val = self.cleaned_data.get("tag")
 
         # should not all be empty
         if not rule_val:
-            raise ValidationError(u'A streaming rule is required.')
+            raise ValidationError(u"A streaming rule is required.")
 
         token_val = {}
         if rule_val:
-            token_val['rule'] = rule_val
+            token_val["rule"] = rule_val
+        if tag_val:
+            token_val["tag"] = tag_val
         token_val = json.dumps(token_val, ensure_ascii=False)
         # for the update view
         if self.view_type == Seed.UPDATE_VIEW:
@@ -951,12 +955,13 @@ class SeedTwitterFilterStreamForm(BaseSeedForm):
     def save(self, commit=True):
         m = super(SeedTwitterFilterStreamForm, self).save(commit=False)
         token = dict()
-        if self.cleaned_data['rule']:
-            token['rule'] = self.cleaned_data['rule']
+        if self.cleaned_data["rule"]:
+            token["rule"] = self.cleaned_data["rule"]
+        if self.cleaned_data["tag"]:
+            token["tag"] = self.cleaned_data["tag"]
         m.token = json.dumps(token, ensure_ascii=False)
         m.save()
         return m
-#code end for filter stream        
 
 class SeedFlickrUserForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
