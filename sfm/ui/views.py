@@ -25,7 +25,7 @@ from .forms import CollectionSetForm, ExportForm
 from . import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
-from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object
+from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object, check_collection_deprecated
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 from .auth import CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
@@ -494,10 +494,15 @@ class CollectionToggleOnView(LoginRequiredMixin, RedirectView):
         collection = get_object_or_404(Collection, pk=kwargs['pk'])
         # Check permissions to toggle
         check_collection_set_based_permission(collection, self.request.user)
-        collection.is_on = not collection.is_on
+
+        is_deprecated = check_collection_deprecated(collection)
+        # Turn on only if off and is not deprecated
+        collection.is_on = not collection.is_on and not is_deprecated
         collection.history_note = self.request.POST.get("history_note", "")
         if collection.is_on:
             messages.info(self.request, "Harvesting is turned on.")
+        elif is_deprecated:
+            messages.warning(self.request, "Collection type is deprecated. Harvesting cannot be turned on.")
         else:
             messages.info(self.request, "Harvesting is turned off.")
         collection.save()

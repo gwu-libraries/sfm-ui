@@ -301,7 +301,7 @@ class Collection(models.Model):
     TWITTER_FILTER = "twitter_filter"
     TWITTER_FILTER_STREAM = "twitter_filter_stream"
     TWITTER_USER_TIMELINE = 'twitter_user_timeline'
-#    TWITTER_SAMPLE = 'twitter_sample'
+    TWITTER_SAMPLE = 'twitter_sample'
     TWITTER_ACADEMIC_SEARCH = 'twitter_academic_search'
     TWITTER_SEARCH_2 = 'twitter_search_2'
     TWITTER_USER_TIMELINE_2 = 'twitter_user_timeline_2'
@@ -322,7 +322,7 @@ class Collection(models.Model):
     HARVEST_CHOICES = [
         (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SEARCH, 'Twitter search'),
-        (TWITTER_FILTER, 'Twitter filter'),
+    #    (TWITTER_FILTER, 'Twitter filter'),
         (TWITTER_FILTER_STREAM, 'Twitter filtered stream'),
         #(TWITTER_SAMPLE, 'Twitter sample'),
         (TWITTER_ACADEMIC_SEARCH, 'Twitter academic search'),
@@ -334,7 +334,7 @@ class Collection(models.Model):
     ]
     HARVEST_DESCRIPTION = {
         TWITTER_SEARCH: 'Recent tweets matching a query',
-        TWITTER_FILTER: 'Tweets in real time matching filter criteria',
+    #    TWITTER_FILTER: 'Tweets in real time matching filter criteria',
         TWITTER_FILTER_STREAM: 'Tweets in real time matching streaming rules',
         TWITTER_USER_TIMELINE: 'Tweets from specific accounts',
 #        TWITTER_SAMPLE: 'A subset of all tweets in real time',
@@ -350,7 +350,7 @@ class Collection(models.Model):
         TWITTER_FILTER: {"link": None, "token": "Filter criteria", "uid": None},
         TWITTER_FILTER_STREAM: {"link": None, "token": "Streaming rules", "uid": None},
         TWITTER_USER_TIMELINE: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
-#        TWITTER_SAMPLE: None,
+        TWITTER_SAMPLE: None,
         TWITTER_ACADEMIC_SEARCH: {"link": None, "token": "Search query", "uid": None},
         TWITTER_SEARCH_2: {"link": None, "token": "Search query", "uid": None},
         TWITTER_USER_TIMELINE_2: {"link": "Link", "token": "Twitter accounts", "uid": "User ID"},
@@ -365,7 +365,7 @@ class Collection(models.Model):
         TWITTER_ACADEMIC_SEARCH: 1,
         TWITTER_SEARCH_2: 1,
         WEIBO_SEARCH: 1,
-#        TWITTER_SAMPLE: 0,
+        TWITTER_SAMPLE: 0,
         WEIBO_TIMELINE: 0
     }
     HARVEST_TYPES_TO_PLATFORM = {
@@ -373,7 +373,7 @@ class Collection(models.Model):
         TWITTER_FILTER: Credential.TWITTER,
         TWITTER_FILTER_STREAM: Credential.TWITTER2,
         TWITTER_USER_TIMELINE: Credential.TWITTER,
-#        TWITTER_SAMPLE: Credential.TWITTER,
+        TWITTER_SAMPLE: Credential.TWITTER,
         TWITTER_ACADEMIC_SEARCH: Credential.TWITTER2,
         TWITTER_SEARCH_2: Credential.TWITTER2,
         TWITTER_USER_TIMELINE_2: Credential.TWITTER2,
@@ -382,7 +382,7 @@ class Collection(models.Model):
         WEIBO_SEARCH: Credential.WEIBO,
         TUMBLR_BLOG_POSTS: Credential.TUMBLR
     }
-    STREAMING_HARVEST_TYPES = (TWITTER_FILTER,TWITTER_FILTER_STREAM)
+    STREAMING_HARVEST_TYPES = (TWITTER_FILTER_STREAM)
     RATE_LIMITED_HARVEST_TYPES = (TWITTER_USER_TIMELINE, TWITTER_SEARCH, TWITTER_USER_TIMELINE_2, TWITTER_SEARCH_2, TWITTER_ACADEMIC_SEARCH)
     DEFAULT_VISIBILITY = 'default'
     LOCAL_VISIBILITY = 'local'
