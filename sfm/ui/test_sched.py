@@ -134,7 +134,7 @@ class ScheduleTests(TestCase):
         mock_scheduler.get_job.side_effect = [None, None, True, True]
         end_date = datetime(2207, 12, 22, 17, 31, tzinfo=pytz.utc)
         collection = Collection.objects.create(collection_set=self.collection_set, credential=self.credential,
-                                               harvest_type=Collection.TWITTER_SAMPLE, name="test_collection",
+                                               harvest_type=Collection.TWITTER_FILTER_STREAM, name="test_collection",
                                                is_on=True,
                                                end_date=end_date)
         collection_id = collection.id

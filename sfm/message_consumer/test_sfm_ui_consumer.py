@@ -22,7 +22,7 @@ class ConsumerTest(TestCase):
                                                harvest_type="test_type", name="test_collection",
                                                harvest_options=json.dumps({}))
         stream_collection = Collection.objects.create(collection_set=collection_set, credential=credential,
-                                                      harvest_type=Collection.TWITTER_SAMPLE,
+                                                      harvest_type=Collection.TWITTER_FILTER_STREAM,
                                                       name="test_stream_collection",
                                                       harvest_options=json.dumps({}), is_on=True)
 
@@ -199,7 +199,7 @@ class ConsumerTest(TestCase):
 
     @patch("message_consumer.sfm_ui_consumer.collection_stop")
     def test_harvest_status_stream_failed_on_message(self, mock_collection_stop):
-        self.consumer.routing_key = "harvest.status.twitter.twitter_sample"
+        self.consumer.routing_key = "harvest.status.twitter2.twitter_filter_stream"
         self.consumer.message = {
             "id": "test:3",
             "status": Harvest.FAILURE,
@@ -218,7 +218,7 @@ class ConsumerTest(TestCase):
 
     @patch("message_consumer.sfm_ui_consumer.collection_stop")
     def test_rogue_harvest(self, mock_collection_stop):
-        self.consumer.routing_key = "harvest.status.twitter.twitter_sample"
+        self.consumer.routing_key = "harvest.status.twitter2.twitter_filter_stream"
         self.consumer.message = {
             "id": "test:3",
             "status": Harvest.RUNNING,
