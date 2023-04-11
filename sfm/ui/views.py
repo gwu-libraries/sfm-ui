@@ -277,7 +277,7 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
         context["can_edit_seeds"] = can_edit if self.object.is_streaming() else self.object.is_active and has_perms
         context["can_toggle_on"] = has_perms 
         # Don't allow turning on Twitter collections not in settings list of allowed types
-        context["disabled_collection_type"] = self.object.harvest_type.startswith('twitter') and (self.object.harvest_type in settings.TWITTER_COLLECTION_TYPES)
+        context["disabled_collection_type"] = self.object.harvest_type.startswith('twitter') and (self.object.harvest_type not in settings.TWITTER_COLLECTION_TYPES)
         context["can_toggle_active"] = not self.object.is_on and has_perms
         # If last harvest is stopping
         context["stream_stopping"] = self.object.last_harvest().status == Harvest.STOP_REQUESTED \
