@@ -283,7 +283,7 @@ PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
 SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
 SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
 
-SFM_UI_VERSION = "2.5.0"
+SFM_UI_VERSION = "3.0.0"
 
 # If a collection is schedules for <= PRIORITY_SCHEDULE_MINUTES,
 # the routing key will have .priority appended.
