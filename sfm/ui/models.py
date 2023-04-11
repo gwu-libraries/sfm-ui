@@ -26,6 +26,16 @@ def default_uuid():
     return uuid.uuid4().hex
 
 
+def update_harvest_types(harvest_types):
+    '''
+    Updates a list of SFM harvest types based on settings, filtering out deprecated Twitter harvest types.
+    '''
+    # If list, assume tuples
+    if isinstance(harvest_types, list):
+        return [h for h in harvest_types if (not h[0].startswith('twitter')) or (h[0] in settings.TWITTER_COLLECTION_TYPES)]
+    # Otherwise, assume dict
+    return {k: v for k, v in harvest_types.items() if (not k.startswith('twitter')) or (k in settings.TWITTER_COLLECTION_TYPES)}
+
 class User(AbstractUser):
     DAILY = "daily"
     WEEKLY = "weekly"
@@ -112,8 +122,8 @@ class Credential(models.Model):
     WEIBO = "weibo"
     TUMBLR = "tumblr"
     PLATFORM_CHOICES = [
-        (TWITTER, 'Twitter'),
-        (TWITTER2, 'Twitter version 2'),
+    #   (TWITTER, 'Twitter'),
+        (TWITTER2, 'Twitter (v.2)'),
         (FLICKR, 'Flickr'),
         (WEIBO, 'Weibo'),
         (TUMBLR, "Tumblr")
@@ -319,32 +329,32 @@ class Collection(models.Model):
         (60 * 24 * 7, 'Every week'),
         (60 * 24 * 7 * 4, 'Every 4 weeks')
     ]
-    HARVEST_CHOICES = [
+    HARVEST_CHOICES = update_harvest_types([
         (TWITTER_USER_TIMELINE, 'Twitter user timeline'),
         (TWITTER_SEARCH, 'Twitter search'),
-    #    (TWITTER_FILTER, 'Twitter filter'),
+        (TWITTER_FILTER, 'Twitter filter'),
         (TWITTER_FILTER_STREAM, 'Twitter filtered stream'),
-        #(TWITTER_SAMPLE, 'Twitter sample'),
+        (TWITTER_SAMPLE, 'Twitter sample'),
         (TWITTER_ACADEMIC_SEARCH, 'Twitter academic search'),
-        (TWITTER_SEARCH_2, 'Twitter search version 2'),
-        (TWITTER_USER_TIMELINE_2, 'Twitter user timeline version 2'),
+        (TWITTER_SEARCH_2, 'Twitter search (.v 2)'),
+        (TWITTER_USER_TIMELINE_2, 'Twitter user timeline (v. 2)'),
         (TUMBLR_BLOG_POSTS, 'Tumblr blog posts'),
         (FLICKR_USER, 'Flickr user'),
         (WEIBO_TIMELINE, 'Weibo timeline')
-    ]
-    HARVEST_DESCRIPTION = {
+    ])
+    HARVEST_DESCRIPTION = update_harvest_types({
         TWITTER_SEARCH: 'Recent tweets matching a query',
-    #    TWITTER_FILTER: 'Tweets in real time matching filter criteria',
+        TWITTER_FILTER: 'Tweets in real time matching filter criteria',
         TWITTER_FILTER_STREAM: 'Tweets in real time matching streaming rules',
         TWITTER_USER_TIMELINE: 'Tweets from specific accounts',
-#        TWITTER_SAMPLE: 'A subset of all tweets in real time',
+        TWITTER_SAMPLE: 'A subset of all tweets in real time',
         TWITTER_ACADEMIC_SEARCH: 'Tweets from the full archive using Twitter Academic Research',
-        TWITTER_SEARCH_2: 'Recent tweets matching a query from the standard version 2 API',
-        TWITTER_USER_TIMELINE_2: 'Tweets from specific accounts, from the version 2 API',
+        TWITTER_SEARCH_2: 'Recent tweets matching a query from the v. 2 API',
+        TWITTER_USER_TIMELINE_2: 'Tweets from specific accounts, from the v. 2 API',
         FLICKR_USER: 'Posts and photos from specific accounts',
         WEIBO_TIMELINE: "Posts from a user and the user's friends",
         TUMBLR_BLOG_POSTS: 'Blog posts from specific blogs'
-    }
+    })
     HARVEST_FIELDS = {
         TWITTER_SEARCH: {"link": None, "token": "Search query", "uid": None},
         TWITTER_FILTER: {"link": None, "token": "Filter criteria", "uid": None},

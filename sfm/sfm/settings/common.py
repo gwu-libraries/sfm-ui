@@ -292,3 +292,6 @@ PRIORITY_SCHEDULE_MINUTES = 60
 PRIORITY_HARVEST_TYPES = ['twitter_search', 'twitter_user_timeline', 'twitter_user_timeline_2', 'twitter_search_2', 'twitter_academic_search']
 # For Django 3.2, recommended to set the autofield for primary-key columns explicitly
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+# permitted Twitter collection types
+# types not included will be disabled in the UI
+TWITTER_COLLECTION_TYPES = env.get('TWITTER_COLLECTION_TYPES', 'twitter_search_2,twitter_user_timeline_2').split(',')
