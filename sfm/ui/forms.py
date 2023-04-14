@@ -342,6 +342,22 @@ class CollectionTwitterFilterForm(BaseCollectionForm):
         m.save()
         return m
 
+class CollectionTwitterFilterStreamForm(BaseCollectionForm):
+    class Meta(BaseCollectionForm.Meta):
+        exclude = ('schedule_minutes',)
+
+    def __init__(self, *args, **kwargs):
+        super(CollectionTwitterFilterStreamForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        m = super(CollectionTwitterFilterStreamForm, self).save(commit=False)
+        m.harvest_type = Collection.TWITTER_FILTER_STREAM
+        m.schedule_minutes = None
+        m.save()
+        return m
+
+
+
 
 class CollectionFlickrUserForm(BaseCollectionForm):
     incremental = forms.BooleanField(initial=True, required=False, label=INCREMENTAL_LABEL, help_text=INCREMENTAL_HELP)
@@ -652,7 +668,7 @@ class SeedTwitterSearch2Form(BaseSeedForm):
     query = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
                             help_text="See Twitter's <a href='https://developer.twitter.com/en/docs/twitter-api/tweets/counts/integrate/build-a-query' target='_blank'>instructions for building a query</a>. "
                                       "Example: (happy OR happiness) lang:en -is:retweet")
-    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC. Start and end dates must be within the previous 7 days. A start date outside of that window will be ignore.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
+    start_time = forms.DateTimeField(required=False, help_text="Earliest date of tweets searched. Will be converted to UTC. Start and end dates must be within the previous 7 days. A start date outside of that window will be ignored.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     end_time= forms.DateTimeField(required=False, help_text="Most recent date of tweets searched. Will be converted to UTC.", widget=DateTimeInput(attrs={'class': 'datepicker'}))
     limit = forms.IntegerField(required=False, validators=[MinValueValidator(1)], help_text="Maximum number of tweets to be retrieved. Will be rounded up to a multiple of 100. Limits are approximate; actual results may exceed the limit slightly.")
 
@@ -881,6 +897,71 @@ class SeedTwitterFilterForm(BaseSeedForm):
         m.save()
         return m
 
+
+class SeedTwitterFilterStreamForm(BaseSeedForm):
+    rule = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 4}),
+                            help_text="""Enter a streaming rule to select Tweets during your streaming harvest. See the <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule" target="_blank">Twitter API documentation</a> for guidance on creating rules. 
+                            """)
+    
+    tag = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 1}),
+                            help_text="""Enter a tag for your rule. Tags will appear in exported data for this collection.""")
+
+    def __init__(self, *args, **kwargs):
+        super(SeedTwitterFilterStreamForm, self).__init__(*args, **kwargs)
+        self.helper.layout[0][0].extend(("rule","tag"))
+
+        if self.instance and self.instance.token:
+            token = json.loads(self.instance.token)
+            if "rule" in token:
+                self.fields["rule"].initial = token["rule"]
+            if "tag" in token:
+                self.fields["tag"].initial = token["tag"]
+
+    def clean_rule(self):
+        rule_val = self.cleaned_data.get("rule").strip()
+        return rule_val
+    
+    def clean_tag(self):
+        tag_val = self.cleaned_data.get("tag").strip()
+        return tag_val
+
+    def clean(self):
+        # if do string strip in here, string ends an empty space, not sure why
+        rule_val = self.cleaned_data.get("rule")
+        tag_val = self.cleaned_data.get("tag")
+
+        # should not all be empty
+        if not rule_val:
+            raise ValidationError(u"A streaming rule is required.")
+
+        token_val = {}
+        if rule_val:
+            token_val["rule"] = rule_val
+        if tag_val:
+            token_val["tag"] = tag_val
+        token_val = json.dumps(token_val, ensure_ascii=False)
+        # for the update view
+        if self.view_type == Seed.UPDATE_VIEW:
+            # check updated seeds exist in db if changes
+            # case insensitive match, and user can update seed `tack:Test` to 'tack:test'
+            if token_val.lower() != self.entry.token.lower() and \
+                    token_val and Seed.objects.filter(collection=self.collection,
+                                                      token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
+        else:
+            if token_val and Seed.objects.filter(collection=self.collection, token__iexact=token_val).exists():
+                raise ValidationError(u'Seed: {} already exist.'.format(token_val))
+
+    def save(self, commit=True):
+        m = super(SeedTwitterFilterStreamForm, self).save(commit=False)
+        token = dict()
+        if self.cleaned_data["rule"]:
+            token["rule"] = self.cleaned_data["rule"]
+        if self.cleaned_data["tag"]:
+            token["tag"] = self.cleaned_data["tag"]
+        m.token = json.dumps(token, ensure_ascii=False)
+        m.save()
+        return m
 
 class SeedFlickrUserForm(BaseSeedForm):
     class Meta(BaseSeedForm.Meta):
@@ -1282,7 +1363,7 @@ class ExportForm(forms.ModelForm):
                        onclick="window.location.href='{0}'".format(cancel_url))
             )
         )
-        if len(self.fields["seeds"].queryset) < 2:
+        if (len(self.fields["seeds"].queryset) < 2) or (self.collection.harvest_type == 'twitter_filter_stream'):
             del self.fields["seeds"]
             del self.fields["seed_choice"]
             self.helper.layout[0].pop(0)

@@ -283,10 +283,15 @@ PERFORM_SERIALIZE = env.get('SFM_PERFORM_SERIALIZE', 'True') == 'True'
 SERIALIZE_HOUR = env.get('SFM_SERIALIZE_HOUR', '3')
 SERIALIZE_MINUTE = env.get('SFM_SERIALIZE_MINUTE', '0')
 
-SFM_UI_VERSION = "2.5.0"
+SFM_UI_VERSION = "3.0.0"
 
 # If a collection is schedules for <= PRIORITY_SCHEDULE_MINUTES,
 # the routing key will have .priority appended.
 PRIORITY_SCHEDULE_MINUTES = 60
 # Harvest types that support priority queues.
-PRIORITY_HARVEST_TYPES = ['twitter_search', 'twitter_user_timeline']
+PRIORITY_HARVEST_TYPES = ['twitter_search', 'twitter_user_timeline', 'twitter_user_timeline_2', 'twitter_search_2', 'twitter_academic_search']
+# For Django 3.2, recommended to set the autofield for primary-key columns explicitly
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+# permitted Twitter collection types
+# types not included will be disabled in the UI
+TWITTER_COLLECTION_TYPES = env.get('TWITTER_COLLECTION_TYPES', 'twitter_search_2,twitter_user_timeline_2').split(',')

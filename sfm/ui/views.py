@@ -16,7 +16,7 @@ from django.db.models import Q
 from braces.views import LoginRequiredMixin
 from allauth.socialaccount.models import SocialApp
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.utils.html import mark_safe
 from django.conf import settings
 
@@ -25,7 +25,7 @@ from .forms import CollectionSetForm, ExportForm
 from . import forms
 from .models import CollectionSet, Collection, Seed, Credential, Harvest, Export, User, Warc
 from .sched import next_run_time
-from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object
+from .utils import CollectionHistoryIter, clean_token, clean_blogname, diff_historical_object, check_collection_deprecated
 from .monitoring import monitor_harvests, monitor_queues, monitor_exports
 from .auth import CollectionSetOrSuperuserPermissionMixin, \
     check_collection_set_based_permission, UserOrSuperuserOrStaffPermissionMixin, UserOrSuperuserPermissionMixin, \
@@ -275,7 +275,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
         context["can_edit"] = can_edit
         # Seed add buttons should be enabled.
         context["can_edit_seeds"] = can_edit if self.object.is_streaming() else self.object.is_active and has_perms
-        context["can_toggle_on"] = has_perms
+        context["can_toggle_on"] = has_perms 
+        # Don't allow turning on Twitter collections not in settings list of allowed types
+        context["disabled_collection_type"] = self.object.harvest_type.startswith('twitter') and (self.object.harvest_type not in settings.TWITTER_COLLECTION_TYPES)
         context["can_toggle_active"] = not self.object.is_on and has_perms
         # If last harvest is stopping
         context["stream_stopping"] = self.object.last_harvest().status == Harvest.STOP_REQUESTED \
@@ -315,8 +317,9 @@ class CollectionDetailView(LoginRequiredMixin, CollectionSetOrCollectionVisibili
             if credential_used_col_object.count() != 0:
                 credential_used_col = credential_used_col_object[0]
         context["credential_used_col"] = credential_used_col
-        # Harvest types that are not limited support bulk add
-        context["can_add_bulk_seeds"] = self.object.required_seed_count() is None
+        # Harvest types that are not limited support bulk add, except for Twitter v2. filter stream
+        # To do --> support bulk add for streaming rules
+        context["can_add_bulk_seeds"] = (self.object.required_seed_count() is None) and (self.object.harvest_type != 'twitter_filter_stream')
         # Can export if there is a WARC
         context["can_export"] = Warc.objects.filter(harvest__harvest_type=self.object.harvest_type,
                                                     harvest__historical_collection__id=self.object.id).exists()
@@ -493,10 +496,15 @@ class CollectionToggleOnView(LoginRequiredMixin, RedirectView):
         collection = get_object_or_404(Collection, pk=kwargs['pk'])
         # Check permissions to toggle
         check_collection_set_based_permission(collection, self.request.user)
-        collection.is_on = not collection.is_on
+
+        is_deprecated = check_collection_deprecated(collection)
+        # Turn on only if off and is not deprecated
+        collection.is_on = not collection.is_on and not is_deprecated
         collection.history_note = self.request.POST.get("history_note", "")
         if collection.is_on:
             messages.info(self.request, "Harvesting is turned on.")
+        elif is_deprecated:
+            messages.warning(self.request, "Collection type is deprecated. Harvesting cannot be turned on.")
         else:
             messages.info(self.request, "Harvesting is turned off.")
         collection.save()

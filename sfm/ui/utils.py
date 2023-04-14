@@ -9,7 +9,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-
 class Diff:
     def __init__(self):
         self.obj = None
@@ -218,3 +217,15 @@ def get_admin_email_addresses():
 def get_site_url():
     return '{}://{}'.format("https" if env.get('SFM_USE_HTTPS', 'False').lower() == 'true' else "http",
                             Site.objects.get_current().domain)
+
+def check_collection_deprecated(obj):
+    """
+    Checks whether collection type has been deprecated. 
+    TO DO: Add this logic to the Collection model instead
+    """
+    DEPRECATED_TYPES = ["twitter_filter", "twitter_sample"]
+    if obj.harvest_type in DEPRECATED_TYPES:
+        log.warning("Deprecated harvest type: %s", obj.harvest_type)
+        return True
+    else:
+        return False

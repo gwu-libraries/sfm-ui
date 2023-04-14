@@ -2,9 +2,11 @@
 FROM gwul/sfm-base@sha256:0b80a3d3562cdb4d631fbb55b9bd24889312838cbd27cd33e14cc0c18405f007
 MAINTAINER Social Feed Manager <sfm@gwu.edu>
 
+ARG build_version=release
+
 ADD . /opt/sfm-ui/
 WORKDIR /opt/sfm-ui
-RUN pip install -r requirements/common.txt -r requirements/release.txt
+RUN pip install -r requirements/common.txt -r requirements/${build_version}.txt
 
 # Adds fixtures.
 ADD docker/ui/fixtures.json /opt/sfm-setup/

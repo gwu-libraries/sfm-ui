@@ -82,7 +82,7 @@
                 </div>
             </div>      
             {% else %}
-            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle_on or stream_stopping or not collection.is_active %}"btn btn-secondary" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
+            <button type="submit" class={% if seed_error_message or seed_warning_message or credential_used_col or not can_toggle_on or stream_stopping or not collection.is_active or disabled_collection_type %}"btn btn-secondary" disabled="disabled" {% else %} "btn btn-success" {% endif %}>
                 <span class="fas fa-power-off fa-fw" aria-hidden="true"></span> Turn on
             </button><br />
         {% endif %}
