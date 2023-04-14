@@ -4,7 +4,7 @@
 DOCKERFILE_SUFFIX=${DOCKER_REPO##*/}
 # Remove the sfm-twitter prefix to extract the name of the Dockerfile
 DOCKERFILE_SUFFIX=${DOCKERFILE_SUFFIX#sfm-ui}
-echo "Dockerfile repo is ${DOCKER_REPO}"
+echo "Dockerfile PATH is ${DOCKERFILE_PATH}"
 if [ $DOCKER_TAG == "master" ]
 then
     docker build . --build-arg build_version=master -f "Dockerfile${DOCKERFILE_SUFFIX}" -t $IMAGE_NAME  
