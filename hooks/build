@@ -2,7 +2,8 @@
 case $DOCKER_TAG in
    master|master-runserver)
     # extract the Dockerfile suffix from the tag name
-    docker build . --build-arg build_version=master -f "Dockerfile${DOCKER_TAG##master}}" -t $IMAGE_NAME ;;
+    echo "Building from master"
+    docker build . --build-arg build_version=master -f "Dockerfile${DOCKER_TAG##master}" -t $IMAGE_NAME ;;
     *)
     docker build . -f Dockerfile -t $IMAGE_NAME 
 esac
