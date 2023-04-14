@@ -5,5 +5,5 @@ case $DOCKER_TAG in
     echo "Building from master"
     docker build . --build-arg build_version=master -f "Dockerfile${DOCKER_TAG##master}" -t $IMAGE_NAME ;;
     *)
-    docker build . -f Dockerfile -t $IMAGE_NAME 
+    docker build . -f Dockerfile -t $IMAGE_NAME ;;
 esac
