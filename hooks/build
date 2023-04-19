@@ -1,9 +1,16 @@
 #!/bin/bash
+# We need to account for the following cases
+# 1) Repo is sfm-ui, tag is either master or master-runserver, Dockerfile or Dockerfile-runserver
+# 2) Repo is sfm-ui, tag is release (3.0.0), Dockerfile
+# 3) Repo is sfm-ui-consumer, tag is master, Dockerfile is Dockerfile-consumer
+# 4) Repo is sfm-ui-incomsumer, tag is release (3.0.0)
+DOCKERFILE="${DOCKER_REPO#index.docker.io/gwul/sfm-ui}"         # Remove repo prefix
 case $DOCKER_TAG in
-   master|master-runserver)
-    # extract the Dockerfile suffix from the tag name
-    echo "Building from master"
-    docker build . --build-arg build_version=master -f "Dockerfile${DOCKER_TAG##master}" -t $IMAGE_NAME ;;
+   *"master"*)
+        DOCKERFILE="Dockerfile${DOCKERFILE}${DOCKER_TAG#master}" # Remove tag element
+        docker build . --build-arg build_version=master -f $DOCKERFILE -t $IMAGE_NAME ;;
     *)
-    docker build . -f Dockerfile -t $IMAGE_NAME ;;
+        if [[ $DOCKER_TAG =~  .+:[0-9\.]+ ]]; then
+            docker build . -f "Dockerfile${DOCKERFILE}" -t $IMAGE_NAME 
+        fi;;
 esac
