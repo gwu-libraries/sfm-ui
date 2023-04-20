@@ -10,7 +10,5 @@ case $DOCKER_TAG in
         DOCKERFILE="Dockerfile${DOCKERFILE}${DOCKER_TAG#master}" # Remove tag element
         docker build . --build-arg build_version=master -f $DOCKERFILE -t $IMAGE_NAME ;;
     *)
-        if [[ $DOCKER_TAG =~  .+:[0-9\.]+ ]]; then
-            docker build . -f "Dockerfile${DOCKERFILE}" -t $IMAGE_NAME 
-        fi;;
+        docker build . -f "Dockerfile${DOCKERFILE}" -t $IMAGE_NAME 
 esac
