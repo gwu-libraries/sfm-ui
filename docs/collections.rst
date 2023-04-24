@@ -32,9 +32,9 @@ As of April 29, 2023, new collections of these types have been deprecated, due t
 
 .. _Twitter user timeline (v. 2):
 
----------------------
+----------------------------
 Twitter user timeline (v. 2)
----------------------
+----------------------------
 
 Twitter user timeline collections collect the 3,200 most recent tweets from each of
 a list of Twitter accounts using `Twitter's user_timeline API
@@ -63,9 +63,9 @@ incrementally.
 
 .. _Twitter search (v. 2):
 
----------------
+---------------------
 Twitter search (v. 2)
----------------
+---------------------
 
 Twitter searches collect tweets from the last 7-9 days that match search
 queries, similar to a regular search done on Twitter, using
@@ -93,9 +93,9 @@ Only one active seed can be used per search collection. If you need to run multi
 
 .. _Twitter user timeline:
 
----------------------
+----------------------------------
 Twitter user timeline (DEPRECATED)
----------------------
+----------------------------------
 
 Twitter user timeline collections collect the 3,200 most recent tweets from each of
 a list of Twitter accounts using `Twitter's user_timeline API
@@ -124,9 +124,9 @@ incrementally.
 
 .. _Twitter search:
 
----------------
+---------------------------
 Twitter search (DEPRECATED)
----------------
+---------------------------
 
 Twitter searches collect tweets from the last 7-9 days that match search
 queries, similar to a regular search done on Twitter, using
@@ -157,9 +157,9 @@ Only one active seed can be used per search collection. If you need to run multi
 
 .. _Twitter sample:
 
---------------
+---------------------------
 Twitter sample (DEPRECATED)
---------------
+---------------------------
 
 Twitter samples are a random collection of approximately 0.5--1% of public
 tweets, using the `Twitter sample stream
@@ -178,9 +178,9 @@ Only one sample or :ref:`Twitter filter` can be run at a time per credential.
 
 .. _Twitter filter:
 
----------------
+---------------------------
 Twitter filter (DEPRECATED)
----------------
+---------------------------
 
 Twitter Filter collections harvest a live selection of public tweets from
 criteria matching keywords, locations, languages, or users, based on the

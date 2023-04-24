@@ -58,12 +58,9 @@ Users can then use this collected data for research, analysis or archiving.
 
 Some ideas for how to use SFM:
   - **Collecting from individual accounts** such as the tweets of every U.S.
-    Senator (:ref:`guide-twitter-user-timelines`).
+    Senator (:ref:`guide-twitter-user-timeline-2`).
   - **Gathering Flickr images for analysis** or archiving the photographs from
     accounts donated to your organization (:ref:`guide-flickr-user-timeline`).
-  - **Researching social media use** by retrieving a sample of all tweets
-    (:ref:`guide-twitter-sample`), or by filtering by specific search terms
-    (:ref:`guide-twitter-filter`).
   - **Capturing a major event** by collecting tweets in a specific geographic
     location or by following specific hashtags.
   - **Collecting Tumblr posts** for preserving institutional blogs or the work
