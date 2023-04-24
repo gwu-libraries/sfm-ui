@@ -186,7 +186,7 @@ and `Entities
 | user_verified                | Indicates that the user's account is verified.      | true                                      |
 |                              |                                                     |                                           |
 +------------------------------+-----------------------------------------------------+-------------------------------------------+
-|  referenced_tweets           | Describes referenced tweets in current tweet.       | Referenced,replied or retweets                                      |
+|  referenced_tweets           | Describes referenced tweets in current tweet.       | Referenced,replied or retweets            |
 |                              |                                                     |                                           |
 +------------------------------+-----------------------------------------------------+-------------------------------------------+
 
