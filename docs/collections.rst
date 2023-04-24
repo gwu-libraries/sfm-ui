@@ -9,23 +9,92 @@ Reading the social media platform's documentation provides further important
 details.
 
 Collection types
-  * `Twitter user timeline`_: Collect tweets from specific Twitter accounts
-  * `Twitter search`_: Collects tweets by a user-provided search query from recent tweets
-  * `Twitter sample`_: Collects a Twitter provided stream of a subset of all tweets in real
-    time.
-  * `Twitter filter`_: Collects tweets by user-provided criteria from a stream of
-    tweets in real time.
+
+  * `Twitter user timeline (v. 2)`_: Collect tweets from specific Twitter accounts.
+  * `Twitter search (v. 2)`_: Collect tweets by a user-provided search query from recent tweets.
   * `Flickr user`_: Collects posts and photos from specific Flickr accounts
   * `Weibo timeline`_: Collects posts from the user and the user's friends
   * `Weibo search`_: Collects recent weibo posts by a user-provided search query
   * `Tumblr blog posts`_: Collects blog posts from specific Tumblr blogs
+
+Deprecated collection types
+
+As of April 29, 2023, new collections of these types have been deprecated, due to changes in the Twitter API.
+
+  * `Twitter user timeline`_: Collect tweets from specific Twitter accounts. **Deprecated**
+  * `Twitter search`_: Collects tweets by a user-provided search query from recent tweets. **Deprecated**
+  * `Twitter sample`_: Collects a Twitter provided stream of a subset of all tweets in real. **Deprecated**
+    time.
+  * `Twitter filter`_: Collects tweets by user-provided criteria from a stream of
+    tweets in real time. **Deprecated**
+
+.. _guide-twitter-user-timeline-2:
+
+.. _Twitter user timeline (v. 2):
+
+---------------------
+Twitter user timeline (v. 2)
+---------------------
+
+Twitter user timeline collections collect the 3,200 most recent tweets from each of
+a list of Twitter accounts using `Twitter's user_timeline API
+<https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/introduction>`_.
+
+**Seeds** for Twitter user timelines are individual Twitter accounts.
+
+To identify a user timeline, you can provide a screen name
+(the string after @, like NASA for @NASA)
+or Twitter user ID (a numeric string which never changes, like 11348282 for
+@NASA). If you provide one identifier, the other will be looked up and displayed
+in SFM the first time the harvester runs. The user may change the screen name
+over time, and the seed will be updated accordingly. 
+
+The harvest schedule should depend on how prolific the Twitter users are.
+In general, the more frequent the tweeter, the more frequent you’ll want to
+schedule harvests.
+
+SFM will notify you when incorrect or private user timeline seeds are requested;
+all other valid seeds will be collected.
+
+See :ref:`guide-incremental-collecting` to decide whether or not to collect
+incrementally.
+
+.. _guide-twitter-search-2:
+
+.. _Twitter search (v. 2):
+
+---------------
+Twitter search (v. 2)
+---------------
+
+Twitter searches collect tweets from the last 7-9 days that match search
+queries, similar to a regular search done on Twitter, using
+the `Twitter Search API <https://developer.twitter.com/en/docs/twitter-api/tweets/search/introduction>`__.
+This is **not** a complete search of all tweets; results are limited
+both by time and arbitrary relevance (determined by Twitter).
+
+Search queries must follow the guidelines described in the Twitter documentation for `Building queries for Search Tweets <https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent>`_.
+
+In SFM, each Twitter search (v. 2) collection can contain only one seed (query), though this may be a complex Boolean query. 
+
+In creating the seed, you can also specify an upper limit (in number of Tweets). This technique is useful given the low monthly cap on data retrieval with Basic access.
+
+In choosing a schedule for your Twitter v. 2 collection, make sure to leave enough time between
+searches. (If there is not enough time between searches, later harvests will
+be skipped until earlier harvests complete.) In some cases, you may only
+want to run the search once and then turn off the collection.
+
+See :ref:`guide-incremental-collecting` to decide whether or not to collect
+incrementally.
+
+Only one active seed can be used per search collection. If you need to run multiple searches in parallel, create a new collection for each search, each with a single seed.
 
 .. _guide-twitter-user-timelines:
 
 .. _Twitter user timeline:
 
 ---------------------
-Twitter user timeline
+Twitter user timeline (DEPRECATED)
 ---------------------
 
 Twitter user timeline collections collect the 3,200 most recent tweets from each of
@@ -56,7 +125,7 @@ incrementally.
 .. _Twitter search:
 
 ---------------
-Twitter search
+Twitter search (DEPRECATED)
 ---------------
 
 Twitter searches collect tweets from the last 7-9 days that match search
@@ -89,7 +158,7 @@ Only one active seed can be used per search collection. If you need to run multi
 .. _Twitter sample:
 
 --------------
-Twitter sample
+Twitter sample (DEPRECATED)
 --------------
 
 Twitter samples are a random collection of approximately 0.5--1% of public
@@ -110,7 +179,7 @@ Only one sample or :ref:`Twitter filter` can be run at a time per credential.
 .. _Twitter filter:
 
 ---------------
-Twitter filter
+Twitter filter (DEPRECATED)
 ---------------
 
 Twitter Filter collections harvest a live selection of public tweets from

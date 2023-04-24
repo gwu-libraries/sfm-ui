@@ -54,29 +54,14 @@ Accounts section of the Admin interface.
 Adding Twitter Credentials
 --------------------------
 
-As a user, the easiest way to set up Twitter credentials is to connect them to your
-personal Twitter account or another Twitter account you control. If you want
-more fine-tuned control, you can manually set up application-level credentials
-(see below). To connect Twitter credentials, first sign in to Twitter with the account 
-you want to use. Then, on the Credentials page, click *Connect to Twitter*. Your browser will open a page from Twitter, asking you for authorization. Click *Authorize*,
-and your credentials will automatically connect. Once credentials are connected, 
-you can start :ref:`guide-creating-collections`.
+To harvest data from the Twitter API as of April 29, 2023, it is necessary to sign up **and pay for** `Basic access <https://developer.twitter.com/en/portal/products/basic>`_. (The "Free" access tier does not permit users to retrieve Tweets via API, only to publish them.)
 
-Twitter application credentials can be obtained from `the Twitter API
-<https://developer.twitter.com/apps>`_. This process requires applying for
-a developer account for your organization or your personal use and describing
-your use case for SFM. Be sure to answer all of the questions in the
-application. You may receive email follow-up requesting additional 
-information before the application is approved.
-
-Creating application credentials and manually adding Twitter credentials, 
-rather than connecting them automatically
-using your Twitter account (see above), gives you greater control over your
-credentials and allows you to use multiple credentials.
+Due to the low monthly limits on data retrieval imposed by Twitter (10K Tweets per month, as of 4/29/2023), each SFM user should obtain their own API credentials. 
 
 To obtain application credentials:
   * Navigate to `<https://developer.twitter.com/en/apply-for-access>`_.
-  * Sign in to Twitter.
+  * Sign in to Twitter, or create an account if you don't already have one.
+  * Once you are logged into the Twitter Developer Portal, you can click the **Upgrade** button to upgrade your account to Basic Access.
   * Follow the prompts to describe your intended use case for academic research. 
   * When a description for your app is requested, you may include:
     *This is an instance of Social Feed Manager, a social media research and 
@@ -89,25 +74,15 @@ To obtain application credentials:
   * It is recommended to change the application permissions to read-only.
   * **Review and agree to the Twitter Developer Agreement**.
   
-You may need to wait several days for the account and app to be approved. One 
-approved, it is recommended that you:
-  * Click on your new application.
-  * Navigate to the *Permissions* tab.
-  * Select *Read only* then *Update settings*.
-  
-You now have application-level credentials you can use in your ``.env`` file.
-
 To manually add a Twitter Credential in your SFM user account:
-  * **Go to the Credentials page of SFM,** and click *Add Twitter Credential*.
-  * Fill out all fields:
-      * On the Twitter apps page (https://apps.twitter.com/) click your new
-        application.
-      * Navigate to the *Keys and Access Tokens* tab.
-      * From the top half of the page, copy and paste into the matching fields
-        in SFM: *Consumer Key* and *Consumer Secret*.
-      * From the bottom half of the page, copy and paste into the matching
-      fields in SFM: *Access Token* and *Access Token Secret*.
-  * **Click** *Save*
+  * **Go to the Credentials page of SFM,** and click *Add Twitter2 Credential*.
+  * There are two ways of saving your credentials in SFM:
+      1. Enter an `API key`, `API key secret`, `Access token`, and `Access token secret`.
+      2. Or enter a `Bearer token` (recommended).
+  * To obtain your credentials, visit the `Twitter Developer Portal Dashboard <https://developer.twitter.com/en/portal/dashboard>`_and select your project. Under the `Apps` section, click on the key icon to access the `Keys and tokens` menu.
+  * Generate the credentials needed (either the API key/secret and Access token/secret, or the Bearer token).
+  * Save these keys, tokens, and secrets somewhere secure.
+  * Enter the credentials in the Twitter2 Credential form on SFM, and click `Save`.
 
 .. _flickr-credentials:
 

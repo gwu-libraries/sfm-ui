@@ -81,14 +81,10 @@ Here's a sample of what a collection set looks like:
 Types of Collections
 ^^^^^^^^^^^^^^^^^^^^
 
-  * :ref:`guide-twitter-user-timelines`: Collect tweets from specific
+  * :ref:`guide-twitter-user-timeline-2`: Collect tweets from specific
     Twitter accounts
-  * :ref:`guide-twitter-search`: Collects tweets by a user-provided search query
+  * :ref:`guide-twitter-search-2`: Collects tweets by a user-provided search query
     from recent tweets
-  * :ref:`guide-twitter-sample`: Collects a Twitter-provided stream of a subset
-    of all tweets in real time.
-  * :ref:`guide-twitter-filter`: Collects tweets by user-provided criteria from
-    a stream of tweets in real time.
   * :ref:`guide-flickr-user-timeline`: Collects posts and photos from specific
     Flickr accounts
   * :ref:`guide-weibo-timelines`: Collects posts from the user and the user's
@@ -225,10 +221,8 @@ for Twitter Sample and Sina Weibo:
 
 For details on each collection type, see:
 
-| :ref:`guide-twitter-user-timelines`
-| :ref:`guide-twitter-search`
-| :ref:`guide-twitter-sample`
-| :ref:`guide-twitter-filter`
+| :ref:`guide-twitter-user-timeline-2`
+| :ref:`guide-twitter-search-2`
 | :ref:`guide-flickr-user-timeline`
 | :ref:`guide-weibo-timelines`
 | :ref:`guide-tumblr-blog-posts`
