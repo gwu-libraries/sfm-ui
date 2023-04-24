@@ -25,7 +25,7 @@ class CollectionSetListViewTests(TestCase):
         self.collection_set1 = CollectionSet.objects.create(name='Test Collection Set One',
                                                             group=group)
 
-        Collection.objects.create(collection_set=self.collection_set1, harvest_type="twitter_search",
+        Collection.objects.create(collection_set=self.collection_set1, harvest_type="twitter_search_2",
                                   name="Test Collection One",
                                   credential=credential)
         group2 = Group.objects.create(name='testgroup2')
@@ -182,7 +182,7 @@ class CollectionDetailViewTests(TestCase):
                                                      token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set1,
                                                     credential=self.credential1,
-                                                    harvest_type=Collection.TWITTER_SEARCH,
+                                                    harvest_type=Collection.TWITTER_SEARCH_2,
                                                     name='Test collection one',
                                                     )
         self.seed = Seed.objects.create(collection=self.collection, token='{}')
@@ -209,7 +209,7 @@ class SeedCreateViewTests(TestCase):
                                                     token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
-                                                    harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                    harvest_type=Collection.TWITTER_USER_TIMELINE_2,
                                                     name='Test collection one',
                                                     )
         self.seed = Seed.objects.create(collection=self.collection,
@@ -245,7 +245,7 @@ class SeedTestsMixin:
                                                     token="{'key': '1'}")
         self.collection = Collection.objects.create(collection_set=self.collection_set,
                                                     credential=self.credential,
-                                                    harvest_type=Collection.TWITTER_USER_TIMELINE,
+                                                    harvest_type=Collection.TWITTER_USER_TIMELINE_2,
                                                     name='Test collection one',
                                                     )
         self.seed = Seed.objects.create(collection=self.collection,
@@ -288,7 +288,7 @@ class SeedBulkCreateViewTests(SeedTestsMixin, TestCase):
         self.assertTrue(response.context["form"])
         self.assertEqual(self.collection, response.context["collection"])
         self.assertEqual(self.collection_set, response.context["collection_set"])
-        self.assertEqual("Twitter user timeline", response.context["harvest_type_name"])
+        self.assertEqual("Twitter user timeline (v. 2)", response.context["harvest_type_name"])
 
     def test_post(self):
         response = self.client.post(reverse("bulk_seed_create", args=[self.collection.pk]),
