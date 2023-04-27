@@ -24,6 +24,8 @@ Twitter Dictionary
 For more info about source tweet data, see the `Twitter API documentation
 <https://developer.twitter.com/en/docs>`_, including `Tweet data dictionaries
 <https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json>`_.
+V2 API data dictionary can be found here:
+`<https://developer.twitter.com/en/docs/twitter-api/data-dictionary/introduction>`_.
 
 Documentation about older archived tweets is archived by the Wayback Machine for
 the `Twitter API
@@ -31,6 +33,9 @@ the `Twitter API
 <https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_,
 and `Entities
 <https://web.archive.org/web/*/https://dev.twitter.com/overview/api/tweets>`_.
+
+
+V1 API
 
 +------------------------------+-----------------------------------------------------+-------------------------------------------+
 | Field	                       | Description                                         | Example                                   |
@@ -186,9 +191,135 @@ and `Entities
 | user_verified                | Indicates that the user's account is verified.      | true                                      |
 |                              |                                                     |                                           |
 +------------------------------+-----------------------------------------------------+-------------------------------------------+
-|  referenced_tweets           | Describes referenced tweets in current tweet.       | Referenced,replied or retweets            |
+
+
+V2 API
+
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| Field	                       | Description                                         | Example                                   |
+|                              |                                                     |                                           |
++==============================+=====================================================+===========================================+
+| id                           | Twitter identifier for the tweet.                   | 114749583439036416                        |
 |                              |                                                     |                                           |
 +------------------------------+-----------------------------------------------------+-------------------------------------------+
+| tweet_url                    | URL of the tweet on Twitter's website. If the tweet | https://twitter.com/NASA/                 |
+|                              | is a retweet, the URL will be redirected to the     | status/394883921303056384                 |
+|                              | original tweet.                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| created_at                   | Date and time the tweet was created, in Twitter's   | Fri Sep 16 17:16:47 +0000 2011            |
+|                              | default format.                                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_username                | The unique screen name of the account that authored | NASA                                      |
+|                              | the tweet, at the time the tweet was posted. Screen |                                           |
+|                              | names are generally displayed with a @ prefixed.    |                                           |
+|                              | Note that an account’s screen name may change over  |                                           |
+|                              | time.                                               |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| text                         | The text of the tweet. Newline characters are       | Observing Hurricane Raymond Lashing       |
+|                              | replaced with a space.                              | Western Mexico: Low pressure System 96E   |
+|                              |                                                     | developed quickly over the…               |
+|                              |                                                     | http://t.co/YpffdKVrgm                    |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| tweet_type                   | original, reply, quote, or retweet                  | retweet                                   |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| bbox                         | The geographic coordinates of the tweet. This is    | [-0.22012208, 51.59248806]                |
+|                              | only enabled if geotagging is enabled on the        |                                           |
+|                              | account. The value, if present, is of the form      |                                           |
+|                              | [longitude, latitude].                              |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| hashtags                     | Hashtags from the tweet text, as a comma-separated  | Mars, askNASA                             |
+|                              | list. Hashtags are generally displayed with a #     |                                           |
+|                              | prefixed.                                           |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| media                        | URLs of media objects (photos, videos, GIFs) that   | https://twitter.com/NASA_Orion/status/    |
+|                              | are attached to the tweet.                          | 394866827857100800/photo/1                |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| urls                         | URLs entered by user as part of tweet. Note that    | http://instagram.com/p/gA_zQ5IaCz/        |
+|                              | URL may be a shortened URL, e.g. from bit.ly.       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| like_count                   | Number of times this tweet had been favorited/liked | 12                                        |
+|                              | by other users at the time the tweet was collected. |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| in_reply_to_user_id          | If tweet is a reply, the user id of the author      | 2244994945                                |
+|                              | of the tweet that is being replied to.              |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| lang                         | Language of the tweet text, as determined by        | en                                        |
+|                              | Twitter.                                            |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| place                        | The user or application-provided geographic         | Washington, DC                            |
+|                              | location from which a tweet was posted.             |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| possibly_sensitive           | Indicates that URL contained in the tweet may       | true                                      |
+|                              | reference sensitive content.                        |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| retweet_count                | Number of times the tweet had been retweeted at     | 25                                        |
+|                              | the time the tweet was collected.                   |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| referenced_tweets_id         | If tweet is a retweet or quote tweet, the Twitter   | 114749583439036416                        |
+|                              | identifier of the source tweet.                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| source                       | The application from which the tweet was posted.    | <a href=\"http://twitter.com/download/    |
+|                              |                                                     | iphone\" rel=\"nofollow\">Twitter for     |
+|                              |                                                     | iPhone</a>                                |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| author_id                    | Twitter identifier for the author of the tweet.     | 481186914                                 |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_created_at              | Date and time the tweet was created, in Twitter's   | Wed Mar 18 13:46:38 +0000 2009            |
+|                              | default format.                                     |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_default_profile_image   | URL of the user's profile image.                    | https://pbs.twimg.com/profile_images/     |
+|                              |                                                     | 942858479592554497/BbazLO9L_normal.jpg    |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_description             | The user-provided account description. Newline      | The safest spacecraft designed by NASA,   |
+|                              | characters are replaced with a space.               | Orion will carry humans to the moon and   |
+|                              |                                                     | beyond.                                   |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_followers_count         | Number of followers this account had at the time    | 235                                       |
+|                              | the tweet was collected.                            |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_friends_count           | Number of users this account was following at the   | 114                                       |
+|                              | time the tweet was collected.                       |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_listed_count            | Number of public lists that this user is a member   | 3                                         |
+|                              | of.                                                 |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_location                | The user's self-described location. Not necessarily | San Francisco, California                 |
+|                              | an actual place.                                    |                                           |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| username                     | The user's self-provided name.                      | Orion Spacecraft                          |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_urls                    | URLs entered by user as part of user's description. | http://www.Instagram.com/realDonaldTrump  |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+| user_verified                | Indicates that the user's account is verified.      | true                                      |
+|                              |                                                     |                                           |
++------------------------------+-----------------------------------------------------+-------------------------------------------+
+
 
 -----------------
 Tumblr Dictionary
