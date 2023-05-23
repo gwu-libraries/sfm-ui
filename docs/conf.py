@@ -55,7 +55,7 @@ author = u'The George Washington University Libraries'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '2.5.0'
+release = '3.0.0'
 # The short X.Y version.
 version = release[0:release.rindex(".")]
 
