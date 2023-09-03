@@ -1,5 +1,5 @@
 APScheduler==3.7.0
-django==3.2.18
+django==3.2.20
 django-allauth==0.41.0
 django-braces==1.14.0
 django-crispy-forms==1.9.0
